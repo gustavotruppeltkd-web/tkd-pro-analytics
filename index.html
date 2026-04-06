@@ -249,6 +249,21 @@
             btn.style.opacity = '0.7';
 
             if (isSignup) {
+                // Check if email is authorized
+                const { data: authData, error: authError } = await supabaseClient
+                    .from('authorized_emails')
+                    .select('email')
+                    .eq('email', email.toLowerCase().trim())
+                    .single();
+
+                if (authError || !authData) {
+                    errorMsg.innerText = "Este e-mail não está autorizado a criar conta. Entre em contato com o administrador.";
+                    errorMsg.style.display = 'block';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    return;
+                }
+
                 const { data, error } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password,
