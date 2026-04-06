@@ -174,7 +174,15 @@
 
 <body>
 
-    <a href="index.html" class="btn-back"><i class="ti ti-arrow-left"></i> Voltar</a>
+    <div class="user-profile top-left-profile"
+        style="position: absolute; top: 30px; left: 40px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar"
+            style="width: 32px; height: 32px; border-radius: 50%;">
+        <div class="user-info" style="display: flex; flex-direction: column;">
+            <span class="user-name" style="font-weight: 600; font-size: 13px;">Configure seu Perfil</span>
+            <span class="user-role" style="color: var(--text-muted); font-size: 11px;">Treinador</span>
+        </div>
+    </div>
 
     <div class="splash-container" style="max-width: 1000px; width: 100%;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
@@ -193,7 +201,8 @@
                 </button>
             </div>
         </div>
-        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Carregando...</span>. Qual equipe deseja gerenciar
+        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Carregando...</span>.
+            Qual equipe deseja gerenciar
             agora?</p>
 
         <div style="text-align: left; margin-bottom: 16px;">
@@ -499,10 +508,79 @@
             closeModal();
         }
 
+        <!-- Modal Primeiro Acesso (Onboarding Treinador) -->
+        <div class="modal-overlay" id="modalFirstTrainer" style="z-index: 2000; background: rgba(15, 23, 42, 0.95);">
+            <div class="modal-content" style="max-width: 500px; border: 1px solid var(--primary); box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);">
+                <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
+                    <h2 class="modal-title" style="text-align: center; color: var(--primary); font-size: 24px;">Bem-vindo(a) ao Pro Coach!</h2>
+                </div>
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <p style="color: var(--text-muted); font-size: 15px;">Para começar, por favor, insira seus dados. Isso personalizará os seus relatórios e dashboards.</p>
+                </div>
+                <form onsubmit="saveFirstTrainer(event)">
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="color: var(--text-main);">Seu Nome Completo</label>
+                        <input type="text" class="form-control" id="firstTrainerName" placeholder="Ex: Mestre Carlos Silva" required style="background: rgba(0,0,0,0.2) !important;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 32px;">
+                        <label style="color: var(--text-main);">Cargo Principal (Ex: Head Coach, Preparador Físico)</label>
+                        <input type="text" class="form-control" id="firstTrainerRole" placeholder="Ex: Treinador Principal" required style="background: rgba(0,0,0,0.2) !important;">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block" style="width: 100%; justify-content: center; padding: 14px; font-size: 16px;">
+                            Começar a Usar <i class="ti ti-arrow-right" style="margin-left: 8px;"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         document.addEventListener('DOMContentLoaded', () => {
-            // timeout para garantir que o app.js carregou o LoadDB
-            setTimeout(renderTurmas, 50);
+            // Verifica se o loadDB ja preencheu o db e se nao ha treinador
+            setTimeout(() => {
+                if (!db.treinadores || db.treinadores.length === 0) {
+                    document.getElementById('modalFirstTrainer').classList.add('active');
+                }
+                renderTurmas();
+            }, 100);
         });
+
+        function saveFirstTrainer(event) {
+            event.preventDefault();
+            const nomeStr = document.getElementById('firstTrainerName').value.trim();
+            const papelStr = document.getElementById('firstTrainerRole').value.trim();
+            if (!nomeStr || !papelStr) return;
+
+            db.treinadores = [{
+                id: 1,
+                nome: nomeStr,
+                papel: papelStr,
+                role: papelStr,
+                avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png',
+                experiencia: '',
+                graduacao: '',
+                localizacao: '',
+                bio: '',
+                conquistas: [],
+                formacao: []
+            }];
+
+            saveDB();
+
+            // Re-render UI top-left
+            if (typeof renderUserProfile === 'function') renderUserProfile();
+
+            document.getElementById('modalFirstTrainer').classList.remove('active');
+
+            // Show toast using existing HTML
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.style.borderLeftColor = 'var(--green)';
+            toast.innerHTML = `<i class="ti ti-check" style="color: var(--green);"></i> Plataforma configurada com sucesso!`;
+            const container = document.querySelector('.toast-container') || document.body;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
     </script>
 </body>
 

@@ -122,25 +122,11 @@ function fetchFromSupabase() {
             // Subscribe to remote changes
             setupRealtimeSubscription();
 
-            // Try to initialize trainer profile if empty
-            initializeTrainerFromAuth();
+            // Call a potential global hook if implemented
+            if (typeof window.onDataLoaded === 'function') {
+                window.onDataLoaded();
+            }
         });
-}
-
-async function initializeTrainerFromAuth() {
-    if (!db.treinadores || db.treinadores.length === 0) {
-        const { data: { session } } = await window.supabaseClient.auth.getSession();
-        if (session && session.user) {
-            db.treinadores = [{
-                id: 1,
-                nome: session.user.email.split('@')[0],
-                papel: 'Administrador',
-                avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png'
-            }];
-            saveDB();
-            renderUserProfile();
-        }
-    }
 }
 
 function renderUserProfile() {
