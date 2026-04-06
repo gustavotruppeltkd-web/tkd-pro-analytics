@@ -80,6 +80,9 @@ function loadDB() {
 
     // Render profile header if elements exist
     renderUserProfile();
+
+    // Check if trainer profile needs to be set up
+    checkTrainerOnboarding();
 }
 
 // Fetch latest state from Supabase
@@ -126,6 +129,9 @@ function fetchFromSupabase() {
             if (typeof window.onDataLoaded === 'function') {
                 window.onDataLoaded();
             }
+
+            // Re-check onboarding after remote data loads (trainer might have been set remotely)
+            checkTrainerOnboarding();
         });
 }
 
@@ -151,6 +157,116 @@ function renderUserProfile() {
             window.location.href = 'treinador-perfil.html';
         };
     });
+}
+
+// ========================
+// GLOBAL ONBOARDING GATE
+// ========================
+function checkTrainerOnboarding() {
+    // Skip on login page and atleta pages
+    const page = window.location.pathname;
+    if (page.includes('index.html') || page === '/' || page.includes('atleta-')) return;
+
+    const hasTrainer = db.treinadores && db.treinadores.length > 0 &&
+        db.treinadores[0].nome && db.treinadores[0].nome.trim() !== '';
+    if (hasTrainer) {
+        // If modal was shown, remove it
+        const existing = document.getElementById('__onboardingGate');
+        if (existing) existing.remove();
+        return;
+    }
+
+    // Avoid injecting twice
+    if (document.getElementById('__onboardingGate')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = '__onboardingGate';
+    overlay.style.cssText = [
+        'position:fixed', 'inset:0', 'z-index:99999',
+        'background:rgba(10,14,26,0.97)',
+        'display:flex', 'align-items:center', 'justify-content:center',
+        'font-family:Inter,system-ui,sans-serif'
+    ].join(';');
+
+    overlay.innerHTML = `
+        <div style="background:#111827;border:1px solid #1e40af;border-radius:20px;padding:48px 40px;max-width:480px;width:90%;box-shadow:0 0 60px rgba(59,130,246,0.2);text-align:center;">
+            <div style="width:72px;height:72px;background:rgba(59,130,246,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
+            <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relatórios e dashboards.</p>
+            <div style="text-align:left;margin-bottom:20px;">
+                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nome Completo *</label>
+                <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva"
+                    style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;"
+                    onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
+            </div>
+            <div style="text-align:left;margin-bottom:32px;">
+                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Cargo / Função *</label>
+                <input id="__ob_role" type="text" placeholder="Ex: Treinador Principal, Head Coach"
+                    style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;"
+                    onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
+            </div>
+            <button id="__ob_btn" onclick="window.__saveOnboarding()"
+                style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;"
+                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                Começar a Usar &rarr;
+            </button>
+            <p id="__ob_err" style="color:#f87171;font-size:12px;margin-top:12px;display:none;">Por favor, preencha todos os campos.</p>
+        </div>
+    `;
+
+    // Block clicks on the page beneath
+    overlay.addEventListener('click', (e) => e.stopPropagation());
+
+    document.body.appendChild(overlay);
+
+    // Bind Enter key
+    overlay.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') window.__saveOnboarding();
+    });
+
+    window.__saveOnboarding = function () {
+        const nome = document.getElementById('__ob_name').value.trim();
+        const papel = document.getElementById('__ob_role').value.trim();
+        const errEl = document.getElementById('__ob_err');
+
+        if (!nome || !papel) {
+            errEl.style.display = 'block';
+            return;
+        }
+        errEl.style.display = 'none';
+
+        db.treinadores = [{
+            id: 1,
+            nome: nome,
+            papel: papel,
+            role: papel,
+            avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png',
+            experiencia: '',
+            graduacao: '',
+            localizacao: '',
+            bio: '',
+            conquistas: [],
+            formacao: []
+        }];
+
+        saveDB();
+        renderUserProfile();
+
+        const gate = document.getElementById('__onboardingGate');
+        if (gate) {
+            gate.style.opacity = '0';
+            gate.style.transition = 'opacity 0.3s';
+            setTimeout(() => gate.remove(), 300);
+        }
+
+        // Set active coach id
+        localStorage.setItem('tkd_active_coach_id', '1');
+
+        // Show toast
+        if (typeof showToast === 'function') showToast('Perfil configurado com sucesso!', 'success');
+    };
 }
 
 function setupRealtimeSubscription() {

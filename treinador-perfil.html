@@ -643,14 +643,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Pequeno timeout para garantir que app.js carregou os dados
             setTimeout(async () => {
-                const coachId = localStorage.getItem('tkd_active_coach_id');
-                if (!coachId || !db.treinadores) {
-                    alert("Dados do treinador não encontrados.");
+                if (!db.treinadores || db.treinadores.length === 0) {
+                    // No trainer exists - onboarding gate in app.js will handle it
                     return;
                 }
 
-                const coach = db.treinadores.find(t => t.id === parseInt(coachId));
+                // Try to find by stored id, otherwise fall back to first trainer
+                const coachId = localStorage.getItem('tkd_active_coach_id');
+                let coach = coachId ? db.treinadores.find(t => t.id === parseInt(coachId)) : null;
+                if (!coach) coach = db.treinadores[0];
                 if (!coach) return;
+
+                localStorage.setItem('tkd_active_coach_id', String(coach.id));
                 currentCoachObj = coach;
 
                 renderProfileScreen();
