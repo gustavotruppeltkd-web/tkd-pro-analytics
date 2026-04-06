@@ -77,7 +77,7 @@
             gap: 6px;
         }
 
-        /* FÃ­sico */
+        /* Físico */
         .tipo-forca {
             background: rgba(239, 68, 68, 0.18);
             border-color: #ef4444;
@@ -505,7 +505,7 @@
             animation: fadeIn 0.3s ease-out;
         }
 
-        /* HistÃ³rico Grid */
+        /* Histórico Grid */
         .history-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -903,7 +903,7 @@
                                 <div style="display: flex; flex-direction: column; gap: 16px; flex: 1;">
                                     <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
                                         <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">
-                                            Ãšltimas</h4>
+                                            Últimas</h4>
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetUltimasComp">
@@ -913,13 +913,13 @@
                                     </div>
                                     <div>
                                         <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">
-                                            PrÃ³ximo Alvo</h4>
+                                            Próximo Alvo</h4>
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetProximasComp">
                                             ��¢ Copa Regional (em 18 dias)<br>
                                             <span style="color: var(--yellow); font-size: 12px;"><i
-                                                    class="ti ti-flag"></i> InscriÃ§Ãµes Abertas</span>
+                                                    class="ti ti-flag"></i> Inscrições Abertas</span>
                                         </div>
                                     </div>
                                 </div>
@@ -964,7 +964,7 @@
                     <div class="list-header" id="commercialListHeader" style="display: none;">
                         <div id="colNameHeader">Aluno e Faixa</div>
                         <div>Idade</div>
-                        <div>AÃ§Ãµes</div>
+                        <div>Ações</div>
                     </div>
 
                     <div class="student-grid" id="alunosGrid">
@@ -980,15 +980,15 @@
 
 
 
-    <!-- Modal Editar HorÃ¡rios -->
+    <!-- Modal Editar Horários -->
     <div class="modal-overlay" id="modalEditHorario">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2 class="modal-title">Editar HorÃ¡rios da Turma</h2>
+                <h2 class="modal-title">Editar Horários da Turma</h2>
                 <button class="btn-close" onclick="closeModalHorario()"><i class="ti ti-x"></i></button>
             </div>
 
-            <!-- FormulÃ¡rio Novo HorÃ¡rio -->
+            <!-- Formulário Novo Horário -->
             <form onsubmit="saveHorario(event)" id="formAddHorario"
                 style="background: var(--bg-dark); padding: 16px; border-radius: var(--radius-md); margin-bottom: 24px; border: 1px solid var(--border-color);">
                 <h4 style="margin-bottom: 12px; font-size: 14px;">Adicionar Novo Bloco</h4>
@@ -997,16 +997,16 @@
                         <label>Dia da Semana</label>
                         <select class="form-control" name="diaSemana" required>
                             <option value="Segunda-Feira">Segunda-Feira</option>
-                            <option value="TerÃ§a-Feira">TerÃ§a-Feira</option>
+                            <option value="Terça-Feira">Terça-Feira</option>
                             <option value="Quarta-Feira">Quarta-Feira</option>
                             <option value="Quinta-Feira">Quinta-Feira</option>
                             <option value="Sexta-Feira">Sexta-Feira</option>
-                            <option value="SÃ¡bado">SÃ¡bado</option>
+                            <option value="Sábado">Sábado</option>
                             <option value="Domingo">Domingo</option>
                         </select>
                     </div>
                     <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                        <label>InÃ­cio</label>
+                        <label>Início</label>
                         <input type="time" class="form-control" name="horaInicio" required>
                     </div>
                     <div class="form-group" style="flex: 1; margin-bottom: 0;">
@@ -1018,7 +1018,7 @@
                 </div>
             </form>
 
-            <h4 style="margin-bottom: 12px; font-size: 14px;">HorÃ¡rios Atuais</h4>
+            <h4 style="margin-bottom: 12px; font-size: 14px;">Horários Atuais</h4>
             <div class="class-list" id="modalScheduleList"
                 style="margin-top: 0; max-height: 300px; overflow-y: auto; padding-right: 8px;">
                 <!-- Preenchido via JS baseado nos cards -->
@@ -1026,7 +1026,7 @@
 
             <div class="form-group" style="margin-top: 24px;">
                 <button type="button" class="btn btn-primary btn-block" style="width: 100%; justify-content: center;"
-                    onclick="closeModalHorario()">Concluir EdiÃ§Ã£o</button>
+                    onclick="closeModalHorario()">Concluir Edição</button>
             </div>
         </div>
     </div>
@@ -1042,7 +1042,7 @@
             <form onsubmit="saveAluno(event)" id="formAddAluno">
                 <h4
                     style="margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    Dados BÃ¡sicos</h4>
+                    Dados Básicos</h4>
                 <div class="form-group">
                     <label>Nome Completo</label>
                     <input type="text" class="form-control" name="nomeAluno" placeholder="Ex: Lucas Silva" required>
@@ -1054,7 +1054,7 @@
                         <input type="date" class="form-control" name="nascimentoAluno" required>
                     </div>
                     <div class="form-group" id="groupContato" style="flex: 1;">
-                        <label>Contato do ResponsÃ¡vel</label>
+                        <label>Contato do Responsável</label>
                         <input type="tel" class="form-control" name="contatoResp" placeholder="(00) 00000-0000"
                             required>
                     </div>
@@ -1092,13 +1092,13 @@
                     <div class="form-group" style="margin-top: 12px;">
                         <label style="display:flex; align-items:center; gap:6px;">
                             <i class="ti ti-lock" style="color:var(--primary);font-size:14px;"></i>
-                            PIN de Acesso do Atleta (4 dÃ­gitos)
+                            PIN de Acesso do Atleta (4 dígitos)
                         </label>
                         <input type="text" class="form-control" name="pinAtleta" placeholder="Ex: 1234" maxlength="4"
                             pattern="[0-9]{4}" inputmode="numeric"
                             style="letter-spacing: 8px; font-size: 18px; font-weight: 700;">
-                        <small style="font-size:11px; color:var(--text-muted); margin-top:4px;">O atleta usarÃ¡ este PIN
-                            para acessar o portal. Se vazio, serÃ¡ definido como 0000.</small>
+                        <small style="font-size:11px; color:var(--text-muted); margin-top:4px;">O atleta usará este PIN
+                            para acessar o portal. Se vazio, será definido como 0000.</small>
                     </div>
 
                     <div style="display: flex; gap: 16px; margin-top: 12px;">
@@ -1144,7 +1144,7 @@
 
                 <div class="form-group">
                     <label style="display: flex; justify-content: space-between;">
-                        <span>Cor da Faixa (GraduaÃ§Ã£o)</span>
+                        <span>Cor da Faixa (Graduação)</span>
                         <a href="#" onclick="openConfigFaixas(event)"
                             style="font-size: 12px; color: var(--primary); text-decoration: none;"><i
                                 class="ti ti-settings"></i> Gerenciar</a>
@@ -1196,13 +1196,13 @@
     <div class="modal-overlay" id="modalRelatorios">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h2 class="modal-title">RelatÃ³rios da Turma</h2>
+                <h2 class="modal-title">Relatórios da Turma</h2>
                 <button class="btn-close" onclick="closeModalRelatorios()"><i class="ti ti-x"></i></button>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 24px; padding: 20px 0;">
 
-                <!-- RelatÃ³rio Geral -->
+                <!-- Relatório Geral -->
                 <div
                     style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
                     <h4 style="margin-bottom: 8px; font-size: 15px;">Listagem Geral de Alunos</h4>
@@ -1213,17 +1213,17 @@
                     </button>
                 </div>
 
-                <!-- RelatÃ³rio de Chamada -->
+                <!-- Relatório de Chamada -->
                 <div
                     style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
-                    <h4 style="margin-bottom: 8px; font-size: 15px;">RelatÃ³rio Mensal de Chamada</h4>
-                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Selecione o mÃªs para ver
-                        a frequÃªncia dos alunos.</p>
+                    <h4 style="margin-bottom: 8px; font-size: 15px;">Relatório Mensal de Chamada</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Selecione o mês para ver
+                        a frequência dos alunos.</p>
                     <div style="display: flex; gap: 8px;">
                         <select id="mesRelatorioChamada" class="form-control" style="flex: 1;">
                             <option value="1">Janeiro</option>
                             <option value="2">Fevereiro</option>
-                            <option value="3">MarÃ§o</option>
+                            <option value="3">Março</option>
                             <option value="4">Abril</option>
                             <option value="5">Maio</option>
                             <option value="6">Junho</option>
@@ -1240,17 +1240,17 @@
                     </div>
                 </div>
 
-                <!-- RelatÃ³rio Financeiro -->
+                <!-- Relatório Financeiro -->
                 <div
                     style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
-                    <h4 style="margin-bottom: 8px; font-size: 15px;">RelatÃ³rio Financeiro Mensal</h4>
+                    <h4 style="margin-bottom: 8px; font-size: 15px;">Relatório Financeiro Mensal</h4>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Status de pagamentos e
-                        valores da turma por mÃªs.</p>
+                        valores da turma por mês.</p>
                     <div style="display: flex; gap: 8px;">
                         <select id="mesRelatorioFinanceiro" class="form-control" style="flex: 1;">
                             <option value="1">Janeiro</option>
                             <option value="2">Fevereiro</option>
-                            <option value="3">MarÃ§o</option>
+                            <option value="3">Março</option>
                             <option value="4">Abril</option>
                             <option value="5">Maio</option>
                             <option value="6">Junho</option>
@@ -1279,7 +1279,7 @@
     <script>
         // Tabs Logic
         function switchTab(tabId) {
-            // FunÃ§Ã£o mantida para compatibilidade, mas simplificada pois agora sÃ³ hÃ¡ uma aba
+            // Função mantida para compatibilidade, mas simplificada pois agora só há uma aba
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
@@ -1301,7 +1301,7 @@
                 // Sidebar is now handled globally by renderSidebar() in app.js
 
                 // Ajuste de Nomenclatura Atleta x Aluno
-                const isRend = (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+                const isRend = (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
                 if (isRend) {
 
                     // Ajuste de Nomenclatura Atleta x Aluno
@@ -1349,13 +1349,13 @@
             if (!ultimasList || !proximasDiv) return;
 
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
-            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
             if (!isRendHere) return;
 
             const agora = new Date();
             agora.setHours(0, 0, 0, 0);
 
-            // Filtro robusto para 'CompetiÃ§Ã£o' (ignora acentos e case)
+            // Filtro robusto para 'Competição' (ignora acentos e case)
             const normalize = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             const competicoes = (db.eventos || []).filter(ev => normalize(ev.tipo).includes('competicao'));
 
@@ -1365,9 +1365,9 @@
             const passadas = competicoes.filter(ev => new Date((ev.dataFim || ev.data) + "T00:00:00") < agora).reverse();
             const futuras = competicoes.filter(ev => new Date((ev.dataFim || ev.data) + "T00:00:00") >= agora);
 
-            // Renderizar Ãšltimas (mostrar as 2 mais recentes)
+            // Renderizar Últimas (mostrar as 2 mais recentes)
             if (passadas.length === 0) {
-                ultimasList.innerHTML = '<span style="color: var(--text-muted); font-size: 13px;">Sem competiÃ§Ãµes passadas</span>';
+                ultimasList.innerHTML = '<span style="color: var(--text-muted); font-size: 13px;">Sem competições passadas</span>';
             } else {
                 ultimasList.innerHTML = passadas.slice(0, 2).map(ev => {
                     const data = new Date(ev.data + "T00:00:00");
@@ -1376,9 +1376,9 @@
                 }).join('');
             }
 
-            // Renderizar PrÃ³ximo Alvo (a mais prÃ³xima no futuro)
+            // Renderizar Próximo Alvo (a mais próxima no futuro)
             if (futuras.length === 0) {
-                proximasDiv.innerHTML = '<span style="color: var(--text-muted); font-size: 13px;">Sem competiÃ§Ãµes agendadas</span>';
+                proximasDiv.innerHTML = '<span style="color: var(--text-muted); font-size: 13px;">Sem competições agendadas</span>';
             } else {
                 const prox = futuras[0];
                 const dataInicio = new Date(prox.data + "T00:00:00");
@@ -1398,7 +1398,7 @@
 
                 let statusExtra = '';
                 if (diffDays <= 30 && diffDays >= 0) {
-                    statusExtra = `<br><span style="color: var(--yellow); font-size: 12px;"><i class="ti ti-flag"></i> InscriÃ§Ãµes Abertas</span>`;
+                    statusExtra = `<br><span style="color: var(--yellow); font-size: 12px;"><i class="ti ti-flag"></i> Inscrições Abertas</span>`;
                 }
 
                 proximasDiv.innerHTML = `
@@ -1415,7 +1415,7 @@
             if (!widget) return;
 
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
-            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
             if (!isRendHere) return;
 
             const agora = new Date();
@@ -1434,7 +1434,7 @@
                 return;
             }
 
-            // Separar FÃ­sico e Taekwondo para a view (ou outro tipo que venha)
+            // Separar Físico e Taekwondo para a view (ou outro tipo que venha)
             const renderTreinoCarga = (t) => {
                 const duracao = t.duracaoMins || 0;
                 const pse = t.psePlanejada || 0;
@@ -1502,7 +1502,7 @@
             if (!widget) return;
 
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
-            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
             if (!isRendHere) return;
 
             // Use LOCAL date (not UTC)
@@ -1523,10 +1523,10 @@
                 .sort((a, b) => (a.horario || '').localeCompare(b.horario || ''));
 
             const TIPO_LABELS = {
-                forca: 'ForÃ§a', potencia: 'PotÃªncia', transferencia: 'TransferÃªncia', hiit: 'HIIT', cardio: 'Cardio',
-                glicolitico: 'GlicolÃ­tico', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
-                tatico: 'TÃ¡tico', tecnico: 'TÃ©cnico', tecnico_tatico: 'TÃ©cnico/TÃ¡tico', simulatorio: 'SimulatÃ³rio', sparring: 'Sparring',
-                fisico: 'FÃ­sico', recuperacao: 'RecuperaÃ§Ã£o', competicao: 'CompetiÃ§Ã£o', reuniao: 'ReuniÃ£o'
+                forca: 'Força', potencia: 'Potência', transferencia: 'Transferência', hiit: 'HIIT', cardio: 'Cardio',
+                glicolitico: 'Glicolítico', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
+                tatico: 'Tático', tecnico: 'Técnico', tecnico_tatico: 'Técnico/Tático', simulatorio: 'Simulatório', sparring: 'Sparring',
+                fisico: 'Físico', recuperacao: 'Recuperação', competicao: 'Competição', reuniao: 'Reunião'
             };
 
             let html = `
@@ -1627,18 +1627,18 @@
                         ${t.horario ? `<span class="view-meta-item"><i class="ti ti-clock"></i> ${t.horario}</span>` : ''}
                         <span class="view-tipo-badge tipo-${t.tipo}">${t.tipo.toUpperCase()}</span>
                         <span class="prot-badge ${protecao === 'sim' ? 'prot-sim' : 'prot-nao'}">
-                            ${protecao === 'sim' ? 'Com ProteÃ§Ã£o' : 'Sem ProteÃ§Ã£o'}
+                            ${protecao === 'sim' ? 'Com Proteção' : 'Sem Proteção'}
                         </span>
                     </div>
                     <div class="view-stats-row">
-                        ${t.duracaoMins ? `<div class="view-stat"><i class="ti ti-clock-hour-4"></i><span>${t.duracaoMins} min</span><small>DuraÃ§Ã£o</small></div>` : ''}
+                        ${t.duracaoMins ? `<div class="view-stat"><i class="ti ti-clock-hour-4"></i><span>${t.duracaoMins} min</span><small>Duração</small></div>` : ''}
                         ${t.psePlanejada ? `<div class="view-stat"><i class="ti ti-gauge"></i><span>PSE ${t.psePlanejada}</span><small>Intensidade</small></div>` : ''}
                     </div>
-                    ${blocosHtml ? `<div class="view-section-label">ConteÃºdo da SessÃ£o</div>${blocosHtml}` : ''}
-                    ${t.obs ? `<div class="view-section-label">ObservaÃ§Ãµes</div><div class="view-obs-text">${t.obs}</div>` : ''}
+                    ${blocosHtml ? `<div class="view-section-label">Conteúdo da Sessão</div>${blocosHtml}` : ''}
+                    ${t.obs ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
                     
                     <div class="view-actions">
-                        <button class="btn" onclick="closeModalTreino()">Fechar VisualizaÃ§Ã£o</button>
+                        <button class="btn" onclick="closeModalTreino()">Fechar Visualização</button>
                         <a href="treino-equipe.html" class="btn btn-primary" onclick="sessionStorage.setItem('tkd_open_treino_id', ${t.id});">
                             <i class="ti ti-edit"></i> Abrir no Editor
                         </a>
@@ -1655,7 +1655,7 @@
 
             const [y, m, d] = (t.data || '').split('-');
             const dataFmt = t.data ? `${d}/${m}/${y}` : '';
-            const protecao = (t.protecao || 'sim') === 'sim' ? 'SIM' : 'NÃƒO';
+            const protecao = (t.protecao || 'sim') === 'sim' ? 'SIM' : 'NÃO';
 
             // Header
             doc.setFillColor(30, 41, 59);
@@ -1668,14 +1668,14 @@
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(`DATA: ${dataFmt}  |  HORÃRIO: ${t.horario || '--:--'}  |  TIPO: ${(t.tipo || '').toUpperCase()}  |  PROTEÃ‡ÃƒO: ${protecao}`, 15, 30);
+            doc.text(`DATA: ${dataFmt}  |  HORÁRIO: ${t.horario || '--:--'}  |  TIPO: ${(t.tipo || '').toUpperCase()}  |  PROTEÇÃO: ${protecao}`, 15, 30);
 
             // Stats
             let yPos = 55;
             doc.setTextColor(30, 41, 59);
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
-            doc.text(`DURAÃ‡ÃƒO: ${t.duracaoMins || 0} min`, 15, yPos);
+            doc.text(`DURAÇÃO: ${t.duracaoMins || 0} min`, 15, yPos);
             doc.text(`PSE PLANEJADA: ${t.psePlanejada || 0}/10`, 80, yPos);
             yPos += 15;
 
@@ -1724,7 +1724,7 @@
             if (t.obs) {
                 if (yPos > 260) { doc.addPage(); yPos = 20; }
                 doc.setFont('helvetica', 'bold');
-                doc.text('OBSERVAÃ‡Ã�ES GERAIS:', 15, yPos);
+                doc.text('OBSERVAÇÃ�ES GERAIS:', 15, yPos);
                 yPos += 6;
                 doc.setFont('helvetica', 'normal');
                 const finalObs = doc.splitTextToSize(t.obs, 180);
@@ -1737,7 +1737,7 @@
                 doc.setPage(i);
                 doc.setFontSize(8);
                 doc.setTextColor(150, 150, 150);
-                doc.text(`Gerado por TKD Scout - PÃ¡gina ${i} de ${pageCount}`, 105, 290, { align: 'center' });
+                doc.text(`Gerado por TKD Scout - Página ${i} de ${pageCount}`, 105, 290, { align: 'center' });
             }
 
             doc.save(`treino_${t.titulo.replace(/\s+/g, '_')}_${dataFmt.replace(/\//g, '-')}.pdf`);
@@ -1750,12 +1750,12 @@
             alunosGrid.innerHTML = '';
 
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
-            const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 
             const labelTitle = isRend ? 'Atletas' : 'Alunos Matriculados';
             document.getElementById('totalAlunosTitle').innerText = `${labelTitle} (${alunosTurma.length})`;
 
-            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 
             alunosGrid.className = isRendHere ? 'student-grid' : 'class-list';
 
@@ -1767,7 +1767,7 @@
             const selectComp = document.getElementById('selectComparison');
             if (selectComp && isRendHere) {
                 const currentVal = selectComp.value;
-                selectComp.innerHTML = '<option value="equipe">Toda a Equipe (MÃ©dia)</option>';
+                selectComp.innerHTML = '<option value="equipe">Toda a Equipe (Média)</option>';
                 alunosTurma.forEach(a => {
                     selectComp.innerHTML += `<option value="${a.id}">${a.nome}</option>`;
                 });
@@ -1776,7 +1776,7 @@
                 }
             }
 
-            // Helper para nÃ­veis de Bem-Estar
+            // Helper para níveis de Bem-Estar
             const renderWellnessDots = (label, icon, value, reverseBad = false) => {
                 if (value === undefined) return '';
                 let dots = '';
@@ -1818,12 +1818,12 @@
                                 ${renderWellnessDots('Dor Muscular', 'ti ti-activity', wLog.dor, true)}
                                 ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLog.humor)}
                                 ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLog.fadiga, true)}
-                                ${renderWellnessDots('AlimentaÃ§Ã£o', 'ti ti-apple', wLog.alimentacao)}
+                                ${renderWellnessDots('Alimentação', 'ti ti-apple', wLog.alimentacao)}
                             </div>
                         `;
                     } else {
                         const lastWLogForWeight = (db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0];
-                        const lastWeightStr = (lastWLogForWeight && lastWLogForWeight.pesoAtual) ? `Ãšltimo peso: ${lastWLogForWeight.pesoAtual}kg` : `Sem dados de peso`;
+                        const lastWeightStr = (lastWLogForWeight && lastWLogForWeight.pesoAtual) ? `Último peso: ${lastWLogForWeight.pesoAtual}kg` : `Sem dados de peso`;
                         wellnessHTML = `<div style="margin: 12px 0 16px 0; font-size:11px; color:var(--text-muted); text-align:center; padding: 12px 0;">Sem bem-estar hoje<br><span style="opacity: 0.7;">(${lastWeightStr})</span></div>`;
                     }
 
@@ -1876,7 +1876,7 @@
         function goToPerfil(alunoId) {
             localStorage.setItem('tkd_view_aluno_id', alunoId);
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
-            if (currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'))) {
+            if (currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'))) {
                 window.location.href = 'atleta-performance.html';
             } else {
                 window.location.href = 'perfil-aluno.html';
@@ -1886,12 +1886,12 @@
 
         // Modal Logic Alunos
         const modalAluno = document.getElementById('modalAddAluno');
-        // (FunÃ§Ã£o goToPerfil duplicada removida)
+        // (Função goToPerfil duplicada removida)
 
         function openModalEditAluno(id) {
             localStorage.setItem('tkd_view_aluno_id', id);
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
-            if (currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'))) {
+            if (currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'))) {
                 window.location.href = 'atleta-performance.html#edit';
             } else {
                 window.location.href = 'perfil-aluno.html#edit';
@@ -1908,7 +1908,7 @@
 
         function openModalAluno() {
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
-            const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 
             const reqComercial = document.querySelectorAll('#fieldsComercial [required]');
             const reqRendimento = document.querySelectorAll('#fieldsRendimento [required]');
@@ -1963,9 +1963,9 @@
             const aluno = db.alunos.find(a => a.id === id);
             if (!aluno) return;
 
-            const label = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o')) ? 'o atleta' : 'o aluno';
+            const label = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição')) ? 'o atleta' : 'o aluno';
 
-            if (confirm(`Tem certeza que deseja excluir permanentemente ${label} "${aluno.nome}"? Esta aÃ§Ã£o nÃ£o pode ser desfeita.`)) {
+            if (confirm(`Tem certeza que deseja excluir permanentemente ${label} "${aluno.nome}"? Esta ação não pode ser desfeita.`)) {
                 deleteAluno(id);
             }
         }
@@ -1982,7 +1982,7 @@
 
                 saveDB();
                 renderAlunosUI();
-                showToast("Registro excluÃ­do com sucesso!", "info");
+                showToast("Registro excluído com sucesso!", "info");
             }
         }
 
@@ -1992,7 +1992,7 @@
 
             let defaultAvatar = 'https://i.pravatar.cc/150?img=' + Math.floor(Math.random() * 70);
 
-            const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+            const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 
             const pinVal = isRend ? ((form.pinAtleta && form.pinAtleta.value.trim().length === 4) ? form.pinAtleta.value.trim() : '0000') : '';
             const novoAluno = {
@@ -2040,7 +2040,7 @@
             finalizeSave();
         }
 
-        // HorÃ¡rios
+        // Horários
         const modalHorario = document.getElementById('modalEditHorario');
 
         function renderScheduleGrids() {
@@ -2101,14 +2101,14 @@
                 turmaId: db.activeTurmaId,
                 dia: form.diaSemana.value,
                 periodo: `${form.horaInicio.value} - ${form.horaFim.value}`,
-                tipo: form.diaSemana.value === 'SÃ¡bado' || form.diaSemana.value === 'Domingo' ? 'especial' : 'normal'
+                tipo: form.diaSemana.value === 'Sábado' || form.diaSemana.value === 'Domingo' ? 'especial' : 'normal'
             };
 
             db.horarios.push(novoH);
             saveDB();
             renderScheduleGrids();
             form.reset();
-            showToast("HorÃ¡rio salvo com sucesso!");
+            showToast("Horário salvo com sucesso!");
         }
 
         function deleteHorario(id) {
@@ -2122,7 +2122,7 @@
             }
         }
 
-        // GrÃ¡ficos movidos para dashboard-rendimento.html
+        // Gráficos movidos para dashboard-rendimento.html
 
         // Reports Logic
         function openModalRelatorios() {
@@ -2257,7 +2257,7 @@
             showToast("PDF gerado com sucesso!");
         }
 
-        // Inicializar os horÃ¡rios na tela
+        // Inicializar os horários na tela
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadPageData, 100);
             // Safety net: re-render the today widget and competitions after page data is loaded

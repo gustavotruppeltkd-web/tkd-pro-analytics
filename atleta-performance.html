@@ -227,7 +227,7 @@
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
                         <div class="belt-tag" id="displayFaixa" style="margin-bottom: 0;">Faixa</div>
                         <span style="color: var(--text-muted); font-size: 14px;" id="displaySubInfo">Equipe de
-                            CompetiÃ§Ã£o</span>
+                            Competição</span>
                     </div>
 
                     <!-- Moved Info Grid into Header -->
@@ -282,7 +282,7 @@
                         </div>
 
                         <div class="info-row" id="rowSaude" style="grid-column: span 4; margin-top: 8px;">
-                            <span class="info-label" style="color: var(--red);">Obs MÃ©dica</span>
+                            <span class="info-label" style="color: var(--red);">Obs Médica</span>
                             <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
                                 registrada</span>
                         </div>
@@ -301,7 +301,7 @@
                     </button>
                     <button class="btn-header-action" onclick="window.location.href='scout-video.html'"
                         style="position: static;">
-                        <i class="ti ti-plus"></i> LanÃ§ar Scout
+                        <i class="ti ti-plus"></i> Lançar Scout
                     </button>
                 </div>
             </div>
@@ -312,11 +312,11 @@
                     <div class="detail-card">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
-                            <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-radar"></i> Radar TÃ¡tico
+                            <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-radar"></i> Radar Tático
                             </h3>
                             <select id="selectRadarSource" class="form-control"
                                 style="width: 150px; padding: 4px 8px; font-size: 13px;" onchange="buildRadarChart()">
-                                <option value="media">MÃ©dia (Todos)</option>
+                                <option value="media">Média (Todos)</option>
                             </select>
                         </div>
                         <div class="chart-container-radar" style="flex: 1;">
@@ -325,11 +325,11 @@
                     </div>
 
                     <div class="detail-card" style="flex: 1;">
-                        <h3><i class="ti ti-video"></i> AnÃ¡lises de Lutas (Scout)</h3>
+                        <h3><i class="ti ti-video"></i> Análises de Lutas (Scout)</h3>
                         <div class="timeline" id="timelineScouts" style="flex: 1;">
                             <div
                                 style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
-                                Nenhuma anÃ¡lise registrada.</div>
+                                Nenhuma análise registrada.</div>
                         </div>
                     </div>
                 </div>
@@ -337,7 +337,7 @@
                 <!-- COLUNA 2 (Bem-Estar) -->
                 <div style="display: flex; flex-direction: column; gap: 24px;">
                     <div class="detail-card" style="flex: 1;">
-                        <h3><i class="ti ti-heart-rate-monitor"></i> Ãšltimo Bem-Estar</h3>
+                        <h3><i class="ti ti-heart-rate-monitor"></i> Último Bem-Estar</h3>
                         <div id="alertArea"
                             style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
                             <div
@@ -348,10 +348,10 @@
                     </div>
                 </div>
 
-                <!-- COLUNA 3 (CompetiÃ§Ãµes Alvo e Passadas + Carga DiÃ¡ria) -->
+                <!-- COLUNA 3 (Competições Alvo e Passadas + Carga Diária) -->
                 <div style="display: flex; flex-direction: column; gap: 24px;">
                     <div class="detail-card" style="flex: 1;">
-                        <h3><i class="ti ti-activity-heartbeat"></i> Ãšltima Carga DiÃ¡ria</h3>
+                        <h3><i class="ti ti-activity-heartbeat"></i> Última Carga Diária</h3>
                         <div id="cargaArea"
                             style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
                             <div
@@ -362,19 +362,19 @@
                     </div>
 
                     <div class="detail-card" style="flex: 1;">
-                        <h3><i class="ti ti-flag"></i> PrÃ³xima CompetiÃ§Ã£o (Alvo)</h3>
+                        <h3><i class="ti ti-flag"></i> Próxima Competição (Alvo)</h3>
                         <div class="timeline" id="timelineProxima" style="flex: 1;">
                             <div
                                 style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
-                                Nenhuma competiÃ§Ã£o agendada.</div>
+                                Nenhuma competição agendada.</div>
                         </div>
                     </div>
 
                     <div class="detail-card" style="flex: 1;">
                         <div
                             style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
-                            <h3 style="border:none; margin:0; padding:0;"><i class="ti ti-medal"></i> Ãšltimas
-                                CompetiÃ§Ãµes</h3>
+                            <h3 style="border:none; margin:0; padding:0;"><i class="ti ti-medal"></i> Últimas
+                                Competições</h3>
                             <div id="medalCounter"
                                 style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px;">
                                 <span style="display:inline-flex;align-items:center;gap:4px;color:#FFD700;"><i
@@ -390,16 +390,16 @@
                         <div class="timeline" id="timelineCompeticoes" style="flex: 1;">
                             <div
                                 style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
-                                Nenhuma competiÃ§Ã£o registrada.</div>
+                                Nenhuma competição registrada.</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- LINHA 3 (Base - GrÃ¡ficos Span) -->
+                <!-- LINHA 3 (Base - Gráficos Span) -->
                 <div class="detail-card" style="grid-column: 1 / -1;">
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
-                        <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-chart-bar"></i> GrÃ¡ficos de
+                        <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-chart-bar"></i> Gráficos de
                             Monitoramento</h3>
 
                         <div class="comparison-controls" style="display: flex; gap: 12px; align-items: center;">
@@ -409,11 +409,11 @@
                                 <select id="selectDataSource" class="form-control" style="width: 180px;"
                                     onchange="handleDataSourceChange()">
                                     <option value="wellness">Bem-Estar (Wellness)</option>
-                                    <option value="pse">PSE (EsforÃ§o)</option>
+                                    <option value="pse">PSE (Esforço)</option>
                                     <option value="carga">Carga de Treino</option>
                                     <option value="scouts">Scouts de Lutas</option>
-                                    <option value="periodizacao">PeriodizaÃ§Ã£o</option>
-                                    <option value="questionarios">QuestionÃ¡rios</option>
+                                    <option value="periodizacao">Periodização</option>
+                                    <option value="questionarios">Questionários</option>
                                 </select>
                             </div>
                             <div id="subSourceContainer" style="display: none;">
@@ -432,7 +432,7 @@
                             style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
                             <h4 id="titleChart1"
                                 style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                GrÃ¡fico 1</h4>
+                                Gráfico 1</h4>
                             <div style="flex: 1; min-height: 200px; position: relative;">
                                 <canvas id="dynamicChart1"></canvas>
                             </div>
@@ -441,7 +441,7 @@
                             style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
                             <h4 id="titleChart2"
                                 style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                GrÃ¡fico 2</h4>
+                                Gráfico 2</h4>
                             <div style="flex: 1; min-height: 200px; position: relative;">
                                 <canvas id="dynamicChart2"></canvas>
                             </div>
@@ -450,7 +450,7 @@
                             style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
                             <h4 id="titleChart3"
                                 style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                GrÃ¡fico 3</h4>
+                                Gráfico 3</h4>
                             <div style="flex: 1; min-height: 200px; position: relative;">
                                 <canvas id="dynamicChart3"></canvas>
                             </div>
@@ -535,8 +535,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>ObservaÃ§Ãµes MÃ©dicas</label>
-                    <input type="text" class="form-control" name="obsAluno" placeholder="Alergias, lesÃµes..." value="">
+                    <label>Observações Médicas</label>
+                    <input type="text" class="form-control" name="obsAluno" placeholder="Alergias, lesões..." value="">
                 </div>
                 <div class="form-group">
                     <label>Cor da Faixa</label>
@@ -562,7 +562,7 @@
                     style="margin-top: 8px; padding-top: 20px; border-top: 1px solid var(--border-color);">
                     <label style="display:flex;align-items:center;gap:6px;">
                         <i class="ti ti-lock" style="color:var(--primary);font-size:14px;"></i>
-                        PIN de Acesso do Portal (4 dÃ­gitos)
+                        PIN de Acesso do Portal (4 dígitos)
                     </label>
                     <input type="text" class="form-control" name="pinAtleta" placeholder="Ex: 1234" maxlength="4"
                         pattern="[0-9]{4}" inputmode="numeric"
@@ -574,7 +574,7 @@
                 <div
                     style="display: flex; gap: 12px; margin-top: 32px; justify-content: flex-end; align-items: center;">
                     <button type="button" class="btn" onclick="closeModalEdit()">Cancelar</button>
-                    <button type="submit" class="btn btn-primary btn-edit-profile">Salvar AlteraÃ§Ãµes</button>
+                    <button type="submit" class="btn btn-primary btn-edit-profile">Salvar Alterações</button>
                 </div>
             </form>
         </div>
@@ -626,7 +626,7 @@
 
             alunoData = db.alunos.find(a => a.id == currentAlunoId);
             if (!alunoData) {
-                alert("Atleta nÃ£o encontrado na base de dados.");
+                alert("Atleta não encontrado na base de dados.");
                 window.location.href = 'dashboard-turma-dados.html';
                 return;
             }
@@ -650,18 +650,18 @@
             if (document.getElementById('displayIdade')) document.getElementById('displayIdade').innerText = `${idade} anos`;
             if (document.getElementById('displayNasc')) document.getElementById('displayNasc').innerText = strNasc;
             if (document.getElementById('displayIdadeNasc')) document.getElementById('displayIdadeNasc').innerText = `${idade} anos (${strNasc})`; // Fallback
-            document.getElementById('displayContato').innerText = alunoData.contato || 'NÃ£o informado';
-            if (document.getElementById('displayEmail')) document.getElementById('displayEmail').innerText = alunoData.email || 'NÃ£o informado';
+            document.getElementById('displayContato').innerText = alunoData.contato || 'Não informado';
+            if (document.getElementById('displayEmail')) document.getElementById('displayEmail').innerText = alunoData.email || 'Não informado';
             if (document.getElementById('displayMatricula')) document.getElementById('displayMatricula').innerText = formatarDataBR(alunoData.matricula);
             if (document.getElementById('displayInfFaixa')) document.getElementById('displayInfFaixa').innerText = alunoData.faixa;
 
-            document.getElementById('displayCPF').innerText = alunoData.cpf || 'NÃ£o informado';
-            document.getElementById('displayRG').innerText = alunoData.rg || 'NÃ£o informado';
-            document.getElementById('displayCatIdade').innerText = alunoData.categoriaIdade || 'NÃ£o informado';
+            document.getElementById('displayCPF').innerText = alunoData.cpf || 'Não informado';
+            document.getElementById('displayRG').innerText = alunoData.rg || 'Não informado';
+            document.getElementById('displayCatIdade').innerText = alunoData.categoriaIdade || 'Não informado';
             const lastWellness = (db.wellnessLogs || []).filter(w => w.atletaId == currentAlunoId).sort((a, b) => b.id - a.id)[0];
             const pesoReportado = lastWellness ? lastWellness.pesoAtual : null;
 
-            document.getElementById('displayCatPeso').innerHTML = `${alunoData.categoriaPeso || 'NÃ£o informado'} ${pesoReportado ? `<span style="color: var(--primary); font-weight: normal; font-size: 0.9em; margin-left: 4px;">(${pesoReportado}kg)</span>` : '<span style="color: var(--text-muted); font-size: 0.8em; margin-left: 4px;">(Peso: NÃ£o informado)</span>'}`;
+            document.getElementById('displayCatPeso').innerHTML = `${alunoData.categoriaPeso || 'Não informado'} ${pesoReportado ? `<span style="color: var(--primary); font-weight: normal; font-size: 0.9em; margin-left: 4px;">(${pesoReportado}kg)</span>` : '<span style="color: var(--text-muted); font-size: 0.8em; margin-left: 4px;">(Peso: Não informado)</span>'}`;
 
             if (alunoData.obs) {
                 document.getElementById('displaySaude').innerText = alunoData.obs;
@@ -687,7 +687,7 @@
         function populateRadarSelect() {
             const sel = document.getElementById('selectRadarSource');
             if (!sel) return;
-            sel.innerHTML = '<option value="media">MÃ©dia (Todos)</option>';
+            sel.innerHTML = '<option value="media">Média (Todos)</option>';
             const athleteScouts = (db.lutasScout || []).filter(s => s.atletaId == currentAlunoId && s.avaliacaoTreinador);
             athleteScouts.sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro)).forEach(s => {
                 const opt = document.createElement('option');
@@ -707,9 +707,9 @@
             // Legado: db.competicoes
             (db.competicoes || []).filter(c => c.atletaId == currentAlunoId).forEach(c => allComps.push(c));
 
-            // Novo: db.eventos do calendÃ¡rio
+            // Novo: db.eventos do calendário
             (db.eventos || []).forEach(e => {
-                if (e.tipo === 'CompetiÃ§Ã£o' || e.tipo === 'Evento') {
+                if (e.tipo === 'Competição' || e.tipo === 'Evento') {
                     const part = (e.participantes || []).find(p => p.atletaId == currentAlunoId);
                     if (part || e.turmaId == 'todas' || e.turmaId == alunoData.turmaId || !e.turmaId) {
                         allComps.push({
@@ -741,7 +741,7 @@
             const renderComps = (compsArray, container) => {
                 if (!container) return;
                 if (compsArray.length === 0) {
-                    container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma competiÃ§Ã£o ' + (container.id === 'timelineProxima' ? 'agendada.' : 'registrada.') + '</div>';
+                    container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma competição ' + (container.id === 'timelineProxima' ? 'agendada.' : 'registrada.') + '</div>';
                     return;
                 }
 
@@ -754,7 +754,7 @@
                     item.innerHTML = `
                         <div class="timeline-date">${formatarDataBR(c.data)} ${c.categoria ? '��¢ ' + c.categoria : ''}</div>
                         <div class="timeline-title">${c.titulo || c.nomeEvento}</div>
-                        ${c.colocacao ? `<div class="timeline-medal"><i class="ti ${container.id === 'timelineProxima' ? 'ti-calendar-event' : 'ti-medal'}" style="color: ${getMedalColor(c.colocacao)}"></i> ${String(c.colocacao).toUpperCase()}</div>` : `<div class="timeline-medal"><i class="ti ti-calendar-event" style="color: var(--primary);"></i> Alvo SecundÃ¡rio</div>`}
+                        ${c.colocacao ? `<div class="timeline-medal"><i class="ti ${container.id === 'timelineProxima' ? 'ti-calendar-event' : 'ti-medal'}" style="color: ${getMedalColor(c.colocacao)}"></i> ${String(c.colocacao).toUpperCase()}</div>` : `<div class="timeline-medal"><i class="ti ti-calendar-event" style="color: var(--primary);"></i> Alvo Secundário</div>`}
                     `;
                     container.appendChild(item);
                 });
@@ -763,12 +763,12 @@
             const renderMedals = (compsArray, container) => {
                 if (!container) return;
 
-                // Filtra todas as competiÃ§Ãµes que o atleta participou e teve colocaÃ§Ã£o Ouro, Prata ou Bronze, mesmo histÃ³ricas
-                // Aqui podemos olhar pra todos os db.eventos de competiÃ§Ã£o ou o db.competicoes legado
+                // Filtra todas as competições que o atleta participou e teve colocação Ouro, Prata ou Bronze, mesmo históricas
+                // Aqui podemos olhar pra todos os db.eventos de competição ou o db.competicoes legado
                 let allMedals = [];
                 (db.competicoes || []).filter(c => c.atletaId == currentAlunoId && c.colocacao && ['ouro', 'prata', 'bronze'].includes(String(c.colocacao).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))).forEach(c => allMedals.push(c));
 
-                (db.eventos || []).filter(e => e.tipo === 'CompetiÃ§Ã£o' || e.tipo === 'Evento').forEach(e => {
+                (db.eventos || []).filter(e => e.tipo === 'Competição' || e.tipo === 'Evento').forEach(e => {
                     const part = (e.participantes || []).find(p => p.atletaId == currentAlunoId && p.colocacao && ['ouro', 'prata', 'bronze'].includes(String(p.colocacao).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
                     if (part) {
                         allMedals.push({
@@ -781,7 +781,7 @@
                     }
                 });
 
-                // Ordena as medalhas pela data (mais recente primeiro) e pega as Ãºltimas 5.
+                // Ordena as medalhas pela data (mais recente primeiro) e pega as últimas 5.
                 const recentMedals = allMedals.sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 5);
 
                 if (recentMedals.length === 0) {
@@ -841,9 +841,9 @@
                 const athleteScouts = (db.lutasScout || []).filter(s => s.atletaId == currentAlunoId);
 
                 if (athleteScouts.length === 0) {
-                    tlScouts.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma anÃ¡lise registrada.</div>';
+                    tlScouts.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma análise registrada.</div>';
                 } else {
-                    let optionsHtml = '<option value="">Selecione uma AnÃ¡lise...</option>';
+                    let optionsHtml = '<option value="">Selecione uma Análise...</option>';
 
                     // Sort descending by dataRegistro
                     athleteScouts.sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro)).forEach(s => {
@@ -853,7 +853,7 @@
                         let resultIcon = '';
                         let resultColor = 'var(--text-muted)';
 
-                        // Determina Ã­cone baseado no resultado final da luta
+                        // Determina ícone baseado no resultado final da luta
                         if (s.resultadoLuta === 'vitoria') {
                             resultIcon = 'ti-trophy';
                             resultColor = 'var(--green)';
@@ -864,30 +864,30 @@
                             resultIcon = 'ti-minus';
                         }
 
-                        // ConstrÃ³i string de rounds (ex: R1:V, R2:D)
+                        // Constrói string de rounds (ex: R1:V, R2:D)
                         let roundsSummary = '';
                         if (s.rounds && s.rounds.length > 0) {
                             const rMap = { vitoria: 'V', derrota: 'D', empate: 'E' };
                             roundsSummary = ' ��¢ ' + s.rounds.map(r => `R${r.round}:${rMap[r.result] || '?'} `).join(', ');
                         } else if (s.round) {
-                            // Fallback para scouts antigos de round Ãºnico
+                            // Fallback para scouts antigos de round único
                             roundsSummary = ` ��¢ Round: ${s.round} `;
                         }
 
-                        // Conta apenas as aÃ§Ãµes reais (ignora divisores se existirem)
+                        // Conta apenas as ações reais (ignora divisores se existirem)
                         const acoesReais = (s.acoes || []).filter(a => !a.isDivider).length;
 
-                        optionsHtml += `<option value="${s.id}">${dForm} - ${s.evento} (${acoesReais} AÃ§Ãµes)</option>`;
+                        optionsHtml += `<option value="${s.id}">${dForm} - ${s.evento} (${acoesReais} Ações)</option>`;
                     });
 
                     tlScouts.innerHTML = `
                         <div style="display: flex; flex-direction: column; gap: 12px; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <label style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Selecione uma anÃ¡lise para visualizar:</label>
+                            <label style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Selecione uma análise para visualizar:</label>
                             <select id="selectScoutAtleta" class="form-control" style="width: 100%; border-color: rgba(255,255,255,0.1);">
                                 ${optionsHtml}
                             </select>
                             <button class="btn btn-primary" style="justify-content: center; width: 100%; margin-top: 4px;" onclick="abrirScoutSelecionado()">
-                                <i class="ti ti-external-link"></i> Abrir AnÃ¡lise Completa
+                                <i class="ti ti-external-link"></i> Abrir Análise Completa
                             </button>
                         </div>
                     `;
@@ -900,7 +900,7 @@
             if (select && select.value) {
                 openScoutDetail(select.value);
             } else {
-                alert('Por favor, selecione uma anÃ¡lise na lista antes de abrir.');
+                alert('Por favor, selecione uma análise na lista antes de abrir.');
             }
         }
 
@@ -934,7 +934,7 @@
                     sums.obediencia += (s.avaliacaoTreinador.obediencia || 0);
                 });
 
-                // MÃ©dia (0-10) -> Escala 0-100 para o grÃ¡fico radar ficar mais visÃ­vel
+                // Média (0-10) -> Escala 0-100 para o gráfico radar ficar mais visível
                 dataArr = [
                     (sums.velocidade / count) * 10,
                     (sums.forca / count) * 10,
@@ -945,7 +945,7 @@
                     (sums.obediencia / count) * 10
                 ];
             } else {
-                // Tenta buscar da tabela legada scoutEstatisticas se nÃ£o houver avaliaÃ§Ãµes novas
+                // Tenta buscar da tabela legada scoutEstatisticas se não houver avaliações novas
                 const scoutDb = (db.scoutEstatisticas || []).find(s => s.atletaId == currentAlunoId);
                 if (scoutDb) {
                     dataArr = [scoutDb.velocidade, scoutDb.forca, scoutDb.tatico, 50, 50, 50, 50]; // Fallback parcial
@@ -959,9 +959,9 @@
             radarChartObj = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'ForÃ§a', 'TÃ¡tica', 'Defesa', 'VariaÃ§Ã£o', 'PrecisÃ£o', 'ObediÃªncia'],
+                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variação', 'Precisão', 'Obediência'],
                     datasets: [{
-                        label: 'Desempenho TÃ©cnico (MÃ©dia)',
+                        label: 'Desempenho Técnico (Média)',
                         data: dataArr,
                         backgroundColor: 'rgba(65, 105, 225, 0.2)',
                         borderColor: 'rgba(65, 105, 225, 1)',
@@ -1055,7 +1055,7 @@
             if (dynamicCharts.chart3) dynamicCharts.chart3.destroy();
 
             const dates7 = getDatesInRangeLocal(7).reverse();
-            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b'];
+            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const labels7 = dates7.map(d => {
                 const dt = new Date(d + 'T00:00:00');
                 return diasSemanaShort[dt.getDay()];
@@ -1066,8 +1066,8 @@
             const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true } } };
 
             if (source === 'wellness') {
-                document.getElementById('titleChart1').innerText = 'EvoluÃ§Ã£o Score Geral (0-100)';
-                document.getElementById('titleChart2').innerText = 'Sono e Estresse MÃ©dia';
+                document.getElementById('titleChart1').innerText = 'Evolução Score Geral (0-100)';
+                document.getElementById('titleChart2').innerText = 'Sono e Estresse Média';
                 document.getElementById('titleChart3').innerText = 'Radar de Componentes';
 
                 const dataPoints = dates7.map(d => {
@@ -1109,13 +1109,13 @@
 
                 dynamicCharts.chart3 = new Chart(ctx3, {
                     type: 'radar',
-                    data: { labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'AlimentaÃ§Ã£o'], datasets: [{ data: avgComp, backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgb(139, 92, 246)' }] },
+                    data: { labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'], datasets: [{ data: avgComp, backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgb(139, 92, 246)' }] },
                     options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
                 });
             } else if (source === 'pse' || source === 'carga') {
-                document.getElementById('titleChart1').innerText = 'EvoluÃ§Ã£o PSE (1-10)';
+                document.getElementById('titleChart1').innerText = 'Evolução PSE (1-10)';
                 document.getElementById('titleChart2').innerText = 'Carga de Treino';
-                document.getElementById('titleChart3').innerText = 'DistribuiÃ§Ã£o Intensidade';
+                document.getElementById('titleChart3').innerText = 'Distribuição Intensidade';
 
                 const pseData = dates7.map(d => {
                     let logs = (db.cargaTreino || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
@@ -1139,7 +1139,7 @@
                                 callbacks: {
                                     label: (ctx) => {
                                         const v = parseFloat(ctx.raw);
-                                        const zona = v >= 8 ? 'ðŸ”´ Alta' : v >= 5 ? 'ðŸŸ¡ MÃ©dia' : 'ðŸŸ¢ Leve';
+                                        const zona = v >= 8 ? 'ðŸ”´ Alta' : v >= 5 ? 'ðŸŸ¡ Média' : 'ðŸŸ¢ Leve';
                                         return ` PSE: ${ctx.raw} ��” ${zona}`;
                                     }
                                 }
@@ -1187,9 +1187,9 @@
                     options: { ...commonOptions, plugins: { legend: { display: true, position: 'bottom' } } }
                 });
             } else {
-                // Fallback: Mostrar wellness como visÃ£o padrÃ£o ao invÃ©s de dados invÃ©lidos
+                // Fallback: Mostrar wellness como visão padrão ao invés de dados invélidos
                 document.getElementById('titleChart1').innerText = 'Score de Wellness (0-100)';
-                document.getElementById('titleChart2').innerText = 'Componentes Wellness (MÃ©dia 7 dias)';
+                document.getElementById('titleChart2').innerText = 'Componentes Wellness (Média 7 dias)';
                 document.getElementById('titleChart3').innerText = 'Radar Wellness';
 
                 const wellData = dates7.map(d => {
@@ -1227,7 +1227,7 @@
                 dynamicCharts.chart2 = new Chart(ctx2, {
                     type: 'bar',
                     data: {
-                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'AlimentaÃ§Ã£o'],
+                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'],
                         datasets: [{ data: avgComp2, backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#06b6d4'], borderRadius: 5 }]
                     },
                     options: { ...commonOptions, scales: { y: { max: 5 } }, plugins: { legend: { display: false } } }
@@ -1236,7 +1236,7 @@
                 dynamicCharts.chart3 = new Chart(ctx3, {
                     type: 'radar',
                     data: {
-                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'AlimentaÃ§Ã£o'],
+                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'],
                         datasets: [{ data: avgComp2, backgroundColor: 'rgba(139,92,246,0.2)', borderColor: 'rgb(139,92,246)', pointBackgroundColor: 'rgb(139,92,246)' }]
                     },
                     options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
@@ -1255,7 +1255,7 @@
                         <i class="ti ti-info-circle" style="color: var(--primary); font-size: 20px; flex-shrink: 0;"></i>
                         <div>
                             <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Sem Dados de Wellness</div>
-                            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">Atleta nÃ£o respondeu o questionÃ¡rio de bem-estar recentemente. Portanto, nÃ£o hÃ¡ histÃ³rico de peso atualizado.</div>
+                            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">Atleta não respondeu o questionário de bem-estar recentemente. Portanto, não há histórico de peso atualizado.</div>
                         </div>
                     </div>`;
                 return;
@@ -1303,7 +1303,7 @@
             html += renderWellnessDots('Dor Muscular', 'ti ti-activity', todayLog.dor, true);
             html += renderWellnessDots('Humor', 'ti ti-mood-smile', todayLog.humor);
             html += renderWellnessDots('Fadiga', 'ti ti-battery-2', todayLog.fadiga, true);
-            html += renderWellnessDots('AlimentaÃ§Ã£o', 'ti ti-apple', todayLog.alimentacao);
+            html += renderWellnessDots('Alimentação', 'ti ti-apple', todayLog.alimentacao);
 
             area.innerHTML = html;
         }
@@ -1319,7 +1319,7 @@
                         <i class="ti ti-info-circle" style="color: var(--text-muted); font-size: 20px; flex-shrink: 0;"></i>
                         <div>
                             <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--text-muted)">Sem Dados de Carga</div>
-                            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">Atleta nÃ£o respondeu PSE de treinos recentes.</div>
+                            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">Atleta não respondeu PSE de treinos recentes.</div>
                         </div>
                     </div>`;
                 return;
@@ -1348,7 +1348,7 @@
 
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
                         <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
-                            <i class="ti ti-clock" style="font-size:14px; color: var(--text-muted);"></i> DuraÃ§Ã£o
+                            <i class="ti ti-clock" style="font-size:14px; color: var(--text-muted);"></i> Duração
                         </span>
                         <strong style="color: var(--text-main); font-size: 13px;">${log.duracaoMins} min</strong>
                     </div>
@@ -1364,18 +1364,18 @@
             };
 
             const logTaekwondo = logs.find(l => l.tipoTreino === 'Taekwondo');
-            const logFisico = logs.find(l => l.tipoTreino === 'FÃ­sico');
+            const logFisico = logs.find(l => l.tipoTreino === 'Físico');
 
             let itemsToRender = [];
             if (logTaekwondo) itemsToRender.push(logTaekwondo);
             if (logFisico) itemsToRender.push(logFisico);
 
             if (itemsToRender.length === 0) {
-                // Caso nÃ£o tenha especÃ­ficos, mostrar o mais recente (dados antigos)
+                // Caso não tenha específicos, mostrar o mais recente (dados antigos)
                 itemsToRender.push(logs[0]);
             }
 
-            // Ordenar para mostrar o item mais recente lanÃ§ado no topo
+            // Ordenar para mostrar o item mais recente lançado no topo
             itemsToRender.sort((a, b) => new Date(b.data) - new Date(a.data));
 
             let html = '<div style="display: flex; gap: 12px; w-full">';
