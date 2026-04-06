@@ -496,7 +496,7 @@
                         </div>
 
 
-                        <div class="card coach-section">
+                        <div class="card coach-section" id="adminPanel" style="display: none;">
                             <h2 class="coach-section-title"><i class="ti ti-shield-lock"></i> Gerenciar Acessos (Admin)
                             </h2>
                             <p class="subtitle" style="font-size: 12px; margin-bottom: 16px;">E-mails autorizados a
@@ -642,7 +642,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             // Pequeno timeout para garantir que app.js carregou os dados
-            setTimeout(() => {
+            setTimeout(async () => {
                 const coachId = localStorage.getItem('tkd_active_coach_id');
                 if (!coachId || !db.treinadores) {
                     alert("Dados do treinador nÃ£o encontrados.");
@@ -655,9 +655,17 @@
 
                 renderProfileScreen();
 
-                // Exibe pÃ¡gina
+                // Exibe página
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('profileContent').style.display = 'block';
+
+                // Check Admin Access
+                if (window.supabaseClient) {
+                    const { data: { session } } = await window.supabaseClient.auth.getSession();
+                    if (session && session.user && session.user.email === 'gustavotruppeltkd@gmail.com') {
+                        document.getElementById('adminPanel').style.display = 'block';
+                    }
+                }
 
             }, 500);
         });
