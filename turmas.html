@@ -202,12 +202,13 @@
             </div>
         </div>
         <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Carregando...</span>.
+        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Treinador</span>.
             Qual equipe deseja gerenciar
             agora?</p>
 
         <div style="text-align: left; margin-bottom: 16px;">
             <h2 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Alto
-                Rendimento (Competi��o)</h2>
+                Rendimento (Competição)</h2>
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin-top: 8px; margin-bottom: 24px;">
         </div>
 
@@ -539,9 +540,17 @@
             // Verifica se o loadDB ja preencheu o db e se nao ha treinador
             setTimeout(() => {
                 if (!db.treinadores || db.treinadores.length === 0) {
-                    document.getElementById('modalFirstTrainer').classList.add('active');
+                    const firstModal = document.getElementById('modalFirstTrainer');
+                    firstModal.style.display = 'flex';
+                    firstModal.classList.add('active');
                 }
                 renderTurmas();
+
+                // Fallback username
+                const userNameEl = document.querySelector('.user-name');
+                if (userNameEl && userNameEl.innerText === 'Carregando...') {
+                    userNameEl.innerText = 'Treinador';
+                }
             }, 100);
         });
 
