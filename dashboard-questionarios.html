@@ -214,10 +214,10 @@
                     <p class="subtitle">AnÃ¡lise Subjetiva e QuestionÃ¡rios DinÃ¢micos</p>
                 </div>
                 <div class="user-profile">
-                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="avatar">
+                    <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Profile" class="avatar">
                     <div class="user-info">
                         <span class="user-name">Carregando...</span>
-                        <span class="user-role">Head Coach</span>
+                        <span class="user-role"><span class="user-role">Treinador</span></span>
                     </div>
                 </div>
             </header>
@@ -556,7 +556,7 @@
         }
 
         // ==========================================
-        //  BUILDER E HISTÃ“RICO
+        //  BUILDER E HISTÃ�RICO
         // ==========================================
 
         let builderCounter = 1;
@@ -733,7 +733,7 @@
                             <img src="${atleta.avatar}" style="width: 40px; height: 40px; border-radius: 50%;">
                             <div>
                                 <h4 style="margin: 0; font-size: 15px;">${atleta.nome}</h4>
-                                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">${quest.titulo} â�¢ ${formatarDataBR(resp.data)}</p>
+                                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">${quest.titulo} ��¢ ${formatarDataBR(resp.data)}</p>
                             </div>
                         </div>
                         <button class="btn btn-primary" onclick="viewRespostaComleta(${resp.id})">Ver Respostas</button>
@@ -878,7 +878,7 @@
                         const overallAvg = atletasComResp.length > 0
                             ? (atletasComResp.reduce((s, a) => s + parseFloat(a.avg), 0) / atletasComResp.length).toFixed(1) : '-';
 
-                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} respostas â�¢ MÃ©dia geral: ${overallAvg}`, canvasWrapper);
+                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} respostas ��¢ MÃ©dia geral: ${overallAvg}`, canvasWrapper);
                         container.appendChild(cardEl);
 
                         setTimeout(() => {
@@ -913,7 +913,7 @@
                         const avg = vals.length > 0 ? (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) : '-';
                         const xLabels = sortedDates.map(d => { const p = d.split('-'); return `${p[2]}/${p[1]}`; });
 
-                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} registros â�¢ MÃ©dia: ${avg}`, canvasWrapper);
+                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} registros ��¢ MÃ©dia: ${avg}`, canvasWrapper);
                         container.appendChild(cardEl);
 
                         setTimeout(() => {
@@ -980,7 +980,7 @@
                         }).reverse();
 
                     const listItems = textAnswers.map(a =>
-                        `<div class="text-answer-item"><div class="answer-meta">${isEquipe ? a.atleta + ' â�¢ ' : ''}${a.data}</div><div>${a.texto}</div></div>`
+                        `<div class="text-answer-item"><div class="answer-meta">${isEquipe ? a.atleta + ' ��¢ ' : ''}${a.data}</div><div>${a.texto}</div></div>`
                     ).join('') || '<p style="color:var(--text-muted);font-size:13px;">Nenhuma resposta de texto ainda.</p>';
 
                     const cardEl = createChartCard(cardId, pergunta.texto, `${textAnswers.length} resposta(s)`,

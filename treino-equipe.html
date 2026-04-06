@@ -1427,13 +1427,13 @@
             <header class="topbar">
                 <div class="page-title">
                     <h1 id="turmaName">Equipe de Competi��o</h1>
-                    <p class="subtitle">Planejamento e Gest�o de Sessões de Treino</p>
+                    <p class="subtitle">Planejamento e Gest�o de Sess�es de Treino</p>
                 </div>
                 <div class="user-profile">
-                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="avatar">
+                    <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Profile" class="avatar">
                     <div class="user-info">
                         <span class="user-name" id="userName">Carregando...</span>
-                        <span class="user-role">Head Coach</span>
+                        <span class="user-role"><span class="user-role">Treinador</span></span>
                     </div>
                 </div>
             </header>
@@ -1442,7 +1442,7 @@
             <div class="cal-controls">
                 <div class="cal-nav">
                     <button class="btn btn-icon" onclick="navCalendar(-1)"><i class="ti ti-chevron-left"></i></button>
-                    <h2 id="calTitle">—</h2>
+                    <h2 id="calTitle">�</h2>
                     <button class="btn btn-icon" onclick="navCalendar(1)"><i class="ti ti-chevron-right"></i></button>
                     <button class="btn" style="font-size:13px;" onclick="goToToday()">Hoje</button>
                 </div>
@@ -1466,28 +1466,28 @@
 
                 <!-- Linha 1: m�tricas -->
                 <div>
-                    <div class="section-title"><i class="ti ti-chart-bar"></i> An�lise de Carga — Microciclo Atual</div>
+                    <div class="section-title"><i class="ti ti-chart-bar"></i> An�lise de Carga � Microciclo Atual</div>
                     <div class="metricas-grid">
                         <div class="card metrica-card">
                             <div class="metrica-label">Carga Aguda (semana)</div>
-                            <div class="metrica-value" id="mCargaAguda">—</div>
+                            <div class="metrica-value" id="mCargaAguda">�</div>
                             <div class="metrica-sub" id="mCargaAgudaSub"></div>
                         </div>
                         <div class="metrica-card">
                             <div class="metrica-label">ACWR <span
                                     style="font-weight:400;text-transform:none;letter-spacing:0;">(aguda ÷
                                     crônica)</span></div>
-                            <div class="metrica-value" id="mAcwr">—</div>
+                            <div class="metrica-value" id="mAcwr">�</div>
                             <div class="metrica-sub" id="mAcwrStatus"></div>
                         </div>
                         <div class="metrica-card">
                             <div class="metrica-label">Monotonia</div>
-                            <div class="metrica-value" id="mMonotonia">—</div>
+                            <div class="metrica-value" id="mMonotonia">�</div>
                             <div class="metrica-sub" id="mMonotoniaSub"></div>
                         </div>
                         <div class="card metrica-card">
                             <div class="metrica-label">Strain Semanal</div>
-                            <div class="metrica-value" id="mStrain">—</div>
+                            <div class="metrica-value" id="mStrain">�</div>
                             <div class="metrica-sub" id="mStrainSub"></div>
                         </div>
                     </div>
@@ -1496,7 +1496,7 @@
                 <!-- Linha 2: gr�fico + distribui��o -->
                 <div class="charts-row">
                     <div class="card chart-card">
-                        <div class="section-title"><i class="ti ti-timeline"></i> Carga Semanal — Últimas 6 Semanas
+                        <div class="section-title"><i class="ti ti-timeline"></i> Carga Semanal � Últimas 6 Semanas
                         </div>
                         <canvas id="chartCarga" height="120"></canvas>
                     </div>
@@ -1549,7 +1549,7 @@
                     <div class="titulo-selector">
                         <div class="custom-dropdown" id="treinoTituloDropdown">
                             <div class="dropdown-trigger" onclick="toggleTitleDropdown()">
-                                <span id="dropdownSelectedTitle">— Selecione ou crie um treino...</span>
+                                <span id="dropdownSelectedTitle">� Selecione ou crie um treino...</span>
                                 <i class="ti ti-chevron-down"></i>
                             </div>
                             <div class="dropdown-menu" id="dropdownMenu">
@@ -1607,7 +1607,7 @@
                         <input type="number" id="treinoDuracao" class="form-control" value="90" min="10" max="360">
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>PSE Planejada (1–10)</label>
+                        <label>PSE Planejada (1�10)</label>
                         <input type="range" id="treinoPse" min="1" max="10" value="6"
                             style="width:100%; margin-top:8px;"
                             oninput="document.getElementById('pseVal').innerText = this.value">
@@ -1624,11 +1624,11 @@
                     <i class="ti ti-plus"></i> Adicionar Bloco
                 </button>
 
-                <!-- Observa�ões -->
-                <div class="section-label"><i class="ti ti-notes" style="margin-right:6px;"></i>Observa�ões</div>
+                <!-- Observa��es -->
+                <div class="section-label"><i class="ti ti-notes" style="margin-right:6px;"></i>Observa��es</div>
                 <div class="form-group">
                     <textarea id="treinoObs" class="form-control" rows="3"
-                        placeholder="Anota�ões, foco do treino, condi�ões especiais..."></textarea>
+                        placeholder="Anota��es, foco do treino, condi��es especiais..."></textarea>
                 </div>
 
                 <!-- Edit Actions -->
@@ -1677,7 +1677,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Carga Alvo Total (CARGA) <span
-                            style="font-weight:400;color:var(--text-muted);">— opcional, ser�distribu�da nas
+                            style="font-weight:400;color:var(--text-muted);">� opcional, ser�distribu�da nas
                             semanas</span></label>
                     <input id="mesoCargaTotal" type="number" class="form-control" placeholder="Ex: 4000" min="0">
                 </div>
@@ -1860,7 +1860,7 @@
             const s = weekStart, e = weekEnd;
             const sStr = `${s.getDate()} ${s.getMonth() !== e.getMonth() ? MESES[s.getMonth()].slice(0, 3) + ' ' : ''}`;
             const eStr = `${e.getDate()} ${MESES[e.getMonth()]}`;
-            document.getElementById('calTitle').innerText = `${sStr}– ${eStr}, ${e.getFullYear()}`;
+            document.getElementById('calTitle').innerText = `${sStr}� ${eStr}, ${e.getFullYear()}`;
 
             const today = toDateStr(new Date());
             const container = document.getElementById('viewWeek');
@@ -2120,7 +2120,7 @@
                 hiddenValue.value = currentTitle;
                 onTitleSelectChange(currentTitle);
             } else {
-                triggerText.innerText = '— Selecione ou crie um treino...';
+                triggerText.innerText = '� Selecione ou crie um treino...';
                 hiddenValue.value = '';
                 onTitleSelectChange('');
             }
@@ -2134,7 +2134,7 @@
             if (val === '__novo__') {
                 triggerText.innerHTML = '<i class="ti ti-plus" style="margin-right:8px;"></i> Novo t�tulo...';
             } else {
-                triggerText.innerText = val || '— Selecione ou crie um treino...';
+                triggerText.innerText = val || '� Selecione ou crie um treino...';
             }
 
             hiddenValue.value = val;
@@ -2186,7 +2186,7 @@
         function deleteSavedTitle(title) {
             if (!title) return;
 
-            if (!confirm(`Deseja excluir o t�tulo "${title}" das sugestões? Isso remover�o nome desta sess�o de todos os treinos desta equipe que a utilizam.`)) {
+            if (!confirm(`Deseja excluir o t�tulo "${title}" das sugest�es? Isso remover�o nome desta sess�o de todos os treinos desta equipe que a utilizam.`)) {
                 return;
             }
 
@@ -2315,7 +2315,7 @@
                 })() : ''}
                 </div>
                 ${blocosHtml ? `<div class="view-section-label">Blocos de Trabalho</div>${blocosHtml}` : ''}
-                ${t.obs ? `<div class="view-section-label">Observa�ões</div><div class="view-obs-text">${t.obs}</div>` : ''}
+                ${t.obs ? `<div class="view-section-label">Observa��es</div><div class="view-obs-text">${t.obs}</div>` : ''}
                 <div class="view-actions">
                     <button class="btn" onclick="deleteTreinoAtual()" style="color:var(--red);background:rgba(239,68,68,0.1);">
                         <i class="ti ti-trash"></i> Excluir
@@ -2517,7 +2517,7 @@
                         <i class="ti ti-trash" style="color:var(--red);"></i>
                     </button>
                 </div>
-                <textarea class="form-control bloco-desc" rows="2" placeholder="Descri��o / orienta�ões deste bloco..." style="margin-bottom:10px;">${desc}</textarea>
+                <textarea class="form-control bloco-desc" rows="2" placeholder="Descri��o / orienta��es deste bloco..." style="margin-bottom:10px;">${desc}</textarea>
                 <div style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;">Exerc�cios</div>
                 <div class="exercicios-container" id="exContainer_${id}"></div>
                 <div class="ex-add-row">
@@ -2783,7 +2783,7 @@
         }
 
         // ============================================================
-        //  PERIODIZAÇÃO — FUNÇÕES DE CÁLCULO
+        //  PERIODIZAÇÃO � FUNÇÕES DE CÁLCULO
         // ============================================================
 
         /** Retorna data de in�cio de semana (segunda-feira) para uma data */
@@ -2868,7 +2868,7 @@
         }
 
         // ============================================================
-        //  PERIODIZAÇÃO — RENDER
+        //  PERIODIZAÇÃO � RENDER
         // ============================================================
         let _cargaChartObj = null;
 
@@ -2897,17 +2897,17 @@
             const acwrEl = document.getElementById('mAcwr');
             const acwrStatusEl = document.getElementById('mAcwrStatus');
             if (acwr === null) {
-                acwrEl.textContent = '—';
+                acwrEl.textContent = '�';
                 acwrEl.className = 'metrica-value';
                 acwrStatusEl.textContent = 'Dados insuficientes';
             } else {
                 acwrEl.textContent = acwr.toFixed(2);
                 if (acwr >= 0.8 && acwr <= 1.3) {
                     acwrEl.className = 'metrica-value acwr-verde';
-                    acwrStatusEl.innerHTML = '🟢 Zona segura (0.80–1.30)';
+                    acwrStatusEl.innerHTML = '🟢 Zona segura (0.80�1.30)';
                 } else if ((acwr >= 0.5 && acwr < 0.8) || (acwr > 1.3 && acwr <= 1.5)) {
                     acwrEl.className = 'metrica-value acwr-amarelo';
-                    acwrStatusEl.innerHTML = '🟡 Aten��o — monitorar';
+                    acwrStatusEl.innerHTML = '🟡 Aten��o � monitorar';
                 } else {
                     acwrEl.className = 'metrica-value acwr-vermelho';
                     acwrStatusEl.innerHTML = acwr > 1.5 ? '🔴 Risco de overtraining' : '🔴 Subcarga / destreinamento';
@@ -2918,13 +2918,13 @@
             const monoEl = document.getElementById('mMonotonia');
             monoEl.textContent = mono.toFixed(2);
             monoEl.className = 'metrica-value ' + (mono > 2 ? 'acwr-vermelho' : mono > 1.5 ? 'acwr-amarelo' : 'acwr-verde');
-            document.getElementById('mMonotoniaSub').textContent = mono > 2 ? 'Alta — est�mulo repetitivo' : mono > 1.5 ? 'Moderada' : 'Boa varia��o';
+            document.getElementById('mMonotoniaSub').textContent = mono > 2 ? 'Alta � est�mulo repetitivo' : mono > 1.5 ? 'Moderada' : 'Boa varia��o';
 
             // --- Strain ---
             const strainEl = document.getElementById('mStrain');
             strainEl.textContent = strain;
             strainEl.className = 'metrica-value ' + (strain > 3000 ? 'acwr-vermelho' : strain > 1500 ? 'acwr-amarelo' : 'acwr-verde');
-            document.getElementById('mStrainSub').textContent = strain > 3000 ? 'Elevado — risco overtraining' : strain > 1500 ? 'Moderado' : 'Controlado';
+            document.getElementById('mStrainSub').textContent = strain > 3000 ? 'Elevado � risco overtraining' : strain > 1500 ? 'Moderado' : 'Controlado';
 
             // --- Fase do mesociclo ---
             const faseEl = document.getElementById('faseMesociclo');
@@ -3050,7 +3050,7 @@
         //  PLANEJADOR DE MESOCICLO
         // ============================================================
 
-        // Fases do mesociclo — termos usados no Brasil
+        // Fases do mesociclo � termos usados no Brasil
         const FASES_MESO = [
             { value: 'ordinario', label: 'Ordin�rio', color: '#c084fc' }, // base/fundamento
             { value: 'acumulacao', label: 'Acumula��o', color: '#60a5fa' }, // volume
@@ -3258,7 +3258,7 @@
                 // Datas da semana
                 const ws = new Date(sem.weekStart + 'T00:00:00');
                 const we = new Date(ws); we.setDate(ws.getDate() + 6);
-                const label = `Sem ${idx + 1} — ${ws.getDate()}/${ws.getMonth() + 1}`;
+                const label = `Sem ${idx + 1} � ${ws.getDate()}/${ws.getMonth() + 1}`;
 
                 // Percentage of this week relative to the whole meso
                 const pctOfTotal = totalAlvo > 0 ? Math.round((alvo / totalAlvo) * 100) : 0;
@@ -3310,7 +3310,7 @@
                             </button>
                         </div>
 
-                        <div class="meso-dia-real" style="margin-top: 8px; width: 100%; text-align: center; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05);" title="Realizado">${realDia > 0 ? realDia + ' CARGA Real.' : '<span style="opacity: 0.5;">—</span>'}</div>
+                        <div class="meso-dia-real" style="margin-top: 8px; width: 100%; text-align: center; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05);" title="Realizado">${realDia > 0 ? realDia + ' CARGA Real.' : '<span style="opacity: 0.5;">�</span>'}</div>
                     </div>`;
                 }).join('');
 
@@ -3348,7 +3348,7 @@
                         </div>
                     </div>
                     <div class="meso-dias-expand" style="display:${_expandedWeeks.has(sem.weekStart) ? 'block' : 'none'};">
-                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Carga planejada por dia (CARGA) — clique na linha para expandir</div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Carga planejada por dia (CARGA) � clique na linha para expandir</div>
                         <div class="meso-dias-grid">${diasHtml}</div>
                         <div class="meso-dias-total" style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:right;">
                             Total dos dias: <strong>${totalDias} CARGA</strong>

@@ -193,12 +193,12 @@
                 </button>
             </div>
         </div>
-        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, Mestre Silva. Qual equipe deseja gerenciar
+        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Carregando...</span>. Qual equipe deseja gerenciar
             agora?</p>
 
         <div style="text-align: left; margin-bottom: 16px;">
             <h2 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Alto
-                Rendimento (Competição)</h2>
+                Rendimento (Competi��o)</h2>
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin-top: 8px; margin-bottom: 24px;">
         </div>
 
@@ -237,7 +237,7 @@
                     <div class="form-group">
                         <label>Nome da Turma</label>
                         <input type="text" id="editNomeTurma" class="form-control"
-                            placeholder="Ex: Preparatório Faixa Preta" required>
+                            placeholder="Ex: Preparat�rio Faixa Preta" required>
                     </div>
 
                     <div class="form-group">
@@ -247,7 +247,7 @@
                                 <input type="radio" name="editTipoTurma" value="rendimento">
                                 <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
                                 <div class="radio-title" style="font-size: 16px;">Rendimento</div>
-                                <div class="radio-desc">Foco em performance, scout militar e testes físicos.</div>
+                                <div class="radio-desc">Foco em performance, scout militar e testes f�sicos.</div>
                             </label>
 
                             <label class="radio-card" onclick="selectEditRadio(this, 'comercial')">
@@ -255,7 +255,7 @@
                                 <i class="ti ti-cash radio-icon"
                                     style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
                                 <div class="radio-title" style="font-size: 16px;">Comercial</div>
-                                <div class="radio-desc">Foco em mensalidade, presença e retenção de alunos.</div>
+                                <div class="radio-desc">Foco em mensalidade, presen�a e reten��o de alunos.</div>
                             </label>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
                     <div class="form-group" style="margin-top: 32px;">
                         <button type="submit" class="btn btn-primary"
                             style="border-radius: 50px; padding: 14px; font-size: 18px; width: 100%; justify-content: center;">Salvar
-                            Alterações</button>
+                            Altera��es</button>
                     </div>
                 </div>
             </form>
@@ -293,7 +293,7 @@
                 <div class="form-group">
                     <button type="submit" class="btn btn-danger"
                         style="border-radius: 50px; padding: 14px; font-size: 16px; width: 100%; justify-content: center;">Confirmar
-                        Exclusão</button>
+                        Exclus�o</button>
                 </div>
             </form>
         </div>
@@ -309,7 +309,7 @@
                 <div class="form-group">
                     <label>Nome da Turma</label>
                     <input type="text" id="novaTurmaNome" class="form-control"
-                        placeholder="Ex: Preparatório Faixa Preta" required>
+                        placeholder="Ex: Preparat�rio Faixa Preta" required>
                 </div>
 
                 <div class="form-group">
@@ -319,7 +319,7 @@
                             <input type="radio" name="tipoTurma" value="rendimento" checked>
                             <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
                             <div class="radio-title" style="font-size: 16px;">Rendimento</div>
-                            <div class="radio-desc">Foco em performance, scout militar e testes físicos.</div>
+                            <div class="radio-desc">Foco em performance, scout militar e testes f�sicos.</div>
                         </label>
 
                         <label class="radio-card" onclick="selectRadio(this, 'comercial')">
@@ -327,7 +327,7 @@
                             <i class="ti ti-cash radio-icon"
                                 style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
                             <div class="radio-title" style="font-size: 16px;">Comercial</div>
-                            <div class="radio-desc">Foco em mensalidade, presença e retenção de alunos.</div>
+                            <div class="radio-desc">Foco em mensalidade, presen�a e reten��o de alunos.</div>
                         </label>
                     </div>
                 </div>
@@ -377,10 +377,10 @@
             if (selectEdit) selectEdit.innerHTML = '<option value="">Selecione...</option>';
 
             db.turmas.forEach(t => {
-                let isRend = (t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competição'));
+                let isRend = (t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competi��o'));
                 let iconElement = isRend ? '<i class="ti ti-medal"></i>' : '<i class="ti ti-users"></i>';
                 let targetPage = isRend ? 'dashboard-turma-dados.html' : 'dashboard-aulas.html';
-                let desc = isRend ? `${t.alunosCount} Atletas â�¢ Foco: Scout e Carga` : `${t.alunosCount} Alunos â�¢ Foco: Chamada/Financ.`;
+                let desc = isRend ? `${t.alunosCount} Atletas ��¢ Foco: Scout e Carga` : `${t.alunosCount} Alunos ��¢ Foco: Chamada/Financ.`;
                 let cardClass = isRend ? 'competicao' : 'iniciante';
 
                 const cardHTML = `
@@ -438,7 +438,7 @@
                 document.getElementById('editFields').style.display = 'block';
                 document.getElementById('editNomeTurma').value = t.nome;
 
-                const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competição');
+                const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competi��o');
 
                 const radios = document.querySelectorAll('#editRadioGroup .radio-card');
                 radios.forEach(el => el.classList.remove('selected'));

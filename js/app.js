@@ -77,6 +77,9 @@ function loadDB() {
 
     // Trigger background fetch from Supabase
     fetchFromSupabase();
+
+    // Render profile header if elements exist
+    renderUserProfile();
 }
 
 // Fetch latest state from Supabase
@@ -118,7 +121,42 @@ function fetchFromSupabase() {
 
             // Subscribe to remote changes
             setupRealtimeSubscription();
+
+            // Try to initialize trainer profile if empty
+            initializeTrainerFromAuth();
         });
+}
+
+async function initializeTrainerFromAuth() {
+    if (!db.treinadores || db.treinadores.length === 0) {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        if (session && session.user) {
+            db.treinadores = [{
+                id: 1,
+                nome: session.user.email.split('@')[0],
+                papel: 'Administrador',
+                avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png'
+            }];
+            saveDB();
+            renderUserProfile();
+        }
+    }
+}
+
+function renderUserProfile() {
+    const nameEls = document.querySelectorAll('.user-name');
+    const roleEls = document.querySelectorAll('.user-role');
+    const avatarEls = document.querySelectorAll('.user-profile img.avatar, .topbar img.avatar');
+
+    const trainer = (db.treinadores && db.treinadores.length > 0) ? db.treinadores[0] : null;
+
+    if (trainer) {
+        nameEls.forEach(el => el.textContent = trainer.nome);
+        roleEls.forEach(el => el.textContent = trainer.papel);
+        if (trainer.avatar) {
+            avatarEls.forEach(el => el.src = trainer.avatar);
+        }
+    }
 }
 
 function setupRealtimeSubscription() {
@@ -263,7 +301,7 @@ function selScale(el, hiddenId, val) {
     parent.querySelectorAll('.btn-scale').forEach(btn => btn.classList.remove('active'));
     el.classList.add('active');
 
-    // Suporte para IDs tradicionais ou arrays name (usados nos formul�rios dinâmicos de Qs)
+    // Suporte para IDs tradicionais ou arrays name (usados nos formul�rios din�micos de Qs)
     let hiddenInput = document.getElementById(hiddenId);
     if (!hiddenInput) {
         hiddenInput = document.querySelector(`input[name="${hiddenId}"]`);
@@ -277,7 +315,7 @@ function selScale(el, hiddenId, val) {
     }
 }
 
-// Converter ranges est�ticos em botões
+// Converter ranges est�ticos em bot�es
 function replaceRangesWithButtons(container = document) {
     container.querySelectorAll('input[type="range"]:not(.no-btn-convert)').forEach(input => {
         const min = parseInt(input.min || '0');
@@ -652,7 +690,7 @@ function openGlobalCropper(file, callback) {
 
         modal.classList.add('active');
 
-        // Destruir instância anterior se existir
+        // Destruir inst�ncia anterior se existir
         if (globalCropperInstance) {
             globalCropperInstance.destroy();
         }
@@ -712,7 +750,7 @@ function confirmGlobalCrop() {
 }
 
 /**
- * Abre um modal detalhado com as informa�ões de um scout salvo.
+ * Abre um modal detalhado com as informa��es de um scout salvo.
  * @param {number} scoutId - ID do scout no db.lutasScout
  */
 function openScoutDetail(scoutId) {
@@ -754,7 +792,7 @@ function openScoutDetail(scoutId) {
         `;
     }
 
-    // Timeline das A�ões
+    // Timeline das A��es
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
@@ -783,7 +821,7 @@ function openScoutDetail(scoutId) {
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
                         <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A��o'} ${resStr}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' � ')}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' �')}</div>
                     </div>
                     <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">R${ev.round}</div>
                 </div>
@@ -827,7 +865,7 @@ function openScoutDetail(scoutId) {
     const totalAtaques = Object.values(tecnicaCount).reduce((a, b) => a + b, 0);
     let tecnicasHtml = topTecnicas.length > 0 ? topTecnicas.map(t => {
         const pct = Math.round((t[1] / totalAtaques) * 100);
-        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">� ${t[0]}: ${pct}%</div>`;
+        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">�${t[0]}: ${pct}%</div>`;
     }).join('') : '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
 
     let topFaltaHtml = '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
@@ -1247,7 +1285,7 @@ async function downloadScoutPDF(scoutId) {
         yPos += 3;
     };
 
-    printIndicatorGroup("Alvos Alcan�ados / Sofridos (Apenas A�ões c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
+    printIndicatorGroup("Alvos Alcan�ados / Sofridos (Apenas A��es c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
     printIndicatorGroup("Localiza��o da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
     printIndicatorGroup("Uso de Pernas (Tentativas)", 'pernas', ofensiva, defensiva, 'subPernas');
     printIndicatorGroup("Posicionamento de Base (Tentativas)", 'bases', ofensiva, defensiva);
@@ -1292,7 +1330,7 @@ async function downloadScoutPDF(scoutId) {
             if (ev.local) sub.push(ev.local + (ev.subLocal ? ` (${ev.subLocal})` : ''));
 
             doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(100);
-            doc.text(sub.join(' � '), 30, yPos + 3.5);
+            doc.text(sub.join(' �'), 30, yPos + 3.5);
 
             yPos += 8;
             doc.setTextColor(30);

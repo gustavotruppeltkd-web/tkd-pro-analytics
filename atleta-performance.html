@@ -752,7 +752,7 @@
                     item.className = `timeline-item ${clss}`;
 
                     item.innerHTML = `
-                        <div class="timeline-date">${formatarDataBR(c.data)} ${c.categoria ? 'â�¢ ' + c.categoria : ''}</div>
+                        <div class="timeline-date">${formatarDataBR(c.data)} ${c.categoria ? '��¢ ' + c.categoria : ''}</div>
                         <div class="timeline-title">${c.titulo || c.nomeEvento}</div>
                         ${c.colocacao ? `<div class="timeline-medal"><i class="ti ${container.id === 'timelineProxima' ? 'ti-calendar-event' : 'ti-medal'}" style="color: ${getMedalColor(c.colocacao)}"></i> ${String(c.colocacao).toUpperCase()}</div>` : `<div class="timeline-medal"><i class="ti ti-calendar-event" style="color: var(--primary);"></i> Alvo SecundÃ¡rio</div>`}
                     `;
@@ -807,7 +807,7 @@
             renderComps(pastComps, tlContainer);
             renderMedals(pastComps, document.getElementById('timelineMedalhas'));
 
-            // â”�â”� Atualiza o contador de medalhas no topo do card â”�â”�
+            // �”��”�Atualiza o contador de medalhas no topo do card �”��”�
             const medalColocacoes = ['ouro', 'prata', 'bronze'];
             let cOuro = 0, cPrata = 0, cBronze = 0;
 
@@ -868,10 +868,10 @@
                         let roundsSummary = '';
                         if (s.rounds && s.rounds.length > 0) {
                             const rMap = { vitoria: 'V', derrota: 'D', empate: 'E' };
-                            roundsSummary = ' â�¢ ' + s.rounds.map(r => `R${r.round}:${rMap[r.result] || '?'} `).join(', ');
+                            roundsSummary = ' ��¢ ' + s.rounds.map(r => `R${r.round}:${rMap[r.result] || '?'} `).join(', ');
                         } else if (s.round) {
                             // Fallback para scouts antigos de round Ãºnico
-                            roundsSummary = ` â�¢ Round: ${s.round} `;
+                            roundsSummary = ` ��¢ Round: ${s.round} `;
                         }
 
                         // Conta apenas as aÃ§Ãµes reais (ignora divisores se existirem)
@@ -1140,7 +1140,7 @@
                                     label: (ctx) => {
                                         const v = parseFloat(ctx.raw);
                                         const zona = v >= 8 ? 'ðŸ”´ Alta' : v >= 5 ? 'ðŸŸ¡ MÃ©dia' : 'ðŸŸ¢ Leve';
-                                        return ` PSE: ${ctx.raw} â�” ${zona}`;
+                                        return ` PSE: ${ctx.raw} ��” ${zona}`;
                                     }
                                 }
                             }
@@ -1167,7 +1167,7 @@
                                     label: (ctx) => {
                                         const v = ctx.raw;
                                         const zona = v >= 800 ? 'ðŸ”´ Alta' : v >= 400 ? 'ðŸŸ¡ Moderada' : 'ðŸŸ¢ Leve';
-                                        return ` Carga: ${v} U.A. â�” ${zona}`;
+                                        return ` Carga: ${v} U.A. ��” ${zona}`;
                                     }
                                 }
                             }
@@ -1203,7 +1203,7 @@
                     data: {
                         labels: labels7, datasets: [
                             { label: 'Score Wellness', data: wellData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)', fill: true, tension: 0.4, pointRadius: 4 },
-                            { label: 'Zona Segura (â‰¥70)', data: labels7.map(() => 70), borderColor: 'rgba(16,185,129,0.4)', borderDash: [5, 4], borderWidth: 1, pointRadius: 0, fill: false }
+                            { label: 'Zona Segura (�‰¥70)', data: labels7.map(() => 70), borderColor: 'rgba(16,185,129,0.4)', borderDash: [5, 4], borderWidth: 1, pointRadius: 0, fill: false }
                         ]
                     },
                     options: { ...commonOptions, scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: true, labels: { font: { size: 10 }, boxWidth: 14 } } } }
@@ -1294,7 +1294,7 @@
             let html = `
                 <div style="margin-bottom: 12px; font-size: 13px; color: var(--text-muted); text-align: center; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
                     Respondido em: <span style="color: var(--text-main); font-weight: 600;">${dataFormatada}</span> 
-                    ${todayLog.pesoAtual ? ` â�¢ Peso: <span style="color: var(--primary); font-weight: 700;">${todayLog.pesoAtual}kg</span>` : ''}
+                    ${todayLog.pesoAtual ? ` ��¢ Peso: <span style="color: var(--primary); font-weight: 700;">${todayLog.pesoAtual}kg</span>` : ''}
                 </div>
             `;
 
@@ -1336,7 +1336,7 @@
                 return `
                 <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <div style="margin-bottom: 6px; font-size: 12px; color: var(--text-muted); text-align: center;">
-                        <strong>${log.tipoTreino || 'Desconhecido'}</strong> â�¢ ${dataFormatada}
+                        <strong>${log.tipoTreino || 'Desconhecido'}</strong> ��¢ ${dataFormatada}
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">

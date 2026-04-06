@@ -234,10 +234,10 @@
                     <p class="subtitle">Vis�o Di�ria de Rendimento e Wellness</p>
                 </div>
                 <div class="user-profile">
-                    <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                    <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar">
                     <div class="user-info">
-                        <span class="user-name">Mestre Silva</span>
-                        <span class="user-role">Head Coach</span>
+                        <span class="user-name"><span class="user-name">Carregando...</span></span>
+                        <span class="user-role"><span class="user-role">Treinador</span></span>
                     </div>
                 </div>
             </header>
@@ -344,7 +344,7 @@
                                     <option value="questionarios">Question�rios</option>
                                     <option value="testes_fisicos">Testes F�sicos</option>
                                     <option value="antropometria">Avalia��o Antropom�trica</option>
-                                    <option value="saude">Sa�de (Lesões)</option>
+                                    <option value="saude">Sa�de (Les�es)</option>
                                 </select>
                             </div>
                             <div id="subSourceContainer" style="display: none;">
@@ -464,7 +464,7 @@
 
                 <h4
                     style="margin-top: 24px; margin-bottom: 16px; color: var(--primary); font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    Dobras Cutâneas (mm)</h4>
+                    Dobras Cut�neas (mm)</h4>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                     <div class="form-group">
                         <label>Tr�ceps</label>
@@ -718,7 +718,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Observa�ões (Opcional)</label>
+                    <label>Observa��es (Opcional)</label>
                     <textarea class="form-control" id="tfObs" rows="2"
                         placeholder="Ex: Atleta se queixou de dor leve no joelho antes do teste"></textarea>
                 </div>
@@ -1262,7 +1262,7 @@
 
             if (treinosHoje.length > 0) {
                 // Ex: "18:00 - 19:30 | 20:00 - 21:00"
-                labelTreino.innerText = treinosHoje.map(t => t.periodo).join('   �   ');
+                labelTreino.innerText = treinosHoje.map(t => t.periodo).join('     ');
                 labelTreino.style.color = 'var(--text-main)';
             } else {
                 labelTreino.innerText = 'Dia de Descanso / Recupera��o';
@@ -1306,7 +1306,7 @@
             if (chartsInstance.scout) chartsInstance.scout.destroy();
             if (chartsInstance.bemEstar) chartsInstance.bemEstar.destroy();
 
-            // Radar de avalia��o t�cnica — inicializa com zeros, atualizado via updateComparisonCharts
+            // Radar de avalia��o t�cnica � inicializa com zeros, atualizado via updateComparisonCharts
             chartsInstance.scout = new Chart(ctxScout, {
                 type: 'radar',
                 data: {
@@ -1394,7 +1394,7 @@
                 scoutsFiltrados = scoutsFiltrados.filter(s => db.alunos.find(a => a.id === s.atletaId && a.turmaId === db.activeTurmaId));
             }
 
-            const label = val === 'equipe' ? 'Avalia��o T�cnica — M�dia da Equipe' : 'Avalia��o T�cnica — Individual';
+            const label = val === 'equipe' ? 'Avalia��o T�cnica � M�dia da Equipe' : 'Avalia��o T�cnica � Individual';
             let dataScout = [0, 0, 0, 0, 0, 0, 0];
 
             if (scoutsFiltrados.length > 0) {
@@ -1420,7 +1420,7 @@
                 ].map(Number);
             }
 
-            // ─── Score de Bem-Estar (�ltimos 7 dias — dados REAIS) ───
+            // ─── Score de Bem-Estar (�ltimos 7 dias � dados REAIS) ───
             const targetDate = dataFiltro;
             const dates7 = getDatesInRange(targetDate, 7).reverse();
             const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b'];
@@ -1706,7 +1706,7 @@
             if (list.length === 0) return showToast("Nenhum dado encontrado", "error");
 
             let csv = "\uFEFF";
-            csv += "Atleta;Data;T�tulo;Vencedor;Pontos Atleta;Pontos Oponente;Qtd. A�ões Ofensivas\n";
+            csv += "Atleta;Data;T�tulo;Vencedor;Pontos Atleta;Pontos Oponente;Qtd. A��es Ofensivas\n";
             list.forEach(l => {
                 const at = db.alunos.find(a => a.id === l.atletaId);
                 const acoes = (l.acoes || []).length;
@@ -2262,7 +2262,7 @@
                 data: {
                     labels: ['Leve (1-4)', 'Mod. (5-7)', 'Intenso (8-10)'],
                     datasets: [{
-                        label: 'Qtd Sessões',
+                        label: 'Qtd Sess�es',
                         data: [leve, mod, intenso],
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
                         borderRadius: 4
@@ -2377,7 +2377,7 @@
             } else if (tipo === 'flexibilidade') {
                 html = `
                     <div class="form-group">
-                        <label>Distância Alcan�ada (cm) - Banco de Wells</label>
+                        <label>Dist�ncia Alcan�ada (cm) - Banco de Wells</label>
                         <input type="number" step="0.1" class="form-control" id="tfValue1" placeholder="Ex: 32.5" required>
                     </div>
                 `;
@@ -2391,7 +2391,7 @@
             } else if (tipo === 'salto_horizontal') {
                 html = `
                     <div class="form-group">
-                        <label>Distância do Salto (cm)</label>
+                        <label>Dist�ncia do Salto (cm)</label>
                         <input type="number" step="0.1" class="form-control" id="tfValue1" placeholder="Ex: 210.5" required>
                     </div>
                 `;
@@ -2633,7 +2633,7 @@
             });
 
             // ==== Gr�fico 3: Volume Semanal (5 semanas - centro atual) ====
-            // O targetDate (dataFiltro) ser�nossa refer�ncia. Ela compõe a semana "Atual"
+            // O targetDate (dataFiltro) ser�nossa refer�ncia. Ela comp�e a semana "Atual"
             const targetDateStr = dates[dates.length - 1] || document.getElementById('dataFiltro').value;
             const targetDateObj = new Date(targetDateStr + 'T00:00:00');
             const centerWeekStart = getWeekStartFor(targetDateObj);
@@ -2713,7 +2713,7 @@
             document.getElementById('titleTable').innerText = 'Hist�rico Geral de Combates (Scout)';
             document.getElementById('titleChart1').innerText = 'Curva de Saldo de Pontos (Pr�prios vs Oponente)';
             document.getElementById('titleChart2').innerText = 'Win Rate (Taxa de Vit�rias)';
-            document.getElementById('titleChart3').innerText = 'Top 5 A�ões Ofensivas (Mais Efetivas)';
+            document.getElementById('titleChart3').innerText = 'Top 5 A��es Ofensivas (Mais Efetivas)';
             document.getElementById('titleChart4').innerText = 'Vulnerabilidades (Pontos Sofridos no Alvo)';
             document.getElementById('titleChart5').innerText = 'Radar de Desempenho T�cnico/T�tico';
 
@@ -2814,7 +2814,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right', labels: { color: '#94a3b8' } } } }
             });
 
-            // Gr�fico 3: Top 5 A�ões Ofensivas (Pr�prias)
+            // Gr�fico 3: Top 5 A��es Ofensivas (Pr�prias)
             const techAtleta = {};
             scouts.forEach(s => {
                 (s.acoes || []).forEach(a => {
@@ -2932,7 +2932,7 @@
                         <th style="padding: 10px;">Foco T�tico/T�cnico</th>
                         <th style="padding: 10px;">Foco F�sico</th>
                         <th style="padding: 10px;">Vol. Semanal (min)</th>
-                        <th style="padding: 10px;">Sessões Relatadas</th>
+                        <th style="padding: 10px;">Sess�es Relatadas</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -3113,7 +3113,7 @@
                 return;
             }
 
-            document.getElementById('titleTable').innerText = `Últimas Intera�ões: ${q.titulo}`;
+            document.getElementById('titleTable').innerText = `Últimas Intera��es: ${q.titulo}`;
             document.getElementById('titleChart1').innerText = 'Ades�o Di�ria (Qtd Respostas)';
             document.getElementById('titleChart2').innerText = 'M�dia por Pergunta (Últimos 7 dias)';
             document.getElementById('titleChart3').innerText = 'Radar de Equil�brio das Respostas';
@@ -3331,7 +3331,7 @@
         }
 
         function renderTestesFisicosGeral(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Avalia�ões F�sicas';
+            document.getElementById('titleTable').innerText = 'Hist�rico de Avalia��es F�sicas';
             document.getElementById('titleChart1').innerText = 'Teia de Val�ncias (Perfil Global)';
             document.getElementById('titleChart2').innerText = 'Evolu��o FSKT (Pot�ncia e Fadiga)';
             document.getElementById('titleChart3').innerText = 'Evolu��o de For�a Explosiva (Saltos)';
@@ -3926,12 +3926,12 @@
 
         // --- ANTROPOMETRIA CHARTS ---
         function renderAntropometriaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Composi�ões Corporais';
+            document.getElementById('titleTable').innerText = 'Hist�rico de Composi��es Corporais';
             document.getElementById('titleChart1').innerText = 'Evolu��o: Peso (kg) vs % Gordura';
             document.getElementById('titleChart2').innerText = 'Composi��o Corporal Absoluta (Massa Magra vs Gorda)';
             document.getElementById('titleChart3').innerText = 'Mapeamento de Circunfer�ncias (cm)';
             document.getElementById('titleChart4').innerText = 'Classifica��o de IMC da Equipe / Atual';
-            document.getElementById('titleChart5').innerText = 'Soma das Dobras Cutâneas Acumuladas';
+            document.getElementById('titleChart5').innerText = 'Soma das Dobras Cut�neas Acumuladas';
 
             let antro = (db.antropometria || []).sort((a, b) => new Date(a.data) - new Date(b.data));
             if (athleteId !== 'equipe') antro = antro.filter(a => a.atletaId === parseInt(athleteId));
@@ -4085,7 +4085,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
             });
 
-            // Gr�fico 5: Dobras Cutâneas Acumuladas
+            // Gr�fico 5: Dobras Cut�neas Acumuladas
             const sumDobras = labelsTime.map(d => {
                 const logs = antro.filter(a => a.data === d);
                 return logs.length ? (logs.reduce((acc, l) => acc + (parseFloat(l.triceps) || 0) + (parseFloat(l.panturrilha) || 0), 0) / logs.length).toFixed(1) : 0;
@@ -4107,11 +4107,11 @@
 
         // --- HEALTH / LESOES CHARTS ---
         function renderHealthCharts(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Ocorr�ncia de Lesões';
-            document.getElementById('titleChart1').innerText = 'Top Regiões do Corpo Afetadas';
+            document.getElementById('titleTable').innerText = 'Hist�rico de Ocorr�ncia de Les�es';
+            document.getElementById('titleChart1').innerText = 'Top Regi�es do Corpo Afetadas';
             document.getElementById('titleChart2').innerText = 'Status M�dico Atual';
             document.getElementById('titleChart3').innerText = 'Dias Perdidos por Tipo de Les�o';
-            document.getElementById('titleChart4').innerText = 'Incid�ncia de Novas Lesões por M�s';
+            document.getElementById('titleChart4').innerText = 'Incid�ncia de Novas Les�es por M�s';
             document.getElementById('titleChart5').innerText = 'Classifica��o por Severidade (Dias)';
 
             let lesoes = (db.lesoes || []).sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
@@ -4157,7 +4157,7 @@
             tableHTML += `</tbody></table>`;
             tableContainer.innerHTML = tableHTML;
 
-            // 1. Top Regiões (Bar Horizontal)
+            // 1. Top Regi�es (Bar Horizontal)
             const regioes = {};
             lesoes.forEach(l => regioes[l.local || 'Outros'] = (regioes[l.local || 'Outros'] || 0) + 1);
             const regioesSorted = Object.entries(regioes).sort((a, b) => b[1] - a[1]);
@@ -4228,7 +4228,7 @@
                 options: { ...getCommonOptions(), plugins: { legend: { display: false } } }
             });
 
-            // 4. Incid�ncia Mensal de Lesões
+            // 4. Incid�ncia Mensal de Les�es
             const inciMes = {};
             lesoes.forEach(l => {
                 const m = l.dataInicio ? l.dataInicio.substring(0, 7) : 'Desconhecido';

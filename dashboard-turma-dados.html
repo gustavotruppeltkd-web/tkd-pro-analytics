@@ -825,7 +825,7 @@
                 </a>
                 <a href="dashboard-aulas.html" class="nav-item">
                     <i class="ti ti-checklist"></i>
-                    <span>Chamada DiÃ¡ria</span>
+                    <span>Chamada Di�ria</span>
                 </a>
                 <a href="financeiro.html" class="nav-item">
                     <i class="ti ti-cash"></i>
@@ -843,19 +843,19 @@
             <header class="topbar">
                 <div class="page-title">
                     <h1>Turma: Adulto Iniciante</h1>
-                    <p class="subtitle" id="pageSubtitle">HorÃ¡rios e Lista Completa de Alunos</p>
+                    <p class="subtitle" id="pageSubtitle">Hor�rios e Lista Completa de Alunos</p>
                 </div>
                 <div class="topbar-actions" style="display: flex; gap: 12px; align-items: center;">
                     <button id="btnRelatorios" class="btn btn-primary" onclick="openModalRelatorios()"
                         style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
                         <i class="ti ti-file-description"></i>
-                        <span>RelatÃ³rios PDF</span>
+                        <span>Relat�rios PDF</span>
                     </button>
                     <div class="user-profile">
-                        <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                        <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar">
                         <div class="user-info">
-                            <span class="user-name">Mestre Silva</span>
-                            <span class="user-role">Head Coach</span>
+                            <span class="user-name"><span class="user-name">Carregando...</span></span>
+                            <span class="user-role"><span class="user-role">Treinador</span></span>
                         </div>
                     </div>
                 </div>
@@ -863,18 +863,18 @@
 
             <!-- TABS (Removed History tab as requested) -->
             <div class="tabs-header" id="tabsHeaderContainer" style="display: none;">
-                <button class="tab-btn active">VisÃ£o Geral (HorÃ¡rios e Lista)</button>
+                <button class="tab-btn active">Vis�o Geral (Hor�rios e Lista)</button>
             </div>
 
-            <!-- TAB 1: VISÃƒO GERAL -->
+            <!-- TAB 1: VISÃO GERAL -->
             <div id="tab-geral" class="tab-content active">
-                <!-- Cronograma / HorÃ¡rios -->
+                <!-- Cronograma / Hor�rios -->
                 <div class="athletes-section" style="margin-bottom: 32px;" id="cronogramaContainer">
                     <div class="section-header">
                         <h2>Cronograma de Aulas</h2>
                         <button class="btn" onclick="openModalHorario()"
                             style="background: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border-color);"><i
-                                class="ti ti-pencil"></i> Editar HorÃ¡rios</button>
+                                class="ti ti-pencil"></i> Editar Hor�rios</button>
                     </div>
 
                     <div class="schedule-grid" id="mainScheduleGrid">
@@ -893,7 +893,7 @@
                                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                                     <h3 style="color: var(--green); margin-bottom: 0; cursor: pointer;"
                                         onclick="window.location.href='calendario.html'">
-                                        <i class="ti ti-medal"></i> CompetiÃ§Ãµes
+                                        <i class="ti ti-medal"></i> Competi��es
                                     </h3>
                                     <a href="calendario.html"
                                         style="font-size: 11px; text-decoration: none; color: var(--green); opacity: 0.8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -907,8 +907,8 @@
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetUltimasComp">
-                                            â�¢ Campeonato Paulista (Set)<br>
-                                            â�¢ Open Sudeste (Jul)
+                                            ��¢ Campeonato Paulista (Set)<br>
+                                            ��¢ Open Sudeste (Jul)
                                         </div>
                                     </div>
                                     <div>
@@ -917,7 +917,7 @@
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetProximasComp">
-                                            â�¢ Copa Regional (em 18 dias)<br>
+                                            ��¢ Copa Regional (em 18 dias)<br>
                                             <span style="color: var(--yellow); font-size: 12px;"><i
                                                     class="ti ti-flag"></i> InscriÃ§Ãµes Abertas</span>
                                         </div>
@@ -1192,7 +1192,7 @@
         </div>
     </div>
 
-    <!-- MODAL RELATÃ“RIOS -->
+    <!-- MODAL RELATÃ�RIOS -->
     <div class="modal-overlay" id="modalRelatorios">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
@@ -1372,7 +1372,7 @@
                 ultimasList.innerHTML = passadas.slice(0, 2).map(ev => {
                     const data = new Date(ev.data + "T00:00:00");
                     const mes = data.toLocaleString('pt-BR', { month: 'short' });
-                    return `<div style="cursor: pointer; margin-bottom: 4px;" onclick="window.location.href='evento-detalhes.html?id=${ev.id}'">â�¢ ${ev.titulo} (${mes})</div>`;
+                    return `<div style="cursor: pointer; margin-bottom: 4px;" onclick="window.location.href='evento-detalhes.html?id=${ev.id}'">��¢ ${ev.titulo} (${mes})</div>`;
                 }).join('');
             }
 
@@ -1403,7 +1403,7 @@
 
                 proximasDiv.innerHTML = `
                     <div style="cursor: pointer;" onclick="window.location.href='evento-detalhes.html?id=${prox.id}'">
-                        â�¢ ${prox.titulo} (${countdownText})
+                        ��¢ ${prox.titulo} (${countdownText})
                         ${statusExtra}
                     </div>
                 `;
@@ -1852,7 +1852,7 @@
                                 <img src="${a.avatar}" alt="${a.nome}" class="student-avatar">
                                 <div class="student-details">
                                     <h4>${a.nome}</h4>
-                                    <p><strong>${a.faixa}</strong> â�¢ ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
+                                    <p><strong>${a.faixa}</strong> ��¢ ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
                                 </div>
                             </div>
                             <div class="col-age">
@@ -2272,4 +2272,3 @@
 </body>
 
 </html>
-

@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btnCancel = document.getElementById('btnCancelEdit');
 
                 if (btnSave) {
-                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escala��o (Salvar Altera�ões)';
+                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escala��o (Salvar Altera��es)';
                     btnSave.style.background = 'var(--primary)';
                     btnSave.style.borderColor = 'var(--primary)';
                 }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnCancel) {
                     btnCancel.style.display = 'flex';
                     btnCancel.addEventListener('click', () => {
-                        if (confirm("Deseja cancelar a edi��o? Todas as altera�ões n�o salvas ser�o perdidas.")) {
+                        if (confirm("Deseja cancelar a edi��o? Todas as altera��es n�o salvas ser�o perdidas.")) {
                             window.location.href = 'scout-video.html';
                         }
                     });
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 configContent.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="ti ti-chevron-down"></i>';
                 if (typeof showToast === 'function') {
-                    showToast("Configura�ões da luta salvas!", "success");
+                    showToast("Configura��es da luta salvas!", "success");
                 }
             });
         }
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = s.resultadoLuta ? `[${s.resultadoLuta.toUpperCase()}]` : '';
                 const acoesCount = (s.acoes || []).filter(a => !a.isDivider).length;
 
-                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} a�ões)</option>`;
+                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} a��es)</option>`;
             });
             return html;
         }
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="empty-state">
                     <i class="ti ti-timeline"></i>
                     <p>Nenhum evento registrado ainda.</p>
-                    <p style="font-size: 11px;">Comece a adicionar a�ões no painel central.</p>
+                    <p style="font-size: 11px;">Comece a adicionar a��es no painel central.</p>
                 </div>`;
             countBadge.innerText = "0";
             return;
@@ -982,7 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
                             <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'A��o'} ${resStr}</span>
                         </div>
-                        <div class="timeline-details" style="font-size: 11px; opacity: 0.8;">${detailsArr.join(' � ')}</div>
+                        <div class="timeline-details" style="font-size: 11px; opacity: 0.8;">${detailsArr.join(' �')}</div>
                     </div>
                     <div class="timeline-actions">
                         <button class="btn-action btn-edit" title="Editar" onclick="editEvent(${ev.id})"><i class="ti ti-edit"></i></button>
