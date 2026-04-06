@@ -147,16 +147,24 @@ function renderUserProfile() {
     const nameEls = document.querySelectorAll('.user-name');
     const roleEls = document.querySelectorAll('.user-role');
     const avatarEls = document.querySelectorAll('.user-profile img.avatar, .topbar img.avatar');
+    const userProfiles = document.querySelectorAll('.user-profile');
 
     const trainer = (db.treinadores && db.treinadores.length > 0) ? db.treinadores[0] : null;
 
     if (trainer) {
         nameEls.forEach(el => el.textContent = trainer.nome);
-        roleEls.forEach(el => el.textContent = trainer.papel);
+        roleEls.forEach(el => el.textContent = trainer.papel || trainer.role);
         if (trainer.avatar) {
             avatarEls.forEach(el => el.src = trainer.avatar);
         }
     }
+
+    userProfiles.forEach(profile => {
+        profile.style.cursor = 'pointer';
+        profile.onclick = () => {
+            window.location.href = 'treinador-perfil.html';
+        };
+    });
 }
 
 function setupRealtimeSubscription() {
