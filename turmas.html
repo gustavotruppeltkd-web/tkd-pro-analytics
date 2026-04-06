@@ -1,0 +1,509 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | Selecione a Turma</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-dark);
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .btn-back {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-back:hover {
+            color: var(--text-main);
+        }
+
+        .splash-container {
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+            max-width: 900px;
+        }
+
+        .splash-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .splash-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+        }
+
+        .profiles-grid {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .profile-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 32px 24px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            min-width: 220px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        .profile-card:hover .profile-icon {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .profile-card.infantil .profile-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green);
+        }
+
+        .profile-card.infantil:hover .profile-icon {
+            background: var(--green);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .profile-card.infantil:hover {
+            border-color: var(--green);
+        }
+
+        .profile-card.iniciante .profile-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--yellow);
+        }
+
+        .profile-card.iniciante:hover .profile-icon {
+            background: var(--yellow);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .profile-card.iniciante:hover {
+            border-color: var(--yellow);
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .profile-meta {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="index.html" class="btn-back"><i class="ti ti-arrow-left"></i> Voltar</a>
+
+    <div class="splash-container" style="max-width: 1000px; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+            <h1 class="splash-title" style="margin-bottom: 0;">Selecione a Turma</h1>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-icon btn-outline" style="border-radius: 50%;" onclick="openModalEditar()"
+                    title="Editar Turma">
+                    <i class="ti ti-pencil" style="font-size: 20px;"></i>
+                </button>
+                <button class="btn btn-icon btn-danger" style="border-radius: 50%;" onclick="openModalExcluir()"
+                    title="Excluir Turma">
+                    <i class="ti ti-trash" style="font-size: 20px;"></i>
+                </button>
+                <button class="btn btn-primary" style="border-radius: 50px; padding: 12px 24px;" onclick="openModal()">
+                    <i class="ti ti-plus"></i> Nova Turma
+                </button>
+            </div>
+        </div>
+        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, Mestre Silva. Qual equipe deseja gerenciar
+            agora?</p>
+
+        <div style="text-align: left; margin-bottom: 16px;">
+            <h2 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Alto
+                Rendimento (CompetiÃ§Ã£o)</h2>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-top: 8px; margin-bottom: 24px;">
+        </div>
+
+        <div class="profiles-grid" style="justify-content: flex-start; margin-bottom: 48px;" id="grid-rendimento">
+            <!-- Renderizado via JS -->
+        </div>
+
+        <div style="text-align: left; margin-bottom: 16px;">
+            <h2 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Aulas
+                Comerciais (Alunos)</h2>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-top: 8px; margin-bottom: 24px;">
+        </div>
+
+        <div class="profiles-grid" style="justify-content: flex-start;" id="grid-comercial">
+            <!-- Renderizado via JS -->
+        </div>
+    </div>
+
+    <!-- Modal Editar Turma -->
+    <div class="modal-overlay" id="modalEditarTurma">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Turma</h2>
+                <button class="btn-close" type="button" onclick="closeModalEditar()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <form id="formEditarTurma" onsubmit="saveEditTurma(event)">
+                <div class="form-group">
+                    <label>Selecione a turma para editar:</label>
+                    <select class="form-control" id="selectTurmaEdit" required onchange="populateEditForm()">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+
+                <div class="form-group" id="editFields" style="display: none;">
+                    <div class="form-group">
+                        <label>Nome da Turma</label>
+                        <input type="text" id="editNomeTurma" class="form-control"
+                            placeholder="Ex: PreparatÃ³rio Faixa Preta" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Perfil (Tipo de Turma)</label>
+                        <div class="radio-group" id="editRadioGroup">
+                            <label class="radio-card" onclick="selectEditRadio(this, 'rendimento')">
+                                <input type="radio" name="editTipoTurma" value="rendimento">
+                                <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
+                                <div class="radio-title" style="font-size: 16px;">Rendimento</div>
+                                <div class="radio-desc">Foco em performance, scout militar e testes fÃ­sicos.</div>
+                            </label>
+
+                            <label class="radio-card" onclick="selectEditRadio(this, 'comercial')">
+                                <input type="radio" name="editTipoTurma" value="comercial">
+                                <i class="ti ti-cash radio-icon"
+                                    style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
+                                <div class="radio-title" style="font-size: 16px;">Comercial</div>
+                                <div class="radio-desc">Foco em mensalidade, presenÃ§a e retenÃ§Ã£o de alunos.</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 32px;">
+                        <button type="submit" class="btn btn-primary"
+                            style="border-radius: 50px; padding: 14px; font-size: 18px; width: 100%; justify-content: center;">Salvar
+                            AlteraÃ§Ãµes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Excluir Turma -->
+    <div class="modal-overlay" id="modalExcluirTurma">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--red);">Excluir Turma</h2>
+                <button class="btn-close" type="button" onclick="closeModalExcluir()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <form id="formExcluirTurma" onsubmit="deleteTurma(event)">
+                <div class="form-group">
+                    <label>Selecione a turma para remover do sistema:</label>
+                    <select class="form-control" id="selectTurmaDelete" required>
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Aviso: Isso removerÃ¡ a equipe
+                    e todos os escouts/fichas associados a ela permanentemente.</p>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger"
+                        style="border-radius: 50px; padding: 14px; font-size: 16px; width: 100%; justify-content: center;">Confirmar
+                        ExclusÃ£o</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalNovaTurma">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Criar Nova Turma</h2>
+                <button class="btn-close" type="button" onclick="closeModal()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <form id="formNovaTurma" onsubmit="saveTurma(event)">
+                <div class="form-group">
+                    <label>Nome da Turma</label>
+                    <input type="text" id="novaTurmaNome" class="form-control"
+                        placeholder="Ex: PreparatÃ³rio Faixa Preta" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Perfil (Tipo de Turma)</label>
+                    <div class="radio-group">
+                        <label class="radio-card selected" onclick="selectRadio(this, 'rendimento')">
+                            <input type="radio" name="tipoTurma" value="rendimento" checked>
+                            <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
+                            <div class="radio-title" style="font-size: 16px;">Rendimento</div>
+                            <div class="radio-desc">Foco em performance, scout militar e testes fÃ­sicos.</div>
+                        </label>
+
+                        <label class="radio-card" onclick="selectRadio(this, 'comercial')">
+                            <input type="radio" name="tipoTurma" value="comercial">
+                            <i class="ti ti-cash radio-icon"
+                                style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
+                            <div class="radio-title" style="font-size: 16px;">Comercial</div>
+                            <div class="radio-desc">Foco em mensalidade, presenÃ§a e retenÃ§Ã£o de alunos.</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 32px;">
+                    <button type="submit" class="btn btn-primary"
+                        style="border-radius: 50px; padding: 14px; font-size: 18px; width: 100%; justify-content: center;">Criar
+                        Nova Turma</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        const modal = document.getElementById('modalNovaTurma');
+        const modalDel = document.getElementById('modalExcluirTurma');
+        const modalEdit = document.getElementById('modalEditarTurma');
+
+        function openModal() { modal.classList.add('active'); }
+        function closeModal() { modal.classList.remove('active'); }
+        function closeModalExcluir() { modalDel.classList.remove('active'); }
+        function closeModalEditar() { modalEdit.classList.remove('active'); }
+
+        function openModalEditar() {
+            renderTurmas(); // Garante o select populado
+            document.getElementById('editFields').style.display = 'none';
+            const selectEdit = document.getElementById('selectTurmaEdit');
+            if (selectEdit) selectEdit.value = '';
+            modalEdit.classList.add('active');
+        }
+
+        // RenderizaÃ§Ã£o DinÃ¢mica
+        function renderTurmas() {
+            const gridRend = document.getElementById('grid-rendimento');
+            const gridCom = document.getElementById('grid-comercial');
+            gridRend.innerHTML = '';
+            gridCom.innerHTML = '';
+
+            const selectDel = document.getElementById('selectTurmaDelete');
+            selectDel.innerHTML = '<option value="">Selecione...</option>';
+
+            const selectEdit = document.getElementById('selectTurmaEdit');
+            if (selectEdit) selectEdit.innerHTML = '<option value="">Selecione...</option>';
+
+            db.turmas.forEach(t => {
+                let isRend = (t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+                let iconElement = isRend ? '<i class="ti ti-medal"></i>' : '<i class="ti ti-users"></i>';
+                let targetPage = isRend ? 'dashboard-turma-dados.html' : 'dashboard-aulas.html';
+                let desc = isRend ? `${t.alunosCount} Atletas â€¢ Foco: Scout e Carga` : `${t.alunosCount} Alunos â€¢ Foco: Chamada/Financ.`;
+                let cardClass = isRend ? 'competicao' : 'iniciante';
+
+                const cardHTML = `
+                    <a href="${targetPage}" onclick="setActiveTurma(${t.id})" class="profile-card ${cardClass}" style="animation: fadeIn 0.4s ease-out;">
+                        <div class="profile-icon">${iconElement}</div>
+                        <span class="profile-name">${t.nome}</span>
+                        <span class="profile-meta">${desc}</span>
+                    </a>
+                `;
+
+                if (isRend) gridRend.insertAdjacentHTML('beforeend', cardHTML);
+                else gridCom.insertAdjacentHTML('beforeend', cardHTML);
+
+                // Option for delete modal and edit modal
+                selectDel.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+                if (selectEdit) selectEdit.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+            });
+        }
+
+        function setActiveTurma(id) {
+            db.activeTurmaId = id;
+            saveDB();
+        }
+
+        function openModalExcluir() {
+            renderTurmas(); // Garante o select populado
+            modalDel.classList.add('active');
+        }
+
+        function deleteTurma(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('selectTurmaDelete').value);
+            if (!id) return;
+
+            db.turmas = db.turmas.filter(t => t.id !== id);
+            saveDB();
+            renderTurmas();
+            closeModalExcluir();
+        }
+
+        function selectRadio(element, type) {
+            document.querySelectorAll('#formNovaTurma .radio-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+
+        function populateEditForm() {
+            const id = parseInt(document.getElementById('selectTurmaEdit').value);
+            if (!id) {
+                document.getElementById('editFields').style.display = 'none';
+                return;
+            }
+            const t = db.turmas.find(x => x.id === id);
+            if (t) {
+                document.getElementById('editFields').style.display = 'block';
+                document.getElementById('editNomeTurma').value = t.nome;
+
+                const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competiÃ§Ã£o');
+
+                const radios = document.querySelectorAll('#editRadioGroup .radio-card');
+                radios.forEach(el => el.classList.remove('selected'));
+
+                if (isRend) {
+                    radios[0].classList.add('selected');
+                    radios[0].querySelector('input').checked = true;
+                } else {
+                    radios[1].classList.add('selected');
+                    radios[1].querySelector('input').checked = true;
+                }
+            }
+        }
+
+        function selectEditRadio(element, type) {
+            document.querySelectorAll('#editRadioGroup .radio-card').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+
+        function saveEditTurma(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('selectTurmaEdit').value);
+            if (!id) return;
+
+            const t = db.turmas.find(x => x.id === id);
+            if (t) {
+                t.nome = document.getElementById('editNomeTurma').value;
+                const tipoValue = document.querySelector('input[name="editTipoTurma"]:checked').value;
+                t.tipo = tipoValue === 'rendimento' ? 'Rendimento' : 'Comercial';
+
+                saveDB();
+                renderTurmas();
+                closeModalEditar();
+            }
+        }
+
+        function saveTurma(event) {
+            event.preventDefault();
+
+            const nomeTurma = document.getElementById('novaTurmaNome').value;
+            const tipoTurma = document.querySelector('#formNovaTurma input[name="tipoTurma"]:checked').value;
+
+            const novaTurma = {
+                id: Date.now(),
+                nome: nomeTurma,
+                alunosCount: 0,
+                dia: 'A Definir',
+                horario: 'A Definir',
+                tipo: tipoTurma === 'rendimento' ? 'Rendimento' : 'Comercial'
+            };
+
+            db.turmas.push(novaTurma);
+            saveDB();
+            renderTurmas();
+
+            document.getElementById('formNovaTurma').reset();
+            closeModal();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // timeout para garantir que o app.js carregou o LoadDB
+            setTimeout(renderTurmas, 50);
+        });
+    </script>
+</body>
+
+</html>
+

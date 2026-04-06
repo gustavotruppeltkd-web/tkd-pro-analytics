@@ -1,0 +1,488 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | AnÃ¡lise de Lutas (Scout)</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/scout-video.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Rendimento -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+
+            <nav class="nav-menu" id="navMenuContainer">
+                <!-- Renderizado via JS (renderSidebar) -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>AnÃ¡lise de Lutas (Scout)</h1>
+                    <p class="subtitle">Scout de Lutas baseado em vÃ­deo (Painel Ãgil)</p>
+                </div>
+                <!-- Source Toggle -->
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <div class="source-toggle">
+                        <button class="btn btn-outline" id="btnYoutubeSource"><i class="ti ti-brand-youtube"></i>
+                            YouTube</button>
+                        <button class="btn btn-outline active" id="btnLocalSource"><i class="ti ti-upload"></i> Arquivo
+                            Local</button>
+                    </div>
+                    <button class="btn" id="btnToggleHistory"
+                        style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main);">
+                        <i class="ti ti-history"></i> HistÃ³rico
+                    </button>
+                </div>
+            </header>
+
+            <!-- History View (Hidden by default) -->
+            <div id="historyView" class="card"
+                style="display: none; margin-bottom: 24px; animation: slideDown 0.3s ease;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                    <h2 style="font-size: 18px; margin: 0;"><i class="ti ti-history" style="color: var(--primary);"></i>
+                        HistÃ³rico de Scouts Salvos</h2>
+                    <button class="btn-icon" onclick="document.getElementById('historyView').style.display='none'"
+                        style="border: none; background: none;"><i class="ti ti-x"></i></button>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <!-- Team Scouts -->
+                    <div
+                        style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <h3
+                            style="font-size: 15px; margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
+                            <i class="ti ti-users"></i> Scouts: Atletas da Equipe
+                        </h3>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <select id="selectTeamScouts" class="form-control" style="flex: 1;">
+                                <option value="">Nenhum scout de equipe encontrado</option>
+                            </select>
+                            <button class="btn btn-primary"
+                                onclick="window.actionSelectedScout('team', 'open')">Abrir</button>
+                            <button class="btn btn-outline" onclick="window.actionSelectedScout('team', 'edit')"
+                                title="Editar (Carregar no Painel)"><i class="ti ti-edit"></i></button>
+                            <button class="btn btn-icon btn-danger"
+                                onclick="window.actionSelectedScout('team', 'delete')" title="Excluir"><i
+                                    class="ti ti-trash"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Opponent Scouts -->
+                    <div
+                        style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color);">
+                        <h3
+                            style="font-size: 15px; margin-bottom: 16px; color: var(--red); display: flex; align-items: center; gap: 8px;">
+                            <i class="ti ti-swords"></i> Scouts: AdversÃ¡rios
+                        </h3>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <select id="selectOpponentScouts" class="form-control" style="flex: 1;">
+                                <option value="">Nenhum scout de adversÃ¡rio encontrado</option>
+                            </select>
+                            <button class="btn btn-primary"
+                                onclick="window.actionSelectedScout('opponent', 'open')">Abrir</button>
+                            <button class="btn btn-outline" onclick="window.actionSelectedScout('opponent', 'edit')"
+                                title="Editar (Carregar no Painel)"><i class="ti ti-edit"></i></button>
+                            <button class="btn btn-icon btn-danger"
+                                onclick="window.actionSelectedScout('opponent', 'delete')" title="Excluir"><i
+                                    class="ti ti-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scout-video-grid">
+                <!-- Left Column: Video & Settings -->
+                <div class="scout-left-col">
+
+                    <!-- Video Container -->
+                    <div class="video-section card">
+                        <!-- Controls for loading video -->
+                        <div class="video-loader" id="youtubeLoader" style="display: none;">
+                            <input type="text" id="youtubeLink" class="form-control"
+                                placeholder="Cole o link do YouTube aqui...">
+                            <button class="btn btn-primary" id="btnLoadYoutube">Carregar</button>
+                        </div>
+                        <div class="video-loader" id="localLoader">
+                            <input type="file" id="localVideoFile" class="form-control" accept="video/*">
+                        </div>
+
+                        <!-- Player Container -->
+                        <div class="player-wrapper">
+                            <!-- Youtube Error Overlay -->
+                            <div id="youtubeErrorOverlay" class="youtube-error-overlay" style="display: none;">
+                                <i class="ti ti-alert-triangle"
+                                    style="font-size: 48px; color: #ff4444; margin-bottom: 16px;"></i>
+                                <h4 style="color: white; margin: 0 0 12px 0; font-size: 18px;">VÃ­deo Bloqueado pelo
+                                    YouTube</h4>
+                                <p
+                                    style="color: var(--text-muted); font-size: 14px; text-align: center; max-width: 85%; line-height: 1.5; margin: 0;">
+                                    O dono deste vÃ­deo (ex: canais oficiais) nÃ£o permite que ele seja reproduzido fora
+                                    do site do YouTube.<br><br>
+                                    <strong style="color: white;">SoluÃ§Ã£o:</strong> Use outro vÃ­deo ou baixe este para o
+                                    seu computador e clique em <b>"Arquivo Local"</b> acima.
+                                </p>
+                            </div>
+
+                            <div id="youtubePlayer" style="display: none;"></div>
+                            <video id="localPlayer" controls
+                                style="width: 100%; height: 100%; object-fit: contain;"></video>
+                        </div>
+
+                        <!-- Real-time Status -->
+                        <div class="video-status">
+                            <span class="status-badge"><i class="ti ti-clock"></i> Tempo Atual: <strong
+                                    id="currentTimeDisplay">00:00</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Custom Techniques -->
+                    <div class="techniques-section card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 style="margin: 0;"><i class="ti ti-list"></i> Minhas TÃ©cnicas</h3>
+                            <span style="font-size: 12px; color: var(--text-muted);">Adicione suas nomenclaturas para o
+                                scout</span>
+                        </div>
+
+                        <div class="add-technique-flex">
+                            <input type="text" id="newTechniqueName" class="form-control"
+                                placeholder="Ex: Bandal, Neryo, Soco...">
+                            <button class="btn btn-primary" id="btnAddTechnique" style="padding: 0 16px;"><i
+                                    class="ti ti-plus"></i></button>
+                        </div>
+                        <div class="tags-container" id="techniquesList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Middle Column: Quick Marking Panel -->
+                <div class="scout-middle-col"
+                    style="position: relative; display: flex; flex-direction: column; max-height: calc(100vh - 120px);">
+
+                    <!-- ConfiguraÃ§Ãµes da Luta -->
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+                            <h3 style="margin: 0;">
+                                <i class="ti ti-settings"></i> ConfiguraÃ§Ãµes da Luta
+                            </h3>
+                            <button id="toggleConfigBtn" class="btn btn-icon"
+                                style="width: 28px; height: 28px; border: none; background: rgba(255,255,255,0.05);">
+                                <i class="ti ti-chevron-up"></i>
+                            </button>
+                        </div>
+
+                        <div id="configLutaContent" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Atleta em Foco (Scout de quem?)</label>
+                                <select class="form-control" id="scoutAtleta" required
+                                    onchange="toggleOpponentNameInput()">
+                                    <option value="">Selecione o atleta da equipe...</option>
+                                    <option value="adversario">--- PossÃ­vel AdversÃ¡rio ---</option>
+                                    <!-- Populated via JS with team athletes -->
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="opponentNameGroup" style="grid-column: span 2; display: none;">
+                                <label>Nome do AdversÃ¡rio</label>
+                                <input type="text" class="form-control" id="opponentNameInput"
+                                    placeholder="Digite o nome do adversÃ¡rio" />
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Nome do Evento / CompetiÃ§Ã£o</label>
+                                <input type="text" class="form-control" id="scoutEvento"
+                                    placeholder="Ex: Campeonato Paulista" required>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>Resultado Final da Luta</label>
+                                <select class="form-control" id="scoutLutaResult">
+                                    <option value="">NÃ£o finalizada / Em andamento</option>
+                                    <option value="vitoria">VitÃ³ria</option>
+                                    <option value="derrota">Derrota</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2; margin-top: 8px;">
+                                <button type="button" class="btn btn-primary" id="btnSaveConfigLuta"
+                                    style="width: 100%; justify-content: center; padding: 10px;">
+                                    <i class="ti ti-device-floppy"></i> Salvar ConfiguraÃ§Ãµes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card"
+                        style="display: flex; flex-direction: column; flex: 1; overflow: hidden; min-height: 0;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; flex-shrink: 0;">
+                            <h3 style="margin: 0;">
+                                <i class="ti ti-bolt"></i> Painel RÃ¡pido
+                            </h3>
+                            <div class="badge"
+                                style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 6px 12px; font-size: 13px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                                <i class="ti ti-flag" style="margin-right: 4px;"></i> Round Atual: <strong
+                                    id="currentRoundDisplay">1</strong>
+                            </div>
+                        </div>
+
+                        <div class="scout-groups-wrapper" style="overflow-y: auto; flex: 1; padding-right: 8px;">
+
+                            <!-- AÃ§Ã£o Principal -->
+                            <div class="scout-group">
+                                <div class="scout-label">AÃ§Ã£o Principal</div>
+                                <div class="scout-options group-4">
+                                    <button class="scout-opt-btn act-principal" data-val="Ataque Feito"
+                                        data-group="acao">Ataque Feito</button>
+                                    <button class="scout-opt-btn act-principal" data-val="Ataque Sofrido"
+                                        data-group="acao">Ataque Sofrido</button>
+                                    <button class="scout-opt-btn act-principal" data-val="Falta Feita"
+                                        data-group="acao">Falta Feita</button>
+                                    <button class="scout-opt-btn act-principal" data-val="Falta Sofrida"
+                                        data-group="acao">Falta Sofrida</button>
+                                </div>
+                            </div>
+
+                            <!-- Resultado -->
+                            <div class="scout-group">
+                                <div class="scout-label">Resultado</div>
+                                <div class="scout-options group-2">
+                                    <button class="scout-opt-btn act-resultado" data-val="Com ponto"
+                                        data-group="resultado" style="--btn-color: var(--green);">Com Ponto</button>
+                                    <button class="scout-opt-btn act-resultado" data-val="Sem ponto"
+                                        data-group="resultado" style="--btn-color: var(--text-muted);">Sem
+                                        Ponto</button>
+                                </div>
+                            </div>
+
+                            <!-- Detalhes FÃ­sicos (2x2 grid) -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <div class="scout-group" style="grid-column: span 2;">
+                                    <div class="scout-label">Alvo principal</div>
+                                    <div class="scout-options group-2">
+                                        <button class="scout-opt-btn act-alvo" data-val="Colete"
+                                            data-group="alvo">Colete</button>
+                                        <button class="scout-opt-btn act-alvo" data-val="Capacete"
+                                            data-group="alvo">Capacete</button>
+                                    </div>
+                                    <!-- Sub opÃ§Ãµes Alvo -->
+                                    <div id="subAlvoContainer"
+                                        style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Sub-alvo
+                                        </div>
+                                        <div class="scout-options" id="subAlvoOptions"
+                                            style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                            <!-- Sub options rendered via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="scout-group">
+                                    <div class="scout-label">Perna</div>
+                                    <div class="scout-options group-2">
+                                        <button class="scout-opt-btn act-perna" data-val="Direita"
+                                            data-group="perna">Direita</button>
+                                        <button class="scout-opt-btn act-perna" data-val="Esquerda"
+                                            data-group="perna">Esquerda</button>
+                                    </div>
+                                    <!-- Sub opÃ§Ãµes Perna -->
+                                    <div id="subPernaContainer"
+                                        style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Detalhe da
+                                            Perna</div>
+                                        <div class="scout-options" id="subPernaOptions"
+                                            style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                            <!-- Sub options rendered via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="scout-group">
+                                    <div class="scout-label">Base</div>
+                                    <div class="scout-options group-2">
+                                        <button class="scout-opt-btn act-base" data-val="Aberta"
+                                            data-group="base">Aberta</button>
+                                        <button class="scout-opt-btn act-base" data-val="Fechada"
+                                            data-group="base">Fechada</button>
+                                    </div>
+                                </div>
+
+                                <div class="scout-group" style="grid-column: span 2;">
+                                    <div class="scout-label">LocalizaÃ§Ã£o da Quadra</div>
+                                    <div class="scout-options group-2"
+                                        style="display: grid; grid-template-columns: 1fr 1fr;">
+                                        <button class="scout-opt-btn act-local" data-val="Meio"
+                                            data-group="local">Meio</button>
+                                        <button class="scout-opt-btn act-local" data-val="No Canto" data-group="local"
+                                            style="font-size: 13px;">No Canto</button>
+                                    </div>
+                                    <!-- Sub opÃ§Ãµes LocalizaÃ§Ã£o -->
+                                    <div id="subLocalContainer"
+                                        style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Detalhe da
+                                            posiÃ§Ã£o</div>
+                                        <div class="scout-options" id="subLocalOptions"
+                                            style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                            <!-- Sub options rendered via JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- TÃ©cnica e Tempo -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <div class="scout-group" style="grid-column: span 2;">
+                                    <div class="scout-label">TÃ©cnica</div>
+                                    <div class="scout-options" id="techniquesGrid"
+                                        style="display: flex; flex-wrap: wrap; gap: 6px;">
+                                        <!-- BotÃµes de tÃ©cnicas renderizados via JS dinamicamente -->
+                                    </div>
+                                </div>
+                                <div class="scout-group" style="padding: 8px 12px;">
+                                    <div class="scout-label">ObservaÃ§Ã£o (Opc. )</div>
+                                    <input type="text" id="obsTecnica" class="form-control"
+                                        placeholder="Nota da tÃ©cnica..."
+                                        style="font-size: 12px; padding: 6px 10px; background: rgba(0,0,0,0.2);">
+                                </div>
+                                <!-- Tempo do Evento -->
+                                <div class="scout-group" style="padding: 8px 12px;">
+                                    <div class="scout-label">Tempo do Evento</div>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <i class="ti ti-clock" style="color: var(--text-muted);"></i>
+                                        <input type="text" id="manualTimeInput" class="form-control"
+                                            placeholder="Ex: 01:23 ou 45"
+                                            style="font-size: 12px; padding: 6px 10px; background: rgba(0,0,0,0.2); width: 100%;">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div> <!-- End scout-groups-wrapper -->
+
+                        <!-- Bottom Register Bar -->
+                        <div class="register-bar"
+                            style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                            <div class="summary-preview" id="currentSummary">Nenhuma aÃ§Ã£o selecionada...</div>
+                            <button class="btn btn-primary" id="btnRegisterEvent"
+                                style="width: 100%; justify-content: center; padding: 12px; font-weight: 600;" disabled>
+                                <i class="ti ti-checkups"></i> Registrar Evento
+                            </button>
+                        </div>
+                    </div> <!-- End card Painel RÃ¡pido -->
+                </div> <!-- End scout-middle-col -->
+
+                <!-- Right Column: Timeline -->
+                <div class="scout-right-col card timeline-card">
+                    <div class="timeline-header">
+                        <h3 style="margin: 0;"><i class="ti ti-history"></i> Timeline</h3>
+                        <div class="badge-count" id="eventCount">0</div>
+                    </div>
+                    <div class="timeline-list" id="timelineList" style="margin-bottom: 16px;">
+                        <!-- Events populated by JS -->
+                        <div class="empty-state">
+                            <i class="ti ti-timeline"></i>
+                            <p>Nenhum evento registrado ainda.</p>
+                            <p style="font-size: 11px;">Comece a adicionar aÃ§Ãµes no painel central.</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="btnEndRound"
+                        style="width: 100%; justify-content: center; padding: 10px; font-weight: 600; margin-bottom: 12px;">
+                        <i class="ti ti-flag-3"></i> Concluir Round Atual
+                    </button>
+                    <button class="btn btn-success" id="btnSaveScoutSession"
+                        style="width: 100%; justify-content: center; padding: 12px; font-weight: 600;">
+                        <i class="ti ti-device-floppy"></i> Finalizar EscalaÃ§Ã£o (Salvar Luta)
+                    </button>
+                    <button class="btn btn-danger" id="btnCancelEdit"
+                        style="display: none; width: 100%; justify-content: center; padding: 10px; font-weight: 600; margin-top: 8px;">
+                        <i class="ti ti-x"></i> Cancelar EdiÃ§Ã£o
+                    </button>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal AvaliaÃ§Ã£o Subjetiva do Treinador -->
+    <div class="modal-overlay" id="modalAvaliacaoTreinador">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="ti ti-star"></i> AvaliaÃ§Ã£o do Treinador</h2>
+                <button class="btn-close" onclick="closeModalAvaliacao()"><i class="ti ti-x"></i></button>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+                DÃª uma nota de 0 a 10 para o desempenho do atleta nesta luta especÃ­fica.
+            </p>
+
+            <form id="formAvaliacaoTreinador" onsubmit="confirmSaveWithAssessment(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label>Velocidade (0-10)</label>
+                        <input type="number" name="velocidade" class="form-control" min="0" max="10" step="0.5"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>ForÃ§a (0-10)</label>
+                        <input type="number" name="forca" class="form-control" min="0" max="10" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>InteligÃªncia TÃ¡tica (0-10)</label>
+                        <input type="number" name="tatica" class="form-control" min="0" max="10" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Defesa (0-10)</label>
+                        <input type="number" name="defesa" class="form-control" min="0" max="10" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>VariaÃ§Ã£o TÃ©cnica (0-10)</label>
+                        <input type="number" name="variacao" class="form-control" min="0" max="10" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>PrecisÃ£o (0-10)</label>
+                        <input type="number" name="precisao" class="form-control" min="0" max="10" step="0.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ObediÃªncia (0-10)</label>
+                        <input type="number" name="obediencia" class="form-control" min="0" max="10" step="0.5"
+                            required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
+                    <button type="button" class="btn" onclick="closeModalAvaliacao()">Pular / Cancelar</button>
+                    <button type="submit" class="btn btn-primary"
+                        style="background: var(--green); border-color: var(--green);">
+                        <i class="ti ti-device-floppy"></i> Finalizar e Salvar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="js/scout-video.js"></script>
+</body>
+
+</html>
+

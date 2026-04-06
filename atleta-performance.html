@@ -1,0 +1,1522 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | Performance do Atleta</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        .profile-header-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg-dark);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-main-info h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .profile-main-info .belt-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .btn-header-action {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            background: rgba(65, 105, 225, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(65, 105, 225, 0.2);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-header-action:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .performance-grid-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .detail-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-card h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 16px;
+            row-gap: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 14px;
+        }
+
+        .info-row.full {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-weight: 500;
+        }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .timeline-item {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .timeline-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .timeline-item.ouro {
+            border-left-color: #FFD700;
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.05) 0%, transparent 100%);
+        }
+
+        .timeline-item.prata {
+            border-left-color: #C0C0C0;
+            background: linear-gradient(90deg, rgba(192, 192, 192, 0.05) 0%, transparent 100%);
+        }
+
+        .timeline-item.bronze {
+            border-left-color: #CD7F32;
+            background: linear-gradient(90deg, rgba(205, 127, 50, 0.05) 0%, transparent 100%);
+        }
+
+        .timeline-item.agendado {
+            border-left-color: var(--primary);
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .timeline-medal {
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-container-large {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        .chart-container-radar {
+            width: 100%;
+            height: 280px;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+            <nav class="nav-menu" id="navMenuContainer">
+                <!-- Renderizado via JS (renderSidebar) -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div style="margin-bottom: 24px;">
+                <a href="dashboard-turma-dados.html"
+                    style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                    <i class="ti ti-arrow-left"></i> Voltar para Dados da Equipe
+                </a>
+            </div>
+
+            <div class="profile-header-card">
+                <img src="https://i.pravatar.cc/150" alt="Avatar" class="profile-avatar-large" id="displayPic">
+                <div class="profile-main-info" style="flex: 1;">
+                    <h1 id="displayNome">Atleta</h1>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+                        <div class="belt-tag" id="displayFaixa" style="margin-bottom: 0;">Faixa</div>
+                        <span style="color: var(--text-muted); font-size: 14px;" id="displaySubInfo">Equipe de
+                            CompetiÃ§Ã£o</span>
+                    </div>
+
+                    <!-- Moved Info Grid into Header -->
+                    <div class="info-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px;">
+                        <!-- Coluna 1 -->
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div class="info-row">
+                                <span class="info-label">Idade</span>
+                                <span class="info-value" id="displayIdade">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Data de Nascimento</span>
+                                <span class="info-value" id="displayNasc">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 2 -->
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div class="info-row">
+                                <span class="info-label">Cat. Idade</span>
+                                <span class="info-value" id="displayCatIdade">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Cat. Peso</span>
+                                <span class="info-value" id="displayCatPeso"
+                                    style="color: var(--primary); font-weight: 700;">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 3 -->
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div class="info-row">
+                                <span class="info-label">CPF</span>
+                                <span class="info-value" id="displayCPF">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">RG</span>
+                                <span class="info-value" id="displayRG">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 4 -->
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div class="info-row">
+                                <span class="info-label">Telefone</span>
+                                <span class="info-value" id="displayContato">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Email</span>
+                                <span class="info-value" id="displayEmail">--</span>
+                            </div>
+                        </div>
+
+                        <div class="info-row" id="rowSaude" style="grid-column: span 4; margin-top: 8px;">
+                            <span class="info-label" style="color: var(--red);">Obs MÃ©dica</span>
+                            <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
+                                registrada</span>
+                        </div>
+                        <div style="display: none;">
+                            <span id="displayMatricula"></span>
+                            <span id="displayInfFaixa"></span>
+                            <span id="displayIdadeNasc"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="position: absolute; top: 32px; right: 32px; display: flex; gap: 8px;">
+                    <button class="btn btn-primary" onclick="openModalEdit()"
+                        style="padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 8px;">
+                        <i class="ti ti-edit"></i> Editar Dados
+                    </button>
+                    <button class="btn-header-action" onclick="window.location.href='scout-video.html'"
+                        style="position: static;">
+                        <i class="ti ti-plus"></i> LanÃ§ar Scout
+                    </button>
+                </div>
+            </div>
+
+            <div class="performance-grid-details">
+                <!-- COLUNA 1 (Radar e Scout) -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div class="detail-card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
+                            <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-radar"></i> Radar TÃ¡tico
+                            </h3>
+                            <select id="selectRadarSource" class="form-control"
+                                style="width: 150px; padding: 4px 8px; font-size: 13px;" onchange="buildRadarChart()">
+                                <option value="media">MÃ©dia (Todos)</option>
+                            </select>
+                        </div>
+                        <div class="chart-container-radar" style="flex: 1;">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="detail-card" style="flex: 1;">
+                        <h3><i class="ti ti-video"></i> AnÃ¡lises de Lutas (Scout)</h3>
+                        <div class="timeline" id="timelineScouts" style="flex: 1;">
+                            <div
+                                style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
+                                Nenhuma anÃ¡lise registrada.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUNA 2 (Bem-Estar) -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div class="detail-card" style="flex: 1;">
+                        <h3><i class="ti ti-heart-rate-monitor"></i> Ãšltimo Bem-Estar</h3>
+                        <div id="alertArea"
+                            style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
+                            <div
+                                style="padding: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color); text-align: center; color: var(--text-muted);">
+                                Analisando dados do atleta...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUNA 3 (CompetiÃ§Ãµes Alvo e Passadas + Carga DiÃ¡ria) -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div class="detail-card" style="flex: 1;">
+                        <h3><i class="ti ti-activity-heartbeat"></i> Ãšltima Carga DiÃ¡ria</h3>
+                        <div id="cargaArea"
+                            style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
+                            <div
+                                style="padding: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px dashed var(--border-color); text-align: center; color: var(--text-muted);">
+                                Buscando dados...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-card" style="flex: 1;">
+                        <h3><i class="ti ti-flag"></i> PrÃ³xima CompetiÃ§Ã£o (Alvo)</h3>
+                        <div class="timeline" id="timelineProxima" style="flex: 1;">
+                            <div
+                                style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
+                                Nenhuma competiÃ§Ã£o agendada.</div>
+                        </div>
+                    </div>
+
+                    <div class="detail-card" style="flex: 1;">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                            <h3 style="border:none; margin:0; padding:0;"><i class="ti ti-medal"></i> Ãšltimas
+                                CompetiÃ§Ãµes</h3>
+                            <div id="medalCounter"
+                                style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px;">
+                                <span style="display:inline-flex;align-items:center;gap:4px;color:#FFD700;"><i
+                                        class="ti ti-medal"></i><span id="cntOuro">0</span></span>
+                                <span style="display:inline-flex;align-items:center;gap:4px;color:#C0C0C0;"><i
+                                        class="ti ti-medal"></i><span id="cntPrata">0</span></span>
+                                <span style="display:inline-flex;align-items:center;gap:4px;color:#CD7F32;"><i
+                                        class="ti ti-medal"></i><span id="cntBronze">0</span></span>
+                                <span style="font-size:11px;color:var(--text-muted);">Total: <span
+                                        id="cntTotal">0</span></span>
+                            </div>
+                        </div>
+                        <div class="timeline" id="timelineCompeticoes" style="flex: 1;">
+                            <div
+                                style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
+                                Nenhuma competiÃ§Ã£o registrada.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINHA 3 (Base - GrÃ¡ficos Span) -->
+                <div class="detail-card" style="grid-column: 1 / -1;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+                        <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-chart-bar"></i> GrÃ¡ficos de
+                            Monitoramento</h3>
+
+                        <div class="comparison-controls" style="display: flex; gap: 12px; align-items: center;">
+                            <div>
+                                <span class="selector-label"
+                                    style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Dado:</span>
+                                <select id="selectDataSource" class="form-control" style="width: 180px;"
+                                    onchange="handleDataSourceChange()">
+                                    <option value="wellness">Bem-Estar (Wellness)</option>
+                                    <option value="pse">PSE (EsforÃ§o)</option>
+                                    <option value="carga">Carga de Treino</option>
+                                    <option value="scouts">Scouts de Lutas</option>
+                                    <option value="periodizacao">PeriodizaÃ§Ã£o</option>
+                                    <option value="questionarios">QuestionÃ¡rios</option>
+                                </select>
+                            </div>
+                            <div id="subSourceContainer" style="display: none;">
+                                <span class="selector-label"
+                                    style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Qual:</span>
+                                <select id="selectSubSource" class="form-control" style="width: 180px;"
+                                    onchange="updateDynamicCharts()">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-grid" id="dynamicChartsGrid"
+                        style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+                        <div class="chart-box"
+                            style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <h4 id="titleChart1"
+                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
+                                GrÃ¡fico 1</h4>
+                            <div style="flex: 1; min-height: 200px; position: relative;">
+                                <canvas id="dynamicChart1"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-box"
+                            style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <h4 id="titleChart2"
+                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
+                                GrÃ¡fico 2</h4>
+                            <div style="flex: 1; min-height: 200px; position: relative;">
+                                <canvas id="dynamicChart2"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-box"
+                            style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column;">
+                            <h4 id="titleChart3"
+                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
+                                GrÃ¡fico 3</h4>
+                            <div style="flex: 1; min-height: 200px; position: relative;">
+                                <canvas id="dynamicChart3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Editar Perfil -->
+    <div class="modal-overlay" id="modalEditPerfil">
+        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Dados do Atleta</h2>
+                <button class="btn-close" onclick="closeModalEdit()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <form onsubmit="savePerfil(event)" id="formEditPerfil">
+                <h4 style="font-size: 14px; margin-bottom: 16px; color: var(--primary);">1. Dados Pessoais</h4>
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" class="form-control" name="nomeAluno" required>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de Nascimento</label>
+                        <input type="date" class="form-control" name="nascAluno" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Telefone Contato</label>
+                        <input type="text" class="form-control" name="telAluno" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>CPF</label>
+                        <input type="text" class="form-control" name="cpfAluno" placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>E-mail</label>
+                        <input type="email" class="form-control" name="emailAluno" placeholder="email@exemplo.com">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>RG</label>
+                        <input type="text" class="form-control" name="rgAluno" placeholder="00.000.000-X">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Sexo</label>
+                        <select class="form-control" name="sexoAluno">
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;" id="editRowCat">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Cat. Peso</label>
+                        <select class="form-control" name="pesoAluno">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Cat. Idade</label>
+                        <select class="form-control" name="catIdadeAluno">
+                            <option value="">Nenhuma</option>
+                            <option value="Infantil">Infantil</option>
+                            <option value="Cadete">Cadete</option>
+                            <option value="Juvenil">Juvenil</option>
+                            <option value="Sub21">Sub-21</option>
+                            <option value="Adulto">Adulto</option>
+                            <option value="Master 1">Master 1</option>
+                            <option value="Poomsae">Poomsae</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ObservaÃ§Ãµes MÃ©dicas</label>
+                    <input type="text" class="form-control" name="obsAluno" placeholder="Alergias, lesÃµes..." value="">
+                </div>
+                <div class="form-group">
+                    <label>Cor da Faixa</label>
+                    <select class="form-control" name="faixaAluno" required>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto de Perfil (Nova Foto do Computador)</label>
+                    <input type="file" class="form-control" name="fotoAluno" accept="image/*"
+                        onchange="handleFotoUploadPerfil(event)" style="padding: 9px 16px;">
+                    <div id="fotoPreviewContainer"
+                        style="margin-top: 10px; display: none; align-items: center; gap: 12px;">
+                        <img id="fotoPreview" src=""
+                            style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
+                        <span style="font-size: 13px; color: var(--green);"><i class="ti ti-check"></i> Foto
+                            ajustada</span>
+                    </div>
+                </div>
+
+                <div class="form-group"
+                    style="margin-top: 8px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <label style="display:flex;align-items:center;gap:6px;">
+                        <i class="ti ti-lock" style="color:var(--primary);font-size:14px;"></i>
+                        PIN de Acesso do Portal (4 dÃ­gitos)
+                    </label>
+                    <input type="text" class="form-control" name="pinAtleta" placeholder="Ex: 1234" maxlength="4"
+                        pattern="[0-9]{4}" inputmode="numeric"
+                        style="letter-spacing: 8px; font-size: 20px; font-weight: 700;">
+                    <small style="font-size:11px;color:var(--text-muted);margin-top:4px;">Deixe em branco para manter o
+                        PIN atual. O atleta usa este PIN para acessar o seu portal mobile.</small>
+                </div>
+
+                <div
+                    style="display: flex; gap: 12px; margin-top: 32px; justify-content: flex-end; align-items: center;">
+                    <button type="button" class="btn" onclick="closeModalEdit()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-edit-profile">Salvar AlteraÃ§Ãµes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Cropper Global (mesmo usado nas outras telas) -->
+    <div class="modal-overlay" id="modalCropper">
+        <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <div class="modal-header">
+                <h2 class="modal-title">Ajustar Foto</h2>
+                <button class="btn-close" onclick="closeGlobalCropper()"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="cropper-container" style="max-height: 400px; margin-bottom: 20px;">
+                <img id="cropperImage" src="" style="max-width: 100%;">
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="btn" onclick="closeGlobalCropper()">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmGlobalCropper()">Cortar e Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Chart Objects
+        let radarChartObj = null;
+        let dynamicCharts = { chart1: null, chart2: null, chart3: null };
+
+        let currentAlunoId = localStorage.getItem('tkd_view_aluno_id');
+        let alunoData = null;
+
+        function getTurmaName(id) {
+            const t = db.turmas.find(t => t.id === id);
+            return t ? t.nome : 'Desconhecida';
+        }
+
+        function loadProfile() {
+            if (!currentAlunoId) {
+                alert("Nenhum atleta selecionado.");
+                window.location.href = 'dashboard-turma-dados.html';
+                return;
+            }
+
+            alunoData = db.alunos.find(a => a.id == currentAlunoId);
+            if (!alunoData) {
+                alert("Atleta nÃ£o encontrado na base de dados.");
+                window.location.href = 'dashboard-turma-dados.html';
+                return;
+            }
+
+            const idade = calcularIdade(alunoData.dataNascimento);
+            const arrNasc = alunoData.dataNascimento.split('-');
+            const strNasc = `${arrNasc[2]}/${arrNasc[1]}/${arrNasc[0]}`;
+
+            // Populate View Info
+            document.getElementById('displayPic').src = alunoData.avatar;
+            document.getElementById('displayNome').innerText = alunoData.nome;
+
+            let faixaDisplay = alunoData.faixa;
+            if (faixaDisplay === '1Âº DAN (Preta)') {
+                faixaDisplay = 'Faixa preta 1Â° DAN';
+            }
+            document.getElementById('displayFaixa').innerText = faixaDisplay;
+
+            // document.getElementById('displaySubInfo').innerHTML = `Equipe: ${getTurmaName(alunoData.turmaId)}`;
+
+            if (document.getElementById('displayIdade')) document.getElementById('displayIdade').innerText = `${idade} anos`;
+            if (document.getElementById('displayNasc')) document.getElementById('displayNasc').innerText = strNasc;
+            if (document.getElementById('displayIdadeNasc')) document.getElementById('displayIdadeNasc').innerText = `${idade} anos (${strNasc})`; // Fallback
+            document.getElementById('displayContato').innerText = alunoData.contato || 'NÃ£o informado';
+            if (document.getElementById('displayEmail')) document.getElementById('displayEmail').innerText = alunoData.email || 'NÃ£o informado';
+            if (document.getElementById('displayMatricula')) document.getElementById('displayMatricula').innerText = formatarDataBR(alunoData.matricula);
+            if (document.getElementById('displayInfFaixa')) document.getElementById('displayInfFaixa').innerText = alunoData.faixa;
+
+            document.getElementById('displayCPF').innerText = alunoData.cpf || 'NÃ£o informado';
+            document.getElementById('displayRG').innerText = alunoData.rg || 'NÃ£o informado';
+            document.getElementById('displayCatIdade').innerText = alunoData.categoriaIdade || 'NÃ£o informado';
+            const lastWellness = (db.wellnessLogs || []).filter(w => w.atletaId == currentAlunoId).sort((a, b) => b.id - a.id)[0];
+            const pesoReportado = lastWellness ? lastWellness.pesoAtual : null;
+
+            document.getElementById('displayCatPeso').innerHTML = `${alunoData.categoriaPeso || 'NÃ£o informado'} ${pesoReportado ? `<span style="color: var(--primary); font-weight: normal; font-size: 0.9em; margin-left: 4px;">(${pesoReportado}kg)</span>` : '<span style="color: var(--text-muted); font-size: 0.8em; margin-left: 4px;">(Peso: NÃ£o informado)</span>'}`;
+
+            if (alunoData.obs) {
+                document.getElementById('displaySaude').innerText = alunoData.obs;
+                document.getElementById('displaySaude').style.color = "var(--red)";
+                if (document.getElementById('rowSaude')) document.getElementById('rowSaude').style.display = 'flex';
+            } else {
+                if (document.getElementById('rowSaude')) {
+                    document.getElementById('rowSaude').style.display = 'none';
+                } else {
+                    document.getElementById('displaySaude').innerText = "Nenhuma";
+                    document.getElementById('displaySaude').style.color = "var(--text-muted)";
+                }
+            }
+
+            buildTimeline();
+            populateRadarSelect();
+            buildRadarChart();
+            updateDynamicCharts();
+            buildAlerts();
+            buildCargaDiaria();
+        }
+
+        function populateRadarSelect() {
+            const sel = document.getElementById('selectRadarSource');
+            if (!sel) return;
+            sel.innerHTML = '<option value="media">MÃ©dia (Todos)</option>';
+            const athleteScouts = (db.lutasScout || []).filter(s => s.atletaId == currentAlunoId && s.avaliacaoTreinador);
+            athleteScouts.sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro)).forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                const d = new Date(s.dataRegistro);
+                opt.text = `${s.evento} (${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()})`;
+                sel.appendChild(opt);
+            });
+        }
+
+        function buildTimeline() {
+            const tlProxima = document.getElementById('timelineProxima');
+            const tlContainer = document.getElementById('timelineCompeticoes');
+            const tlScouts = document.getElementById('timelineScouts');
+
+            let allComps = [];
+            // Legado: db.competicoes
+            (db.competicoes || []).filter(c => c.atletaId == currentAlunoId).forEach(c => allComps.push(c));
+
+            // Novo: db.eventos do calendÃ¡rio
+            (db.eventos || []).forEach(e => {
+                if (e.tipo === 'CompetiÃ§Ã£o' || e.tipo === 'Evento') {
+                    const part = (e.participantes || []).find(p => p.atletaId == currentAlunoId);
+                    if (part || e.turmaId == 'todas' || e.turmaId == alunoData.turmaId || !e.turmaId) {
+                        allComps.push({
+                            id: 'ev_' + e.id,
+                            data: e.data,
+                            nomeEvento: e.titulo,
+                            colocacao: part ? part.colocacao : '',
+                            categoria: ''
+                        });
+                    }
+                }
+            });
+
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+
+            const pastComps = allComps.filter(c => new Date(c.data) < now).sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 5);
+            const futureComps = allComps.filter(c => new Date(c.data) >= now).sort((a, b) => new Date(a.data) - new Date(b.data)).slice(0, 5);
+
+            const getMedalColor = (resultado) => {
+                if (!resultado) return 'var(--text-muted)';
+                const res = String(resultado).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (res === 'ouro') return '#FFD700';
+                if (res === 'prata') return '#C0C0C0';
+                if (res === 'bronze') return '#CD7F32';
+                return 'var(--primary)';
+            };
+
+            const renderComps = (compsArray, container) => {
+                if (!container) return;
+                if (compsArray.length === 0) {
+                    container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma competiÃ§Ã£o ' + (container.id === 'timelineProxima' ? 'agendada.' : 'registrada.') + '</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                compsArray.forEach(c => {
+                    const item = document.createElement('div');
+                    const clss = c.colocacao ? String(c.colocacao).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : 'agendado';
+                    item.className = `timeline-item ${clss}`;
+
+                    item.innerHTML = `
+                        <div class="timeline-date">${formatarDataBR(c.data)} ${c.categoria ? 'â€¢ ' + c.categoria : ''}</div>
+                        <div class="timeline-title">${c.titulo || c.nomeEvento}</div>
+                        ${c.colocacao ? `<div class="timeline-medal"><i class="ti ${container.id === 'timelineProxima' ? 'ti-calendar-event' : 'ti-medal'}" style="color: ${getMedalColor(c.colocacao)}"></i> ${String(c.colocacao).toUpperCase()}</div>` : `<div class="timeline-medal"><i class="ti ti-calendar-event" style="color: var(--primary);"></i> Alvo SecundÃ¡rio</div>`}
+                    `;
+                    container.appendChild(item);
+                });
+            };
+
+            const renderMedals = (compsArray, container) => {
+                if (!container) return;
+
+                // Filtra todas as competiÃ§Ãµes que o atleta participou e teve colocaÃ§Ã£o Ouro, Prata ou Bronze, mesmo histÃ³ricas
+                // Aqui podemos olhar pra todos os db.eventos de competiÃ§Ã£o ou o db.competicoes legado
+                let allMedals = [];
+                (db.competicoes || []).filter(c => c.atletaId == currentAlunoId && c.colocacao && ['ouro', 'prata', 'bronze'].includes(String(c.colocacao).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))).forEach(c => allMedals.push(c));
+
+                (db.eventos || []).filter(e => e.tipo === 'CompetiÃ§Ã£o' || e.tipo === 'Evento').forEach(e => {
+                    const part = (e.participantes || []).find(p => p.atletaId == currentAlunoId && p.colocacao && ['ouro', 'prata', 'bronze'].includes(String(p.colocacao).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
+                    if (part) {
+                        allMedals.push({
+                            id: 'ev_' + e.id,
+                            data: e.data,
+                            nomeEvento: e.titulo,
+                            colocacao: part.colocacao,
+                            categoria: ''
+                        });
+                    }
+                });
+
+                // Ordena as medalhas pela data (mais recente primeiro) e pega as Ãºltimas 5.
+                const recentMedals = allMedals.sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 5);
+
+                if (recentMedals.length === 0) {
+                    container.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma medalha recente encontrada.</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                recentMedals.forEach(c => {
+                    const item = document.createElement('div');
+                    const clss = String(c.colocacao).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    item.className = `timeline-item ${clss}`;
+                    item.innerHTML = `
+                        <div class="timeline-title">${c.titulo || c.nomeEvento}</div>
+                        <div class="timeline-date" style="margin-top: 4px; margin-bottom: 0;">${formatarDataBR(c.data)}</div>
+                        <div class="timeline-medal"><i class="ti ti-medal" style="color: ${getMedalColor(c.colocacao)}"></i> ${String(c.colocacao).toUpperCase()}</div>
+                    `;
+                    container.appendChild(item);
+                });
+            };
+
+            renderComps(futureComps, tlProxima);
+            renderComps(pastComps, tlContainer);
+            renderMedals(pastComps, document.getElementById('timelineMedalhas'));
+
+            // â”€â”€ Atualiza o contador de medalhas no topo do card â”€â”€
+            const medalColocacoes = ['ouro', 'prata', 'bronze'];
+            let cOuro = 0, cPrata = 0, cBronze = 0;
+
+            (db.competicoes || []).filter(c => c.atletaId == currentAlunoId).forEach(c => {
+                const col = String(c.colocacao || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                if (col === 'ouro') cOuro++;
+                else if (col === 'prata') cPrata++;
+                else if (col === 'bronze') cBronze++;
+            });
+            (db.eventos || []).forEach(ev => {
+                const part = (ev.participantes || []).find(p => p.atletaId == currentAlunoId);
+                if (!part) return;
+                const col = String(part.colocacao || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                if (col === 'ouro') cOuro++;
+                else if (col === 'prata') cPrata++;
+                else if (col === 'bronze') cBronze++;
+            });
+
+            const cTotal = cOuro + cPrata + cBronze;
+            const elOuro = document.getElementById('cntOuro');
+            const elPrata = document.getElementById('cntPrata');
+            const elBronze = document.getElementById('cntBronze');
+            const elTotal = document.getElementById('cntTotal');
+            if (elOuro) elOuro.textContent = cOuro;
+            if (elPrata) elPrata.textContent = cPrata;
+            if (elBronze) elBronze.textContent = cBronze;
+            if (elTotal) elTotal.textContent = cTotal;
+
+            // Render Scouts
+            if (tlScouts) {
+                const athleteScouts = (db.lutasScout || []).filter(s => s.atletaId == currentAlunoId);
+
+                if (athleteScouts.length === 0) {
+                    tlScouts.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">Nenhuma anÃ¡lise registrada.</div>';
+                } else {
+                    let optionsHtml = '<option value="">Selecione uma AnÃ¡lise...</option>';
+
+                    // Sort descending by dataRegistro
+                    athleteScouts.sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro)).forEach(s => {
+                        const d = new Date(s.dataRegistro);
+                        const dForm = `${String(d.getDate()).padStart(2, '0')} /${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()} `;
+
+                        let resultIcon = '';
+                        let resultColor = 'var(--text-muted)';
+
+                        // Determina Ã­cone baseado no resultado final da luta
+                        if (s.resultadoLuta === 'vitoria') {
+                            resultIcon = 'ti-trophy';
+                            resultColor = 'var(--green)';
+                        } else if (s.resultadoLuta === 'derrota') {
+                            resultIcon = 'ti-thumb-down';
+                            resultColor = 'var(--red)';
+                        } else {
+                            resultIcon = 'ti-minus';
+                        }
+
+                        // ConstrÃ³i string de rounds (ex: R1:V, R2:D)
+                        let roundsSummary = '';
+                        if (s.rounds && s.rounds.length > 0) {
+                            const rMap = { vitoria: 'V', derrota: 'D', empate: 'E' };
+                            roundsSummary = ' â€¢ ' + s.rounds.map(r => `R${r.round}:${rMap[r.result] || '?'} `).join(', ');
+                        } else if (s.round) {
+                            // Fallback para scouts antigos de round Ãºnico
+                            roundsSummary = ` â€¢ Round: ${s.round} `;
+                        }
+
+                        // Conta apenas as aÃ§Ãµes reais (ignora divisores se existirem)
+                        const acoesReais = (s.acoes || []).filter(a => !a.isDivider).length;
+
+                        optionsHtml += `<option value="${s.id}">${dForm} - ${s.evento} (${acoesReais} AÃ§Ãµes)</option>`;
+                    });
+
+                    tlScouts.innerHTML = `
+                        <div style="display: flex; flex-direction: column; gap: 12px; background: rgba(255,255,255,0.02); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <label style="font-size: 13px; color: var(--text-muted); font-weight: 500;">Selecione uma anÃ¡lise para visualizar:</label>
+                            <select id="selectScoutAtleta" class="form-control" style="width: 100%; border-color: rgba(255,255,255,0.1);">
+                                ${optionsHtml}
+                            </select>
+                            <button class="btn btn-primary" style="justify-content: center; width: 100%; margin-top: 4px;" onclick="abrirScoutSelecionado()">
+                                <i class="ti ti-external-link"></i> Abrir AnÃ¡lise Completa
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        window.abrirScoutSelecionado = function () {
+            const select = document.getElementById('selectScoutAtleta');
+            if (select && select.value) {
+                openScoutDetail(select.value);
+            } else {
+                alert('Por favor, selecione uma anÃ¡lise na lista antes de abrir.');
+            }
+        }
+
+        function buildRadarChart() {
+            // Dark theme config for charts
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.1)';
+
+            const ctx = document.getElementById('radarChart').getContext('2d');
+
+            const sourceId = document.getElementById('selectRadarSource') ? document.getElementById('selectRadarSource').value : 'media';
+            let athleteScouts = [];
+            if (sourceId === 'media') {
+                athleteScouts = (db.lutasScout || []).filter(s => s.atletaId == currentAlunoId && s.avaliacaoTreinador);
+            } else {
+                athleteScouts = (db.lutasScout || []).filter(s => s.id == parseInt(sourceId) && s.avaliacaoTreinador);
+            }
+
+            let dataArr = [0, 0, 0, 0, 0, 0, 0];
+            let count = athleteScouts.length;
+
+            if (count > 0) {
+                const sums = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
+                athleteScouts.forEach(s => {
+                    sums.velocidade += (s.avaliacaoTreinador.velocidade || 0);
+                    sums.forca += (s.avaliacaoTreinador.forca || 0);
+                    sums.tatica += (s.avaliacaoTreinador.tatica || 0);
+                    sums.defesa += (s.avaliacaoTreinador.defesa || 0);
+                    sums.variacao += (s.avaliacaoTreinador.variacao || 0);
+                    sums.precisao += (s.avaliacaoTreinador.precisao || 0);
+                    sums.obediencia += (s.avaliacaoTreinador.obediencia || 0);
+                });
+
+                // MÃ©dia (0-10) -> Escala 0-100 para o grÃ¡fico radar ficar mais visÃ­vel
+                dataArr = [
+                    (sums.velocidade / count) * 10,
+                    (sums.forca / count) * 10,
+                    (sums.tatica / count) * 10,
+                    (sums.defesa / count) * 10,
+                    (sums.variacao / count) * 10,
+                    (sums.precisao / count) * 10,
+                    (sums.obediencia / count) * 10
+                ];
+            } else {
+                // Tenta buscar da tabela legada scoutEstatisticas se nÃ£o houver avaliaÃ§Ãµes novas
+                const scoutDb = (db.scoutEstatisticas || []).find(s => s.atletaId == currentAlunoId);
+                if (scoutDb) {
+                    dataArr = [scoutDb.velocidade, scoutDb.forca, scoutDb.tatico, 50, 50, 50, 50]; // Fallback parcial
+                } else {
+                    dataArr = [50, 50, 50, 50, 50, 50, 50]; // Default neutro
+                }
+            }
+
+            if (radarChartObj) radarChartObj.destroy();
+
+            radarChartObj = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Velocidade', 'ForÃ§a', 'TÃ¡tica', 'Defesa', 'VariaÃ§Ã£o', 'PrecisÃ£o', 'ObediÃªncia'],
+                    datasets: [{
+                        label: 'Desempenho TÃ©cnico (MÃ©dia)',
+                        data: dataArr,
+                        backgroundColor: 'rgba(65, 105, 225, 0.2)',
+                        borderColor: 'rgba(65, 105, 225, 1)',
+                        pointBackgroundColor: 'var(--primary)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'var(--primary)',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { color: '#e2e8f0', font: { size: 10, family: 'Inter' } },
+                            ticks: { display: false, min: 0, max: 100, stepSize: 20 },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.label + ': ' + (context.raw / 10).toFixed(1);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calcWellnessScore(sono, estresse, dor, humor, fadiga) {
+            const soma = parseInt(sono) + parseInt(estresse) + parseInt(dor) + parseInt(humor) + parseInt(fadiga);
+            return Math.round(((soma - 5) / 20) * 100);
+        }
+
+        function handleDataSourceChange() {
+            const source = document.getElementById('selectDataSource').value;
+            const subContainer = document.getElementById('subSourceContainer');
+            if (source === 'questionarios') {
+                subContainer.style.display = 'block';
+                populateQuestionnaires();
+            } else {
+                subContainer.style.display = 'none';
+                updateDynamicCharts();
+            }
+        }
+
+        function populateQuestionnaires() {
+            const subSelect = document.getElementById('selectSubSource');
+            subSelect.innerHTML = '';
+            const qList = db.questionarios || [];
+            if (qList.length === 0) {
+                subSelect.innerHTML = '<option value="">Nenhum criado</option>';
+            } else {
+                qList.forEach(q => {
+                    const opt = document.createElement('option');
+                    opt.value = q.id;
+                    opt.text = q.titulo;
+                    subSelect.appendChild(opt);
+                });
+            }
+            updateDynamicCharts();
+        }
+
+        function getDatesInRangeLocal(daysBefore) {
+            let dates = [];
+            const end = new Date();
+            for (let i = 0; i < daysBefore; i++) {
+                let d = new Date(end);
+                d.setDate(d.getDate() - i);
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            return dates;
+        }
+
+        function updateDynamicCharts() {
+            const source = document.getElementById('selectDataSource').value;
+            const ctx1 = document.getElementById('dynamicChart1').getContext('2d');
+            const ctx2 = document.getElementById('dynamicChart2').getContext('2d');
+            const ctx3 = document.getElementById('dynamicChart3').getContext('2d');
+
+            if (dynamicCharts.chart1) dynamicCharts.chart1.destroy();
+            if (dynamicCharts.chart2) dynamicCharts.chart2.destroy();
+            if (dynamicCharts.chart3) dynamicCharts.chart3.destroy();
+
+            const dates7 = getDatesInRangeLocal(7).reverse();
+            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'SÃ¡b'];
+            const labels7 = dates7.map(d => {
+                const dt = new Date(d + 'T00:00:00');
+                return diasSemanaShort[dt.getDay()];
+            });
+
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+            const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true } } };
+
+            if (source === 'wellness') {
+                document.getElementById('titleChart1').innerText = 'EvoluÃ§Ã£o Score Geral (0-100)';
+                document.getElementById('titleChart2').innerText = 'Sono e Estresse MÃ©dia';
+                document.getElementById('titleChart3').innerText = 'Radar de Componentes';
+
+                const dataPoints = dates7.map(d => {
+                    let logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
+                    if (logs.length === 0) return null;
+                    const scores = logs.map(l => calcWellnessScore(l.sono || 3, l.estresse || 3, l.dor || 3, l.humor || 3, l.fadiga || 3));
+                    return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+                });
+
+                dynamicCharts.chart1 = new Chart(ctx1, {
+                    type: 'line',
+                    data: { labels: labels7, datasets: [{ label: 'Wellness Score', data: dataPoints, borderColor: 'var(--primary)', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.4 }] },
+                    options: commonOptions
+                });
+
+                let components = { sono: 0, estresse: 0, dor: 0, humor: 0, fadiga: 0, alimentacao: 0 };
+                let totalLogs = 0;
+                dates7.forEach(d => {
+                    let logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
+                    logs.forEach(l => { components.sono += parseInt(l.sono || 3); components.estresse += parseInt(l.estresse || 3); components.dor += parseInt(l.dor || 3); components.humor += parseInt(l.humor || 3); components.fadiga += parseInt(l.fadiga || 3); components.alimentacao += parseInt(l.alimentacao !== undefined && !isNaN(l.alimentacao) ? l.alimentacao : 3); totalLogs++; });
+                });
+                const avgComp = [
+                    totalLogs > 0 ? (components.sono / totalLogs).toFixed(1) : 0,
+                    totalLogs > 0 ? (components.estresse / totalLogs).toFixed(1) : 0,
+                    totalLogs > 0 ? (components.dor / totalLogs).toFixed(1) : 0,
+                    totalLogs > 0 ? (components.humor / totalLogs).toFixed(1) : 0,
+                    totalLogs > 0 ? (components.fadiga / totalLogs).toFixed(1) : 0,
+                    totalLogs > 0 ? (components.alimentacao / totalLogs).toFixed(1) : 0
+                ];
+
+                const dataSono = dates7.map(d => { let logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId); return logs.length > 0 ? parseInt(logs[0].sono) : null; });
+                const dataEstresse = dates7.map(d => { let logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId); return logs.length > 0 ? parseInt(logs[0].estresse) : null; });
+
+                dynamicCharts.chart2 = new Chart(ctx2, {
+                    type: 'bar',
+                    data: { labels: labels7, datasets: [{ label: 'Sono', data: dataSono, backgroundColor: '#3b82f6' }, { label: 'Estresse', data: dataEstresse, backgroundColor: '#f59e0b' }] },
+                    options: { ...commonOptions, scales: { y: { max: 5 } }, plugins: { legend: { display: true } } }
+                });
+
+                dynamicCharts.chart3 = new Chart(ctx3, {
+                    type: 'radar',
+                    data: { labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'AlimentaÃ§Ã£o'], datasets: [{ data: avgComp, backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgb(139, 92, 246)' }] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
+                });
+            } else if (source === 'pse' || source === 'carga') {
+                document.getElementById('titleChart1').innerText = 'EvoluÃ§Ã£o PSE (1-10)';
+                document.getElementById('titleChart2').innerText = 'Carga de Treino';
+                document.getElementById('titleChart3').innerText = 'DistribuiÃ§Ã£o Intensidade';
+
+                const pseData = dates7.map(d => {
+                    let logs = (db.cargaTreino || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
+                    if (logs.length === 0) return null;
+                    return (logs.reduce((a, b) => a + (b.pse || 0), 0) / logs.length).toFixed(1);
+                });
+
+                const cargaData = dates7.map(d => {
+                    let logs = (db.cargaTreino || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
+                    return logs.reduce((a, b) => a + (b.cargaCalculada || 0), 0);
+                });
+
+                dynamicCharts.chart1 = new Chart(ctx1, {
+                    type: 'line',
+                    data: { labels: labels7, datasets: [{ label: 'PSE', data: pseData, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.1, pointRadius: 4 }] },
+                    options: {
+                        ...commonOptions, scales: { y: { min: 0, max: 10, grid: { color: 'rgba(255,255,255,0.05)' } } },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        const v = parseFloat(ctx.raw);
+                                        const zona = v >= 8 ? 'ðŸ”´ Alta' : v >= 5 ? 'ðŸŸ¡ MÃ©dia' : 'ðŸŸ¢ Leve';
+                                        return ` PSE: ${ctx.raw} â€” ${zona}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Carga com cores por zona
+                const cargaColors = cargaData.map(v => {
+                    if (v >= 800) return 'rgba(239,68,68,0.85)';
+                    if (v >= 400) return 'rgba(245,158,11,0.85)';
+                    return 'rgba(16,185,129,0.85)';
+                });
+
+                dynamicCharts.chart2 = new Chart(ctx2, {
+                    type: 'bar',
+                    data: { labels: labels7, datasets: [{ label: 'Carga (U.A.)', data: cargaData, backgroundColor: cargaColors, borderRadius: 4 }] },
+                    options: {
+                        ...commonOptions,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => {
+                                        const v = ctx.raw;
+                                        const zona = v >= 800 ? 'ðŸ”´ Alta' : v >= 400 ? 'ðŸŸ¡ Moderada' : 'ðŸŸ¢ Leve';
+                                        return ` Carga: ${v} U.A. â€” ${zona}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                let dist = [0, 0, 0];
+                dates7.forEach(d => {
+                    let logs = (db.cargaTreino || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
+                    logs.forEach(l => { if (l.pse <= 4) dist[0]++; else if (l.pse <= 7) dist[1]++; else dist[2]++; });
+                });
+
+                dynamicCharts.chart3 = new Chart(ctx3, {
+                    type: 'doughnut',
+                    data: { labels: ['Leve', 'Moderado', 'Intenso'], datasets: [{ data: dist, backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }] },
+                    options: { ...commonOptions, plugins: { legend: { display: true, position: 'bottom' } } }
+                });
+            } else {
+                // Fallback: Mostrar wellness como visÃ£o padrÃ£o ao invÃ©s de dados invÃ©lidos
+                document.getElementById('titleChart1').innerText = 'Score de Wellness (0-100)';
+                document.getElementById('titleChart2').innerText = 'Componentes Wellness (MÃ©dia 7 dias)';
+                document.getElementById('titleChart3').innerText = 'Radar Wellness';
+
+                const wellData = dates7.map(d => {
+                    const logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
+                    if (!logs.length) return null;
+                    return (logs.reduce((a, l) => a + calcWellnessScore(l.sono, l.estresse, l.dor, l.humor, l.fadiga, l.alimentacao), 0) / logs.length).toFixed(1);
+                });
+
+                dynamicCharts.chart1 = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: labels7, datasets: [
+                            { label: 'Score Wellness', data: wellData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)', fill: true, tension: 0.4, pointRadius: 4 },
+                            { label: 'Zona Segura (â‰¥70)', data: labels7.map(() => 70), borderColor: 'rgba(16,185,129,0.4)', borderDash: [5, 4], borderWidth: 1, pointRadius: 0, fill: false }
+                        ]
+                    },
+                    options: { ...commonOptions, scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: true, labels: { font: { size: 10 }, boxWidth: 14 } } } }
+                });
+
+                let compWell = { sono: 0, estresse: 0, dor: 0, humor: 0, fadiga: 0, alimentacao: 0 };
+                let nWell = 0;
+                dates7.forEach(d => {
+                    (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId).forEach(l => {
+                        compWell.sono += (l.sono || 3);
+                        compWell.estresse += (l.estresse || 3);
+                        compWell.dor += (l.dor || 3);
+                        compWell.humor += (l.humor || 3);
+                        compWell.fadiga += (l.fadiga || 3);
+                        compWell.alimentacao += (l.alimentacao || 3);
+                        nWell++;
+                    });
+                });
+                const avgComp2 = Object.values(compWell).map(v => nWell > 0 ? parseFloat((v / nWell).toFixed(1)) : 0);
+
+                dynamicCharts.chart2 = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'AlimentaÃ§Ã£o'],
+                        datasets: [{ data: avgComp2, backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#06b6d4'], borderRadius: 5 }]
+                    },
+                    options: { ...commonOptions, scales: { y: { max: 5 } }, plugins: { legend: { display: false } } }
+                });
+
+                dynamicCharts.chart3 = new Chart(ctx3, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'AlimentaÃ§Ã£o'],
+                        datasets: [{ data: avgComp2, backgroundColor: 'rgba(139,92,246,0.2)', borderColor: 'rgb(139,92,246)', pointBackgroundColor: 'rgb(139,92,246)' }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
+                });
+            }
+        }
+
+        function buildAlerts() {
+            const area = document.getElementById('alertArea');
+            let logs = (db.wellnessLogs || []).filter(w => w.atletaId == currentAlunoId);
+            logs.sort((a, b) => b.id - a.id); // desc by exact timestamp
+
+            if (logs.length === 0) {
+                area.innerHTML = `
+                        <div style="padding: 12px 16px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--primary); display: flex; align-items: flex-start; gap: 12px;">
+                        <i class="ti ti-info-circle" style="color: var(--primary); font-size: 20px; flex-shrink: 0;"></i>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Sem Dados de Wellness</div>
+                            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">Atleta nÃ£o respondeu o questionÃ¡rio de bem-estar recentemente. Portanto, nÃ£o hÃ¡ histÃ³rico de peso atualizado.</div>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            const todayLog = logs[0];
+
+            const renderWellnessDots = (label, icon, value, reverseBad = false) => {
+                if (value === undefined) return '';
+                let dots = '';
+                let color = 'var(--primary)';
+                if (reverseBad) {
+                    color = value >= 4 ? 'var(--red)' : (value >= 3 ? 'var(--yellow)' : 'var(--green)');
+                } else {
+                    color = value <= 2 ? 'var(--red)' : (value <= 3 ? 'var(--yellow)' : 'var(--green)');
+                }
+
+                for (let i = 1; i <= 5; i++) {
+                    const bg = i <= value ? color : 'rgba(255,255,255,0.1)';
+                    dots += `<div style="width: 8px; height: 8px; border-radius: 50%; background: ${bg}; transition: 0.3s;"></div>`;
+                }
+
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(0,0,0,0.15); border-radius: 8px; margin-bottom: 8px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:8px; font-size:13px; font-weight: 500;">
+                            <i class="${icon}" style="font-size:16px; color: var(--text-muted);"></i> ${label}
+                        </span>
+                        <div style="display: flex; gap: 4px;">${dots}</div>
+                    </div>
+                `;
+            };
+
+            const [ano, mes, dia] = todayLog.data.split('-');
+            const dataFormatada = `${dia}/${mes}/${ano}`;
+
+            let html = `
+                <div style="margin-bottom: 12px; font-size: 13px; color: var(--text-muted); text-align: center; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">
+                    Respondido em: <span style="color: var(--text-main); font-weight: 600;">${dataFormatada}</span> 
+                    ${todayLog.pesoAtual ? ` â€¢ Peso: <span style="color: var(--primary); font-weight: 700;">${todayLog.pesoAtual}kg</span>` : ''}
+                </div>
+            `;
+
+            html += renderWellnessDots('Sono', 'ti ti-bed', todayLog.sono);
+            html += renderWellnessDots('Estresse', 'ti ti-brain', todayLog.estresse, true);
+            html += renderWellnessDots('Dor Muscular', 'ti ti-activity', todayLog.dor, true);
+            html += renderWellnessDots('Humor', 'ti ti-mood-smile', todayLog.humor);
+            html += renderWellnessDots('Fadiga', 'ti ti-battery-2', todayLog.fadiga, true);
+            html += renderWellnessDots('AlimentaÃ§Ã£o', 'ti ti-apple', todayLog.alimentacao);
+
+            area.innerHTML = html;
+        }
+
+        function buildCargaDiaria() {
+            const area = document.getElementById('cargaArea');
+            let logs = (db.cargaTreino || []).filter(c => c.atletaId == currentAlunoId);
+            logs.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+            if (logs.length === 0) {
+                area.innerHTML = `
+                        <div style="padding: 12px 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: flex-start; gap: 12px;">
+                        <i class="ti ti-info-circle" style="color: var(--text-muted); font-size: 20px; flex-shrink: 0;"></i>
+                        <div>
+                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--text-muted)">Sem Dados de Carga</div>
+                            <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4;">Atleta nÃ£o respondeu PSE de treinos recentes.</div>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            const renderLog = (log) => {
+                const [ano, mes, dia] = log.data.split('-');
+                const dataFormatada = `${dia}/${mes}/${ano}`;
+
+                let pseColor = 'var(--green)';
+                if (log.pse >= 8) pseColor = 'var(--red)';
+                else if (log.pse >= 5) pseColor = 'var(--yellow)';
+
+                return `
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="margin-bottom: 6px; font-size: 12px; color: var(--text-muted); text-align: center;">
+                        <strong>${log.tipoTreino || 'Desconhecido'}</strong> â€¢ ${dataFormatada}
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
+                            <i class="ti ti-activity" style="font-size:14px; color: var(--text-muted);"></i> PSE
+                        </span>
+                        <strong style="color: ${pseColor}; font-size: 14px;">${log.pse}/10</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
+                            <i class="ti ti-clock" style="font-size:14px; color: var(--text-muted);"></i> DuraÃ§Ã£o
+                        </span>
+                        <strong style="color: var(--text-main); font-size: 13px;">${log.duracaoMins} min</strong>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
+                            <i class="ti ti-bolt" style="font-size:14px; color: var(--text-muted);"></i> Carga
+                        </span>
+                        <strong style="color: ${pseColor}; font-size: 13px;">${log.cargaCalculada} U.A.</strong>
+                    </div>
+                </div>
+                `;
+            };
+
+            const logTaekwondo = logs.find(l => l.tipoTreino === 'Taekwondo');
+            const logFisico = logs.find(l => l.tipoTreino === 'FÃ­sico');
+
+            let itemsToRender = [];
+            if (logTaekwondo) itemsToRender.push(logTaekwondo);
+            if (logFisico) itemsToRender.push(logFisico);
+
+            if (itemsToRender.length === 0) {
+                // Caso nÃ£o tenha especÃ­ficos, mostrar o mais recente (dados antigos)
+                itemsToRender.push(logs[0]);
+            }
+
+            // Ordenar para mostrar o item mais recente lanÃ§ado no topo
+            itemsToRender.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+            let html = '<div style="display: flex; gap: 12px; w-full">';
+            itemsToRender.forEach((log, index) => {
+                html += renderLog(log);
+                if (index < itemsToRender.length - 1) {
+                    html += '<div style="width: 1px; background: rgba(255,255,255,0.05); margin: 0 4px;"></div>';
+                }
+            });
+            html += '</div>';
+
+            area.innerHTML = html;
+        }
+
+        // Edit Profile Logic
+        const modalEdit = document.getElementById('modalEditPerfil');
+        function openModalEdit() {
+            const form = document.getElementById('formEditPerfil');
+            form.nomeAluno.value = alunoData.nome;
+            form.nascAluno.value = alunoData.dataNascimento;
+            form.telAluno.value = alunoData.contato || '';
+            form.cpfAluno.value = alunoData.cpf || '';
+            if (form.emailAluno) form.emailAluno.value = alunoData.email || '';
+            form.rgAluno.value = alunoData.rg || '';
+            form.sexoAluno.value = alunoData.sexo || 'Masculino';
+            form.catIdadeAluno.value = alunoData.categoriaIdade || '';
+            form.obsAluno.value = alunoData.obs || '';
+
+            const selectPeso = form.pesoAluno;
+            selectPeso.innerHTML = '<option value="">Sem Categoria</option>' + (db.categoriasPeso || []).map(p => `<option value="${p}">${p}</option>`).join('');
+            selectPeso.value = alunoData.categoriaPeso || '';
+
+            const selectFaixa = form.faixaAluno;
+            selectFaixa.innerHTML = (db.faixas || []).map(f => `<option value="${f}">${f}</option>`).join('');
+            selectFaixa.value = alunoData.faixa || '';
+
+            // PIN
+            if (form.pinAtleta) form.pinAtleta.value = '';
+
+            modalEdit.classList.add('active');
+        }
+
+        function closeModalEdit() {
+            modalEdit.classList.remove('active');
+            temporaryAvatar = null;
+            document.getElementById('fotoPreviewContainer').style.display = 'none';
+        }
+
+        function savePerfil(event) {
+            event.preventDefault();
+            const form = document.getElementById('formEditPerfil');
+
+            alunoData.nome = form.nomeAluno.value;
+            alunoData.dataNascimento = form.nascAluno.value;
+            alunoData.contato = form.telAluno.value;
+            alunoData.email = form.emailAluno ? form.emailAluno.value : null;
+            alunoData.cpf = form.cpfAluno.value || null;
+            alunoData.rg = form.rgAluno.value || null;
+            alunoData.sexo = form.sexoAluno.value;
+            alunoData.categoriaPeso = form.pesoAluno.value;
+            alunoData.categoriaIdade = form.catIdadeAluno.value;
+            alunoData.obs = form.obsAluno.value || null;
+            alunoData.faixa = form.faixaAluno.value;
+
+            // Save PIN if provided
+            if (form.pinAtleta && form.pinAtleta.value.length === 4) {
+                alunoData.pin = form.pinAtleta.value;
+            }
+
+            if (temporaryAvatar) {
+                alunoData.avatar = temporaryAvatar;
+            }
+
+            saveDB();
+            closeModalEdit();
+            loadProfile();
+
+            const btn = document.querySelector('.btn-edit-profile');
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = `<i class="ti ti-check"></i> Salvo!`;
+            btn.style.background = 'var(--green)';
+            setTimeout(() => {
+                btn.innerHTML = oldHtml;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        // Cropper Logic
+        let temporaryAvatar = null;
+        let cropperInstance = null;
+        let cropperCallback = null;
+
+        function openGlobalCropper(file, callback) {
+            const modal = document.getElementById('modalCropper');
+            const image = document.getElementById('cropperImage');
+            cropperCallback = callback;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                image.src = e.target.result;
+                modal.classList.add('active');
+                if (cropperInstance) cropperInstance.destroy();
+                cropperInstance = new Cropper(image, { aspectRatio: 1, viewMode: 1 });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function closeGlobalCropper() {
+            document.getElementById('modalCropper').classList.remove('active');
+            if (cropperInstance) {
+                cropperInstance.destroy();
+                cropperInstance = null;
+            }
+        }
+
+        function confirmGlobalCropper() {
+            if (!cropperInstance) return;
+            const canvas = cropperInstance.getCroppedCanvas({ width: 300, height: 300 });
+            if (cropperCallback) cropperCallback(canvas.toDataURL('image/jpeg', 0.8));
+            closeGlobalCropper();
+        }
+
+        function handleFotoUploadPerfil(event) {
+            const file = event.target.files[0];
+            if (file) {
+                openGlobalCropper(file, (cropped) => {
+                    temporaryAvatar = cropped;
+                    document.getElementById('fotoPreview').src = cropped;
+                    document.getElementById('fotoPreviewContainer').style.display = 'flex';
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadProfile, 100); // Wait for app.js loadDB
+            if (window.location.hash === '#edit') {
+                setTimeout(openModalEdit, 300);
+            }
+        });
+    </script>
+</body>
+
+</html>
+

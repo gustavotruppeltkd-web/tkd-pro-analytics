@@ -1,0 +1,770 @@
+:root {
+    --bg-dark: #0f172a;
+    --bg-sidebar: #1e293b;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+
+    --green: #10b981;
+    --green-bg: rgba(16, 185, 129, 0.15);
+    --yellow: #f59e0b;
+    --yellow-bg: rgba(245, 158, 11, 0.15);
+    --red: #ef4444;
+    --red-bg: rgba(239, 68, 68, 0.15);
+
+    --border-color: rgba(255, 255, 255, 0.05);
+
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.3);
+
+    --transition: all 0.25s ease;
+    color-scheme: dark;
+}
+
+[data-theme="light"] {
+    --bg-dark: #f8fafc;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+
+    --border-color: rgba(0, 0, 0, 0.1);
+
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+    /* Keep primary and alert colors the same, or gently tweak */
+    --green-bg: rgba(16, 185, 129, 0.1);
+    --yellow-bg: rgba(245, 158, 11, 0.1);
+    --red-bg: rgba(239, 68, 68, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 24px 32px;
+    color: var(--primary);
+}
+
+.logo-icon {
+    font-size: 32px;
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.nav-item i {
+    font-size: 20px;
+}
+
+.nav-item:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.nav-item.active {
+    background-color: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-glow);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+}
+
+/* Cards and Panels */
+.card {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.page-title h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--bg-card);
+    padding: 8px 16px 8px 8px;
+    border-radius: 50px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.user-profile:hover {
+    border-color: var(--border-color);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-role {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* Dashboard Semáforo Stats */
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+
+
+/* Wait, the HTML structure has `.stat-card` directly inside `.dashboard-grid` along with `.athletes-section`.
+Let's fix that layout using CSS grid */
+
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+}
+
+.stat-icon.green {
+    background: var(--green-bg);
+    color: var(--green);
+}
+
+.stat-icon.yellow {
+    background: var(--yellow-bg);
+    color: var(--yellow);
+}
+
+.stat-icon.red {
+    background: var(--red-bg);
+    color: var(--red);
+}
+
+.stat-details h3 {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stat-meta {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.text-green {
+    color: var(--green);
+}
+
+.text-yellow {
+    color: var(--yellow);
+}
+
+.text-red {
+    color: var(--red);
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary {
+    background: var(--bg-hover);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-danger {
+    background: var(--red-bg);
+    color: var(--red);
+}
+
+.btn-danger:hover {
+    background: var(--red);
+    color: white;
+}
+
+.btn-success {
+    background: var(--green-bg);
+    color: var(--green);
+}
+
+.btn-success:hover {
+    background: var(--green);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--yellow-bg);
+    color: var(--yellow);
+}
+
+.btn-warning:hover {
+    background: var(--yellow);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover {
+    background: var(--bg-hover);
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+/* Athletes Section */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.section-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.athlete-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid transparent;
+    overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.athlete-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.athlete-card.status-green {
+    border-top-color: var(--green);
+}
+
+.athlete-card.status-green:hover {
+    box-shadow: 0 12px 24px rgba(16, 185, 129, 0.15);
+}
+
+.athlete-card.status-yellow {
+    border-top-color: var(--yellow);
+}
+
+.athlete-card.status-yellow:hover {
+    box-shadow: 0 12px 24px rgba(245, 158, 11, 0.15);
+}
+
+.athlete-card.status-red {
+    border-top-color: var(--red);
+}
+
+.athlete-card.status-red:hover {
+    box-shadow: 0 12px 24px rgba(239, 68, 68, 0.2);
+}
+
+.card-header {
+    padding: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.athlete-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.athlete-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge.weight {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.badge.rank.black {
+    background: #1e293b;
+    color: #fff;
+    border: 1px solid var(--border-color);
+}
+
+.badge.rank.red {
+    background: var(--red);
+    color: #fff;
+}
+
+.card-body {
+    padding: 24px;
+    flex: 1;
+}
+
+.card-body h3 {
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.category {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metric .label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.metric .value {
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.acwr-bar {
+    margin-top: 16px;
+}
+
+.acwr-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+}
+
+.progress-track {
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+.progress-fill.green {
+    background: var(--green);
+}
+
+.progress-fill.yellow {
+    background: var(--yellow);
+}
+
+.progress-fill.red {
+    background: var(--red);
+}
+
+.card-footer {
+    padding: 16px 24px;
+    background: var(--bg-hover);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.card-footer .btn-icon {
+    font-size: 14px;
+    padding: 0 12px;
+    width: auto;
+    gap: 8px;
+}
+
+/* Modals Centralized */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: var(--bg-sidebar);
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 32px;
+    transform: translateY(20px);
+    transition: var(--transition);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 15px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.2);
+}
+
+/* Global form controls legibility */
+select {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    color-scheme: dark !important;
+}
+
+select option {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+}
+
+.form-control,
+.filter-select {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+}
+
+.btn-block {
+    width: 100%;
+    justify-content: center;
+}
+
+/* Global Toast Notification */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast {
+    background: var(--bg-sidebar);
+    color: var(--text-main);
+    border-left: 4px solid var(--green);
+    padding: 16px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    font-size: 15px;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Scale Buttons */
+.btn-scale-group {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-scale {
+    flex: 1;
+    min-width: 28px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0.5;
+}
+
+.btn-scale:hover {
+    opacity: 0.8;
+    transform: translateY(-2px);
+}
+
+.btn-scale.active {
+    opacity: 1;
+    transform: scale(1.05);
+    border-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-scale.c-red {
+    background: #ef4444;
+}
+
+.btn-scale.c-orange {
+    background: #f97316;
+}
+
+.btn-scale.c-yellow {
+    background: #eab308;
+}
+
+.btn-scale.c-lime {
+    background: #84cc16;
+}
+
+.btn-scale.c-green {
+    background: #22c55e;
+}

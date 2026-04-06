@@ -1,0 +1,721 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | CalendÃ¡rio</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        .view-switcher {
+            display: flex;
+            background: var(--bg-hover);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .view-btn.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* List View Styles */
+        .event-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .event-item:hover {
+            transform: translateX(4px);
+            border-color: var(--primary);
+        }
+
+        .event-date-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+            padding-right: 20px;
+            border-right: 1px solid var(--border-color);
+            margin-right: 20px;
+        }
+
+        .event-day {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .event-month {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .event-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+        }
+
+        .event-meta i {
+            font-size: 14px;
+        }
+
+        .event-type-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-competiÃ§Ã£o {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+
+        .type-curso {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green);
+        }
+
+        .type-seminÃ¡rio {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--yellow);
+        }
+
+        .type-festival {
+            background: rgba(139, 92, 246, 0.1);
+            color: #8b5cf6;
+        }
+
+        /* Calendar View Styles */
+        .calendar-grid-container {
+            overflow: hidden;
+            display: none;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .calendar-weekday {
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .calendar-day {
+            min-height: 120px;
+            padding: 8px;
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+
+        .day-number {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .calendar-day.today .day-number {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-event-tag {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calendar-event-tag:hover {
+            filter: brightness(1.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+            <nav class="nav-menu" id="navMenuContainer">
+                <!-- Renderizado via JS (renderSidebar) -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>CalendÃ¡rio & Eventos</h1>
+                    <p class="subtitle">Planejamento anual da equipe</p>
+                </div>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">Carregando...</span>
+                        <span class="user-role">Head Coach</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="section-actions"
+                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                <div class="view-switcher">
+                    <button class="view-btn active" onclick="switchView('list')"><i class="ti ti-list"></i>
+                        Lista</button>
+                    <button class="view-btn" onclick="switchView('calendar')"><i class="ti ti-calendar"></i>
+                        Mensal</button>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-outline" onclick="downloadYearlyCalendar()">
+                        <i class="ti ti-download"></i> Baixar CalendÃ¡rio do Ano
+                    </button>
+                    <button class="btn btn-primary" onclick="openModalEvent()">
+                        <i class="ti ti-plus"></i> Novo Evento
+                    </button>
+                </div>
+            </div>
+
+            <!-- List View Container -->
+            <div id="listView" class="event-list">
+                <!-- Rendered by JS -->
+            </div>
+
+            <!-- Calendar View Container -->
+            <div id="calendarView" class="card calendar-grid-container" style="padding: 0;">
+                <div class="calendar-header">
+                    <h2 id="currentMonthYear">Outubro 2023</h2>
+                    <div class="calendar-nav">
+                        <button class="btn-icon" onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
+                        <button class="btn" style="background: var(--bg-hover);" onclick="goToToday()">Hoje</button>
+                        <button class="btn-icon" onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid">
+                    <!-- Weekdays -->
+                    <div class="calendar-weekday">Dom</div>
+                    <div class="calendar-weekday">Seg</div>
+                    <div class="calendar-weekday">Ter</div>
+                    <div class="calendar-weekday">Qua</div>
+                    <div class="calendar-weekday">Qui</div>
+                    <div class="calendar-weekday">Sex</div>
+                    <div class="calendar-weekday">SÃ¡b</div>
+                    <!-- Days rendered by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Novo Evento -->
+    <div class="modal-overlay" id="modalEvent">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalEventTitle">Novo Evento</h2>
+                <button class="btn-close" onclick="closeModalEvent()"><i class="ti ti-x"></i></button>
+            </div>
+            <form id="formEvent" onsubmit="saveEvent(event)">
+                <div class="form-group">
+                    <label>TÃ­tulo do Evento</label>
+                    <input type="text" class="form-control" name="titulo" placeholder="Ex: Campeonato Brasileiro"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Evento</label>
+                    <select class="form-control" name="tipo" required>
+                        <option value="CompetiÃ§Ã£o">CompetiÃ§Ã£o</option>
+                        <option value="Curso">Curso</option>
+                        <option value="SeminÃ¡rio">SeminÃ¡rio</option>
+                        <option value="Festival">Festival</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Grau de Dificuldade</label>
+                        <select class="form-control" name="dificuldade">
+                            <option value="">NÃ£o se aplica</option>
+                            <option value="Baixo">Baixo</option>
+                            <option value="MÃ©dio">MÃ©dio</option>
+                            <option value="Alto">Alto</option>
+                            <option value="Muito Elevado">Muito Alto</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1; display: flex; align-items: flex-end;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer;">
+                            <input type="checkbox" name="classificatorio"
+                                style="width: 18px; height: 18px; accent-color: var(--primary);">
+                            <span style="font-size: 14px; font-weight: 500;">Evento ClassificatÃ³rio</span>
+                        </label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de InÃ­cio</label>
+                        <input type="date" class="form-control" name="data" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de TÃ©rmino (Opcional)</label>
+                        <input type="date" class="form-control" name="dataFim">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Organizador</label>
+                    <input type="text" class="form-control" name="organizador" placeholder="Ex: CBTKD">
+                </div>
+                <div class="form-group">
+                    <label>LocalizaÃ§Ã£o</label>
+                    <input type="text" class="form-control" name="local" placeholder="Ex: GinÃ¡sio Municipal, SP">
+                </div>
+                <div class="form-group" style="margin-top: 24px;">
+                    <button type="submit" id="btnSubmitEvent" class="btn btn-primary btn-block"
+                        style="width: 100%; justify-content: center;">Criar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let currentView = 'list';
+        let displayDate = new Date();
+        let editingEventId = null;
+
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            if (view === 'list') {
+                document.getElementById('listView').style.display = 'flex';
+                document.getElementById('calendarView').style.display = 'none';
+                renderListView();
+            } else {
+                document.getElementById('listView').style.display = 'none';
+                document.getElementById('calendarView').style.display = 'block';
+                renderCalendarView();
+            }
+        }
+
+        function openModalEvent(eventId = null) {
+            editingEventId = eventId;
+            const form = document.getElementById('formEvent');
+            const title = document.getElementById('modalEventTitle');
+            const btn = document.getElementById('btnSubmitEvent');
+
+            if (editingEventId) {
+                const ev = db.eventos.find(e => e.id === editingEventId);
+                if (ev) {
+                    form.titulo.value = ev.titulo;
+                    form.tipo.value = ev.tipo;
+                    form.data.value = ev.data;
+                    form.dataFim.value = ev.dataFim || ev.data;
+                    form.organizador.value = ev.organizador || '';
+                    form.local.value = ev.local || '';
+                    form.dificuldade.value = ev.dificuldade || '';
+                    form.classificatorio.checked = ev.classificatorio || false;
+
+                    title.innerText = 'Editar Evento';
+                    btn.innerText = 'Salvar AlteraÃ§Ãµes';
+                }
+            } else {
+                form.reset();
+                title.innerText = 'Novo Evento';
+                btn.innerText = 'Criar Evento';
+            }
+
+            document.getElementById('modalEvent').classList.add('active');
+        }
+        function closeModalEvent() {
+            editingEventId = null;
+            document.getElementById('modalEvent').classList.remove('active');
+        }
+
+        function saveEvent(e) {
+            e.preventDefault();
+            const form = e.target;
+
+            if (editingEventId) {
+                const index = db.eventos.findIndex(ev => ev.id === editingEventId);
+                if (index !== -1) {
+                    db.eventos[index] = {
+                        ...db.eventos[index],
+                        titulo: form.titulo.value,
+                        tipo: form.tipo.value,
+                        data: form.data.value,
+                        dataFim: form.dataFim.value || form.data.value,
+                        organizador: form.organizador.value,
+                        local: form.local.value,
+                        dificuldade: form.dificuldade.value,
+                        classificatorio: form.classificatorio.checked
+                    };
+                    showToast('Evento atualizado com sucesso!');
+                }
+            } else {
+                const newEvent = {
+                    id: Date.now(),
+                    titulo: form.titulo.value,
+                    tipo: form.tipo.value,
+                    data: form.data.value,
+                    dataFim: form.dataFim.value || form.data.value,
+                    organizador: form.organizador.value,
+                    local: form.local.value,
+                    dificuldade: form.dificuldade.value,
+                    classificatorio: form.classificatorio.checked,
+                    participantes: []
+                };
+                db.eventos.push(newEvent);
+                showToast('Evento criado com sucesso!');
+            }
+
+            saveDB();
+            form.reset();
+            closeModalEvent();
+
+            if (currentView === 'list') renderListView();
+            else renderCalendarView();
+        }
+
+        function deleteEvent(id, e) {
+            if (e) e.stopPropagation();
+            if (confirm('Tem certeza que deseja excluir este evento?')) {
+                db.eventos = db.eventos.filter(ev => ev.id !== id);
+                saveDB();
+                showToast('Evento excluÃ­do.', 'info');
+                if (currentView === 'list') renderListView();
+                else renderCalendarView();
+            }
+        }
+
+        function renderListView() {
+            const list = document.getElementById('listView');
+            list.innerHTML = '';
+
+            // Sort by date
+            const sortedEvents = [...db.eventos].sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            if (sortedEvents.length === 0) {
+                list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">Nenhum evento programado.</div>';
+                return;
+            }
+
+            sortedEvents.forEach(ev => {
+                const dateStart = new Date(ev.data + "T00:00:00");
+                const dateEnd = ev.dataFim ? new Date(ev.dataFim + "T00:00:00") : dateStart;
+
+                const dayStart = dateStart.getDate();
+                const monthStart = dateStart.toLocaleString('pt-BR', { month: 'short' });
+
+                let dateDisplay = `<span class="event-day">${dayStart}</span><span class="event-month">${monthStart}</span>`;
+
+                if (ev.dataFim && ev.dataFim !== ev.data) {
+                    const dayEnd = dateEnd.getDate();
+                    const monthEnd = dateEnd.toLocaleString('pt-BR', { month: 'short' });
+
+                    if (monthStart === monthEnd) {
+                        dateDisplay = `<span class="event-day">${dayStart} - ${dayEnd}</span><span class="event-month">${monthStart}</span>`;
+                    } else {
+                        dateDisplay = `<span class="event-day" style="font-size: 14px;">${dayStart} ${monthStart} - ${dayEnd} ${monthEnd}</span>`;
+                    }
+                }
+
+                const item = document.createElement('div');
+                item.className = 'card event-item';
+                item.onclick = () => window.location.href = `evento-detalhes.html?id=${ev.id}`;
+                item.innerHTML = `
+                    <div class="event-date-box">
+                        ${dateDisplay}
+                    </div>
+                    <div class="event-info">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="event-title">${ev.titulo}</span>
+                            <span class="event-type-badge type-${ev.tipo.toLowerCase()}">${ev.tipo}</span>
+                        </div>
+                        <div class="event-meta">
+                            <span><i class="ti ti-map-pin"></i> ${ev.local || 'Local nÃ£o definido'}</span>
+                            <span><i class="ti ti-building"></i> ${ev.organizador || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn btn-icon" style="color: var(--primary); margin-right: 8px;" onclick="event.stopPropagation(); openModalEvent(${ev.id})"><i class="ti ti-edit"></i></button>
+                        <button class="btn btn-icon btn-danger" onclick="deleteEvent(${ev.id}, event)"><i class="ti ti-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function renderCalendarView() {
+            const grid = document.getElementById('calendarGrid');
+            // Keep weekdays
+            const weekdays = Array.from(grid.querySelectorAll('.calendar-weekday'));
+            grid.innerHTML = '';
+            weekdays.forEach(wd => grid.appendChild(wd));
+
+            const year = displayDate.getFullYear();
+            const month = displayDate.getMonth();
+
+            document.getElementById('currentMonthYear').innerText = displayDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+            // Prev month days
+            for (let i = firstDay; i > 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day other-month';
+                day.innerHTML = `<div class="day-number">${prevMonthLastDay - i + 1}</div>`;
+                grid.appendChild(day);
+            }
+
+            // Current month days
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                const isToday = today.getDate() === i && today.getMonth() === month && today.getFullYear() === year;
+                day.className = `calendar-day ${isToday ? 'today' : ''}`;
+                day.innerHTML = `<div class="day-number">${i}</div>`;
+
+                // Add events
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                const currentDayTimestamp = new Date(dateStr + "T00:00:00").getTime();
+
+                const dayEvents = db.eventos.filter(ev => {
+                    const start = new Date(ev.data + "T00:00:00").getTime();
+                    const end = new Date((ev.dataFim || ev.data) + "T00:00:00").getTime();
+                    return currentDayTimestamp >= start && currentDayTimestamp <= end;
+                });
+
+                dayEvents.forEach(ev => {
+                    const tag = document.createElement('div');
+                    tag.className = `calendar-event-tag type-${ev.tipo.toLowerCase()}`;
+                    tag.innerText = ev.titulo;
+                    tag.onclick = (e) => {
+                        e.stopPropagation();
+                        window.location.href = `evento-detalhes.html?id=${ev.id}`;
+                    };
+                    day.appendChild(tag);
+                });
+
+                grid.appendChild(day);
+            }
+        }
+
+        function downloadYearlyCalendar() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const currentYear = new Date().getFullYear();
+
+            // Filtra e ordena eventos do ano atual
+            const yearlyEvents = db.eventos
+                .filter(ev => new Date(ev.data + "T00:00:00").getFullYear() === currentYear)
+                .sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            if (yearlyEvents.length === 0) {
+                showToast('Nenhum evento encontrado para o ano atual.', 'error');
+                return;
+            }
+
+            // ConfiguraÃ§Ãµes EstÃ©ticas
+            const primaryColor = [37, 99, 235]; // Blue
+            const textColor = [31, 41, 55];
+            const secondaryText = [107, 114, 128];
+
+            // CabeÃ§alho do PDF
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, 210, 40, 'F');
+
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.setFont("helvetica", "bold");
+            doc.text("CALENDÃRIO ANUAL - " + currentYear, 15, 20);
+
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text("Pro Coach Analytics | Planejamento da Equipe", 15, 28);
+
+            let currentY = 55;
+            const months = [
+                "JANEIRO", "FEVEREIRO", "MARÃ‡O", "ABRIL", "MAIO", "JUNHO",
+                "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
+            ];
+
+            // Agrupa por mÃªs
+            const eventsByMonth = {};
+            yearlyEvents.forEach(ev => {
+                const month = new Date(ev.data + "T00:00:00").getMonth();
+                if (!eventsByMonth[month]) eventsByMonth[month] = [];
+                eventsByMonth[month].push(ev);
+            });
+
+            // Itera pelos meses
+            for (let m = 0; m < 12; m++) {
+                if (!eventsByMonth[m]) continue;
+
+                // Verifica quebra de pÃ¡gina
+                if (currentY > 250) {
+                    doc.addPage();
+                    currentY = 20;
+                }
+
+                // TÃ­tulo do MÃªs
+                doc.setTextColor(...primaryColor);
+                doc.setFontSize(14);
+                doc.setFont("helvetica", "bold");
+                doc.text(months[m], 15, currentY);
+                currentY += 2;
+                doc.setDrawColor(...primaryColor);
+                doc.setLineWidth(0.5);
+                doc.line(15, currentY, 195, currentY);
+                currentY += 10;
+
+                // Eventos do MÃªs
+                eventsByMonth[m].forEach(ev => {
+                    const d = new Date(ev.data + "T00:00:00");
+                    const dateStr = d.toLocaleDateString('pt-BR');
+
+                    // Verifica quebra de pÃ¡gina por evento
+                    if (currentY > 270) {
+                        doc.addPage();
+                        currentY = 20;
+                    }
+
+                    // Card do Evento (Simulado no PDF)
+                    doc.setTextColor(...textColor);
+                    doc.setFontSize(11);
+                    doc.setFont("helvetica", "bold");
+                    doc.text(`${dateStr} - ${ev.titulo}`, 20, currentY);
+
+                    doc.setFontSize(9);
+                    doc.setFont("helvetica", "normal");
+                    doc.setTextColor(...secondaryText);
+                    currentY += 6;
+                    doc.text(`Tipo: ${ev.tipo} | Local: ${ev.local || 'N/A'}`, 25, currentY);
+
+                    if (ev.organizador) {
+                        currentY += 5;
+                        doc.text(`Organizador: ${ev.organizador}`, 25, currentY);
+                    }
+
+                    currentY += 10;
+                });
+
+                currentY += 5; // EspaÃ§o extra apÃ³s o mÃªs
+            }
+
+            // RodapÃ©
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(...secondaryText);
+                doc.text(`Documento gerado em ${new Date().toLocaleDateString()} | Pro Coach Analytics`, 105, 290, { align: 'center' });
+                doc.text(`PÃ¡gina ${i} de ${pageCount}`, 195, 290, { align: 'right' });
+            }
+
+            doc.save(`Calendario_ProCoach_${currentYear}.pdf`);
+            showToast('CalendÃ¡rio baixado com sucesso!');
+        }
+
+        function changeMonth(offset) {
+            displayDate.setMonth(displayDate.getMonth() + offset);
+            renderCalendarView();
+        }
+
+        function goToToday() {
+            displayDate = new Date();
+            renderCalendarView();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(renderListView, 100);
+        });
+    </script>
+</body>
+
+</html>
+

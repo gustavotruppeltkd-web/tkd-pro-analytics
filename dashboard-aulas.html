@@ -1,0 +1,436 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | GestÃ£o Comercial de Alunos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <style>
+        .class-list {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .student-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .student-row:hover {
+            transform: translateX(4px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Flex blocks for row */
+        .col-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 2;
+        }
+
+        .student-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .student-details h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .student-details p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .col-presenca {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Financial Badges */
+        .tag-fin {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-pago {
+            background: #10b981;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .tag-atrasado {
+            background: #ef4444;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+        }
+
+        .tag-avencer {
+            background: #f59e0b;
+            color: #fff;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        /* Attendance Toggles */
+        .btn-attendance {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-attendance.present:hover,
+        .btn-attendance.present.active {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .btn-attendance.absent:hover,
+        .btn-attendance.absent.active {
+            background: var(--red);
+            color: #fff;
+            border-color: var(--red);
+        }
+
+        /* List Header */
+        .list-header {
+            display: flex;
+            padding: 0 24px 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .list-header>div:nth-child(1) {
+            flex: 2;
+        }
+
+        .list-header>div:nth-child(2) {
+            flex: 1;
+            text-align: center;
+        }
+
+        .list-header>div:nth-child(3) {
+            flex: 1;
+            text-align: right;
+            padding-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Commercial -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+
+            <nav class="nav-menu" id="navMenuContainer">
+                <!-- Renderizado via JS (renderSidebar) -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Turma: Adulto Iniciante</h1>
+                    <p class="subtitle">GestÃ£o de PresenÃ§as</p>
+                </div>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">Mestre Silva</span>
+                        <span class="user-role">Head Coach</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid" id="dashboardStats" style="margin-bottom: 32px;">
+                <!-- Renderizado via JS -->
+            </div>
+
+            <!-- Attendance List -->
+            <div class="athletes-section">
+                <div class="section-header">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <h2 style="margin: 0;">Chamada de:</h2>
+                        <input type="date" id="dataChamada" class="form-control"
+                            style="width: 160px; padding: 8px 12px;">
+                    </div>
+                    <div style="display: flex; gap: 12px;" id="attendanceActions">
+                        <button class="btn" id="btnEditChamada" onclick="toggleEditMode()"
+                            style="display: none; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main);">
+                            <i class="ti ti-edit"></i> Editar Chamada
+                        </button>
+                        <button class="btn btn-primary" id="btnSaveChamada" onclick="saveChamada()"><i
+                                class="ti ti-device-floppy"></i> Salvar Chamada</button>
+                    </div>
+                </div>
+
+                <div class="list-header">
+                    <div>Aluno e Faixa</div>
+                    <div>PresenÃ§a</div>
+                </div>
+
+                <div class="class-list" id="chamadaGrid">
+                    <!-- Renderizado via JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Modal Logic
+
+
+        let currTurma = null;
+        let alunosTurma = [];
+        let isEditing = false;
+
+        function loadPageData() {
+            loadDB(); // Recarregar dados do localStorage
+
+            // Garantir que trabalhamos com o array original do db
+            currTurma = db.turmas.find(t => t.id == db.activeTurmaId);
+            if (currTurma) {
+                document.querySelector('.page-title h1').innerText = currTurma.nome;
+            }
+
+            // Set today's date on the input
+            const hoje = new Date();
+            hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
+            document.getElementById('dataChamada').value = hoje.toISOString().split('T')[0];
+
+            renderStatsUI();
+            renderChamadaUI();
+        }
+
+        function renderStatsUI() {
+            // Usar == para evitar erros de tipo (string vs number)
+            alunosTurma = db.alunos.filter(a => a.turmaId == db.activeTurmaId);
+            const statsGrid = document.getElementById('dashboardStats');
+
+            let total = alunosTurma.length;
+            let pagos = 0;
+            let pendentes = 0;
+            let valorPendente = 0;
+
+            alunosTurma.forEach(a => {
+                if (a.statusFin === 'pago') pagos++;
+                if (a.statusFin === 'atrasado' || a.statusFin === 'avencer') {
+                    pendentes++;
+                    if (a.statusFin === 'atrasado') valorPendente += a.mensalidade;
+                }
+            });
+
+            const porcPago = total > 0 ? Math.round((pagos / total) * 100) : 0;
+
+            statsGrid.innerHTML = `
+                <!-- Commercial Stats -->
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                        <i class="ti ti-users-group"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Total de Alunos</h3>
+                        <p class="stat-value">${total} Matriculados</p>
+                        <p class="stat-meta">Turma Atual</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChamadaUI() {
+            const chamadaGrid = document.getElementById('chamadaGrid');
+            chamadaGrid.innerHTML = '';
+
+            const dataSelecionada = document.getElementById('dataChamada').value;
+            const registroExistente = (db.chamadas || []).find(c => c.data === dataSelecionada && c.turmaId == db.activeTurmaId);
+
+            const btnSave = document.getElementById('btnSaveChamada');
+            const dataInput = document.getElementById('dataChamada');
+            const btnEdit = document.getElementById('btnEditChamada');
+
+            if (registroExistente && !isEditing) {
+                // UI de bloqueio se jÃ¡ existe chamada e NÃƒO estamos editando
+                btnSave.innerHTML = `<i class="ti ti-lock"></i> Chamada Encerrada`;
+                btnSave.style.background = 'var(--bg-hover)';
+                btnSave.style.color = 'var(--text-muted)';
+                btnSave.style.borderColor = 'var(--border-color)';
+                btnSave.style.cursor = 'not-allowed';
+                btnSave.disabled = true;
+                dataInput.disabled = false; // Permitir mudar a data
+
+                btnEdit.style.display = 'flex';
+                btnEdit.innerHTML = `<i class="ti ti-edit"></i> Editar Chamada`;
+                btnEdit.style.color = 'var(--text-main)';
+            } else {
+                btnSave.disabled = false;
+                btnSave.style.cursor = 'pointer';
+                btnSave.style.background = 'var(--primary)';
+                btnSave.style.color = '#fff';
+                btnSave.innerHTML = isEditing ? `<i class="ti ti-device-floppy"></i> Atualizar Chamada` : `<i class="ti ti-device-floppy"></i> Salvar Chamada`;
+                dataInput.disabled = isEditing; // Bloquear data durante ediÃ§Ã£o
+
+                if (registroExistente) {
+                    btnEdit.style.display = 'flex';
+                    btnEdit.innerHTML = `<i class="ti ti-x"></i> Cancelar EdiÃ§Ã£o`;
+                    btnEdit.style.color = 'var(--red)';
+                } else {
+                    btnEdit.style.display = 'none';
+                }
+            }
+
+            alunosTurma.forEach(a => {
+                let isPresent = true;
+                if (registroExistente) {
+                    isPresent = registroExistente.presencas.includes(a.id);
+                }
+
+                const card = `
+                    <div class="student-row" style="animation: fadeIn 0.4s ease-out;" id="chamada-aluno-${a.id}">
+                        <div class="col-info">
+                            <img src="${a.avatar}" alt="${a.nome}" class="student-avatar">
+                            <div class="student-details">
+                                <h4>${a.nome}</h4>
+                                <p><strong>${a.faixa}</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-presenca">
+                            <button class="btn-attendance present ${isPresent ? 'active' : ''}" 
+                                ${(registroExistente && !isEditing) ? 'disabled style="cursor:not-allowed"' : ''} 
+                                onclick="toggleAttendance(this, 'present')">
+                                <i class="ti ti-check"></i>
+                            </button>
+                            <button class="btn-attendance absent ${!isPresent ? 'active' : ''}" 
+                                ${(registroExistente && !isEditing) ? 'disabled style="cursor:not-allowed"' : ''} 
+                                onclick="toggleAttendance(this, 'absent')">
+                                <i class="ti ti-x"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                chamadaGrid.insertAdjacentHTML('beforeend', card);
+            });
+        }
+
+        // Adicionar listener para mudanÃ§a de data
+        document.getElementById('dataChamada').addEventListener('change', () => {
+            isEditing = false;
+            renderChamadaUI();
+        });
+
+        function toggleEditMode() {
+            isEditing = !isEditing;
+            renderChamadaUI();
+        }
+
+        // Simple attendance toggle
+        function toggleAttendance(btn, type) {
+            if (btn.disabled) return;
+
+            const parent = btn.parentElement;
+            const buttons = parent.querySelectorAll('.btn-attendance');
+
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // Bloqueio de chamada concluÃ­da e salvar no App.js DB
+        function saveChamada() {
+            const btnSave = document.getElementById('btnSaveChamada');
+            const dataChamadaInput = document.getElementById('dataChamada');
+            const dataSelecionada = dataChamadaInput.value || new Date().toISOString().split('T')[0];
+
+            if (!db.chamadas) db.chamadas = [];
+
+            // Se estiver editando, remove a anterior antes de salvar a nova
+            const indexExistente = db.chamadas.findIndex(c => c.data === dataSelecionada && c.turmaId == db.activeTurmaId);
+
+            const novaChamada = {
+                id: indexExistente > -1 ? db.chamadas[indexExistente].id : Date.now(),
+                data: dataSelecionada,
+                turmaId: db.activeTurmaId,
+                presencas: [],
+                faltas: []
+            };
+
+            // Salvar presenÃ§as
+            alunosTurma.forEach(a => {
+                const row = document.getElementById(`chamada-aluno-${a.id}`);
+                if (!row) return;
+
+                const bPresent = row.querySelector('.present.active');
+
+                // Atualizar record da chamada
+                if (bPresent) {
+                    novaChamada.presencas.push(a.id);
+                } else {
+                    novaChamada.faltas.push(a.id);
+                }
+            });
+
+            if (indexExistente > -1) {
+                db.chamadas[indexExistente] = novaChamada;
+            } else {
+                db.chamadas.push(novaChamada);
+            }
+
+            saveDB();
+            isEditing = false;
+
+            showToast(indexExistente > -1 ? "Chamada atualizada com sucesso!" : "Chamada salva com sucesso!");
+            renderChamadaUI();
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadPageData, 100);
+        });
+    </script>
+</body>
+
+</html>
+

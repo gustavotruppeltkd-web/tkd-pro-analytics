@@ -1,0 +1,188 @@
+/* Modo Beira de Quadra - Scout Mobile/Tablet First layout */
+.scout-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px);
+    /* minus topbar */
+    gap: 16px;
+    overflow: hidden;
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: space-between;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 16px 32px;
+    align-items: center;
+}
+
+.score-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.score-box h2 {
+    font-size: 20px;
+    text-transform: uppercase;
+}
+
+.score-blue h2 {
+    color: var(--primary);
+}
+
+.score-red h2 {
+    color: var(--red);
+}
+
+.score-value {
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.scout-grid {
+    display: flex;
+    flex: 1;
+    gap: 16px;
+}
+
+.athlete-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Big Action Buttons */
+.btn-scout {
+    flex: 1;
+    border-radius: var(--radius-lg);
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.1s;
+    /* fast transition for active tap */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    user-select: none;
+}
+
+.btn-scout:active {
+    transform: scale(0.98);
+}
+
+/* Blue Side */
+.blue-side .btn-scout {
+    background: rgba(65, 105, 225, 0.1);
+    color: var(--primary);
+    border: 2px solid rgba(65, 105, 225, 0.3);
+}
+
+.blue-side .btn-scout:active {
+    background: rgba(65, 105, 225, 0.3);
+}
+
+/* Red Side */
+.red-side .btn-scout {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--red);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.red-side .btn-scout:active {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.btn-scout span.points {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+/* Center Map area */
+.court-area {
+    width: 300px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    align-items: center;
+}
+
+.court-map {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: #e2e8f0;
+    border-radius: 50%;
+    /* Approximating the octogon for now visually */
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    position: relative;
+    cursor: crosshair;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.heatmap-point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: rgba(245, 158, 11, 0.8);
+    /* Yellow/Orange default */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+}
+
+.heatmap-point.confirmed {
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+}
+
+/* Responsive for mobile portrait */
+@media (max-width: 1024px) {
+    .scout-grid {
+        flex-direction: column;
+    }
+
+    .court-area {
+        width: 100%;
+        height: 200px;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .court-map {
+        width: auto;
+        height: 100%;
+    }
+
+    .athlete-side {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .btn-scout {
+        flex-basis: calc(50% - 6px);
+        min-height: 100px;
+    }
+}

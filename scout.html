@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro coach Analytics | Beira de Quadra</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/scout.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ti ti-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="atletas.html" class="nav-item">
+                    <i class="ti ti-users"></i>
+                    <span>Atletas</span>
+                </a>
+                <a href="treino.html" class="nav-item">
+                    <i class="ti ti-barbell"></i>
+                    <span>Treinamento</span>
+                </a>
+                <a href="scout.html" class="nav-item active">
+                    <i class="ti ti-device-gamepad-2"></i>
+                    <span>Scout (Beira de Quadra)</span>
+                </a>
+                <a href="calendario.html" class="nav-item">
+                    <i class="ti ti-calendar"></i>
+                    <span>CalendÃ¡rio</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" style="padding: 16px 32px;">
+            <header class="topbar" style="margin-bottom: 16px;">
+                <div class="page-title">
+                    <h1 style="font-size: 24px;">Modo Beira de Quadra</h1>
+                    <p class="subtitle" id="status-hint">Clique simples: Tentativa | Segure: Ponto Confirmado</p>
+                </div>
+                <div class="user-profile">
+                    <button class="btn btn-primary" id="btn-finish-scout"><i class="ti ti-check"></i> Encerrar
+                        Scout</button>
+                </div>
+            </header>
+
+            <div class="scout-container">
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                    <div class="score-box score-blue">
+                        <h2>Carlos (Chung)</h2>
+                        <span class="score-value" id="score-blue-val">0</span>
+                    </div>
+
+                    <div class="timer">
+                        <span>Round 1</span>
+                        <span style="font-size: 48px; color: var(--text-main);" id="timer-val">02:00</span>
+                        <button class="btn-icon" id="btn-play-pause" style="margin-top: 8px;"><i
+                                class="ti ti-player-pause"></i></button>
+                    </div>
+
+                    <div class="score-box score-red">
+                        <h2>Oponente (Hong)</h2>
+                        <span class="score-value" id="score-red-val">0</span>
+                    </div>
+                </div>
+
+                <!-- Scout Actions -->
+                <div class="scout-grid">
+
+                    <!-- Blue Athlete Actions -->
+                    <div class="athlete-side blue-side">
+                        <button class="btn-scout" data-target="blue" data-points="2" data-tech="Bandal Chagi">
+                            Bandal Chagi (Tronco) <span class="points">+2</span>
+                        </button>
+                        <button class="btn-scout" data-target="blue" data-points="3" data-tech="Naeryo Chagi">
+                            Naeryo Chagi (CabeÃ§a) <span class="points">+3</span>
+                        </button>
+                        <button class="btn-scout" data-target="blue" data-points="4" data-tech="Dwit Chagi">
+                            TÃ©cnica GiratÃ³ria (Tronco) <span class="points">+4</span>
+                        </button>
+                        <button class="btn-scout" data-target="blue" data-points="1" data-tech="Soco">
+                            Soco (Tronco) <span class="points">+1</span>
+                        </button>
+                        <button class="btn-scout" data-target="blue" data-points="1" data-tech="Gam-jeom"
+                            style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--red);">
+                            Falta do Oponente <span class="points">+1</span>
+                        </button>
+                    </div>
+
+                    <!-- Octogon Heatmap -->
+                    <div class="court-area">
+                        <h3 style="font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 8px;">
+                            Mapa de Calor (Clique para registrar)</h3>
+                        <div class="court-map" id="court-map">
+                            <!-- Points will be injected here by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Red Athlete Actions -->
+                    <div class="athlete-side red-side">
+                        <button class="btn-scout" data-target="red" data-points="2" data-tech="Bandal Chagi">
+                            Bandal Chagi (Tronco) <span class="points">+2</span>
+                        </button>
+                        <button class="btn-scout" data-target="red" data-points="3" data-tech="Naeryo Chagi">
+                            Naeryo Chagi (CabeÃ§a) <span class="points">+3</span>
+                        </button>
+                        <button class="btn-scout" data-target="red" data-points="4" data-tech="Dwit Chagi">
+                            TÃ©cnica GiratÃ³ria (Tronco) <span class="points">+4</span>
+                        </button>
+                        <button class="btn-scout" data-target="red" data-points="1" data-tech="Soco">
+                            Soco (Tronco) <span class="points">+1</span>
+                        </button>
+                        <button class="btn-scout" data-target="red" data-points="1" data-tech="Gam-jeom"
+                            style="background: rgba(65, 105, 225, 0.1); border-color: rgba(65, 105, 225, 0.3); color: var(--primary);">
+                            Falta do Carlos <span class="points">+1</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/scout.js"></script>
+</body>
+
+</html>
+

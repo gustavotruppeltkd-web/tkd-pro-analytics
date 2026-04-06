@@ -1,0 +1,680 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | Detalhes do Evento</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <style>
+        .event-header-card {
+            padding: 32px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .event-title-area h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .stat-icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .participation-section {
+            padding: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .athlete-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .athlete-row:last-child {
+            border-bottom: none;
+        }
+
+        .athlete-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .athlete-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .athlete-name {
+            font-weight: 500;
+        }
+
+        .col-result {
+            width: 150px;
+        }
+
+        .col-medal {
+            width: 100px;
+            text-align: center;
+        }
+
+        .col-actions {
+            width: 50px;
+            text-align: right;
+        }
+
+        .medal-toggle {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .medal-toggle.active {
+            color: var(--yellow);
+        }
+
+        .form-select-atleta {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 250px;
+        }
+
+        /* Medal Colors */
+        .medal-icon {
+            font-size: 24px;
+        }
+
+        .medal-ouro {
+            color: #FFD700;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
+        }
+
+        .medal-prata {
+            color: #C0C0C0;
+            filter: drop-shadow(0 0 5px rgba(192, 192, 192, 0.4));
+        }
+
+        .medal-bronze {
+            color: #CD7F32;
+            filter: drop-shadow(0 0 5px rgba(205, 127, 50, 0.4));
+        }
+
+        .round-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .medal-breakdown span {
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Reuse) -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+            <nav class="nav-menu" id="navMenuContainer">
+                <!-- Renderizado via JS (renderSidebar) -->
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <a href="calendario.html" class="btn btn-outline"><i class="ti ti-arrow-left"></i> Voltar</a>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">Carregando...</span>
+                        <span class="user-role">Head Coach</span>
+                    </div>
+                </div>
+            </header>
+
+            <div id="eventDetailContainer">
+                <!-- Content injected by JS -->
+            </div>
+
+            <div class="stats-row">
+                <div class="card stat-box">
+                    <div class="stat-icon-circle" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">
+                        <i class="ti ti-users"></i>
+                    </div>
+                    <div>
+                        <p style="color: var(--text-muted); font-size: 13px;">Participantes</p>
+                        <h3 id="statParticipantes">0</h3>
+                    </div>
+                </div>
+                <div class="card stat-box">
+                    <div class="stat-icon-circle" style="background: rgba(245, 158, 11, 0.1); color: var(--yellow);">
+                        <i class="ti ti-medal"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                            <div>
+                                <p style="color: var(--text-muted); font-size: 13px;">Medalhas</p>
+                                <h3 id="statMedalhas">0</h3>
+                            </div>
+                            <div class="medal-breakdown" style="display: flex; gap: 12px; margin-bottom: 4px;">
+                                <span title="Ouro" style="color: #FFD700;"><i class="ti ti-medal"></i> <span
+                                        id="statOuro">0</span></span>
+                                <span title="Prata" style="color: #C0C0C0;"><i class="ti ti-medal"></i> <span
+                                        id="statPrata">0</span></span>
+                                <span title="Bronze" style="color: #CD7F32;"><i class="ti ti-medal"></i> <span
+                                        id="statBronze">0</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card participation-section">
+                <div class="section-header">
+                    <h2>ParticipaÃ§Ã£o dos Atletas</h2>
+                    <div style="display: flex; gap: 12px;">
+                        <select id="selectAddAtleta" class="form-select-atleta">
+                            <option value="">Adicionar Atleta...</option>
+                            <!-- Options injected by JS -->
+                        </select>
+                        <button class="btn btn-primary" onclick="addAtletaParticipation()">
+                            <i class="ti ti-plus"></i> Adicionar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="athletesList">
+                    <!-- List items injected by JS -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = parseInt(urlParams.get('id'));
+        let currentEvent = null;
+
+        function initPage() {
+            currentEvent = db.eventos.find(e => e.id === eventId);
+            if (!currentEvent) {
+                alert('Evento nÃ£o encontrado!');
+                window.location.href = 'calendario.html';
+                return;
+            }
+
+            renderEventInfo();
+            renderAthletesList();
+            populateAtletaSelect();
+        }
+
+        function renderEventInfo() {
+            const container = document.getElementById('eventDetailContainer');
+
+            let displayDate = formatarDataBR(currentEvent.data);
+            if (currentEvent.dataFim && currentEvent.dataFim !== currentEvent.data) {
+                displayDate = `${formatarDataBR(currentEvent.data)} - ${formatarDataBR(currentEvent.dataFim)}`;
+            }
+
+            let extraBadges = '';
+            if (currentEvent.dificuldade) {
+                let badgeClass = 'bg-dark';
+                if (currentEvent.dificuldade === 'Alto' || currentEvent.dificuldade === 'Muito Elevado' || currentEvent.dificuldade === 'Muito Alto') badgeClass = 'bg-red';
+                else if (currentEvent.dificuldade === 'MÃ©dio') badgeClass = 'bg-yellow';
+                else if (currentEvent.dificuldade === 'Baixo') badgeClass = 'bg-green';
+                extraBadges += `<span class="event-badge" style="background: var(--${badgeClass} || var(--bg-hover)); margin-left:8px;"><i class="ti ti-star"></i> NÃ­vel: ${currentEvent.dificuldade}</span>`;
+            }
+            if (currentEvent.classificatorio) {
+                extraBadges += `<span class="event-badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; margin-left:8px;"><i class="ti ti-ticket"></i> ClassificatÃ³rio</span>`;
+            }
+
+            container.innerHTML = `
+                <div class="card event-header-card">
+                    <div class="event-title-area">
+                        <span class="event-badge type-${currentEvent.tipo.toLowerCase()}">${currentEvent.tipo}</span>
+                        ${extraBadges}
+                        <h1>${currentEvent.titulo}</h1>
+                        <div style="display: flex; gap: 24px; color: var(--text-muted); flex-wrap: wrap;">
+                            <span><i class="ti ti-calendar"></i> ${displayDate}</span>
+                            <span><i class="ti ti-map-pin"></i> ${currentEvent.local || 'Local nÃ£o definido'}</span>
+                            <span><i class="ti ti-building"></i> ${currentEvent.organizador || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateAtletaSelect() {
+            const select = document.getElementById('selectAddAtleta');
+            // Show only athletes from "Rendimento" teams
+            const rendimentoTurmas = db.turmas.filter(t => t.tipo === 'Rendimento').map(t => t.id);
+            const alreadyIn = currentEvent.participantes.map(p => p.atletaId);
+
+            const available = db.alunos.filter(a => rendimentoTurmas.includes(a.turmaId) && !alreadyIn.includes(a.id));
+
+            select.innerHTML = '<option value="">Adicionar Atleta...</option>';
+            available.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.id;
+                opt.innerText = a.nome;
+                select.appendChild(opt);
+            });
+        }
+
+        function addAtletaParticipation() {
+            const select = document.getElementById('selectAddAtleta');
+            const athleteId = parseInt(select.value);
+            if (!athleteId) return;
+
+            currentEvent.participantes.push({
+                atletaId: athleteId,
+                colocacao: 'ParticipaÃ§Ã£o',
+                medalha: false,
+                lutas: 0
+            });
+
+            saveDB();
+            renderAthletesList();
+            populateAtletaSelect();
+            showToast('Atleta adicionado ao evento.');
+        }
+
+        function updateResult(athleteId, colocacao) {
+            const p = currentEvent.participantes.find(x => x.atletaId === athleteId);
+            if (p) {
+                p.colocacao = colocacao;
+                // Automate medal property
+                if (['Ouro', 'Prata', 'Bronze'].includes(colocacao)) {
+                    p.medalha = true;
+                } else {
+                    p.medalha = false;
+                }
+                saveDB();
+                renderAthletesList(); // Refresh to show medal/round
+            }
+        }
+
+        function updateLutas(athleteId, lutas) {
+            const p = currentEvent.participantes.find(x => x.atletaId === athleteId);
+            if (p) {
+                p.lutas = parseInt(lutas) || 0;
+                saveDB();
+            }
+        }
+
+
+        function removeParticipation(athleteId) {
+            if (confirm('Remover participaÃ§Ã£o deste atleta?')) {
+                currentEvent.participantes = currentEvent.participantes.filter(p => p.atletaId !== athleteId);
+                saveDB();
+                renderAthletesList();
+                populateAtletaSelect();
+            }
+        }
+
+        function renderAthletesList() {
+            const list = document.getElementById('athletesList');
+            list.innerHTML = '';
+
+            let medalTotal = 0;
+            let ouroCount = 0;
+            let prataCount = 0;
+            let bronzeCount = 0;
+
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let eventDate = new Date(currentEvent.data + "T00:00:00");
+            let eventFinished = true;
+            if (currentEvent.dataFim) {
+                eventDate = new Date(currentEvent.dataFim + "T00:00:00");
+            }
+            if (eventDate >= today) { // Se a data final do evento ainda Ã© hoje ou no futuro, nÃ£o pode editar lutas (a nÃ£o ser que jÃ¡ tenha passado)
+                // Na verdade, a regra "nÃ£o passou ainda" se aplica ao inicio?
+                // Se o evento Ã© dia 25 e hoje Ã© 23, "nÃ£o passou ainda". Bloqueado.
+                // Se o evento Ã© dia 25 e hoje Ã© 26, "jÃ¡ passou". Liberado.
+            }
+            // Para simplificar: Bloqueia se a data de inÃ­cio do evento for MAIOR que hoje
+            let startDate = new Date(currentEvent.data + "T00:00:00");
+            let isFutureEvent = startDate > today;
+
+            currentEvent.participantes.forEach(p => {
+                const athlete = db.alunos.find(a => a.id === p.atletaId);
+                if (!athlete) return;
+
+                if (p.colocacao === 'Ouro') { medalTotal++; ouroCount++; }
+                else if (p.colocacao === 'Prata') { medalTotal++; prataCount++; }
+                else if (p.colocacao === 'Bronze') { medalTotal++; bronzeCount++; }
+
+                let medalIcon = '';
+                let roundDisplay = '';
+
+                if (p.colocacao === 'Ouro') medalIcon = '<i class="ti ti-medal medal-icon medal-ouro"></i><span style="font-size: 13px; font-weight: 500; margin-left: 8px;">Ouro</span>';
+                else if (p.colocacao === 'Prata') medalIcon = '<i class="ti ti-medal medal-icon medal-prata"></i><span style="font-size: 13px; font-weight: 500; margin-left: 8px;">Prata</span>';
+                else if (p.colocacao === 'Bronze') medalIcon = '<i class="ti ti-medal medal-icon medal-bronze"></i><span style="font-size: 13px; font-weight: 500; margin-left: 8px;">Bronze</span>';
+                else if (p.colocacao === 'Quartas de Final') roundDisplay = '<span class="round-badge">Quartas</span>';
+                else if (p.colocacao === 'Oitavas de Final') roundDisplay = '<span class="round-badge">Oitavas</span>';
+                else if (p.colocacao === '16 avos de Final') roundDisplay = '<span class="round-badge">16 Avos</span>';
+
+                const row = document.createElement('div');
+                row.className = 'athlete-row';
+
+                let inpHtml = `<input type="number" class="form-control" title="NÃºmero de Lutas" value="${p.lutas || 0}" min="0" max="20" style="width: 60px; padding: 6px; font-size: 13px; text-align: center; margin-right: 12px;" onchange="updateLutas(${athlete.id}, this.value)" ${isFutureEvent ? 'disabled title="O evento ainda nÃ£o comeÃ§ou"' : ''}>`;
+
+                row.innerHTML = `
+                    <div class="athlete-info">
+                        <img src="${athlete.avatar}" class="athlete-avatar">
+                        <span class="athlete-name">${athlete.nome}</span>
+                    </div>
+                    <div class="col-result" style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; width: 150px; margin-right: 16px;">
+                        <span style="font-size: 13px; color: var(--text-muted);">Lutas ${p.lutas || 0}</span>
+                        <button class="btn btn-icon" style="background: transparent; color: var(--text-muted); font-size: 18px; padding: 0; margin-left: 2px;" onclick="toggleFightsView(${athlete.id})">
+                            <i class="ti ti-chevron-down" id="toggleIcon-${athlete.id}"></i>
+                        </button>
+                    </div>
+                    <div class="col-medal" style="display: flex; align-items: center; justify-content: center; width: 120px;">
+                        ${medalIcon || roundDisplay || '<span style="font-size: 12px; color: var(--text-muted);">-</span>'}
+                    </div>
+                    <div class="col-actions" style="display: flex; align-items: center; gap: 8px; width: auto;">
+                        <button class="btn-icon" style="color: var(--text-muted);" onclick="openAthleteDetails(${athlete.id})" title="Detalhes">
+                            <i class="ti ti-edit"></i>
+                        </button>
+                        <button class="btn btn-icon btn-danger" onclick="removeParticipation(${athlete.id})" title="Remover Atleta">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>
+                `;
+
+                // Add Fights Visualization Box below the main row if fights exist
+                if (p.lutasDetalhes && p.lutasDetalhes.length > 0) {
+                    let fightsHtml = '';
+                    p.lutasDetalhes.forEach((luta, index) => {
+                        let resultColor = 'var(--text-muted)';
+                        if (luta.resultado && luta.resultado.startsWith('Venceu')) resultColor = 'var(--green)';
+                        if (luta.resultado && luta.resultado.startsWith('Perdeu')) resultColor = 'var(--red)';
+
+                        fightsHtml += `
+                            <div style="display: flex; align-items: center; margin-bottom: 8px; font-size: 12.5px;">
+                                <div style="width: 70px; color: var(--primary); font-weight: 600;">Luta ${index + 1}</div>
+                                <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
+                                    <span style="color: var(--text-muted);">vs</span> 
+                                    <span style="font-weight: 500;">${luta.oponente || 'Oponente nÃ£o definido'}</span>
+                                </div>
+                                <div style="flex: 2; color: ${resultColor}; text-align: right; padding-right: 16px; font-weight: 500;">
+                                    ${luta.resultado || 'Resultado nÃ£o preenchido'}
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    const fightsContainer = document.createElement('div');
+                    fightsContainer.id = `fightsContainer-${athlete.id}`;
+                    fightsContainer.style.background = 'rgba(255, 255, 255, 0.015)';
+                    fightsContainer.style.padding = '16px 24px';
+                    fightsContainer.style.borderTop = '1px solid rgba(255,255,255,0.03)';
+                    fightsContainer.style.borderBottom = '1px solid var(--border-color)';
+                    fightsContainer.style.display = 'none'; // Hidden by default
+                    fightsContainer.innerHTML = fightsHtml;
+
+                    list.appendChild(row);
+                    list.appendChild(fightsContainer);
+                } else {
+                    list.appendChild(row);
+                }
+            });
+
+            document.getElementById('statParticipantes').innerText = currentEvent.participantes.length;
+            document.getElementById('statMedalhas').innerText = medalTotal;
+            document.getElementById('statOuro').innerText = ouroCount;
+            document.getElementById('statPrata').innerText = prataCount;
+            document.getElementById('statBronze').innerText = bronzeCount;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initPage, 100);
+        });
+
+        // Toggle fights list view
+        function toggleFightsView(athleteId) {
+            const container = document.getElementById(`fightsContainer-${athleteId}`);
+            const icon = document.getElementById(`toggleIcon-${athleteId}`);
+            if (!container || !icon) return;
+
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                icon.className = 'ti ti-chevron-up';
+            } else {
+                container.style.display = 'none';
+                icon.className = 'ti ti-chevron-down';
+            }
+        }
+
+        // --- ATHLETE DETAILS MODAL ---
+        let currentEditingAthleteId = null;
+
+        function openAthleteDetails(athleteId) {
+            currentEditingAthleteId = athleteId;
+            const p = currentEvent.participantes.find(x => x.atletaId === athleteId);
+            const athlete = db.alunos.find(a => a.id === athleteId);
+            if (!p || !athlete) return;
+
+            document.getElementById('modalAthleteName').innerText = athlete.nome;
+            document.getElementById('formAthleteResult').value = p.colocacao || 'ParticipaÃ§Ã£o';
+            document.getElementById('formAthleteLutasCount').value = p.lutas || 0;
+
+            if (!p.lutasDetalhes) p.lutasDetalhes = [];
+
+            renderFightsList();
+            document.getElementById('modalAthleteEventDetails').classList.add('active');
+        }
+
+        function closeAthleteDetails() {
+            currentEditingAthleteId = null;
+            document.getElementById('modalAthleteEventDetails').classList.remove('active');
+        }
+
+        function handleLutasCountChange() {
+            const count = parseInt(document.getElementById('formAthleteLutasCount').value) || 0;
+            const p = currentEvent.participantes.find(x => x.atletaId === currentEditingAthleteId);
+            if (!p) return;
+
+            // Adjust fights array
+            if (!p.lutasDetalhes) p.lutasDetalhes = [];
+            while (p.lutasDetalhes.length < count) {
+                p.lutasDetalhes.push({ oponente: '', resultado: '' });
+            }
+            while (p.lutasDetalhes.length > count) {
+                p.lutasDetalhes.pop();
+            }
+
+            renderFightsList();
+        }
+
+        function renderFightsList() {
+            const container = document.getElementById('fightsContainer');
+            const p = currentEvent.participantes.find(x => x.atletaId === currentEditingAthleteId);
+            if (!p || !p.lutasDetalhes || p.lutasDetalhes.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Nenhuma luta registrada. Aumente o nÃºmero de lutas acima.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            p.lutasDetalhes.forEach((luta, i) => {
+                container.innerHTML += `
+                    <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 12px;">
+                        <div style="font-weight: 600; font-size: 13px; margin-bottom: 12px; color: var(--primary);">Luta ${i + 1}</div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 11px;">Oponente</label>
+                                <input type="text" class="form-control" value="${luta.oponente || ''}" onchange="updateFightDetails(${i}, 'oponente', this.value)" placeholder="Nome do Oponente">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 11px;">Resultado da Luta (Melhor de 3)</label>
+                                <select class="form-control" onchange="updateFightDetails(${i}, 'resultado', this.value)">
+                                    <option value="">Selecione o resultado</option>
+                                    <optgroup label="VitÃ³rias">
+                                        <option value="Venceu 2x0 (Ganhou 1Âº e 2Âº)" ${luta.resultado === 'Venceu 2x0 (Ganhou 1Âº e 2Âº)' ? 'selected' : ''}>Venceu 2x0 (Ganhou 1Âº e 2Âº)</option>
+                                        <option value="Venceu 2x1 (De virada - Perdeu o 1Âº)" ${luta.resultado === 'Venceu 2x1 (De virada - Perdeu o 1Âº)' ? 'selected' : ''}>Venceu 2x1 (De virada - Perdeu o 1Âº)</option>
+                                        <option value="Venceu 2x1 (Perdeu o 2Âº)" ${luta.resultado === 'Venceu 2x1 (Perdeu o 2Âº)' ? 'selected' : ''}>Venceu 2x1 (Perdeu o 2Âº)</option>
+                                    </optgroup>
+                                    <optgroup label="Derrotas">
+                                        <option value="Perdeu 0x2 (Perdeu 1Âº e 2Âº)" ${luta.resultado === 'Perdeu 0x2 (Perdeu 1Âº e 2Âº)' ? 'selected' : ''}>Perdeu 0x2 (Perdeu 1Âº e 2Âº)</option>
+                                        <option value="Perdeu 1x2 (Ganhou apenas o 1Âº)" ${luta.resultado === 'Perdeu 1x2 (Ganhou apenas o 1Âº)' ? 'selected' : ''}>Perdeu 1x2 (Ganhou apenas o 1Âº)</option>
+                                        <option value="Perdeu 1x2 (Ganhou apenas o 2Âº)" ${luta.resultado === 'Perdeu 1x2 (Ganhou apenas o 2Âº)' ? 'selected' : ''}>Perdeu 1x2 (Ganhou apenas o 2Âº)</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function updateFightDetails(index, field, value) {
+            const p = currentEvent.participantes.find(x => x.atletaId === currentEditingAthleteId);
+            if (!p || !p.lutasDetalhes) return;
+
+            p.lutasDetalhes[index][field] = value;
+        }
+
+        function saveAthleteDetails() {
+            const p = currentEvent.participantes.find(x => x.atletaId === currentEditingAthleteId);
+            if (!p) return;
+
+            const lutasCount = parseInt(document.getElementById('formAthleteLutasCount').value) || 0;
+            const colocacao = document.getElementById('formAthleteResult').value;
+
+            p.lutas = lutasCount;
+            p.colocacao = colocacao;
+            if (['Ouro', 'Prata', 'Bronze'].includes(colocacao)) {
+                p.medalha = true;
+            } else {
+                p.medalha = false;
+            }
+
+            saveDB();
+            closeAthleteDetails();
+            renderAthletesList();
+            showToast('Detalhes do atleta salvos!');
+        }
+
+    </script>
+
+    <!-- Modal Athlete Details -->
+    <div class="modal-overlay" id="modalAthleteEventDetails">
+        <div class="modal-content" style="max-width: 500px; width: 100%;">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">Detalhes da ParticipaÃ§Ã£o</h2>
+                    <p id="modalAthleteName" style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Nome do
+                        Atleta</p>
+                </div>
+                <button class="btn-close" onclick="closeAthleteDetails()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label>ClassificaÃ§Ã£o / Medalha</label>
+                    <select id="formAthleteResult" class="form-control">
+                        <option value="ParticipaÃ§Ã£o">ParticipaÃ§Ã£o</option>
+                        <option value="Ouro">Ouro</option>
+                        <option value="Prata">Prata</option>
+                        <option value="Bronze">Bronze</option>
+                        <option value="Quartas de Final">Quartas de Final</option>
+                        <option value="Oitavas de Final">Oitavas de Final</option>
+                        <option value="16 avos de Final">16 avos de Final</option>
+                    </select>
+                </div>
+                <div class="form-group" style="width: 120px; margin-bottom: 0;">
+                    <label>NÂº Lutas</label>
+                    <input type="number" id="formAthleteLutasCount" class="form-control" min="0"
+                        onchange="handleLutasCountChange()">
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h3
+                    style="font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                    HistÃ³rico de Lutas</h3>
+                <div id="fightsContainer" style="max-height: 300px; overflow-y: auto;">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-outline" onclick="closeAthleteDetails()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveAthleteDetails()">Salvar Detalhes</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+

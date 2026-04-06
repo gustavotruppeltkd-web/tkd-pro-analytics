@@ -1,0 +1,1008 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | QuestionÃ¡rios DinÃ¢micos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .tabs-header {
+            display: flex;
+            gap: 32px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 0;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .tab-btn:hover {
+            color: var(--text-main);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Form Render Styles */
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .question-block {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        /* Custom Inputs */
+        .status-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .status-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .status-btn.selected {
+            border-color: var(--primary);
+            background: rgba(65, 105, 225, 0.2);
+            font-weight: 600;
+        }
+
+        /* Builder Styles */
+        .builder-row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            margin-bottom: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            border-radius: var(--radius-md);
+        }
+
+        /* Chart Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .chart-card h4 {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .chart-card .chart-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white !important;
+            border: none;
+            padding: 0 16px;
+            height: 38px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+            text-decoration: none;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .btn-export i {
+            font-size: 16px;
+        }
+
+        .text-answers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .text-answer-item {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 13px;
+            line-height: 1.4;
+            border-left: 3px solid var(--primary);
+        }
+
+        .text-answer-item .answer-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Rendimento -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+            <nav class="nav-menu" id="navMenuContainer">
+                <!-- Renderizado via JS (renderSidebar) -->
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1 id="turmaName">Equipe de CompetiÃ§Ã£o</h1>
+                    <p class="subtitle">AnÃ¡lise Subjetiva e QuestionÃ¡rios DinÃ¢micos</p>
+                </div>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">Carregando...</span>
+                        <span class="user-role">Head Coach</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="switchTab('responder')">Responder FormulÃ¡rio</button>
+                <button class="tab-btn" onclick="switchTab('historico')">HistÃ³rico de Respostas</button>
+                <button class="tab-btn" onclick="switchTab('graficos')">GrÃ¡ficos por QuestionÃ¡rio</button>
+                <button class="tab-btn" onclick="switchTab('builder')">Criador de QuestionÃ¡rios</button>
+            </div>
+
+            <!-- Tab: Responder -->
+            <div id="tab-responder" class="tab-pane active">
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="q-header">
+                        <h2>Nova Resposta</h2>
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <input type="date" id="dataResposta" class="form-control"
+                                style="width: 150px; padding: 10px;">
+                            <select id="selectAtleta" class="form-control" style="width: 250px;">
+                                <option value="">Selecione o Atleta...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 32px;">
+                        <label>Escolha o QuestionÃ¡rio</label>
+                        <select id="selectQuestionario" class="form-control" onchange="renderActiveQuestionario()">
+                            <option value="">Selecione um questionÃ¡rio...</option>
+                        </select>
+                    </div>
+
+                    <form id="formRespostas" onsubmit="saveRespostas(event)" style="display: none;">
+                        <div id="perguntasContainer">
+                            <!-- JS Inject -->
+                        </div>
+                        <div style="margin-top: 32px; display: flex; justify-content: flex-end;">
+                            <button type="submit" class="btn btn-primary" style="padding: 12px 32px;"><i
+                                    class="ti ti-device-floppy"></i> Salvar Respostas</button>
+                        </div>
+                    </form>
+
+                    <div id="emptyFormMessage" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
+                        <i class="ti ti-clipboard" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>Selecione um questionÃ¡rio acima para exibir as perguntas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: HistÃ³rico -->
+            <div id="tab-historico" class="tab-pane">
+                <div class="card" style="margin-bottom: 24px;">
+                    <h2>Respostas Recentes</h2>
+                    <p class="subtitle" style="margin-bottom: 24px;">Lista de submissÃµes feitas pelos atletas.</p>
+                    <div id="historicoGrid" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- JS Inject -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: GrÃ¡ficos -->
+            <div id="tab-graficos" class="tab-pane">
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="q-header">
+                        <div>
+                            <h2>AnÃ¡lise por QuestionÃ¡rio</h2>
+                            <p class="subtitle" style="margin-top: 4px;">Visualize os resultados agregados de todos os
+                                atletas.</p>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <select id="selectGraficoQ" class="form-control" style="width: 240px;"
+                                onchange="renderGraficos()">
+                                <option value="">Selecione um questionÃ¡rio...</option>
+                            </select>
+                            <select id="selectGraficoAtleta" class="form-control" style="width: 220px;"
+                                onchange="renderGraficos()">
+                                <option value="equipe">&#128101; Toda a Equipe</option>
+                            </select>
+                            <button class="btn-export" onclick="exportQuestionarioCSV()">
+                                <i class="ti ti-download"></i> Exportar CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="graficosEmpty" style="text-align: center; color: var(--text-muted); padding: 48px 0;">
+                        <i class="ti ti-chart-bar" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
+                        <p>Selecione um questionÃ¡rio acima para ver os grÃ¡ficos de todas as respostas.</p>
+                    </div>
+
+                    <div id="graficosContainer" class="charts-grid" style="display: none;">
+                        <!-- JS Inject -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Builder (Criador) -->
+            <div id="tab-builder" class="tab-pane">
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="q-header">
+                        <h2>Criar Novo QuestionÃ¡rio</h2>
+                        <button class="btn btn-primary" onclick="salvarNovoQuestionario()"><i class="ti ti-check"></i>
+                            Salvar QuestionÃ¡rio</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>TÃ­tulo do FormulÃ¡rio (ex: Feedback PÃ³s-Luta, AnÃ¡lise PsicolÃ³gica)</label>
+                        <input type="text" id="builderTitulo" class="form-control" placeholder="Digite o tÃ­tulo...">
+                    </div>
+
+                    <div style="margin-top: 32px;">
+                        <h3>Perguntas</h3>
+                        <p class="subtitle" style="margin-bottom: 16px;">Adicione as perguntas que irÃ£o compor este
+                            questionÃ¡rio.</p>
+
+                        <div id="builderPerguntasList">
+                            <!-- JS Inject Rows -->
+                        </div>
+
+                        <button class="btn"
+                            style="border: 1px dashed var(--border-color); width: 100%; justify-content: center; padding: 16px; margin-top: 16px;"
+                            onclick="addBuilderPergunta()">
+                            <i class="ti ti-plus"></i> Adicionar Nova Pergunta
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <h2>QuestionÃ¡rios Existentes</h2>
+                    <div id="existentesGrid" style="margin-top: 16px;">
+                        <!-- JS Inject -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal View Resposta Completa -->
+    <div class="modal-overlay" id="modalViewResposta">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalhe da SubmissÃ£o</h2>
+                <button class="btn-close" type="button" onclick="closeModalView()"><i class="ti ti-x"></i></button>
+            </div>
+            <div id="viewRespostaContent" style="margin-top: 16px;">
+                <!-- JS Inject -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const turma = db.turmas.find(t => t.id === db.activeTurmaId);
+            if (turma) document.getElementById('turmaName').innerText = turma.nome;
+
+            document.getElementById('dataResposta').value = new Date().toISOString().split('T')[0];
+
+            populateSelects();
+            renderBuilderPreview();
+            renderExistentes();
+            renderHistorico();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if (tabId === 'graficos') {
+                populateGraficoSelect();
+            }
+        }
+
+        function populateSelects() {
+            // Atletas
+            const selectA = document.getElementById('selectAtleta');
+            selectA.innerHTML = '<option value="">Selecione o Atleta...</option>';
+            db.alunos.filter(a => a.turmaId === db.activeTurmaId).forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.id;
+                opt.text = a.nome;
+                selectA.appendChild(opt);
+            });
+
+            // QuestionÃ¡rios
+            const selectQ = document.getElementById('selectQuestionario');
+            selectQ.innerHTML = '<option value="">Selecione um questionÃ¡rio...</option>';
+            (db.questionarios || []).filter(q => q.ativo).forEach(q => {
+                const opt = document.createElement('option');
+                opt.value = q.id;
+                opt.text = q.titulo;
+                selectQ.appendChild(opt);
+            });
+        }
+
+        function populateGraficoSelect() {
+            // Questionnaires
+            const sel = document.getElementById('selectGraficoQ');
+            const currentQ = sel.value;
+            sel.innerHTML = '<option value="">Selecione um questionÃ¡rio...</option>';
+            (db.questionarios || []).forEach(q => {
+                sel.innerHTML += `<option value="${q.id}">${q.titulo}</option>`;
+            });
+            if (currentQ) sel.value = currentQ;
+
+            // Athletes
+            const selA = document.getElementById('selectGraficoAtleta');
+            const currentA = selA.value;
+            selA.innerHTML = '<option value="equipe">&#128101; Toda a Equipe</option>';
+            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            alunosTurma.forEach(a => {
+                selA.innerHTML += `<option value="${a.id}">${a.nome}</option>`;
+            });
+            if (currentA) selA.value = currentA;
+        }
+
+        // ==========================================
+        //  RENDERIZADOR DE QUESTIONÃRIO DINÃ‚MICO
+        // ==========================================
+        let currentQuestionsRaw = [];
+
+        function renderActiveQuestionario() {
+            const qId = parseInt(document.getElementById('selectQuestionario').value);
+            const container = document.getElementById('perguntasContainer');
+            const formObj = document.getElementById('formRespostas');
+            const emptyMsg = document.getElementById('emptyFormMessage');
+
+            if (!qId) {
+                formObj.style.display = 'none';
+                emptyMsg.style.display = 'block';
+                return;
+            }
+
+            const quest = db.questionarios.find(q => q.id === qId);
+            if (!quest) return;
+
+            currentQuestionsRaw = quest.perguntas;
+            container.innerHTML = '';
+
+            quest.perguntas.forEach((p, index) => {
+                let inputHtml = '';
+
+                switch (p.tipo) {
+                    case 'escala_5':
+                        inputHtml = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 11px;"><span>1 (Pior)</span><span>5 (Melhor)</span></div>
+                        ${renderScaleButtons(1, 5, 3, `q_${p.id}`)}
+                        `;
+                        break;
+                    case 'escala_10':
+                        inputHtml = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 11px;"><span>1 (MÃ­nimo)</span><span>10 (MÃ¡ximo)</span></div>
+                        ${renderScaleButtons(1, 10, 5, `q_${p.id}`)}
+                        `;
+                        break;
+                    case 'status':
+                        inputHtml = `
+                        <div class="status-options">
+                            <input type="hidden" name="q_${p.id}" id="input_${p.id}" value="" required>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Ruim')">Ruim</div>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'MÃ©dio')">MÃ©dio</div>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Bom')">Bom</div>
+                        </div>
+                        `;
+                        break;
+                    case 'sim_nao':
+                        inputHtml = `
+                        <div class="status-options">
+                            <input type="hidden" name="q_${p.id}" id="input_${p.id}" value="" required>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'NÃ£o')">NÃ£o</div>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Sim')">Sim</div>
+                        </div>
+                        `;
+                        break;
+                    case 'texto':
+                        inputHtml = `<textarea name="q_${p.id}" class="form-control" rows="3" placeholder="Digite sua resposta..." required></textarea>`;
+                        break;
+                }
+
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="question-block">
+                        <div class="question-text">${index + 1}. ${p.texto}</div>
+                        ${inputHtml}
+                    </div>
+                `);
+            });
+
+            formObj.style.display = 'block';
+            emptyMsg.style.display = 'none';
+        }
+
+        function selectStatus(element, inputId, value) {
+            const siblings = element.parentElement.querySelectorAll('.status-btn');
+            siblings.forEach(s => s.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById(inputId).value = value;
+        }
+
+        function saveRespostas(e) {
+            e.preventDefault();
+            const aId = document.getElementById('selectAtleta').value;
+            const qId = parseInt(document.getElementById('selectQuestionario').value);
+            const data = document.getElementById('dataResposta').value;
+
+            if (!aId) return alert("Selecione um atleta primeiro.");
+
+            const formData = new FormData(e.target);
+            let respostasVal = {};
+
+            currentQuestionsRaw.forEach(p => {
+                respostasVal[p.id] = formData.get(`q_${p.id}`);
+            });
+
+            db.respostas.push({
+                id: Date.now(),
+                atletaId: parseInt(aId),
+                questionarioId: qId,
+                data: data,
+                respostas: respostasVal
+            });
+
+            saveDB();
+            renderHistorico();
+            e.target.reset();
+            currentQuestionsRaw = [];
+            const container = document.getElementById('perguntasContainer');
+            container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--green);"><b>Respostas salvas com sucesso!</b></div>`;
+            showToast("Respostas do questionÃ¡rio salvas!");
+            setTimeout(() => {
+                document.getElementById('selectQuestionario').value = "";
+                renderActiveQuestionario();
+            }, 2000);
+        }
+
+        // ==========================================
+        //  BUILDER E HISTÃ“RICO
+        // ==========================================
+
+        let builderCounter = 1;
+
+        function addBuilderPergunta() {
+            const list = document.getElementById('builderPerguntasList');
+            const rowId = 'bRow_' + builderCounter++;
+
+            const row = `
+                <div class="builder-row" id="${rowId}">
+                    <div class="form-group" style="flex: 3; margin-bottom: 0;">
+                        <label>Texto da Pergunta</label>
+                        <input type="text" class="form-control b-texto" placeholder="Ex: AvaliaÃ§Ã£o tÃ¡tica...">
+                    </div>
+                    <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                        <label>Tipo de Resposta</label>
+                        <select class="form-control b-tipo">
+                            <option value="escala_5">Nota de 1 a 5</option>
+                            <option value="escala_10">Nota de 1 a 10</option>
+                            <option value="status">Bom, MÃ©dio, Ruim</option>
+                            <option value="sim_nao">Sim / NÃ£o</option>
+                            <option value="texto">Campo de Texto Livre</option>
+                        </select>
+                    </div>
+                    <button class="btn" style="color: var(--red); background: rgba(239, 68, 68, 0.1); height: 42px;" onclick="document.getElementById('${rowId}').remove()"><i class="ti ti-trash"></i></button>
+                </div>
+            `;
+            list.insertAdjacentHTML('beforeend', row);
+        }
+
+        function renderBuilderPreview() {
+            // Adds one empty slot by default
+            const list = document.getElementById('builderPerguntasList');
+            list.innerHTML = '';
+            addBuilderPergunta();
+        }
+
+        function salvarNovoQuestionario() {
+            const titulo = document.getElementById('builderTitulo').value.trim();
+            if (!titulo) return alert("ForneÃ§a um tÃ­tulo para o formulÃ¡rio.");
+
+            const rows = document.querySelectorAll('.builder-row');
+            let perguntas = [];
+
+            rows.forEach((row, i) => {
+                const txt = row.querySelector('.b-texto').value.trim();
+                const tipo = row.querySelector('.b-tipo').value;
+                if (txt) {
+                    perguntas.push({ id: Date.now() + i, texto: txt, tipo: tipo });
+                }
+            });
+
+            if (perguntas.length === 0) return alert("Adicione ao menos uma pergunta preenchida.");
+
+            db.questionarios.push({
+                id: Date.now(),
+                titulo: titulo,
+                ativo: true,
+                perguntas: perguntas
+            });
+
+            saveDB();
+            document.getElementById('builderTitulo').value = '';
+            renderBuilderPreview();
+            renderExistentes();
+            populateSelects(); // Atualiza dropwodns
+            showToast("QuestionÃ¡rio Salvo e Ativado!");
+        }
+
+        function exportQuestionarioCSV() {
+            const qId = parseInt(document.getElementById('selectGraficoQ').value);
+            if (!qId) return showToast("Selecione um questionÃ¡rio para exportar", "error");
+
+            const quest = db.questionarios.find(q => q.id === qId);
+            const respostas = (db.respostas || []).filter(r => r.questionarioId === qId);
+
+            if (respostas.length === 0) return showToast("Nenhuma resposta para exportar", "error");
+
+            // CSV Header
+            let csv = "\uFEFF"; // BOM for UTF-8
+            let headers = ["Atleta", "Data"];
+            quest.perguntas.forEach(p => headers.push(p.texto));
+            csv += headers.join(";") + "\n";
+
+            // CSV Rows
+            respostas.forEach(r => {
+                const atleta = db.alunos.find(a => a.id === r.atletaId);
+                let row = [atleta ? atleta.nome : "?", r.data];
+                quest.perguntas.forEach(p => {
+                    let ans = r.respostas[p.id] || "";
+                    // Remove semÃ­colons to avoid CSV breaking
+                    if (typeof ans === "string") ans = ans.replace(/;/g, ",");
+                    row.push(ans);
+                });
+                csv += row.join(";") + "\n";
+            });
+
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Questionario_${quest.titulo.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("CSV exportado com sucesso!");
+        }
+
+        function renderExistentes() {
+            const list = document.getElementById('existentesGrid');
+            list.innerHTML = '';
+            (db.questionarios || []).forEach(q => {
+                list.insertAdjacentHTML('beforeend', `
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <h4 style="margin:0; font-size:16px;">${q.titulo}</h4>
+                            <p style="margin:0; font-size:12px; color:var(--text-muted);">${q.perguntas.length} perguntas cadastradas</p>
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <span style="color: var(--green); font-size:12px;"><i class="ti ti-check"></i> Ativo</span>
+                            <button class="btn" onclick="deleteQuestionario(${q.id})" style="background: rgba(239, 68, 68, 0.1); color: var(--red); border: none; padding: 8px; cursor: pointer;">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function deleteQuestionario(id) {
+            const quest = db.questionarios.find(q => q.id === id);
+            if (!quest) return;
+
+            if (confirm(`Deseja realmente EXCLUIR o questionÃ¡rio "${quest.titulo}"?\n\nIsso apagarÃ¡ permanentemente o formulÃ¡rio e TODAS as respostas de atletas associadas a ele.`)) {
+                // Remove questionnaire
+                db.questionarios = db.questionarios.filter(q => q.id !== id);
+
+                // Remove associated answers
+                if (db.respostas) {
+                    db.respostas = db.respostas.filter(r => r.questionarioId !== id);
+                }
+
+                saveDB();
+                renderExistentes();
+                populateSelects();
+                renderHistorico();
+                showToast("QuestionÃ¡rio e respostas excluÃ­dos.");
+            }
+        }
+
+        function renderHistorico() {
+            const grid = document.getElementById('historicoGrid');
+            grid.innerHTML = '';
+
+            if (!db.respostas || db.respostas.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted);">Nenhuma resposta registrada ainda.</p>';
+                return;
+            }
+
+            // Reverse for latest first
+            const recentes = [...db.respostas].reverse();
+
+            recentes.forEach(resp => {
+                const atleta = db.alunos.find(a => a.id === resp.atletaId);
+                const quest = db.questionarios.find(q => q.id === resp.questionarioId);
+
+                if (!atleta || !quest) return;
+
+                grid.insertAdjacentHTML('beforeend', `
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <img src="${atleta.avatar}" style="width: 40px; height: 40px; border-radius: 50%;">
+                            <div>
+                                <h4 style="margin: 0; font-size: 15px;">${atleta.nome}</h4>
+                                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">${quest.titulo} â€¢ ${formatarDataBR(resp.data)}</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="viewRespostaComleta(${resp.id})">Ver Respostas</button>
+                    </div>
+                `);
+            });
+        }
+
+        function viewRespostaComleta(respId) {
+            const resp = db.respostas.find(r => r.id === respId);
+            if (!resp) return;
+            const quest = db.questionarios.find(q => q.id === resp.questionarioId);
+            const html = document.getElementById('viewRespostaContent');
+
+            let respsHtml = '';
+            quest.perguntas.forEach(p => {
+                const answer = resp.respostas[p.id] || 'NÃ£o respondido';
+                respsHtml += `
+                    <div style="margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">${p.texto}</div>
+                        <div style="font-size: 16px; font-weight: 500;">${answer}</div>
+                    </div>
+                `;
+            });
+
+            html.innerHTML = respsHtml;
+            document.getElementById('modalViewResposta').classList.add('active');
+        }
+
+        function closeModalView() {
+            document.getElementById('modalViewResposta').classList.remove('active');
+        }
+
+        // ==========================================
+        //  GRÃFICOS POR QUESTIONÃRIO
+        // ==========================================
+        let chartInstances = {};
+
+        function renderGraficos() {
+            const qId = parseInt(document.getElementById('selectGraficoQ').value);
+            const atletaVal = document.getElementById('selectGraficoAtleta').value;
+            const isEquipe = (atletaVal === 'equipe');
+            const atletaId = isEquipe ? null : parseInt(atletaVal);
+
+            const container = document.getElementById('graficosContainer');
+            const empty = document.getElementById('graficosEmpty');
+
+            // Destroy existing chart instances
+            Object.values(chartInstances).forEach(c => { try { c.destroy(); } catch (e) { } });
+            chartInstances = {};
+            container.innerHTML = '';
+
+            if (!qId) {
+                container.style.display = 'none';
+                empty.style.display = 'block';
+                empty.innerHTML = '<i class="ti ti-chart-bar" style="font-size:48px;opacity:0.3;margin-bottom:16px;"></i><p>Selecione um questionÃ¡rio acima para ver os grÃ¡ficos.</p>';
+                return;
+            }
+
+            const quest = db.questionarios.find(q => q.id === qId);
+            if (!quest) return;
+
+            // Get relevant responses
+            let respostas = (db.respostas || []).filter(r => r.questionarioId === qId);
+            if (!isEquipe) respostas = respostas.filter(r => r.atletaId === atletaId);
+
+            if (respostas.length === 0) {
+                container.style.display = 'none';
+                empty.style.display = 'block';
+                const who = isEquipe ? quest.titulo : db.alunos.find(a => a.id === atletaId)?.nome || '?';
+                empty.innerHTML = `<i class="ti ti-mood-empty" style="font-size:48px;opacity:0.3;margin-bottom:16px;"></i><p>Nenhuma resposta registrada para <strong>${who}</strong> ainda.</p>`;
+                return;
+            }
+
+            empty.style.display = 'none';
+            empty.innerHTML = '';
+            container.style.display = 'grid';
+
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = 'Inter, sans-serif';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+            // Palette for team bar charts
+            const PALETTE = [
+                'rgba(99,102,241,0.85)', 'rgba(16,185,129,0.85)', 'rgba(245,158,11,0.85)',
+                'rgba(239,68,68,0.85)', 'rgba(168,85,247,0.85)', 'rgba(59,130,246,0.85)'
+            ];
+            const colorMap = { 'Bom': 'rgba(16,185,129,0.85)', 'MÃ©dio': 'rgba(245,158,11,0.85)', 'Ruim': 'rgba(239,68,68,0.85)', 'Sim': 'rgba(239,68,68,0.85)', 'NÃ£o': 'rgba(16,185,129,0.85)' };
+
+            // 1. CHART: ADHESION (Responses per day)
+            const adhesionByDate = {};
+            respostas.forEach(r => {
+                adhesionByDate[r.data] = (adhesionByDate[r.data] || 0) + 1;
+            });
+            const sortedDates = Object.keys(adhesionByDate).sort();
+            const adhesionLabels = sortedDates.map(d => { const p = d.split('-'); return `${p[2]}/${p[1]}`; });
+            const adhesionValues = sortedDates.map(d => adhesionByDate[d]);
+
+            const adhesionCard = createChartCard('chartAdersion', 'Volume de Respostas (AdesÃ£o)', `${respostas.length} submissÃµes no total`,
+                `<div style="width:100%;height:220px;position:relative;"><canvas id="canvasAdhesion"></canvas></div>`);
+            container.appendChild(adhesionCard);
+
+            setTimeout(() => {
+                const ctx = document.getElementById('canvasAdhesion');
+                chartInstances['canvasAdhesion'] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: adhesionLabels,
+                        datasets: [{
+                            label: 'Respostas', data: adhesionValues,
+                            borderColor: 'var(--primary)', backgroundColor: 'rgba(65, 105, 225, 0.1)',
+                            fill: true, tension: 0.4
+                        }]
+                    },
+                    options: {
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }, 50);
+
+            quest.perguntas.forEach((pergunta, idx) => {
+                const cardId = `chartCard_${idx}`;
+                const canvasId = `chartCanvas_${idx}`;
+                const totalResps = respostas.filter(r => r.respostas[pergunta.id] !== undefined && r.respostas[pergunta.id] !== null && r.respostas[pergunta.id] !== '').length;
+
+                const canvasWrapper = `<div style="width:100%;height:220px;position:relative;"><canvas id="${canvasId}"></canvas></div>`;
+
+                if (pergunta.tipo === 'escala_5' || pergunta.tipo === 'escala_10') {
+                    const maxVal = pergunta.tipo === 'escala_5' ? 5 : 10;
+
+                    if (isEquipe) {
+                        // BAR: each athlete's average
+                        const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+                        const atletasComResp = alunosTurma.map(a => {
+                            const vals = respostas.filter(r => r.atletaId === a.id && r.respostas[pergunta.id] !== undefined)
+                                .map(r => parseFloat(r.respostas[pergunta.id])).filter(v => !isNaN(v));
+                            return vals.length > 0 ? { nome: a.nome.split(' ')[0], avg: (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) } : null;
+                        }).filter(Boolean);
+
+                        const overallAvg = atletasComResp.length > 0
+                            ? (atletasComResp.reduce((s, a) => s + parseFloat(a.avg), 0) / atletasComResp.length).toFixed(1) : '-';
+
+                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} respostas â€¢ MÃ©dia geral: ${overallAvg}`, canvasWrapper);
+                        container.appendChild(cardEl);
+
+                        setTimeout(() => {
+                            const ctx = document.getElementById(canvasId);
+                            if (!ctx) return;
+                            chartInstances[canvasId] = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: atletasComResp.map(a => a.nome),
+                                    datasets: [{
+                                        label: 'MÃ©dia', data: atletasComResp.map(a => a.avg),
+                                        backgroundColor: PALETTE, borderRadius: 6, barPercentage: 0.5
+                                    }]
+                                },
+                                options: {
+                                    maintainAspectRatio: false,
+                                    scales: { y: { min: 0, max: maxVal, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+                                    plugins: { legend: { display: false } }
+                                }
+                            });
+                        }, 50);
+
+                    } else {
+                        // LINE: individual's history over time
+                        const byDate = {};
+                        respostas.forEach(r => {
+                            const val = parseFloat(r.respostas[pergunta.id]);
+                            if (!isNaN(val)) byDate[r.data] = val;
+                        });
+                        const sortedDates = Object.keys(byDate).sort();
+                        const vals = sortedDates.map(d => byDate[d]);
+                        const avg = vals.length > 0 ? (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) : '-';
+                        const xLabels = sortedDates.map(d => { const p = d.split('-'); return `${p[2]}/${p[1]}`; });
+
+                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} registros â€¢ MÃ©dia: ${avg}`, canvasWrapper);
+                        container.appendChild(cardEl);
+
+                        setTimeout(() => {
+                            const ctx = document.getElementById(canvasId);
+                            if (!ctx) return;
+                            chartInstances[canvasId] = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: xLabels.length > 0 ? xLabels : ['Sem dados'],
+                                    datasets: [{
+                                        label: 'Valor', data: vals.length > 0 ? vals : [0],
+                                        borderColor: 'rgba(99,102,241,1)', backgroundColor: 'rgba(99,102,241,0.15)',
+                                        borderWidth: 2, pointBackgroundColor: 'rgba(99,102,241,1)', fill: true, tension: 0.3
+                                    }]
+                                },
+                                options: {
+                                    maintainAspectRatio: false,
+                                    scales: { y: { min: 0, max: maxVal, ticks: { stepSize: 1 } }, x: { grid: { display: false } } },
+                                    plugins: { legend: { display: false } }
+                                }
+                            });
+                        }, 50);
+                    }
+
+                } else if (pergunta.tipo === 'status' || pergunta.tipo === 'sim_nao') {
+                    // DONUT: distribution (same for both modes)
+                    const counts = {};
+                    respostas.forEach(r => { const v = r.respostas[pergunta.id]; if (v) counts[v] = (counts[v] || 0) + 1; });
+                    const labels = Object.keys(counts);
+                    const data = labels.map(l => counts[l]);
+                    const colors = labels.map(l => colorMap[l] || 'rgba(99,102,241,0.85)');
+
+                    const donutWrapper = `<div style="width:100%;height:220px;position:relative;display:flex;justify-content:center;"><canvas id="${canvasId}"></canvas></div>`;
+                    const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} respostas`, donutWrapper);
+                    container.appendChild(cardEl);
+
+                    setTimeout(() => {
+                        const ctx = document.getElementById(canvasId);
+                        if (!ctx) return;
+                        chartInstances[canvasId] = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: labels.length > 0 ? labels : ['Sem dados'],
+                                datasets: [{
+                                    data: data.length > 0 ? data : [1],
+                                    backgroundColor: colors.length > 0 ? colors : ['rgba(100,100,100,0.5)'],
+                                    borderWidth: 0, hoverOffset: 6
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                plugins: { legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true } } }
+                            }
+                        });
+                    }, 50);
+
+                } else if (pergunta.tipo === 'texto') {
+                    const textAnswers = respostas
+                        .filter(r => r.respostas[pergunta.id] && r.respostas[pergunta.id].trim() !== '')
+                        .map(r => {
+                            const at = db.alunos.find(a => a.id === r.atletaId);
+                            const parts = r.data.split('-');
+                            return { texto: r.respostas[pergunta.id], atleta: at ? at.nome : '?', data: `${parts[2]}/${parts[1]}` };
+                        }).reverse();
+
+                    const listItems = textAnswers.map(a =>
+                        `<div class="text-answer-item"><div class="answer-meta">${isEquipe ? a.atleta + ' â€¢ ' : ''}${a.data}</div><div>${a.texto}</div></div>`
+                    ).join('') || '<p style="color:var(--text-muted);font-size:13px;">Nenhuma resposta de texto ainda.</p>';
+
+                    const cardEl = createChartCard(cardId, pergunta.texto, `${textAnswers.length} resposta(s)`,
+                        `<div class="text-answers-list">${listItems}</div>`);
+                    container.appendChild(cardEl);
+                }
+            });
+        }
+
+        function createChartCard(id, title, meta, innerHtml) {
+            const div = document.createElement('div');
+            div.className = 'chart-card';
+            div.id = id;
+            div.innerHTML = `
+                <h4>${title}</h4>
+                <p class="chart-meta">${meta}</p>
+                ${innerHtml}
+            `;
+            return div;
+        }
+    </script>
+</body>
+
+</html>
+

@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="ti ti-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="atletas.html" class="nav-item">
+                    <i class="ti ti-users"></i>
+                    <span>Atletas</span>
+                </a>
+                <a href="treino.html" class="nav-item">
+                    <i class="ti ti-barbell"></i>
+                    <span>Treinamento</span>
+                </a>
+                <a href="scout.html" class="nav-item">
+                    <i class="ti ti-device-gamepad-2"></i>
+                    <span>Scout (Beira de Quadra)</span>
+                </a>
+                <a href="calendario.html" class="nav-item">
+                    <i class="ti ti-calendar"></i>
+                    <span>CalendÃ¡rio</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1>Dashboard de Performance</h1>
+                    <p class="subtitle">VisÃ£o geral da equipe de competiÃ§Ã£o</p>
+                </div>
+                <div class="user-profile">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                    <div class="user-info">
+                        <span class="user-name">Mestre Silva</span>
+                        <span class="user-role">Head Coach</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                <!-- Status SemÃ¡foro Stats -->
+                <div class="card"
+                    style="display: flex; gap: 20px; align-items: center; border-left: 4px solid var(--green);">
+                    <div class="stat-icon green">
+                        <i class="ti ti-activity"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Prontos para Luta</h3>
+                        <p class="stat-value">12 Atletas</p>
+                        <p class="stat-meta text-green">Wellness Ideal</p>
+                    </div>
+                </div>
+
+                <div class="card"
+                    style="display: flex; gap: 20px; align-items: center; border-left: 4px solid var(--yellow);">
+                    <div class="stat-icon yellow">
+                        <i class="ti ti-alert-triangle"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>AtenÃ§Ã£o NecessÃ¡ria</h3>
+                        <p class="stat-value">3 Atletas</p>
+                        <p class="stat-meta text-yellow">Fadiga > 20%</p>
+                    </div>
+                </div>
+
+                <div class="card"
+                    style="display: flex; gap: 20px; align-items: center; border-left: 4px solid var(--red);">
+                    <div class="stat-icon red">
+                        <i class="ti ti-ambulance"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3>Risco / Lesionados</h3>
+                        <p class="stat-value">1 Atleta</p>
+                        <p class="stat-meta text-red">ACWR > 1.5</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atletas Grid (Cards) -->
+            <div class="athletes-section">
+                <div class="section-header">
+                    <h2>Monitoramento de Carga e Peso</h2>
+                    <button class="btn btn-primary" onclick="openModalAluno()"><i class="ti ti-user-plus"></i>
+                        Adicionar Atleta da Base</button>
+                </div>
+
+                <div class="cards-grid">
+                    <!-- Athlete Card 1: Verde -->
+                    <div class="athlete-card status-green">
+                        <div class="card-header">
+                            <img src="https://i.pravatar.cc/150?img=33" alt="Atleta" class="athlete-avatar">
+                            <div class="athlete-badges">
+                                <span class="badge weight">-68kg</span>
+                                <span class="badge rank black">DAN 1</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Carlos Almeida</h3>
+                            <p class="category">Adulto Masculino</p>
+
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span class="label">Peso Atual</span>
+                                    <span class="value">69.2kg <i class="ti ti-arrow-down text-green"></i></span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Wellness</span>
+                                    <span class="value">4.5 / 5</span>
+                                </div>
+                            </div>
+
+                            <div class="acwr-bar">
+                                <div class="acwr-label">
+                                    <span>ACWR</span>
+                                    <span>1.1 (Ideal)</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill green" style="width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-icon"><i class="ti ti-chart-radar"></i></button>
+                            <button class="btn-icon"><i class="ti ti-file-certificate"></i> Bio</button>
+                        </div>
+                    </div>
+
+                    <!-- Athlete Card 2: Amarelo -->
+                    <div class="athlete-card status-yellow">
+                        <div class="card-header">
+                            <img src="https://i.pravatar.cc/150?img=47" alt="Atleta" class="athlete-avatar">
+                            <div class="athlete-badges">
+                                <span class="badge weight">-57kg</span>
+                                <span class="badge rank red">2Âº GUB</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Mariana Costa</h3>
+                            <p class="category">Adulto Feminino</p>
+
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span class="label">Peso Atual</span>
+                                    <span class="value">58.8kg <i class="ti ti-arrow-up text-yellow"></i></span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Wellness</span>
+                                    <span class="value">2.8 / 5</span>
+                                </div>
+                            </div>
+
+                            <div class="acwr-bar">
+                                <div class="acwr-label">
+                                    <span>ACWR</span>
+                                    <span>1.35 (AtenÃ§Ã£o)</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill yellow" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-icon"><i class="ti ti-chart-radar"></i></button>
+                            <button class="btn-icon"><i class="ti ti-file-certificate"></i> Bio</button>
+                        </div>
+                    </div>
+
+                    <!-- Athlete Card 3: Vermelho -->
+                    <div class="athlete-card status-red">
+                        <div class="card-header">
+                            <img src="https://i.pravatar.cc/150?img=12" alt="Atleta" class="athlete-avatar">
+                            <div class="athlete-badges">
+                                <span class="badge weight">-80kg</span>
+                                <span class="badge rank black">DAN 2</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h3>Raphael Mendes</h3>
+                            <p class="category">Adulto Masculino</p>
+
+                            <div class="metrics">
+                                <div class="metric">
+                                    <span class="label">Peso Atual</span>
+                                    <span class="value">84.5kg <i class="ti ti-arrow-up text-red"></i></span>
+                                </div>
+                                <div class="metric">
+                                    <span class="label">Wellness</span>
+                                    <span class="value">1.5 / 5</span>
+                                </div>
+                            </div>
+
+                            <div class="acwr-bar">
+                                <div class="acwr-label">
+                                    <span>ACWR</span>
+                                    <span class="text-red">1.6 (Risco)</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill red" style="width: 95%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn-icon"><i class="ti ti-chart-radar"></i></button>
+                            <button class="btn-icon"><i class="ti ti-file-certificate"></i> Bio</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+    </div>
+    </main>
+    </div>
+
+    <!-- Modal Adicionar Aluno (Rendimento) -->
+    <div class="modal-overlay" id="modalAddAluno">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Adicionar Atleta Ã  Equipe</h2>
+                <button class="btn-close" onclick="closeModalAluno()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <form onsubmit="saveAluno(event)">
+                <div class="form-group">
+                    <label>Buscar Atleta na Base</label>
+                    <select class="form-control" required>
+                        <option value="">Selecione um atleta formativo...</option>
+                        <option>Carlos Almeida (Faixa Preta)</option>
+                        <option>Mariana Costa (Ponta Preta)</option>
+                        <option>Raphael Mendes (Faixa Vermelha)</option>
+                        <option>Novo Atleta (Direcionar para Cadastro)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-top: 32px;">
+                    <button type="submit" class="btn btn-primary btn-block"
+                        style="width: 100%; justify-content: center;">Integrar Ã  Equipe Principal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Modal Logic
+        const modalAluno = document.getElementById('modalAddAluno');
+        function openModalAluno() { modalAluno.classList.add('active'); }
+        function closeModalAluno() { modalAluno.classList.remove('active'); }
+        function saveAluno(e) {
+            e.preventDefault();
+            alert("Atleta integrado com sucesso!");
+            closeModalAluno();
+        }
+    </script>
+</body>
+
+</html>
+

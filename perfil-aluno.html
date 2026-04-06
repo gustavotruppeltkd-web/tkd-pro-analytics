@@ -1,0 +1,940 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro coach Analytics | Perfil do Aluno</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <style>
+        .profile-header-card {
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg-dark);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-main-info h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .profile-main-info .belt-tag {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .btn-edit-profile {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            background: var(--bg-hover);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-edit-profile:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .profile-grid-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .detail-card {
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .detail-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+        }
+
+        /* Color variations for cards */
+        .detail-card.card-blue::before {
+            background: #3b82f6;
+        }
+
+        .detail-card.card-green::before {
+            background: #10b981;
+        }
+
+        .detail-card.card-orange::before {
+            background: #f59e0b;
+        }
+
+        .detail-card.card-purple::before {
+            background: #8b5cf6;
+        }
+
+        .detail-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+        }
+
+        .detail-card h3 i {
+            font-size: 20px;
+            color: inherit;
+            opacity: 0.9;
+        }
+
+        /* Specific header colors per card */
+        .detail-card.card-green h3 {
+            color: #10b981;
+        }
+
+        .detail-card.card-blue h3 {
+            color: #3b82f6;
+        }
+
+        .detail-card.card-orange h3 {
+            color: #f59e0b;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Stats visual */
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            border-radius: 4px;
+        }
+
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: var(--bg-sidebar);
+            color: var(--text-main);
+            font-size: 11px;
+            font-weight: 500;
+            border-radius: 6px;
+            white-space: pre-line;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            min-width: 140px;
+            border: 1px solid var(--border-color);
+            pointer-events: none;
+            line-height: 1.4;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 2px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: var(--border-color) transparent transparent transparent;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            z-index: 10;
+        }
+
+        .tooltip:hover::before,
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Fin. Status indicator */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-badge.pago {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+        }
+
+        .status-badge.atrasado {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Commercial -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <i class="ti ti-shield-up logo-icon"></i>
+                <h2>Pro coach Analytics</h2>
+            </div>
+            <nav class="nav-menu" id="navMenuContainer">
+                <a href="dashboard-aulas.html" class="nav-item">
+                    <i class="ti ti-checklist"></i>
+                    <span>Chamada DiÃ¡ria</span>
+                </a>
+                <a href="dashboard-turma-dados.html" class="nav-item">
+                    <i class="ti ti-users"></i>
+                    <span>Dados da Turma</span>
+                </a>
+                <a href="financeiro.html" class="nav-item">
+                    <i class="ti ti-cash"></i>
+                    <span>Financeiro</span>
+                </a>
+                <a href="calendario.html" class="nav-item">
+                    <i class="ti ti-calendar"></i>
+                    <span>CalendÃ¡rio</span>
+                </a>
+                <a href="turmas.html" class="nav-item" style="margin-top: 24px; color: var(--text-muted);">
+                    <i class="ti ti-arrow-left"></i>
+                    <span>Trocar de Turma</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div style="margin-bottom: 24px;">
+                <a href="dashboard-turma-dados.html"
+                    style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                    <i class="ti ti-arrow-left"></i> Voltar para Dados da Turma
+                </a>
+            </div>
+
+            <div class="card profile-header-card">
+                <img src="https://i.pravatar.cc/150?img=15" alt="JoÃ£o Pedro" class="profile-avatar-large"
+                    id="displayPic">
+                <div class="profile-main-info">
+                    <h1 id="displayNome">JoÃ£o Pedro Santos</h1>
+                    <div class="belt-tag" id="displayFaixa">10Âº GUB (Branca)</div>
+                    <p style="color: var(--text-muted); font-size: 14px;">Turma: Adulto Iniciante â€¢ MatrÃ­cula:
+                        10/Ago/2023</p>
+                </div>
+                <button class="btn btn-outline"
+                    style="position: absolute; top: 32px; right: 32px; border-radius: 50px; padding: 10px 20px;"
+                    onclick="openModalEdit()">
+                    <i class="ti ti-edit"></i> Editar Perfil
+                </button>
+            </div>
+
+            <div class="profile-grid-details" id="profileGrid">
+
+                <!-- Card 1: Pessoal -->
+                <div class="card detail-card card-blue" id="cardPessoal">
+                    <h3><i class="ti ti-user"></i> InformaÃ§Ãµes Pessoais</h3>
+                    <div class="info-row">
+                        <span class="info-label">Idade / Nascimento</span>
+                        <span class="info-value" id="displayIdadeNasc">15 anos (12/04/2008)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">GraduaÃ§Ã£o</span>
+                        <span class="info-value" id="displayFaixaInfo">10Âº GUB (Branca)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Contato (Resp.)</span>
+                        <span class="info-value" id="displayContato">(11) 98765-4321</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">CPF</span>
+                        <span class="info-value" id="displayCPF">NÃ£o informado</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">RG</span>
+                        <span class="info-value" id="displayRG">NÃ£o informado</span>
+                    </div>
+                    <div class="info-row" id="rowSexo">
+                        <span class="info-label">Sexo</span>
+                        <span class="info-value" id="displaySexo">NÃ£o informado</span>
+                    </div>
+                    <div class="info-row" id="rowCatIdade">
+                        <span class="info-label">Categoria de Idade</span>
+                        <span class="info-value" id="displayCatIdade">NÃ£o informado</span>
+                    </div>
+                    <div class="info-row" id="rowCatPeso">
+                        <span class="info-label">Categoria de Peso</span>
+                        <span class="info-value" id="displayCatPeso">NÃ£o informado</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">ObservaÃ§Ãµes MÃ©dicas</span>
+                        <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
+                            registrada</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Treino -->
+                <div class="card detail-card card-green" id="cardFrequencia">
+                    <h3><i class="ti ti-activity"></i> FrequÃªncia de Treino</h3>
+                    <div class="info-row" style="margin-bottom: 4px;">
+                        <span class="info-label">Ãšltimos 2 Meses (16 Aulas)</span>
+                    </div>
+                    <div>
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px;">
+                            <span>Taxa de FrequÃªncia</span>
+                            <span style="font-weight: 600; color: var(--green);">87%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 87%;"></div>
+                        </div>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                        <div style="text-align: center;" class="tooltip"
+                            data-tooltip="Presente em:&#10;01/Out, 03/Out, 08/Out, 10/Out,&#10;15/Out, 17/Out, 22/Out, 24/Out,&#10;29/Out, 31/Out, 05/Nov, 07/Nov,&#10;12/Nov, 14/Nov">
+                            <div style="font-size: 20px; font-weight: 600; color: var(--green);">14</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">PresenÃ§as</div>
+                        </div>
+                        <div style="text-align: center;" class="tooltip"
+                            data-tooltip="Faltou nos dias:&#10;12/Set&#10;25/Out">
+                            <div style="font-size: 20px; font-weight: 600; color: var(--red);">2</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Faltas</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 20px; font-weight: 600;">2</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Treinos/Sem</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Financeiro -->
+                <div class="card detail-card card-orange" id="cardFinanceiro">
+                    <h3><i class="ti ti-cash"></i> Status Financeiro</h3>
+
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                        <div>
+                            <span class="info-label" style="display: block; margin-bottom: 4px;">Mensalidade
+                                Atual</span>
+                            <span style="font-size: 24px; font-weight: 700;" id="displayValor">R$ 150,00</span>
+                        </div>
+                        <div class="status-badge pago">
+                            <i class="ti ti-check"></i> Mensalidade em Dia
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Dia de Vencimento</span>
+                        <span class="info-value" id="displayVenc">Todo dia 10</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Ãšltimo Pagamento</span>
+                        <span class="info-value">10/11/2023</span>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Editar Perfil -->
+    <div class="modal-overlay" id="modalEditPerfil">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Perfil do Aluno</h2>
+                <button class="btn-close" onclick="closeModalEdit()"><i class="ti ti-x"></i></button>
+            </div>
+
+            <form onsubmit="savePerfil(event)" id="formEditPerfil">
+
+                <h4 style="font-size: 14px; margin-bottom: 16px; color: var(--primary);">1. Dados Pessoais</h4>
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" class="form-control" name="nomeAluno" value="JoÃ£o Pedro Santos" required>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Data de Nascimento</label>
+                        <input type="date" class="form-control" name="nascAluno" value="2008-04-12" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Telefone Contato</label>
+                        <input type="text" class="form-control" name="telAluno" value="(11) 98765-4321" required>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>CPF</label>
+                        <input type="text" class="form-control" name="cpfAluno" placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>RG</label>
+                        <input type="text" class="form-control" name="rgAluno" placeholder="00.000.000-X">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Sexo</label>
+                        <select class="form-control" name="sexoAluno">
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;" id="editRowCat">
+                    <div class="form-group" style="flex: 1;">
+                        <label style="display: flex; justify-content: space-between;">
+                            <span>Cat. Peso</span>
+                            <a href="#" onclick="openConfigPesos(event)"
+                                style="font-size: 12px; color: var(--primary); text-decoration: none;"><i
+                                    class="ti ti-settings"></i> Gerenciar</a>
+                        </label>
+                        <select class="form-control" name="pesoAluno">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Cat. Idade</label>
+                        <select class="form-control" name="catIdadeAluno">
+                            <option value="">Nenhuma</option>
+                            <option value="Infantil">Infantil</option>
+                            <option value="Cadete">Cadete</option>
+                            <option value="Juvenil">Juvenil</option>
+                            <option value="Sub21">Sub-21</option>
+                            <option value="Adulto">Adulto</option>
+                            <option value="Master 1">Master 1</option>
+                            <option value="Poomsae">Poomsae</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ObservaÃ§Ãµes MÃ©dicas</label>
+                    <input type="text" class="form-control" name="obsAluno" placeholder="Alergias, lesÃµes..." value="">
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; justify-content: space-between;">
+                        <span>Cor da Faixa</span>
+                        <a href="#" onclick="openConfigFaixas(event)"
+                            style="font-size: 12px; color: var(--primary); text-decoration: none;"><i
+                                class="ti ti-settings"></i> Gerenciar</a>
+                    </label>
+                    <select class="form-control" name="faixaAluno" required>
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Foto de Perfil (Nova Foto do Computador)</label>
+                    <input type="file" class="form-control" name="fotoAluno" accept="image/*"
+                        onchange="handleFotoUploadPerfil(event)" style="padding: 9px 16px;">
+                    <div id="fotoPreviewContainer"
+                        style="margin-top: 10px; display: none; align-items: center; gap: 12px;">
+                        <img id="fotoPreview" src=""
+                            style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
+                        <span style="font-size: 13px; color: var(--green);"><i class="ti ti-check"></i> Foto
+                            ajustada</span>
+                    </div>
+                </div>
+
+                <div id="editFieldsComercial">
+                    <h4 style="font-size: 14px; margin-bottom: 16px; margin-top: 24px; color: var(--primary);">2. Dados
+                        Financeiros</h4>
+                    <div style="display: flex; gap: 16px; align-items: flex-end;">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Plano Contratado</label>
+                            <select class="form-control" name="planoAluno" id="planoAluno" onchange="calcVencimento()">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 16px; margin-top: 16px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Data de InÃ­cio</label>
+                            <input type="date" class="form-control" name="inicioPlano" id="inicioPlano"
+                                onchange="calcVencimento()">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>VÃ¡lido atÃ© <span
+                                    style="color:var(--text-muted); font-size:11px;">(Auto)</span></label>
+                            <input type="date" class="form-control" name="fimPlano" id="fimPlano" readonly
+                                style="background: rgba(255,255,255,0.02); color: var(--text-muted);">
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="display: flex; gap: 12px; margin-top: 32px; justify-content: space-between; align-items: center;">
+                    <button type="button" class="btn"
+                        style="color: var(--red); border: 1px solid var(--red-bg); background: rgba(239, 68, 68, 0.05);"
+                        onclick="deleteAluno()">
+                        <i class="ti ti-trash"></i> Excluir Aluno
+                    </button>
+                    <div style="display: flex; gap: 12px;">
+                        <button type="button" class="btn btn-outline" onclick="closeModalEdit()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar AlteraÃ§Ãµes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Modal edit logic
+        const modalEdit = document.getElementById('modalEditPerfil');
+        function openModalEdit() { modalEdit.classList.add('active'); }
+        let temporaryAvatar = null;
+
+        function handleFotoUploadPerfil(event) {
+            const file = event.target.files[0];
+            if (file) {
+                openGlobalCropper(file, (croppedBase64) => {
+                    temporaryAvatar = croppedBase64;
+                    document.getElementById('fotoPreview').src = croppedBase64;
+                    document.getElementById('fotoPreviewContainer').style.display = 'flex';
+                });
+            }
+        }
+
+        function closeModalEdit() {
+            document.getElementById('modalEditPerfil').classList.remove('active');
+            temporaryAvatar = null;
+            document.getElementById('fotoPreviewContainer').style.display = 'none';
+        }
+
+        let currentAlunoId = localStorage.getItem('tkd_view_aluno_id');
+        let alunoData = null;
+
+        function getTurmaName(id) {
+            const t = db.turmas.find(t => t.id === id);
+            return t ? t.nome : 'Desconhecida';
+        }
+
+        function loadProfile() {
+            if (!currentAlunoId) {
+                alert("Nenhum aluno selecionado.");
+                window.location.href = 'dashboard-turma-dados.html';
+                return;
+            }
+
+            alunoData = db.alunos.find(a => a.id == currentAlunoId);
+            if (!alunoData) {
+                alert("Aluno nÃ£o encontrado na base de dados.");
+                window.location.href = 'dashboard-turma-dados.html';
+                return;
+            }
+
+            // --- Dynamic Sidebar e Tipo de Turma ---
+            let isRendimento = false;
+            const currTurma = db.turmas.find(t => t.id === alunoData.turmaId);
+            if (currTurma) {
+                isRendimento = (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+                const nav = document.getElementById('navMenuContainer');
+                if (isRendimento && nav) {
+                    nav.innerHTML = `
+                    <a href="dashboard-rendimento.html" class="nav-item">
+                        <i class="ti ti-activity"></i>
+                        <span>Performance (SemÃ¡foro)</span>
+                    </a>
+                    <a href="dashboard-questionarios.html" class="nav-item">
+                        <i class="ti ti-clipboard-list"></i>
+                        <span>QuestionÃ¡rios</span>
+                    </a>
+                    <a href="scout-video.html" class="nav-item">
+                        <i class="ti ti-video"></i>
+                        <span>AnÃ¡lise de Lutas</span>
+                    </a>
+                    <a href="dashboard-turma-dados.html" class="nav-item active">
+                        <i class="ti ti-users"></i>
+                        <span>Dados da Equipe</span>
+                    </a>
+                    <a href="calendario.html" class="nav-item">
+                        <i class="ti ti-calendar"></i>
+                        <span>CalendÃ¡rio</span>
+                    </a>
+                    <a href="turmas.html" class="nav-item" style="margin-top: 24px; color: var(--text-muted);">
+                        <i class="ti ti-arrow-left"></i>
+                        <span>Trocar de Turma</span>
+                    </a>
+                    `;
+                }
+            }
+
+            // Oculta/Exibe UI Financeira baseado no tipo da turma
+            const cardFinanceiro = document.getElementById('cardFinanceiro');
+            const profileGrid = document.getElementById('profileGrid');
+            if (cardFinanceiro && profileGrid) {
+                if (isRendimento) {
+                    cardFinanceiro.style.display = 'none';
+                    profileGrid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                } else {
+                    cardFinanceiro.style.display = 'block';
+                    profileGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                }
+            }
+
+            const editFieldsComercial = document.getElementById('editFieldsComercial');
+            if (editFieldsComercial) {
+                editFieldsComercial.style.display = isRendimento ? 'none' : 'block';
+            }
+
+            // Oculta campos de rendimento dependendo do tipo da turma
+            if (!isRendimento) {
+                document.getElementById('rowSexo').style.display = 'none';
+                document.getElementById('rowCatIdade').style.display = 'none';
+                document.getElementById('rowCatPeso').style.display = 'none';
+                document.getElementById('editRowCat').style.display = 'none';
+
+                // Hide Sex from edit form too since it's only 3 columns flex
+                const formSexo = document.querySelector('select[name="sexoAluno"]').closest('.form-group');
+                if (formSexo) formSexo.style.display = 'none';
+            } else {
+                document.getElementById('rowSexo').style.display = 'flex';
+                document.getElementById('rowCatIdade').style.display = 'flex';
+                document.getElementById('rowCatPeso').style.display = 'flex';
+                document.getElementById('editRowCat').style.display = 'flex';
+                const formSexo = document.querySelector('select[name="sexoAluno"]').closest('.form-group');
+                if (formSexo) formSexo.style.display = 'flex';
+            }
+
+            const idade = calcularIdade(alunoData.dataNascimento);
+
+            // Format dates
+            const arrNasc = alunoData.dataNascimento.split('-');
+            const strNasc = `${arrNasc[2]}/${arrNasc[1]}/${arrNasc[0]}`;
+
+            const arrMatr = alunoData.matricula.split('-');
+            const strMatr = `${arrMatr[2]}/${formatarMesCurto(alunoData.matricula)}/${arrMatr[0]}`;
+
+            // Populate View
+            document.getElementById('displayPic').src = alunoData.avatar;
+            document.getElementById('displayNome').innerText = alunoData.nome;
+            document.getElementById('displayFaixa').innerText = alunoData.faixa;
+
+            const pSubtitle = document.querySelector('.profile-main-info p');
+            pSubtitle.innerHTML = `Turma: ${getTurmaName(alunoData.turmaId)} â€¢ MatrÃ­cula: ${strMatr}`;
+
+            document.getElementById('displayIdadeNasc').innerText = `${idade} anos (${strNasc})`;
+            document.getElementById('displayFaixaInfo').innerText = alunoData.faixa;
+            document.getElementById('displayContato').innerText = alunoData.contato;
+            document.getElementById('displayCPF').innerText = alunoData.cpf || 'NÃ£o informado';
+            document.getElementById('displayRG').innerText = alunoData.rg || 'NÃ£o informado';
+            document.getElementById('displaySexo').innerText = alunoData.sexo || 'NÃ£o informado';
+            document.getElementById('displayCatIdade').innerText = alunoData.categoriaIdade || 'NÃ£o informado';
+            const lastWellness = (db.wellnessLogs || []).filter(w => w.atletaId == currentAlunoId).sort((a, b) => b.id - a.id)[0];
+            const pesoReportado = lastWellness ? lastWellness.pesoAtual : null;
+
+            document.getElementById('displayCatPeso').innerHTML = `${alunoData.categoriaPeso || 'NÃ£o informado'} ${pesoReportado ? `<span style="color: var(--primary); font-weight: 700; margin-left: 4px;">(${pesoReportado}kg)</span>` : ''}`;
+
+            if (alunoData.obs) {
+                document.getElementById('displaySaude').innerText = alunoData.obs;
+                document.getElementById('displaySaude').style.color = "var(--red)";
+            } else {
+                document.getElementById('displaySaude').innerText = "Nenhuma registrada";
+                document.getElementById('displaySaude').style.color = "var(--text-muted)";
+            }
+
+            document.getElementById('displayValor').innerHTML = alunoData.planoId ? `R$ ${alunoData.mensalidade.toFixed(2).replace('.', ',')} <span style="font-size:12px; color:var(--text-muted); display:block;">${getPlanoName(alunoData.planoId)}</span>` : `R$ ${alunoData.mensalidade.toFixed(2).replace('.', ',')}`;
+
+            if (alunoData.inicioPlano && alunoData.fimPlano) {
+                const arrIn = alunoData.inicioPlano.split('-');
+                const arrFim = alunoData.fimPlano.split('-');
+                document.getElementById('displayVenc').innerText = `VÃ¡lido: ${arrIn[2]}/${arrIn[1]} atÃ© ${arrFim[2]}/${arrFim[1]}/${arrFim[0]}`;
+                document.getElementById('displayVenc').style.fontSize = '12px';
+            } else {
+                document.getElementById('displayVenc').innerText = `Venc. dia ${alunoData.vencimento}`;
+            }
+
+            // Frequencia baseada no histÃ³rico real de db.chamadas
+            const historico = (db.chamadas || []).filter(c => c.turmaId == alunoData.turmaId);
+            const presencasDatas = historico.filter(c => c.presencas.includes(alunoData.id)).map(c => formatarDataBR(c.data));
+            const faltasDatas = historico.filter(c => c.faltas.includes(alunoData.id)).map(c => formatarDataBR(c.data));
+
+            const nPresencas = presencasDatas.length;
+            const nFaltas = faltasDatas.length;
+            const totalAulas = nPresencas + nFaltas || 1;
+            const freq = Math.round((nPresencas / totalAulas) * 100);
+
+            let colorFreq = 'var(--text-main)';
+            if (freq >= 80) colorFreq = 'var(--green)';
+            else if (freq >= 60) colorFreq = 'var(--yellow)';
+            else colorFreq = 'var(--red)';
+
+            const freqCard = document.querySelectorAll('.detail-card')[1];
+            freqCard.innerHTML = `
+                <h3><i class="ti ti-activity"></i> FrequÃªncia de Treino</h3>
+                <div class="info-row" style="margin-bottom: 4px;">
+                    <span class="info-label">HistÃ³rico Geral (${nPresencas + nFaltas} Aulas registradas)</span>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px;">
+                        <span>Taxa de FrequÃªncia</span>
+                        <span style="font-weight: 600; color: ${colorFreq};">${freq}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${freq}%; background: ${colorFreq};"></div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+                    <div style="text-align: center;" class="tooltip" data-tooltip="Presente em:\n${presencasDatas.length > 0 ? presencasDatas.join('\n') : 'Nenhuma data'}">
+                        <div style="font-size: 20px; font-weight: 600; color: var(--green);">${nPresencas}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">PresenÃ§as</div>
+                    </div>
+                    <div style="text-align: center;" class="tooltip" data-tooltip="Faltou em:\n${faltasDatas.length > 0 ? faltasDatas.join('\n') : 'Nenhuma data'}">
+                        <div style="font-size: 20px; font-weight: 600; color: var(--red);">${nFaltas}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Faltas</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: 600;">--</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">Treinos/Sem</div>
+                    </div>
+                </div>
+            `;
+
+            // Financeiro StatusBadge
+            const btnFin = document.querySelector('.status-badge');
+            if (alunoData.statusFin === 'pago') {
+                btnFin.className = 'status-badge pago';
+                btnFin.innerHTML = '<i class="ti ti-check"></i> Mensalidade em Dia';
+            } else if (alunoData.statusFin === 'atrasado') {
+                btnFin.className = 'status-badge atrasado';
+                btnFin.innerHTML = '<i class="ti ti-alert-circle"></i> Em Atraso';
+            } else {
+                btnFin.className = 'status-badge';
+                btnFin.style.background = 'rgba(245, 158, 11, 0.15)';
+                btnFin.style.color = 'var(--yellow)';
+                btnFin.innerHTML = '<i class="ti ti-clock"></i> PrÃ³ximo ao Vencimento';
+            }
+
+            // Populate Form Planos Select
+            const selectPlano = document.getElementById('planoAluno');
+            selectPlano.innerHTML = '';
+            (db.planos || []).forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.text = `${p.nome} (R$ ${p.valor.toFixed(2)})`;
+                selectPlano.appendChild(opt);
+            });
+
+            // Populate Form Inputs
+            const form = document.getElementById('formEditPerfil');
+            form.nomeAluno.value = alunoData.nome;
+            form.nascAluno.value = alunoData.dataNascimento;
+            form.telAluno.value = alunoData.contato;
+            form.cpfAluno.value = alunoData.cpf || '';
+            form.rgAluno.value = alunoData.rg || '';
+            form.sexoAluno.value = alunoData.sexo || 'Masculino';
+
+            form.pesoAluno.innerHTML = '<option value="">Sem Categoria</option>' + (db.categoriasPeso || []).map(p => `<option value="${p}">${p}</option>`).join('');
+            form.pesoAluno.value = alunoData.categoriaPeso || '';
+
+            form.catIdadeAluno.value = alunoData.categoriaIdade || '';
+            form.obsAluno.value = alunoData.obs || '';
+            form.faixaAluno.value = alunoData.faixa;
+
+            if (alunoData.planoId) selectPlano.value = alunoData.planoId;
+            if (alunoData.inicioPlano) form.inicioPlano.value = alunoData.inicioPlano;
+            if (alunoData.fimPlano) form.fimPlano.value = alunoData.fimPlano;
+        }
+
+        function getPlanoName(id) {
+            if (!db.planos) return 'Desconhecido';
+            const p = db.planos.find(x => x.id === parseInt(id));
+            return p ? p.nome : 'Desconhecido';
+        }
+
+        function calcVencimento() {
+            const planoId = parseInt(document.getElementById('planoAluno').value);
+            const inicio = document.getElementById('inicioPlano').value;
+            if (!planoId || !inicio) return;
+
+            const plano = (db.planos || []).find(p => p.id === planoId);
+            if (!plano) return;
+
+            const dataInicio = new Date(inicio);
+            // Corrige o timezone do input date
+            dataInicio.setMinutes(dataInicio.getMinutes() + dataInicio.getTimezoneOffset());
+
+            const dataFim = new Date(dataInicio);
+            dataFim.setMonth(dataFim.getMonth() + plano.duracaoMeses);
+
+            document.getElementById('fimPlano').value = dataFim.toISOString().split('T')[0];
+        }
+
+        function savePerfil(e) {
+            e.preventDefault();
+            const form = document.getElementById('formEditPerfil');
+
+            alunoData.nome = form.nomeAluno.value;
+            alunoData.dataNascimento = form.nascAluno.value;
+            alunoData.contato = form.telAluno.value;
+            alunoData.cpf = form.cpfAluno.value;
+            alunoData.rg = form.rgAluno.value;
+            alunoData.sexo = form.sexoAluno.value;
+            alunoData.categoriaPeso = form.pesoAluno.value;
+            alunoData.categoriaIdade = form.catIdadeAluno.value;
+            alunoData.obs = form.obsAluno.value;
+            alunoData.faixa = form.faixaAluno.value;
+
+            const editComercial = document.getElementById('editFieldsComercial');
+            if (editComercial && editComercial.style.display !== 'none') {
+                const planoId = parseInt(form.planoAluno.value);
+                alunoData.planoId = planoId;
+                alunoData.inicioPlano = form.inicioPlano.value;
+                alunoData.fimPlano = form.fimPlano.value;
+
+                // Extract valor and vencimento fallback
+                const plano = (db.planos || []).find(p => p.id === planoId);
+                if (plano) {
+                    alunoData.mensalidade = plano.valor;
+                    // update default vencimento to start date day
+                    if (alunoData.inicioPlano) {
+                        const dia = alunoData.inicioPlano.split('-')[2];
+                        alunoData.vencimento = dia;
+                    }
+                }
+            }
+
+            const finalizePerfil = () => {
+                saveDB();
+                closeModalEdit();
+                loadProfile();
+
+                // Notification visual
+                const btn = document.querySelector('.btn-edit-profile');
+                const oldHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="ti ti-check"></i> Salvo com Sucesso!`;
+                btn.style.background = 'var(--green)';
+                btn.style.color = '#fff';
+                btn.style.borderColor = 'var(--green)';
+
+                setTimeout(() => {
+                    btn.innerHTML = oldHtml;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.borderColor = '';
+                }, 2000);
+            };
+
+            if (temporaryAvatar) {
+                alunoData.avatar = temporaryAvatar;
+            }
+
+            finalizePerfil();
+        }
+
+        function deleteAluno() {
+            if (confirm(`Tem absoluta certeza de que deseja EXCLUIR permanentemente o aluno ${alunoData.nome}?\n\nEsta aÃ§Ã£o nÃ£o poderÃ¡ ser desfeita e todo o histÃ³rico de presenÃ§as e pagamentos serÃ¡ apagado.`)) {
+                // Remover aluno
+                const aIndex = db.alunos.findIndex(a => a.id === parseInt(currentAlunoId));
+                if (aIndex > -1) {
+                    db.alunos.splice(aIndex, 1);
+                    // Diminuir count da turma
+                    const tIndex = db.turmas.findIndex(t => t.id === alunoData.turmaId);
+                    if (tIndex > -1) {
+                        db.turmas[tIndex].alunosCount = Math.max(0, db.turmas[tIndex].alunosCount - 1);
+                    }
+                    saveDB();
+                    window.location.href = 'dashboard-turma-dados.html';
+                }
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadProfile, 100);
+
+            // Auto open edit modal if coming from a direct edit link
+            if (window.location.hash === '#edit') {
+                setTimeout(openModalEdit, 300); // Wait for profile array population
+            }
+        });
+    </script>
+</body>
+
+</html>
+
