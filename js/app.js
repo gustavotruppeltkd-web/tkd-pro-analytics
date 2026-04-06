@@ -580,15 +580,15 @@ function renderSidebar() {
         menuItems = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-calendar-event', label: 'Vis�o da Equipe' },
             { href: 'dashboard-rendimento.html', icon: 'ti-activity', label: 'Monitoramento' },
-            { href: 'dashboard-questionarios.html', icon: 'ti-clipboard-list', label: 'Question�rios' },
+            { href: 'dashboard-questionarios.html', icon: 'ti-clipboard-list', label: 'Questionários' },
             { href: 'treino-equipe.html', icon: 'ti-barbell', label: 'Treinos' },
-            { href: 'calendario.html', icon: 'ti-calendar', label: 'Calend�rio' },
-            { href: 'scout-video.html', icon: 'ti-video', label: 'An�lise de Lutas' }
+            { href: 'calendario.html', icon: 'ti-calendar', label: 'Calendário' },
+            { href: 'scout-video.html', icon: 'ti-video', label: 'Análise de Lutas' }
         ];
     } else {
         menuItems = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-users', label: 'Dados da Turma' },
-            { href: 'dashboard-aulas.html', icon: 'ti-checklist', label: 'Chamada Di�ria' },
+            { href: 'dashboard-aulas.html', icon: 'ti-checklist', label: 'Chamada Diária' },
             { href: 'financeiro.html', icon: 'ti-cash', label: 'Financeiro' }
         ];
     }

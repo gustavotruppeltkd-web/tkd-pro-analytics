@@ -874,7 +874,7 @@
                             roundsSummary = ` ��¢ Round: ${s.round} `;
                         }
 
-                        // Conta apenas as ações reais (ignora divisores se existirem)
+                        // Conta apenas as ações reais (ignora divisãores se existirem)
                         const acoesReais = (s.acoes || []).filter(a => !a.isDivider).length;
 
                         optionsHtml += `<option value="${s.id}">${dForm} - ${s.evento} (${acoesReais} Ações)</option>`;
