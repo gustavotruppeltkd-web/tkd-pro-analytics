@@ -46,7 +46,7 @@
             min-height: 100vh;
         }
 
-        /* â”€â”€ HERO HEADER â”€â”€ */
+        /* â”�â”� HERO HEADER â”�â”� */
         .portal-hero {
             background: linear-gradient(135deg, #0f1117 0%, #1a1d27 60%, #1e1840 100%);
             border-bottom: 1px solid var(--border);
@@ -118,7 +118,7 @@
             flex-shrink: 0;
         }
 
-        /* â”€â”€ MAIN GRID â”€â”€ */
+        /* â”�â”� MAIN GRID â”�â”� */
         .dashboard {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -154,7 +154,7 @@
             grid-column: 1 / -1;
         }
 
-        /* â”€â”€ CARDS â”€â”€ */
+        /* â”�â”� CARDS â”�â”� */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -272,7 +272,7 @@
             color: #ec4899;
         }
 
-        /* â”€â”€ RADAR â”€â”€ */
+        /* â”�â”� RADAR â”�â”� */
         .radar-wrap {
             position: relative;
             height: 260px;
@@ -292,7 +292,7 @@
             opacity: 0.4;
         }
 
-        /* â”€â”€ COMPETITIONS â”€â”€ */
+        /* â”�â”� COMPETITIONS â”�â”� */
         .comp-item {
             display: flex;
             align-items: center;
@@ -366,7 +366,7 @@
             margin-top: 0;
         }
 
-        /* â”€â”€ MEDALS â”€â”€ */
+        /* â”�â”� MEDALS â”�â”� */
         .medals-grid {
             display: flex;
             flex-wrap: wrap;
@@ -412,7 +412,7 @@
             border-color: rgba(180, 120, 60, 0.4);
         }
 
-        /* â”€â”€ TRAINING â”€â”€ */
+        /* â”�â”� TRAINING â”�â”� */
         .treino-block {
             background: var(--bg-card2);
             border-radius: var(--radius-sm);
@@ -445,7 +445,7 @@
             margin-top: 6px;
         }
 
-        /* â”€â”€ SCHEDULE â”€â”€ */
+        /* â”�â”� SCHEDULE â”�â”� */
         .timeline {
             display: flex;
             flex-direction: column;
@@ -507,7 +507,7 @@
             margin-top: 2px;
         }
 
-        /* â”€â”€ QUESTIONNAIRES â”€â”€ */
+        /* â”�â”� QUESTIONNAIRES â”�â”� */
         .q-selector {
             width: 100%;
             background: var(--bg-card2);
@@ -599,7 +599,7 @@
             margin-top: 4px;
         }
 
-        /* â”€â”€ CALENDAR â”€â”€ */
+        /* â”�â”� CALENDAR â”�â”� */
         .cal-wrapper {
             flex: 1;
             display: flex;
@@ -653,7 +653,7 @@
             box-shadow: 0 0 12px rgba(216, 180, 254, 0.4);
         }
 
-        /* â”€â”€ WELLNESS / PSE (collapsible) â”€â”€ */
+        /* â”�â”� WELLNESS / PSE (collapsible) â”�â”� */
         .accordion {
             background: var(--bg-card2);
             border: 1px solid var(--border);
@@ -1117,7 +1117,7 @@
             border-color: var(--primary);
         }
 
-        /* â”€â”€ BUTTONS â”€â”€ */
+        /* â”�â”� BUTTONS â”�â”� */
         .btn-submit {
             width: 100%;
             padding: 14px;
@@ -1143,7 +1143,7 @@
             transform: translateY(-1px);
         }
 
-        /* â”€â”€ TOAST â”€â”€ */
+        /* â”�â”� TOAST â”�â”� */
         #toast {
             position: fixed;
             bottom: 24px;
@@ -1169,7 +1169,7 @@
             background: var(--red);
         }
 
-        /* â”€â”€ MISC â”€â”€ */
+        /* â”�â”� MISC â”�â”� */
         .empty-state {
             text-align: center;
             padding: 30px 16px;
@@ -1205,7 +1205,7 @@
             cursor: pointer;
         }
 
-        /* â”€â”€ SCALE BUTTONS â”€â”€ */
+        /* â”�â”� SCALE BUTTONS â”�â”� */
         .btn-scale-group {
             display: flex;
             gap: 4px;
@@ -1371,7 +1371,7 @@
                         class="ti ti-medal"></i></div>
                 <div>
                     <div class="card-title c-orange">Medalhas Conquistadas</div>
-                    <div class="card-subtitle" id="medalSubtitle">â€”</div>
+                    <div class="card-subtitle" id="medalSubtitle">â�”</div>
                 </div>
             </div>
             <div id="medalsContent"></div>
@@ -1502,7 +1502,7 @@
     <div id="toast"></div>
 
     <script>
-        // â”€â”€ INIT â”€â”€
+        // â”�â”� INIT â”�â”�
         const params = new URLSearchParams(location.search);
         const atletaId = parseInt(params.get('atleta') || sessionStorage.getItem('tkd_atleta_id') || '0');
         const nowLocal = new Date();
@@ -1585,7 +1585,7 @@
             checkPseDone();
         }
 
-        // â”€â”€ RADAR â”€â”€
+        // â”�â”� RADAR â”�â”�
         function renderRadar() {
             const scouts = (window.db.lutasScout || []).filter(s => s.atletaId === atletaId && s.avaliacaoTreinador);
             const ctx = document.getElementById('radarChart').getContext('2d');
@@ -1641,12 +1641,12 @@
             });
         }
 
-        // â”€â”€ COMPETITIONS â”€â”€
+        // â”�â”� COMPETITIONS â”�â”�
         function renderCompetitions() {
             // Removido a pedido do usuÃ¡rio: O painel de competiÃ§Ãµes foi removido do HTML.
         }
 
-        // â”€â”€ MEDALS â”€â”€
+        // â”�â”� MEDALS â”�â”�
         function renderMedals() {
             // Busca nas duas fontes: db.competicoes (legado) e db.eventos[].participantes (atual)
             const medalColocacoes = ['Ouro', 'Prata', 'Bronze'];
@@ -1700,7 +1700,7 @@
         <span class="icon">${icon}</span>
         <div class="info">
           <div class="event">${c.nomeEvento}</div>
-          <div class="cat">${c.categoria ? c.categoria + ' Â· ' : ''}${c.data ? formatarDataBR(c.data) : ''}</div>
+          <div class="cat">${c.categoria ? c.categoria + ' �· ' : ''}${c.data ? formatarDataBR(c.data) : ''}</div>
         </div>
       </div>`;
             }).join('');
@@ -1709,7 +1709,7 @@
                 `<div class="medals-grid">${html}</div>`;
         }
 
-        // â”€â”€ TREINO â”€â”€
+        // â”�â”� TREINO â”�â”�
         function renderTreino() {
             const now = new Date();
             document.getElementById('treinoDateLabel').textContent =
@@ -1748,7 +1748,7 @@
             }).join('');
         }
 
-        // â”€â”€ SCHEDULE â”€â”€
+        // â”�â”� SCHEDULE â”�â”�
         function renderSchedule() {
             const eventos = (window.db.eventos || [])
                 .filter(e => e.data >= today)
@@ -1780,7 +1780,7 @@
             el.innerHTML = `<div class="timeline">${items}</div>`;
         }
 
-        // â”€â”€ CALENDAR SUMMARY â”€â”€
+        // â”�â”� CALENDAR SUMMARY â”�â”�
         function renderCalendarSummary() {
             if (!atleta) return;
 
@@ -1839,7 +1839,7 @@
             document.getElementById('calendarContent').innerHTML = html;
         }
 
-        // â”€â”€ QUESTIONNAIRES â”€â”€
+        // â”�â”� QUESTIONNAIRES â”�â”�
         function renderQSelector() {
             const ativos = (window.db.questionarios || []).filter(q => q.ativo !== false);
             const sel = document.getElementById('qSelector');
@@ -1952,7 +1952,7 @@
             loadSelectedQ();
         }
 
-        // â”€â”€ WELLNESS â”€â”€
+        // â”�â”� WELLNESS â”�â”�
         function getWellnessColor(val, max) {
             const pct = (parseInt(val) - 1) / (max - 1 || 1);
             if (pct <= 0.25) return 'var(--red)';
@@ -2019,7 +2019,7 @@
             }
         }
 
-        // â”€â”€ TREINO MODAL â”€â”€
+        // â”�â”� TREINO MODAL â”�â”�
         function toggleTreinoModal() {
             const m = document.getElementById('treinoModal');
             if (m.classList.contains('show')) {
@@ -2132,7 +2132,7 @@
                         <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
                             <div>
                                 <div style="font-weight: 600; font-size: 14px;">${c.tipoTreino || 'Geral'}</div>
-                                <div style="font-size: 12px; color: var(--text-muted);">PSE: <strong style="color:${pseColor}">${c.pse}</strong> â€¢ ${c.duracaoMins} min â€¢ Carga: ${c.cargaCalculada} U.A.</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">PSE: <strong style="color:${pseColor}">${c.pse}</strong> â�¢ ${c.duracaoMins} min â�¢ Carga: ${c.cargaCalculada} U.A.</div>
                             </div>
                             <button class="btn-icon tooltip" style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 6px;" onclick="deletePSE(${c.id})"><i class="ti ti-trash"></i></button>
                         </div>
@@ -2216,7 +2216,7 @@
             localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
         }
 
-        // â”€â”€ START â”€â”€
+        // â”�â”� START â”�â”�
         // Wait for app.js to initialize the db
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadPortal, 100); // Small delay to ensure loadDB() finished

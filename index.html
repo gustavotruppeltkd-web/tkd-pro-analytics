@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Coach Analytics | Autenticação</title>
+    <title>Pro Coach Analytics | Autentica��o</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -191,7 +191,7 @@
             </div>
             <div class="input-group">
                 <label>Senha</label>
-                <input type="password" class="form-control" id="password" required placeholder="••••••••">
+                <input type="password" class="form-control" id="password" required placeholder="��������">
             </div>
             <button type="submit" class="btn-enter" id="submitBtn">
                 <i class="ti ti-login"></i> Entrar
@@ -199,7 +199,7 @@
         </form>
 
         <a href="#" class="toggle-mode" id="toggleModeBtn" onclick="toggleMode(event)">
-            Não tem uma conta? Cadastre-se
+            N�o tem uma conta? Cadastre-se
         </a>
     </div>
 
@@ -224,14 +224,14 @@
 
             if (isSignup) {
                 title.innerText = "Criar Conta";
-                subtitle.innerText = "Criação de usuário Supabase";
+                subtitle.innerText = "Cria��o de usu�rio Supabase";
                 btn.innerHTML = `<i class="ti ti-user-plus"></i> Registrar`;
-                toggleBtn.innerText = "Já tem uma conta? Faça Login";
+                toggleBtn.innerText = "J�tem uma conta? Fa�a Login";
             } else {
                 title.innerText = "Bem-vindo(a)";
                 subtitle.innerText = "Acesso Seguro Supabase";
                 btn.innerHTML = `<i class="ti ti-login"></i> Entrar`;
-                toggleBtn.innerText = "Não tem uma conta? Cadastre-se";
+                toggleBtn.innerText = "N�o tem uma conta? Cadastre-se";
             }
         }
 
@@ -257,7 +257,7 @@
                     .single();
 
                 if (authError || !authData) {
-                    errorMsg.innerText = "Este e-mail não está autorizado a criar conta. Entre em contato com o administrador.";
+                    errorMsg.innerText = "Este e-mail n�o est�autorizado a criar conta. Entre em contato com o administrador.";
                     errorMsg.style.display = 'block';
                     btn.disabled = false;
                     btn.style.opacity = '1';
@@ -273,7 +273,7 @@
                     errorMsg.innerText = error.message;
                     errorMsg.style.display = 'block';
                 } else {
-                    successMsg.innerText = "Conta criada com sucesso! Faça login.";
+                    successMsg.innerText = "Conta criada com sucesso! Fa�a login.";
                     successMsg.style.display = 'block';
                     toggleMode(new Event('click')); // switch back to login
                 }
@@ -284,7 +284,7 @@
                 });
 
                 if (error) {
-                    errorMsg.innerText = "E-mail ou senha inválidos.";
+                    errorMsg.innerText = "E-mail ou senha inv�lidos.";
                     errorMsg.style.display = 'block';
                 }
                 // If success, auth.js onAuthStateChange will automatically redirect to turmas.html

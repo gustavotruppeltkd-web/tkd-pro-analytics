@@ -907,8 +907,8 @@
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetUltimasComp">
-                                            â€¢ Campeonato Paulista (Set)<br>
-                                            â€¢ Open Sudeste (Jul)
+                                            â�¢ Campeonato Paulista (Set)<br>
+                                            â�¢ Open Sudeste (Jul)
                                         </div>
                                     </div>
                                     <div>
@@ -917,7 +917,7 @@
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetProximasComp">
-                                            â€¢ Copa Regional (em 18 dias)<br>
+                                            â�¢ Copa Regional (em 18 dias)<br>
                                             <span style="color: var(--yellow); font-size: 12px;"><i
                                                     class="ti ti-flag"></i> InscriÃ§Ãµes Abertas</span>
                                         </div>
@@ -1372,7 +1372,7 @@
                 ultimasList.innerHTML = passadas.slice(0, 2).map(ev => {
                     const data = new Date(ev.data + "T00:00:00");
                     const mes = data.toLocaleString('pt-BR', { month: 'short' });
-                    return `<div style="cursor: pointer; margin-bottom: 4px;" onclick="window.location.href='evento-detalhes.html?id=${ev.id}'">â€¢ ${ev.titulo} (${mes})</div>`;
+                    return `<div style="cursor: pointer; margin-bottom: 4px;" onclick="window.location.href='evento-detalhes.html?id=${ev.id}'">â�¢ ${ev.titulo} (${mes})</div>`;
                 }).join('');
             }
 
@@ -1403,7 +1403,7 @@
 
                 proximasDiv.innerHTML = `
                     <div style="cursor: pointer;" onclick="window.location.href='evento-detalhes.html?id=${prox.id}'">
-                        â€¢ ${prox.titulo} (${countdownText})
+                        â�¢ ${prox.titulo} (${countdownText})
                         ${statusExtra}
                     </div>
                 `;
@@ -1724,7 +1724,7 @@
             if (t.obs) {
                 if (yPos > 260) { doc.addPage(); yPos = 20; }
                 doc.setFont('helvetica', 'bold');
-                doc.text('OBSERVAÃ‡Ã•ES GERAIS:', 15, yPos);
+                doc.text('OBSERVAÃ‡Ã�ES GERAIS:', 15, yPos);
                 yPos += 6;
                 doc.setFont('helvetica', 'normal');
                 const finalObs = doc.splitTextToSize(t.obs, 180);
@@ -1852,7 +1852,7 @@
                                 <img src="${a.avatar}" alt="${a.nome}" class="student-avatar">
                                 <div class="student-details">
                                     <h4>${a.nome}</h4>
-                                    <p><strong>${a.faixa}</strong> â€¢ ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
+                                    <p><strong>${a.faixa}</strong> â�¢ ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
                                 </div>
                             </div>
                             <div class="col-age">

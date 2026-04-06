@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btnCancel = document.getElementById('btnCancelEdit');
 
                 if (btnSave) {
-                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escalação (Salvar Alterações)';
+                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escala��o (Salvar Altera�ões)';
                     btnSave.style.background = 'var(--primary)';
                     btnSave.style.borderColor = 'var(--primary)';
                 }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnCancel) {
                     btnCancel.style.display = 'flex';
                     btnCancel.addEventListener('click', () => {
-                        if (confirm("Deseja cancelar a edição? Todas as alterações não salvas serão perdidas.")) {
+                        if (confirm("Deseja cancelar a edi��o? Todas as altera�ões n�o salvas ser�o perdidas.")) {
                             window.location.href = 'scout-video.html';
                         }
                     });
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpa e recria caso exista para evitar duplicados
         select.innerHTML = `
             <option value="">Selecione o atleta da equipe...</option>
-            <option value="adversario">--- Possível Adversário ---</option>
+            <option value="adversario">--- Poss�vel Advers�rio ---</option>
         `;
 
         // Filtra os atletas da turma atual
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 configContent.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="ti ti-chevron-down"></i>';
                 if (typeof showToast === 'function') {
-                    showToast("Configurações da luta salvas!", "success");
+                    showToast("Configura�ões da luta salvas!", "success");
                 }
             });
         }
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cleanResult = result.toLowerCase().trim();
 
                 if (!validResults.includes(cleanResult)) {
-                    alert("Resultado inválido. Use: vitoria, derrota ou empate.");
+                    alert("Resultado inv�lido. Use: vitoria, derrota ou empate.");
                     return;
                 }
 
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const scouts = [...(db.lutasScout || [])].sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro));
 
         const teamScouts = scouts.filter(s => typeof s.atletaId === 'number' || s.atletaId === undefined);
-        const opponentScouts = scouts.filter(s => typeof s.atletaId === 'string' && (s.atletaId === 'adversario' || s.atletaId.startsWith('Adversário')));
+        const opponentScouts = scouts.filter(s => typeof s.atletaId === 'string' && (s.atletaId === 'adversario' || s.atletaId.startsWith('Advers�rio')));
 
         function buildOptions(list, defaultText) {
             if (list.length === 0) return `<option value="">${defaultText}</option>`;
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let nomeAtleta = "Atleta Removido";
                 if (typeof s.atletaId === 'string') {
-                    nomeAtleta = s.atletaId === 'adversario' ? 'Adversário Registrado' : s.atletaId;
+                    nomeAtleta = s.atletaId === 'adversario' ? 'Advers�rio Registrado' : s.atletaId;
                 } else if (typeof s.atletaId === 'number') {
                     const at = db.alunos.find(a => a.id === s.atletaId);
                     if (at) nomeAtleta = at.nome;
@@ -341,13 +341,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = s.resultadoLuta ? `[${s.resultadoLuta.toUpperCase()}]` : '';
                 const acoesCount = (s.acoes || []).filter(a => !a.isDivider).length;
 
-                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} ações)</option>`;
+                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} a�ões)</option>`;
             });
             return html;
         }
 
         teamSelect.innerHTML = buildOptions(teamScouts, "Nenhum scout de equipe salvo.");
-        opponentSelect.innerHTML = buildOptions(opponentScouts, "Nenhum scout de adversário salvo.");
+        opponentSelect.innerHTML = buildOptions(opponentScouts, "Nenhum scout de advers�rio salvo.");
     }
 
     window.actionSelectedScout = function (type, action) {
@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const scoutId = parseInt(selectEl.value);
 
         if (!scoutId) {
-            alert("Por favor, selecione um scout na lista antes de executar uma ação.");
+            alert("Por favor, selecione um scout na lista antes de executar uma a��o.");
             return;
         }
 
@@ -377,17 +377,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultadoLuta = document.getElementById('scoutLutaResult').value;
 
         if (!atleta) {
-            alert("Por favor, selecione para qual atleta (ou adversário) você está fazendo este scout.");
+            alert("Por favor, selecione para qual atleta (ou advers�rio) voc�est�fazendo este scout.");
             return;
         }
 
         if (!evento) {
-            alert("Por favor, informe o nome do evento/competição.");
+            alert("Por favor, informe o nome do evento/competi��o.");
             return;
         }
 
         if (timelineEvents.length === 0) {
-            alert("Não há nenhuma ação na timeline. Cadastre movimentos antes de salvar o scout.");
+            alert("N�o h�nenhuma a��o na timeline. Cadastre movimentos antes de salvar o scout.");
             return;
         }
 
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultadoLuta = document.getElementById('scoutLutaResult').value;
         const opponentName = document.getElementById('opponentNameInput') ? document.getElementById('opponentNameInput').value.trim() : '';
 
-        const atletaFinal = atleta === 'adversario' ? (opponentName ? `Adversário (${opponentName})` : 'adversario') : parseInt(atleta);
+        const atletaFinal = atleta === 'adversario' ? (opponentName ? `Advers�rio (${opponentName})` : 'adversario') : parseInt(atleta);
 
         const form = document.getElementById('formAvaliacaoTreinador');
         const avaliacao = {
@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast("Scout atualizado com sucesso!", "success");
                 closeModalAvaliacao();
 
-                if (confirm("Deseja voltar para a visão geral ou continuar editando?")) {
+                if (confirm("Deseja voltar para a vis�o geral ou continuar editando?")) {
                     window.location.href = 'scout-video.html';
                 }
                 return;
@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.style.display = 'block';
 
-        let subOptions = ['Frente', 'Trás'];
+        let subOptions = ['Frente', 'Tr�s'];
 
         subOptions.forEach(opt => {
             const btn = document.createElement('button');
@@ -674,11 +674,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let url = document.getElementById('youtubeLink').value.trim();
             let videoId = extractYouTubeId(url);
             if (!videoId) {
-                alert("URL do YouTube inválida.");
+                alert("URL do YouTube inv�lida.");
                 return;
             }
 
-            // Ocultar overlay se estivesse visível
+            // Ocultar overlay se estivesse vis�vel
             document.getElementById('youtubeErrorOverlay').style.display = 'none';
 
             if (ytPlayer) {
@@ -687,14 +687,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 ytPlayer = null;
             }
 
-            // O YouTube IFrame API falha no file:// origin. Vamos forçar o origin e o widget_referrer
-            // para o host atual ou um genérico
+            // O YouTube IFrame API falha no file:// origin. Vamos for�ar o origin e o widget_referrer
+            // para o host atual ou um gen�rico
             let originUrl = 'http://localhost';
             if (window.location.protocol.startsWith('http')) {
                 originUrl = window.location.origin;
             }
 
-            // A documentação do YouTube recomenda instanciar o player e deixar a API criar o iframe
+            // A documenta��o do YouTube recomenda instanciar o player e deixar a API criar o iframe
             ytPlayer = new YT.Player('youtubePlayer', {
                 height: '100%',
                 width: '100%',
@@ -714,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else if (event.data === 153) {
                             // FALLBACK PUSH: Erro 153 (Browser bloqueando referrer da API).
                             // Removemos a API controlada e criamos um iframe burro (embed puro).
-                            // Perdemos o auto-timestamp (terá que digitar manual no futuro se quiser), mas o vídeo toca.
+                            // Perdemos o auto-timestamp (ter�que digitar manual no futuro se quiser), mas o v�deo toca.
                             if (ytPlayer) {
                                 ytPlayer.destroy();
                                 ytPlayer = null;
@@ -738,11 +738,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 wrapper.insertBefore(fallbackIframe, localPlayerNode);
                             }
 
-                            // Avisamos o usuário que estamos no fallback
+                            // Avisamos o usu�rio que estamos no fallback
                             console.warn("YouTube API bloqueada (Erro 153). Aplicando Fallback Embed.");
 
                         } else if (event.data === 2) {
-                            alert("Erro 2 (YouTube): O ID do vídeo é inválido.");
+                            alert("Erro 2 (YouTube): O ID do v�deo �inv�lido.");
                         } else if (event.data === 5) {
                             alert("Erro 5 (YouTube): Houve um erro no player.");
                         } else {
@@ -820,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (localLabel) parts.push(`@ ${localLabel}`);
 
-        // Check if there is enough to be valid (at least Ação is required)
+        // Check if there is enough to be valid (at least A��o is required)
         if (currentScoutState.acao) {
             btnReg.disabled = false;
         } else {
@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let fullStr = Object.values(currentScoutState).filter(x => x).join(' - ');
-        if (!fullStr) fullStr = "Nenhuma ação selecionada...";
+        if (!fullStr) fullStr = "Nenhuma a��o selecionada...";
 
         document.getElementById('currentSummary').innerText = fullStr;
     }
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="empty-state">
                     <i class="ti ti-timeline"></i>
                     <p>Nenhum evento registrado ainda.</p>
-                    <p style="font-size: 11px;">Comece a adicionar ações no painel central.</p>
+                    <p style="font-size: 11px;">Comece a adicionar a�ões no painel central.</p>
                 </div>`;
             countBadge.innerText = "0";
             return;
@@ -980,9 +980,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="timeline-content" onclick="jumpToEvent(${ev.time})" style="cursor: pointer; flex: 1;">
                         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
                             <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
-                            <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'Ação'} ${resStr}</span>
+                            <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'A��o'} ${resStr}</span>
                         </div>
-                        <div class="timeline-details" style="font-size: 11px; opacity: 0.8;">${detailsArr.join(' • ')}</div>
+                        <div class="timeline-details" style="font-size: 11px; opacity: 0.8;">${detailsArr.join(' � ')}</div>
                     </div>
                     <div class="timeline-actions">
                         <button class="btn-action btn-edit" title="Editar" onclick="editEvent(${ev.id})"><i class="ti ti-edit"></i></button>
@@ -998,7 +998,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.deleteEvent = function (id) {
-        if (!confirm('Deseja realmente excluir esta ação?')) return;
+        if (!confirm('Deseja realmente excluir esta a��o?')) return;
         timelineEvents = timelineEvents.filter(e => e.id !== id);
         renderTimeline();
     }

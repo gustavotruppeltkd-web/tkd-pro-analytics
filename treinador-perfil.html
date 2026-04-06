@@ -778,7 +778,7 @@
             const email = input.value.trim().toLowerCase();
 
             if (!email || !email.includes('@')) {
-                alert("Por favor, insira um e-mail válido.");
+                alert("Por favor, insira um e-mail v�lido.");
                 return;
             }
 
@@ -787,7 +787,7 @@
                 .insert([{ email }]);
 
             if (error) {
-                if (error.code === '23505') alert("Este e-mail já está autorizado.");
+                if (error.code === '23505') alert("Este e-mail j�est�autorizado.");
                 else alert("Erro ao autorizar e-mail: " + error.message);
                 return;
             }
@@ -797,7 +797,7 @@
         }
 
         async function removeAuthorizedEmail(id) {
-            if (!confirm("Tem certeza? Esta pessoa não poderá mais se registrar.")) return;
+            if (!confirm("Tem certeza? Esta pessoa n�o poder�mais se registrar.")) return;
 
             const { error } = await supabaseClient
                 .from('authorized_emails')
@@ -812,7 +812,7 @@
             renderAuthorizedEmails();
         }
 
-        // --- FUNÃ‡Ã•ES DO MODAL ---
+        // --- FUNÃ‡Ã�ES DO MODAL ---
         function openEditCoachModal() {
             const coach = currentCoachObj;
 
@@ -982,7 +982,7 @@
             doc.setFont("helvetica", "normal");
             doc.text((coach.role || "Treinador").toUpperCase() + " DE TAEKWONDO", 55, 26);
 
-            // GRID DE INFORMAÃ‡Ã•ES (Mudei de 8 para 7 e ajustei recuo dos valores)
+            // GRID DE INFORMAÃ‡Ã�ES (Mudei de 8 para 7 e ajustei recuo dos valores)
             doc.setFontSize(7);
             const birthDate = coach.nascimento ? new Date(coach.nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '---';
 
@@ -1012,7 +1012,7 @@
 
             let currentY = 70;
 
-            // --- SEÃ‡Ã•ES DO CURRÃCULO ---
+            // --- SEÃ‡Ã�ES DO CURRÃCULO ---
             const drawSectionHeader = (title, y) => {
                 doc.setTextColor(...colorText);
                 doc.setFont("helvetica", "bold");
@@ -1059,7 +1059,7 @@
             // FormaÃ§Ã£o
             currentY += 5;
             if (currentY > pageHeight - 30) { doc.addPage(); currentY = 20; }
-            currentY = drawSectionHeader("FORMAÃ‡ÃƒO E CERTIFICAÃ‡Ã•ES", currentY);
+            currentY = drawSectionHeader("FORMAÃ‡ÃƒO E CERTIFICAÃ‡Ã�ES", currentY);
             if (coach.formacao && coach.formacao.length > 0) {
                 coach.formacao.forEach(f => {
                     if (currentY > pageHeight - 25) { doc.addPage(); currentY = 20; }
