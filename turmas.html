@@ -298,6 +298,11 @@
         function closeModalExcluir() { modalDel.classList.remove('active'); }
         function closeModalEditar() { modalEdit.classList.remove('active'); }
 
+        function openModalExcluir() {
+            renderTurmas();
+            modalDel.classList.add('active');
+        }
+
         function openModalEditar() {
             renderTurmas();
             document.getElementById('editFields').style.display = 'none';
