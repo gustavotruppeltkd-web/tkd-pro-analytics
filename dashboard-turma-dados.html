@@ -11,7 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.uM&eacute;d.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.uMd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         /* ===== Treinos Hoje Widget - mini calendar day ===== */
@@ -320,7 +320,7 @@
         .chart-box {
             background: var(--bg-dark);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-M&eacute;d);
+            border-radius: var(--radius-md);
             padding: 16px;
             display: flex;
             flex-direction: column;
@@ -341,7 +341,7 @@
             justify-content: space-between;
             background: var(--bg-card);
             padding: 16px 24px;
-            border-radius: var(--radius-M&eacute;d);
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             transition: var(--transition);
         }
@@ -429,7 +429,7 @@
         .schedule-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-M&eacute;d);
+            border-radius: var(--radius-md);
             padding: 16px;
             display: flex;
             align-items: center;
@@ -676,7 +676,7 @@
             margin-bottom: 24px;
             background: rgba(0, 0, 0, 0.2);
             padding: 16px;
-            border-radius: var(--radius-M&eacute;d);
+            border-radius: var(--radius-md);
         }
 
         .view-stat {
@@ -715,7 +715,7 @@
         .view-bloco {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-M&eacute;d);
+            border-radius: var(--radius-md);
             padding: 16px;
             margin-bottom: 16px;
         }
@@ -990,7 +990,7 @@
 
             <!-- Formulário Novo Horário -->
             <form onsubmit="saveHorario(event)" id="formAddHorario"
-                style="background: var(--bg-dark); padding: 16px; border-radius: var(--radius-M&eacute;d); margin-bottom: 24px; border: 1px solid var(--border-color);">
+                style="background: var(--bg-dark); padding: 16px; border-radius: var(--radius-md); margin-bottom: 24px; border: 1px solid var(--border-color);">
                 <h4 style="margin-bottom: 12px; font-size: 14px;">Adicionar Novo Bloco</h4>
                 <div style="display: flex; gap: 12px; align-items: flex-end;">
                     <div class="form-group" style="flex: 2; margin-bottom: 0;">
@@ -1841,7 +1841,7 @@
                                 <button class="btn btn-primary" style="flex: 1; justify-content: center; border-radius: 8px;" onclick="goToPerfil(${a.id})">Perfil</button>
                                 <button class="btn-icon tooltip" style="color: var(--primary); border-color: rgba(59, 130, 246, 0.3); border-radius: 8px;" data-tooltip="Editar Dados" onclick="openModalEditAluno(${a.id})"><i class="ti ti-edit"></i></button>
                                 <button class="btn-icon tooltip" style="color: var(--green); border-color: rgba(16, 185, 129, 0.3); border-radius: 8px;" data-tooltip="Copiar Link do Atleta" onclick="copiarLinkAtleta(${a.id})"><i class="ti ti-link"></i></button>
-                                <button class="btn-icon tooltip" style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 8px;" data-tooltip="Excluir Atleta" onclick="confirM&eacute;deleteAluno(${a.id})"><i class="ti ti-trash"></i></button>
+                                <button class="btn-icon tooltip" style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 8px;" data-tooltip="Excluir Atleta" onclick="confirMdeleteAluno(${a.id})"><i class="ti ti-trash"></i></button>
                             </div>
                         </div>
                     `;
@@ -1860,7 +1860,7 @@
                             </div>
                             <div class="col-action">
                                 <button class="btn" onclick="goToPerfil(${a.id})" style="background: var(--primary); border: none; padding: 8px 16px;">Ver Perfil</button>
-                                <button class="btn-icon tooltip" style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 8px; height: auto;" data-tooltip="Excluir Aluno" onclick="confirM&eacute;deleteAluno(${a.id})"><i class="ti ti-trash"></i></button>
+                                <button class="btn-icon tooltip" style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 8px; height: auto;" data-tooltip="Excluir Aluno" onclick="confirMdeleteAluno(${a.id})"><i class="ti ti-trash"></i></button>
                             </div>
                         </div>
                     `;
@@ -1959,7 +1959,7 @@
             if (form) form.reset();
         }
 
-        function confirM&eacute;deleteAluno(id) {
+        function confirMdeleteAluno(id) {
             const aluno = db.alunos.find(a => a.id === id);
             if (!aluno) return;
 
@@ -2272,3 +2272,5 @@
 </body>
 
 </html>
+
+
