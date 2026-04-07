@@ -234,7 +234,7 @@
 
             <div class="card participation-section">
                 <div class="section-header">
-                    <h2>Participação dos Atletas</h2>
+                    <h2>ParticipaÃ§Ã£o dos Atletas</h2>
                     <div style="display: flex; gap: 12px;">
                         <select id="selectAddAtleta" class="form-select-atleta">
                             <option value="">Adicionar Atleta...</option>
@@ -265,7 +265,7 @@
         function initPage() {
             currentEvent = db.eventos.find(e => e.id === eventId);
             if (!currentEvent) {
-                alert('Evento não encontrado!');
+                alert('Evento nÃ£o encontrado!');
                 window.location.href = 'calendario.html';
                 return;
             }
@@ -287,12 +287,12 @@
             if (currentEvent.dificuldade) {
                 let badgeClass = 'bg-dark';
                 if (currentEvent.dificuldade === 'Alto' || currentEvent.dificuldade === 'Muito Elevado' || currentEvent.dificuldade === 'Muito Alto') badgeClass = 'bg-red';
-                else if (currentEvent.dificuldade === 'Médio') badgeClass = 'bg-yellow';
+                else if (currentEvent.dificuldade === 'MÃ©dio') badgeClass = 'bg-yellow';
                 else if (currentEvent.dificuldade === 'Baixo') badgeClass = 'bg-green';
-                extraBadges += `<span class="event-badge" style="background: var(--${badgeClass} || var(--bg-hover)); margin-left:8px;"><i class="ti ti-star"></i> Nível: ${currentEvent.dificuldade}</span>`;
+                extraBadges += `<span class="event-badge" style="background: var(--${badgeClass} || var(--bg-hover)); margin-left:8px;"><i class="ti ti-star"></i> NÃ­vel: ${currentEvent.dificuldade}</span>`;
             }
             if (currentEvent.classificatorio) {
-                extraBadges += `<span class="event-badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; margin-left:8px;"><i class="ti ti-ticket"></i> Classificatório</span>`;
+                extraBadges += `<span class="event-badge" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6; margin-left:8px;"><i class="ti ti-ticket"></i> ClassificatÃ³rio</span>`;
             }
 
             container.innerHTML = `
@@ -303,7 +303,7 @@
                         <h1>${currentEvent.titulo}</h1>
                         <div style="display: flex; gap: 24px; color: var(--text-muted); flex-wrap: wrap;">
                             <span><i class="ti ti-calendar"></i> ${displayDate}</span>
-                            <span><i class="ti ti-map-pin"></i> ${currentEvent.local || 'Local não definido'}</span>
+                            <span><i class="ti ti-map-pin"></i> ${currentEvent.local || 'Local nÃ£o definido'}</span>
                             <span><i class="ti ti-building"></i> ${currentEvent.organizador || 'N/A'}</span>
                         </div>
                     </div>
@@ -335,7 +335,7 @@
 
             currentEvent.participantes.push({
                 atletaId: athleteId,
-                colocacao: 'Participação',
+                colocacao: 'ParticipaÃ§Ã£o',
                 medalha: false,
                 lutas: 0
             });
@@ -371,7 +371,7 @@
 
 
         function removeParticipation(athleteId) {
-            if (confirm('Remover participação deste atleta?')) {
+            if (confirm('Remover participaÃ§Ã£o deste atleta?')) {
                 currentEvent.participantes = currentEvent.participantes.filter(p => p.atletaId !== athleteId);
                 saveDB();
                 renderAthletesList();
@@ -396,12 +396,12 @@
             if (currentEvent.dataFim) {
                 eventDate = new Date(currentEvent.dataFim + "T00:00:00");
             }
-            if (eventDate >= today) { // Se a data final do evento ainda é hoje ou no futuro, não pode editar lutas (a não ser que já tenha passado)
-                // Na verdade, a regra "não passou ainda" se aplica ao inicio?
-                // Se o evento é dia 25 e hoje é 23, "não passou ainda". Bloqueado.
-                // Se o evento é dia 25 e hoje é 26, "já passou". Liberado.
+            if (eventDate >= today) { // Se a data final do evento ainda Ã© hoje ou no futuro, nÃ£o pode editar lutas (a nÃ£o ser que jÃ¡ tenha passado)
+                // Na verdade, a regra "nÃ£o passou ainda" se aplica ao inicio?
+                // Se o evento Ã© dia 25 e hoje Ã© 23, "nÃ£o passou ainda". Bloqueado.
+                // Se o evento Ã© dia 25 e hoje Ã© 26, "jÃ¡ passou". Liberado.
             }
-            // Para simplificar: Bloqueia se a data de início do evento for MAIOR que hoje
+            // Para simplificar: Bloqueia se a data de inÃ­cio do evento for MAIOR que hoje
             let startDate = new Date(currentEvent.data + "T00:00:00");
             let isFutureEvent = startDate > today;
 
@@ -426,7 +426,7 @@
                 const row = document.createElement('div');
                 row.className = 'athlete-row';
 
-                let inpHtml = `<input type="number" class="form-control" title="Número de Lutas" value="${p.lutas || 0}" min="0" max="20" style="width: 60px; padding: 6px; font-size: 13px; text-align: center; margin-right: 12px;" onchange="updateLutas(${athlete.id}, this.value)" ${isFutureEvent ? 'disabled title="O evento ainda não começou"' : ''}>`;
+                let inpHtml = `<input type="number" class="form-control" title="NÃºmero de Lutas" value="${p.lutas || 0}" min="0" max="20" style="width: 60px; padding: 6px; font-size: 13px; text-align: center; margin-right: 12px;" onchange="updateLutas(${athlete.id}, this.value)" ${isFutureEvent ? 'disabled title="O evento ainda nÃ£o comeÃ§ou"' : ''}>`;
 
                 row.innerHTML = `
                     <div class="athlete-info">
@@ -465,10 +465,10 @@
                                 <div style="width: 70px; color: var(--primary); font-weight: 600;">Luta ${index + 1}</div>
                                 <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
                                     <span style="color: var(--text-muted);">vs</span> 
-                                    <span style="font-weight: 500;">${luta.oponente || 'Oponente não definido'}</span>
+                                    <span style="font-weight: 500;">${luta.oponente || 'Oponente nÃ£o definido'}</span>
                                 </div>
                                 <div style="flex: 2; color: ${resultColor}; text-align: right; padding-right: 16px; font-weight: 500;">
-                                    ${luta.resultado || 'Resultado não preenchido'}
+                                    ${luta.resultado || 'Resultado nÃ£o preenchido'}
                                 </div>
                             </div>
                         `;
@@ -526,7 +526,7 @@
             if (!p || !athlete) return;
 
             document.getElementById('modalAthleteName').innerText = athlete.nome;
-            document.getElementById('formAthleteResult').value = p.colocacao || 'Participação';
+            document.getElementById('formAthleteResult').value = p.colocacao || 'ParticipaÃ§Ã£o';
             document.getElementById('formAthleteLutasCount').value = p.lutas || 0;
 
             if (!p.lutasDetalhes) p.lutasDetalhes = [];
@@ -561,7 +561,7 @@
             const container = document.getElementById('fightsContainer');
             const p = currentEvent.participantes.find(x => x.atletaId === currentEditingAthleteId);
             if (!p || !p.lutasDetalhes || p.lutasDetalhes.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Nenhuma luta registrada. Aumente o número de lutas acima.</p>';
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Nenhuma luta registrada. Aumente o nÃºmero de lutas acima.</p>';
                 return;
             }
 
@@ -579,7 +579,7 @@
                                 <label style="font-size: 11px;">Resultado da Luta (Melhor de 3)</label>
                                 <select class="form-control" onchange="updateFightDetails(${i}, 'resultado', this.value)">
                                     <option value="">Selecione o resultado</option>
-                                    <optgroup label="Vitórias">
+                                    <optgroup label="VitÃ³rias">
                                         <option value="Venceu 2x0 (Ganhou 1�º e 2�º)" ${luta.resultado === 'Venceu 2x0 (Ganhou 1�º e 2�º)' ? 'selected' : ''}>Venceu 2x0 (Ganhou 1�º e 2�º)</option>
                                         <option value="Venceu 2x1 (De virada - Perdeu o 1�º)" ${luta.resultado === 'Venceu 2x1 (De virada - Perdeu o 1�º)' ? 'selected' : ''}>Venceu 2x1 (De virada - Perdeu o 1�º)</option>
                                         <option value="Venceu 2x1 (Perdeu o 2�º)" ${luta.resultado === 'Venceu 2x1 (Perdeu o 2�º)' ? 'selected' : ''}>Venceu 2x1 (Perdeu o 2�º)</option>
@@ -632,7 +632,7 @@
         <div class="modal-content" style="max-width: 500px; width: 100%;">
             <div class="modal-header">
                 <div>
-                    <h2 class="modal-title">Detalhes da Participação</h2>
+                    <h2 class="modal-title">Detalhes da ParticipaÃ§Ã£o</h2>
                     <p id="modalAthleteName" style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Nome do
                         Atleta</p>
                 </div>
@@ -641,9 +641,9 @@
 
             <div style="display: flex; gap: 16px; margin-bottom: 16px;">
                 <div class="form-group" style="flex: 1; margin-bottom: 0;">
-                    <label>Classificação / Medalha</label>
+                    <label>ClassificaÃ§Ã£o / Medalha</label>
                     <select id="formAthleteResult" class="form-control">
-                        <option value="Participação">Participação</option>
+                        <option value="ParticipaÃ§Ã£o">ParticipaÃ§Ã£o</option>
                         <option value="Ouro">Ouro</option>
                         <option value="Prata">Prata</option>
                         <option value="Bronze">Bronze</option>
@@ -662,7 +662,7 @@
             <div style="margin-bottom: 24px;">
                 <h3
                     style="font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
-                    Histórico de Lutas</h3>
+                    HistÃ³rico de Lutas</h3>
                 <div id="fightsContainer" style="max-height: 300px; overflow-y: auto;">
                     <!-- Rendered by JS -->
                 </div>

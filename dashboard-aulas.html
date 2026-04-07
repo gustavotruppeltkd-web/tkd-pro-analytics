@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro coach Analytics | Gestão Comercial de Alunos</title>
+    <title>Pro coach Analytics | GestÃ£o Comercial de Alunos</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
@@ -170,7 +170,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h1>Turma: Adulto Iniciante</h1>
-                    <p class="subtitle">Gestão de Presenças</p>
+                    <p class="subtitle">GestÃ£o de PresenÃ§as</p>
                 </div>
                 <div class="user-profile">
                     <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar">
@@ -205,7 +205,7 @@
 
                 <div class="list-header">
                     <div>Aluno e Faixa</div>
-                    <div>Presença</div>
+                    <div>PresenÃ§a</div>
                 </div>
 
                 <div class="class-list" id="chamadaGrid">
@@ -294,7 +294,7 @@
             const btnEdit = document.getElementById('btnEditChamada');
 
             if (registroExistente && !isEditing) {
-                // UI de bloqueio se já existe chamada e NÃO estamos editando
+                // UI de bloqueio se jÃ¡ existe chamada e NÃƒO estamos editando
                 btnSave.innerHTML = `<i class="ti ti-lock"></i> Chamada Encerrada`;
                 btnSave.style.background = 'var(--bg-hover)';
                 btnSave.style.color = 'var(--text-muted)';
@@ -312,11 +312,11 @@
                 btnSave.style.background = 'var(--primary)';
                 btnSave.style.color = '#fff';
                 btnSave.innerHTML = isEditing ? `<i class="ti ti-device-floppy"></i> Atualizar Chamada` : `<i class="ti ti-device-floppy"></i> Salvar Chamada`;
-                dataInput.disabled = isEditing; // Bloquear data durante edição
+                dataInput.disabled = isEditing; // Bloquear data durante ediÃ§Ã£o
 
                 if (registroExistente) {
                     btnEdit.style.display = 'flex';
-                    btnEdit.innerHTML = `<i class="ti ti-x"></i> Cancelar Edição`;
+                    btnEdit.innerHTML = `<i class="ti ti-x"></i> Cancelar EdiÃ§Ã£o`;
                     btnEdit.style.color = 'var(--red)';
                 } else {
                     btnEdit.style.display = 'none';
@@ -356,7 +356,7 @@
             });
         }
 
-        // Adicionar listener para mudança de data
+        // Adicionar listener para mudanÃ§a de data
         document.getElementById('dataChamada').addEventListener('change', () => {
             isEditing = false;
             renderChamadaUI();
@@ -378,7 +378,7 @@
             btn.classList.add('active');
         }
 
-        // Bloqueio de chamada concluída e salvar no App.js DB
+        // Bloqueio de chamada concluÃ­da e salvar no App.js DB
         function saveChamada() {
             const btnSave = document.getElementById('btnSaveChamada');
             const dataChamadaInput = document.getElementById('dataChamada');
@@ -397,7 +397,7 @@
                 faltas: []
             };
 
-            // Salvar presenças
+            // Salvar presenÃ§as
             alunosTurma.forEach(a => {
                 const row = document.getElementById(`chamada-aluno-${a.id}`);
                 if (!row) return;

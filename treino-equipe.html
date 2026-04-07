@@ -177,7 +177,7 @@
             align-items: center;
         }
 
-        /* Físico */
+        /* F�sico */
         .tipo-forca {
             background: rgba(239, 68, 68, 0.18);
             border-color: #ef4444;
@@ -719,7 +719,7 @@
             color: var(--primary);
         }
 
-        /* Físico */
+        /* F�sico */
         .tipo-btn.active.tipo-forca {
             background: rgba(239, 68, 68, 0.2);
             border-color: #ef4444;
@@ -1427,7 +1427,7 @@
             <header class="topbar">
                 <div class="page-title">
                     <h1 id="turmaName">Equipe de Competi��o</h1>
-                    <p class="subtitle">Planejamento e Gest�o de Sessões de Treino</p>
+                    <p class="subtitle">Planejamento e Gest�o de Sess�es de Treino</p>
                 </div>
                 <div class="user-profile">
                     <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Profile" class="avatar">
@@ -1450,7 +1450,7 @@
                     <button id="btnWeek" class="active" onclick="setView('week')"><i class="ti ti-layout-columns"
                             style="margin-right:6px;"></i>Semana</button>
                     <button id="btnMonth" onclick="setView('month')"><i class="ti ti-layout-grid"
-                            style="margin-right:6px;"></i>Mês</button>
+                            style="margin-right:6px;"></i>M�s</button>
                     <button id="btnMeso" onclick="setView('meso')"><i class="ti ti-chart-gantt"
                             style="margin-right:6px;"></i>Mesociclo</button>
                 </div>
@@ -1466,7 +1466,7 @@
 
                 <!-- Linha 1: m�tricas -->
                 <div>
-                    <div class="section-title"><i class="ti ti-chart-bar"></i> Análise de Carga � Microciclo Atual</div>
+                    <div class="section-title"><i class="ti ti-chart-bar"></i> An�lise de Carga � Microciclo Atual</div>
                     <div class="metricas-grid">
                         <div class="card metrica-card">
                             <div class="metrica-label">Carga Aguda (semana)</div>
@@ -1514,7 +1514,7 @@
     <div class="modal-overlay" id="modalTreino">
         <div class="modal-content modal-treino">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTreinoTitle">Nova Sessão de Treino</h2>
+                <h2 class="modal-title" id="modalTreinoTitle">Nova Sess�o de Treino</h2>
                 <div style="display:flex; gap:10px; align-items:center;">
                     <button id="btnDownloadPDF" class="btn"
                         style="padding: 6px 10px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); display:none;">
@@ -1531,21 +1531,21 @@
 
             <!-- EDIT PANEL (form) -->
             <div id="treinoEditPanel">
-                <!-- Data + Horário -->
+                <!-- Data + Hor�rio -->
                 <div class="row-2" style="margin-bottom:16px;">
                     <div class="form-group" style="margin:0;">
-                        <label>Data da Sessão</label>
+                        <label>Data da Sess�o</label>
                         <input type="date" id="treinoData" class="form-control">
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>Horário de In�cio</label>
+                        <label>Hor�rio de In�cio</label>
                         <input type="time" id="treinoHorario" class="form-control" value="17:00">
                     </div>
                 </div>
 
                 <!-- T�tulo -->
                 <div class="form-group">
-                    <label>T�tulo da Sessão</label>
+                    <label>T�tulo da Sess�o</label>
                     <div class="titulo-selector">
                         <div class="custom-dropdown" id="treinoTituloDropdown">
                             <div class="dropdown-trigger" onclick="toggleTitleDropdown()">
@@ -1573,7 +1573,7 @@
                                 onchange="updateTipoOpcoes()"> Taekwondo
                         </label>
                         <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
-                            <input type="radio" name="treinoMacro" value="fisico" onchange="updateTipoOpcoes()"> Físico
+                            <input type="radio" name="treinoMacro" value="fisico" onchange="updateTipoOpcoes()"> F�sico
                         </label>
                     </div>
                 </div>
@@ -1640,7 +1640,7 @@
                     <div style="display:flex;gap:12px;margin-left:auto;">
                         <button class="btn" id="btnCancelarEdit" onclick="cancelarEdicao()">Cancelar</button>
                         <button class="btn btn-primary" onclick="saveTreino()">
-                            <i class="ti ti-device-floppy"></i> Salvar Sessão
+                            <i class="ti ti-device-floppy"></i> Salvar Sess�o
                         </button>
                     </div>
                 </div>
@@ -1730,7 +1730,7 @@
             forca: 'For�a', potencia: 'Pot�ncia', transferencia: 'Transfer�ncia', hiit: 'HIIT', cardio: 'Cardio',
             glicolitico: 'Glicol�tico', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
             tatico: 'T�tico', tecnico: 'T�cnico', tecnico_tatico: 'T�cnico/T�tico', simulatorio: 'Simulat�rio', sparring: 'Sparring',
-            fisico: 'Físico', recuperacao: 'Recupera��o', competicao: 'Competi��o', reuniao: 'Reuni�o'
+            fisico: 'F�sico', recuperacao: 'Recupera��o', competicao: 'Competi��o', reuniao: 'Reuni�o'
         };
 
         function updateTipoOpcoes() {
@@ -1759,7 +1759,7 @@
             }
         }
 
-        const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b'];
         const MESES = ['Janeiro', 'Fevereiro', 'Mar�o', 'Abril', 'Maio', 'Junho',
             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
@@ -1911,7 +1911,7 @@
             const startOffset = (firstDay.getDay() + 6) % 7;
 
             let html = '<div class="month-grid">';
-            ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].forEach(d => {
+            ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b', 'Dom'].forEach(d => {
                 html += `<div class="month-header-cell">${d}</div>`;
             });
 
@@ -2214,7 +2214,7 @@
         // ============================================================
         function openModalTreino(dateStr) {
             document.getElementById('treinoEditId').value = '';
-            document.getElementById('modalTreinoTitle').innerText = 'Nova Sessão de Treino';
+            document.getElementById('modalTreinoTitle').innerText = 'Nova Sess�o de Treino';
             document.getElementById('btnDeleteTreino').style.display = 'none';
             document.getElementById('treinoData').value = dateStr;
             document.getElementById('treinoHorario').value = '17:00';
@@ -2747,7 +2747,7 @@
 
             saveDB();
             renderCalendar();
-            showToast(`Sessão "${titulo}" salva com sucesso!`);
+            showToast(`Sess�o "${titulo}" salva com sucesso!`);
 
             // Re-render view panel so next time it opens in view mode
             document.getElementById('modalTreinoTitle').innerText = treino.titulo;
@@ -3062,7 +3062,7 @@
             { value: 'recuperacao', label: 'Recupera��o', color: '#34d399' }, // taper/descanso
             { value: 'transicao', label: 'Transi��o', color: '#94a3b8' }, // entre mesociclos
         ];
-        const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+        const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b', 'Dom'];
 
         let _activeMesoId = null;
 
@@ -3293,7 +3293,7 @@
                             <select class="meso-dia-input" style="width: 100%; padding: 3px; font-size: 10px; border-radius: 3px; background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);"
                                 onchange="onMesoSessionChange(${meso.id},'${sem.weekStart}',${di},${sIdx},'tipo',this.value)">
                                 <option value="Taekwondo" style="background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);" ${(!sess.tipo || sess.tipo === 'Taekwondo') ? 'selected' : ''}>Taekwondo</option>
-                                <option value="Físico" style="background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);" ${sess.tipo === 'Físico' ? 'selected' : ''}>Físico</option>
+                                <option value="F�sico" style="background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);" ${sess.tipo === 'F�sico' ? 'selected' : ''}>F�sico</option>
                             </select>
                         </div>
                     `).join('');

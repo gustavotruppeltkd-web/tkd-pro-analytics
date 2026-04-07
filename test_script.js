@@ -1,743 +1,4 @@
-﻿<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro coach Analytics | Sem�foro de Rendimento</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        .class-list {
-            margin-top: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .student-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--bg-card);
-            padding: 16px 24px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .student-row:hover {
-            transform: translateX(4px);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .col-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 2;
-        }
-
-        .student-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .student-details h4 {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .student-details p {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .col-wellness {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .semaforo-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .semaforo-green {
-            background-color: var(--green);
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
-        }
-
-        .semaforo-yellow {
-            background-color: var(--yellow);
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
-        }
-
-        .semaforo-red {
-            background-color: var(--red);
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
-        }
-
-        .semaforo-gray {
-            background-color: #6B7280;
-        }
-
-        .wellness-score {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .list-header {
-            display: flex;
-            padding: 0 24px 8px;
-            font-size: 12px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.5px;
-        }
-
-        .list-header>div:nth-child(1) {
-            flex: 2;
-        }
-
-        .list-header>div:nth-child(2) {
-            flex: 1;
-            text-align: right;
-            padding-right: 8px;
-        }
-
-        .athlete-mini-list {
-            margin-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .athlete-mini-item {
-            font-size: 13px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .athlete-mini-item::before {
-            content: "";
-            width: 4px;
-            height: 4px;
-            background: currentColor;
-            border-radius: 50%;
-            opacity: 0.5;
-        }
-
-        .btn-export {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            color: white !important;
-            border: none;
-            padding: 0 16px;
-            height: 38px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-            text-decoration: none;
-        }
-
-        .btn-export:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
-            filter: brightness(1.1);
-        }
-
-        .btn-export i {
-            font-size: 16px;
-        }
-
-        /* Dynamic Charts Styles */
-        .comparison-controls {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .selector-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-right: 4px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .chart-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-top: 24px;
-        }
-
-        @media (max-width: 1200px) {
-            .chart-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="app-container">
-        <!-- Sidebar Rendimento -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <i class="ti ti-shield-up logo-icon"></i>
-                <h2>Pro coach Analytics</h2>
-            </div>
-
-            <nav class="nav-menu" id="navMenuContainer">
-                <!-- Renderizado via JS (renderSidebar) -->
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="topbar">
-                <div class="page-title">
-                    <h1 id="turmaName">Equipe de Competi��o</h1>
-                    <p class="subtitle">Vis�o Di�ria de Rendimento e Wellness</p>
-                </div>
-                <div class="user-profile">
-                    <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar">
-                    <div class="user-info">
-                        <span class="user-name"><span class="user-name">Carregando...</span></span>
-                        <span class="user-role"><span class="user-role">Treinador</span></span>
-                    </div>
-                </div>
-            </header>
-
-            <div class="dashboard-grid"
-                style="margin-bottom: 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
-
-                <div class="card stat-card" style="border-left: 4px solid var(--green);">
-                    <div class="card-title-group"
-                        style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-                        <i class="ti ti-circle-check" style="color: var(--green); font-size: 20px;"></i>
-                        <h3 style="color: var(--text-main); font-size: 15px; font-weight: 600; margin: 0;">Atletas Aptos
-                        </h3>
-                    </div>
-                    <div class="value" id="stats-verde" style="color: var(--green);">0</div>
-                    <div class="athlete-mini-list" id="list-verde">
-                        <!-- Populated via JS -->
-                    </div>
-                </div>
-
-                <div class="card stat-card" style="border-left: 4px solid var(--yellow);">
-                    <div class="card-title-group"
-                        style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-                        <i class="ti ti-alert-triangle" style="color: var(--yellow); font-size: 20px;"></i>
-                        <h3 style="color: var(--text-main); font-size: 15px; font-weight: 600; margin: 0;">Aten��o
-                            Necess�ria</h3>
-                    </div>
-                    <div class="value" id="stats-amarelo" style="color: var(--yellow);">0</div>
-                    <div class="athlete-mini-list" id="list-amarelo">
-                        <!-- Populated via JS -->
-                    </div>
-                </div>
-
-                <div class="card stat-card" style="border-left: 4px solid var(--red);">
-                    <div class="card-title-group"
-                        style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
-                        <i class="ti ti-activity" style="color: var(--red); font-size: 20px;"></i>
-                        <h3 style="color: var(--text-main); font-size: 15px; font-weight: 600; margin: 0;">Risco Cl�nico
-                        </h3>
-                    </div>
-                    <div class="value" id="stats-vermelho" style="color: var(--red);">0</div>
-                    <div class="athlete-mini-list" id="list-vermelho">
-                        <!-- Populated via JS -->
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- Attendance List -->
-            <div class="athletes-section">
-                <div class="section-header">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <h2 style="margin: 0;">Status Di�rio:</h2>
-                        <input type="date" id="dataFiltro" class="form-control" style="width: 160px; padding: 8px 12px;"
-                            onchange="renderSemaforo()">
-                    </div>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <button class="btn btn-secondary" onclick="openModalTestesFisicos()"><i
-                                class="ti ti-activity-heartbeat"></i> Teste
-                            F�sico</button>
-                        <button class="btn btn-secondary" onclick="openModalAntropo()"><i
-                                class="ti ti-ruler-measure"></i> Avalia��o Antro</button>
-                        <button class="btn btn-secondary" onclick="openModalCarga()"><i class="ti ti-activity"></i>
-                            Lan�ar Carga Di�ria</button>
-                        <button class="btn btn-primary" onclick="openModalWellness()"><i
-                                class="ti ti-heart-rate-monitor"></i> Lan�ar Relato Di�rio</button>
-                    </div>
-                </div>
-
-                <div class="list-header">
-                    <div>Atleta</div>
-                    <div>Status de Recupera��o (Wellness)</div>
-                </div>
-
-                <div class="class-list" id="semaforoGrid">
-                    <!-- Renderizado via JS -->
-                </div>
-
-                <!-- Section Comparison Charts (Moved from Data) -->
-                <div class="comparison-widget card" id="comparisonWidget" style="margin-top: 32px; padding: 24px;">
-                    <div class="comparison-header"
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 16px; flex-wrap: wrap; gap: 16px;">
-                        <h2 style="font-size: 18px; margin: 0;"><i class="ti ti-chart-bar"
-                                style="color: var(--primary);"></i>
-                            Gr�ficos de Monitoramento</h2>
-
-                        <div class="comparison-controls">
-                            <div>
-                                <span class="selector-label">Atleta:</span>
-                                <select id="selectComparison" class="form-control" style="width: 200px;"
-                                    onchange="updateDynamicCharts()">
-                                    <option value="equipe">Toda a Equipe (M�dia)</option>
-                                    <!-- Rendered via JS -->
-                                </select>
-                            </div>
-                            <div>
-                                <span class="selector-label">Dado:</span>
-                                <select id="selectDataSource" class="form-control" style="width: 200px;"
-                                    onchange="handleDataSourceChange()">
-                                    <option value="wellness">Bem-Estar (Wellness)</option>
-                                    <option value="pse_carga">Carga de Treino e PSE</option>
-                                    <option value="scouts">Scouts de Lutas</option>
-                                    <option value="periodizacao">Periodiza��o</option>
-                                    <option value="questionarios">Question�rios</option>
-                                    <option value="testes_fisicos">Testes F�sicos</option>
-                                    <option value="antropometria">Avalia��o Antropom�trica</option>
-                                    <option value="saude">Sa�de (Les�es)</option>
-                                </select>
-                            </div>
-                            <div id="subSourceContainer" style="display: none;">
-                                <span class="selector-label">Qual:</span>
-                                <select id="selectSubSource" class="form-control" style="width: 200px;"
-                                    onchange="updateDynamicCharts()">
-                                    <!-- Populated via JS -->
-                                </select>
-                            </div>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn-export" onclick="exportDynamicCSV()">
-                                    <i class="ti ti-download"></i> CSV
-                                </button>
-                                <button class="btn-export" style="background-color: #ef4444; border-color: #ef4444;"
-                                    onclick="exportDynamicPDF()">
-                                    <i class="ti ti-file-pdf"></i> PDF
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="chart-grid" id="dynamicChartsGrid">
-                        <!-- Panel 0: Data Table (Spans 2 columns to give room for data) -->
-                        <div class="chart-box card" style="display: flex; flex-direction: column; grid-column: span 3;">
-                            <h4 id="titleTable"
-                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 1.5em; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                                Tabela de Dados</h4>
-                            <div style="flex: 1; position: relative; max-height: 250px; overflow-y: auto;"
-                                id="dynamicTableContainer">
-                                <!-- Table injected here -->
-                                <p style="color: var(--text-muted); font-size: 13px;">Carregando dados...</p>
-                            </div>
-                        </div>
-
-                        <!-- Panel 1: Chart 1 -->
-                        <div class="chart-box card" style="display: flex; flex-direction: column;">
-                            <h4 id="titleChart1"
-                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                Gr�fico 1</h4>
-                            <div style="flex: 1; min-height: 260px; position: relative;" class="canvas-container">
-                                <canvas id="dynamicChart1"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Panel 2: Chart 2 -->
-                        <div class="chart-box card" style="display: flex; flex-direction: column;">
-                            <h4 id="titleChart2"
-                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                Gr�fico 2</h4>
-                            <div style="flex: 1; min-height: 260px; position: relative;" class="canvas-container">
-                                <canvas id="dynamicChart2"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Panel 3: Chart 3 -->
-                        <div class="chart-box card" style="display: flex; flex-direction: column;">
-                            <h4 id="titleChart3"
-                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                Gr�fico 3</h4>
-                            <div style="flex: 1; min-height: 260px; position: relative;" class="canvas-container">
-                                <canvas id="dynamicChart3"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Panel 4: Chart 4 -->
-                        <div class="chart-box card" style="display: flex; flex-direction: column;">
-                            <h4 id="titleChart4"
-                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                Gr�fico 4</h4>
-                            <div style="flex: 1; min-height: 260px; position: relative;" class="canvas-container">
-                                <canvas id="dynamicChart4"></canvas>
-                            </div>
-                        </div>
-
-                        <!-- Panel 5: Chart 5 -->
-                        <div class="chart-box card" style="display: flex; flex-direction: column; grid-column: span 2;">
-                            <h4 id="titleChart5"
-                                style="font-size: 14px; margin-bottom: 16px; color: var(--text-muted); min-height: 2em;">
-                                Gr�fico 5</h4>
-                            <div style="flex: 1; min-height: 260px; position: relative;" class="canvas-container">
-                                <canvas id="dynamicChart5"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </main>
-    </div>
-
-    <!-- Modal Avalia��o Antropom�trica -->
-    <div class="modal-overlay" id="modalAntropo">
-        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header">
-                <h2 class="modal-title">Avalia��o Antropom�trica</h2>
-                <button class="btn-close" type="button" onclick="closeModalAntropo()"><i class="ti ti-x"></i></button>
-            </div>
-
-            <form onsubmit="saveAntropometria(event)" id="formAntropo">
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Atleta</label>
-                    <select class="form-control" id="antropoAtleta" required>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                    <div class="form-group">
-                        <label>Peso (kg)</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoPeso" placeholder="Ex: 68.5"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label>Altura (cm)</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoAltura" placeholder="Ex: 175"
-                            required>
-                    </div>
-                </div>
-
-                <h4
-                    style="margin-top: 24px; margin-bottom: 16px; color: var(--primary); font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    Dobras Cut�neas (mm)</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
-                    <div class="form-group">
-                        <label>Tr�ceps</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoDobraTriceps"
-                            placeholder="Ex: 12.5" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Panturrilha Medial</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoDobraPant"
-                            placeholder="Ex: 10.0" required>
-                    </div>
-                </div>
-
-                <h4
-                    style="margin-top: 24px; margin-bottom: 16px; color: var(--primary); font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    Circunfer�ncias (cm)</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;">
-                    <div class="form-group">
-                        <label>Cintura</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoCircCintura"
-                            placeholder="Ex: 80">
-                    </div>
-                    <div class="form-group">
-                        <label>Quadril</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoCircQuadril"
-                            placeholder="Ex: 95">
-                    </div>
-                    <div class="form-group">
-                        <label>Abdômen</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoCircAbdomen"
-                            placeholder="Ex: 82">
-                    </div>
-                    <div class="form-group">
-                        <label>Bra�o (Relaxado)</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoCircBraco" placeholder="Ex: 32">
-                    </div>
-                    <div class="form-group">
-                        <label>Coxa (Medial)</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoCircCoxa" placeholder="Ex: 55">
-                    </div>
-                    <div class="form-group">
-                        <label>Panturrilha</label>
-                        <input type="number" step="0.1" class="form-control" id="antropoCircPant" placeholder="Ex: 38">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-block"
-                        style="width: 100%; justify-content: center;">Salvar Avalia��o & Calcular</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Lan�amento Wellness -->
-    <div class="modal-overlay" id="modalWellness">
-        <div class="modal-content" style="max-width: 500px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header">
-                <h2 class="modal-title">Relato de Bem-Estar (Wellness)</h2>
-                <button class="btn-close" type="button" onclick="closeModalWellness()"><i class="ti ti-x"></i></button>
-            </div>
-
-            <form onsubmit="saveWellness(event)" id="formWellness">
-                <div class="form-group">
-                    <label>Atleta</label>
-                    <select class="form-control" id="wellnessAtleta" required>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Qualidade do Sono (1 a 5)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: P�ssimo</span>
-                        <span>5: Excelente</span>
-                    </div>
-                    <input type="range" id="wellnessSono" min="1" max="5" value="3" style="width: 100%;">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valSono">3</div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>N�vel de Estresse (1 a 5)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Muito Estressado</span>
-                        <span>5: Muito Relaxado</span>
-                    </div>
-                    <input type="range" id="wellnessEstresse" min="1" max="5" value="3" style="width: 100%;">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valEstresse">3</div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Dor Muscular (1 a 5)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Dor Forte</span>
-                        <span>5: Sem Dor Normal</span>
-                    </div>
-                    <input type="range" id="wellnessDor" min="1" max="5" value="3" style="width: 100%;">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valDor">3</div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Humor (1 a 5)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Muito Irritado</span>
-                        <span>5: Muito Contente</span>
-                    </div>
-                    <input type="range" id="wellnessHumor" min="1" max="5" value="3" style="width: 100%;">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valHumor">3</div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Fadiga / Cansa�o (1 a 5)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Muito Fadigado</span>
-                        <span>5: Muito Disposto</span>
-                    </div>
-                    <input type="range" id="wellnessFadiga" min="1" max="5" value="3" style="width: 100%;">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valFadiga">3</div>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Alimenta��o (0 a 5)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>0: Ruim</span>
-                        <span>5: Boa</span>
-                    </div>
-                    <input type="range" id="wellnessAlimentacao" min="0" max="5" value="3" style="width: 100%;">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valAlimentacao">3</div>
-                </div>
-
-                <div class="form-group">
-                    <label>Peso Atual (em Kg, opcional)</label>
-                    <input type="number" step="0.1" class="form-control" id="wellnessPeso" placeholder="Ex: 68.5">
-                </div>
-
-                <div class="form-group" style="display: flex; align-items: center; gap: 12px; margin-top: 16px;">
-                    <input type="checkbox" id="wellnessMenstrual"
-                        style="width: 20px; height: 20px; accent-color: var(--primary);">
-                    <label style="margin: 0; cursor: pointer;" for="wellnessMenstrual">Em Per�odo Menstrual (Apenas
-                        Atletas Femininas)</label>
-                </div>
-
-                <div class="form-group" style="margin-top: 32px;">
-                    <button type="submit" class="btn btn-primary btn-block"
-                        style="width: 100%; justify-content: center;">Salvar Di�rio</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Lan�amento Carga Foster -->
-    <div class="modal-overlay" id="modalCarga">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-header">
-                <h2 class="modal-title">Carga de Treinamento (Foster)</h2>
-                <button class="btn-close" type="button" onclick="closeModalCarga()"><i class="ti ti-x"></i></button>
-            </div>
-
-            <form onsubmit="saveCarga(event)" id="formCarga">
-                <div class="form-group">
-                    <label>Atleta</label>
-                    <select class="form-control" id="cargaAtleta" required>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Percep��o Subjetiva de Esfor�o - PSE (1 a 10)</label>
-                    <div
-                        style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Muito Leve</span>
-                        <span>10: M�ximo</span>
-                    </div>
-                    <input type="range" id="cargaPse" min="1" max="10" value="5" style="width: 100%;"
-                        oninput="document.getElementById('valPse').innerText = this.value">
-                    <div style="text-align: center; font-weight: bold; margin-top: 8px; font-size: 20px;" id="valPse">5
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Dura��o do Treino (Minutos)</label>
-                    <input type="number" class="form-control" id="cargaDuracao" placeholder="Ex: 90" required>
-                </div>
-
-                <div class="form-group" style="margin-top: 24px;">
-                    <label>Tipo de Treino</label>
-                    <select class="form-control" id="cargaTipo" required>
-                        <option value="Taekwondo">Taekwondo</option>
-                        <option value="F�sico">F�sico</option>
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-top: 32px;">
-                    <button type="submit" class="btn btn-primary btn-block"
-                        style="width: 100%; justify-content: center;">Salvar Carga</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Lan�amento Testes F�sicos -->
-    <div class="modal-overlay" id="modalTestesFisicos">
-        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <div class="modal-header">
-                <h2 class="modal-title">Registrar Teste F�sico</h2>
-                <button class="btn-close" type="button" onclick="closeModalTestesFisicos()"><i
-                        class="ti ti-x"></i></button>
-            </div>
-
-            <form onsubmit="saveTesteFisico(event)" id="formTestesFisicos">
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Atleta</label>
-                    <select class="form-control" id="tfAtleta" required>
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Data do Teste</label>
-                    <input type="date" class="form-control" id="tfData" required>
-                </div>
-
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Tipo de Teste</label>
-                    <select class="form-control" id="tfTipo" onchange="renderTestInputs()" required>
-                        <option value="">Selecione o Teste</option>
-                        <option value="fskt_10s">FSKT 10s (Single)</option>
-                        <option value="fskt_5x10s">FSKT 5x10s (M�ltiplo)</option>
-                        <option value="flexibilidade">Flexibilidade (Banco de Wells)</option>
-                        <option value="salto_vertical">For�a Explosiva (Salto Vertical)</option>
-                        <option value="salto_horizontal">For�a Explosiva (Salto Horizontal Bilateral)</option>
-                        <option value="salto_horizontal_unilateral">For�a Explosiva (Salto Horizontal Unilateral)
-                        </option>
-                        <option value="vo2max">Capacidade Aer�bia (Vo2 M�x Estimado)</option>
-                        <option value="agilidade">Agilidade (Ex: Shuttle Run)</option>
-                        <option value="outro">Outro</option>
-                    </select>
-                </div>
-
-                <div id="dynamicTestInputs" style="margin-bottom: 24px;">
-                    <!-- Campos renderizados via JS de acordo com o Tipo -->
-                    <p style="color: var(--text-muted); font-size: 14px; text-align: center; padding: 20px;">
-                        Selecione um tipo de teste acima para preencher os dados.
-                    </p>
-                </div>
-
-                <div class="form-group">
-                    <label>Observa��es (Opcional)</label>
-                    <textarea class="form-control" id="tfObs" rows="2"
-                        placeholder="Ex: Atleta se queixou de dor leve no joelho antes do teste"></textarea>
-                </div>
-
-                <div class="form-group" style="margin-top: 32px;">
-                    <button type="submit" class="btn btn-primary btn-block"
-                        style="width: 100%; justify-content: center;">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-client.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/app.js"></script>
-    <script>
-
-        // Transform sliders to buttons early on
+﻿// Transform sliders to buttons early on
         document.addEventListener('DOMContentLoaded', () => {
             replaceRangesWithButtons();
         });
@@ -924,7 +185,7 @@
         }
 
         function getSemaforoStatus(score, acwr, strain, formDor, formMenstrual) {
-            // Regras Avan�adas de Risco Cl�nico (Vermelho overriding)
+            // Regras Avan�adas de Risco Clínico (Vermelho overriding)
             let isRed = false;
             let isYellow = false;
             let motivo = [];
@@ -1254,7 +515,7 @@
             renderSemaforo();
 
             // Populate Treinos Hoje (baseado no dia da semana real)
-            const diasSemana = ['Domingo', 'Segunda-feira', 'Ter�a-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'S�bado'];
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Ter�a-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const hojeStr = diasSemana[new Date().getDay()];
 
             const treinosHoje = (db.horarios || []).filter(h => h.turmaId === db.activeTurmaId && h.dia === hojeStr);
@@ -1277,7 +538,7 @@
             }, 100);
         });
 
-        // Gr�ficos de Compara��o (Migrados da Vis�o de Equipe)
+        // Gráficos de Compara��o (Migrados da Vis�o de Equipe)
         let chartsInstance = {};
 
         function populateComparisonSelect() {
@@ -1423,7 +684,7 @@
             // ─── Score de Bem-Estar (�ltimos 7 dias � dados REAIS) ───
             const targetDate = dataFiltro;
             const dates7 = getDatesInRange(targetDate, 7).reverse();
-            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b'];
+            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
             const labelsBemEstar = dates7.map(d => {
                 const dt = new Date(d + 'T00:00:00');
@@ -1564,7 +825,7 @@
 
             // Setup Labels for last 7 days
             const dates7 = getDatesInRange(targetDate, 7).reverse();
-            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b'];
+            const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const labels7 = dates7.map(d => {
                 const dt = new Date(d + 'T00:00:00');
                 return diasSemanaShort[dt.getDay()];
@@ -1892,8 +1153,8 @@
             document.getElementById('titleChart1').innerText = 'Evolu��o do Score Geral (Tend�ncia)';
             document.getElementById('titleChart2').innerText = 'Mapeamento de M�dias (1-5)';
             document.getElementById('titleChart3').innerText = 'Distribui��o de Zonas de Prontid�o (Risco)';
-            document.getElementById('titleChart4').innerText = 'Fatores F�sicos vs Psicol�gicos';
-            document.getElementById('titleChart5').innerText = 'M�dia por Dia da Semana (Hist�rico)';
+            document.getElementById('titleChart4').innerText = 'Fatores Físicos vs Psicol�gicos';
+            document.getElementById('titleChart5').innerText = 'M�dia por Dia da Semana (Histórico)';
 
             let allLogs = (db.wellnessLogs || []).filter(l => dates.includes(l.data));
             if (athleteId !== 'equipe') {
@@ -2047,7 +1308,7 @@
                 }
             });
 
-            // Gr�fico 4: F�sico vs Psicol�gico
+            // Gr�fico 4: Físico vs Psicol�gico
             const dataFis = dates.map(d => {
                 let dlogs = allLogs.filter(l => l.data === d);
                 if (dlogs.length === 0) return null;
@@ -2066,7 +1327,7 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Fator F�sico', data: dataFis, borderColor: '#ef4444', backgroundColor: 'transparent', tension: 0.3 },
+                        { label: 'Fator Físico', data: dataFis, borderColor: '#ef4444', backgroundColor: 'transparent', tension: 0.3 },
                         { label: 'Fator Psicol�gico', data: dataPsi, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.3 }
                     ]
                 },
@@ -2077,7 +1338,7 @@
                 }
             });
 
-            // Gr�fico 5: M�dia de Score por Dia da Semana (Hist�rico Completo)
+            // Gr�fico 5: M�dia de Score por Dia da Semana (Histórico Completo)
             let histLogs = (db.wellnessLogs || []);
             if (athleteId !== 'equipe') {
                 histLogs = histLogs.filter(l => l.atletaId === parseInt(athleteId));
@@ -2100,7 +1361,7 @@
             dynamicCharts.chart5 = new Chart(ctx5, {
                 type: 'bar',
                 data: {
-                    labels: ['Domingo', 'Segunda', 'Ter�a', 'Quarta', 'Quinta', 'Sexta', 'S�bado'],
+                    labels: ['Domingo', 'Segunda', 'Ter�a', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
                     datasets: [{
                         label: 'M�dia Hist�rica',
                         data: daysAvg,
@@ -2122,8 +1383,8 @@
 
         // --- PSE & CARGA CHARTS ---
         function renderPseCargaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
-            document.getElementById('titleTable').innerText = 'Di�rio de Treinos (PSE e Carga)';
-            document.getElementById('titleChart1').innerText = 'Flutua��o da Carga Di�ria (Dura��o × PSE)';
+            document.getElementById('titleTable').innerText = 'Diário de Treinos (PSE e Carga)';
+            document.getElementById('titleChart1').innerText = 'Flutua��o da Carga Diária (Dura��o × PSE)';
             document.getElementById('titleChart2').innerText = 'Rela��o: Volume vs Intensidade';
             document.getElementById('titleChart3').innerText = 'Propor��o por Tipo de Treino';
             document.getElementById('titleChart4').innerText = 'Distribui��o de Intensidade (Zonas de PSE)';
@@ -2233,13 +1494,13 @@
             // Gr�fico 3: Propor��o por Tipo de Treino (Pizza)
             let fis = 0, tkd = 0;
             allLogs.forEach(l => {
-                if (l.tipoTreino === 'F�sico') fis++;
+                if (l.tipoTreino === 'Físico') fis++;
                 else tkd++;
             });
             dynamicCharts.chart3 = new Chart(ctx3, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Taekwondo', 'F�sico'],
+                    labels: ['Taekwondo', 'Físico'],
                     datasets: [{
                         data: [tkd, fis],
                         backgroundColor: ['#3b82f6', '#f59e0b'],
@@ -2262,7 +1523,7 @@
                 data: {
                     labels: ['Leve (1-4)', 'Mod. (5-7)', 'Intenso (8-10)'],
                     datasets: [{
-                        label: 'Qtd Sess�es',
+                        label: 'Qtd Sessões',
                         data: [leve, mod, intenso],
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
                         borderRadius: 4
@@ -2523,7 +1784,7 @@
 
         // --- PSE / CARGA CHARTS (FUNDIDO) ---
         function renderPseCargaCharts(ctx1, ctx2, ctx3, labels, dates, athleteId) {
-            document.getElementById('titleChart1').innerText = 'Carga Di�ria Di�ria (Planejada vs Realizada)';
+            document.getElementById('titleChart1').innerText = 'Carga Diária Diária (Planejada vs Realizada)';
             document.getElementById('titleChart2').innerText = 'Evolu��o de Carga por Tipo (Últimos 7 dias)';
             document.getElementById('titleChart3').innerText = 'Monitoramento do Ciclo (5 Semanas)';
 
@@ -2590,9 +1851,9 @@
             });
 
             let tiposUnicos = [...new Set(logs7dias.map(l => l.tipoTreino).filter(t => t && t !== 'Geral'))];
-            if (tiposUnicos.length === 0) tiposUnicos = ['Taekwondo', 'F�sico']; // Force legends empty
+            if (tiposUnicos.length === 0) tiposUnicos = ['Taekwondo', 'Físico']; // Force legends empty
 
-            const colorMap = { 'Taekwondo': '#3b82f6', 'F�sico': '#f59e0b' };
+            const colorMap = { 'Taekwondo': '#3b82f6', 'Físico': '#f59e0b' };
             const fallbackColors = ['#10b981', '#ef4444', '#06b6d4', '#ec4899'];
 
             const datasetsTipos = tiposUnicos.map((tipo, index) => {
@@ -2710,7 +1971,7 @@
 
         // --- SCOUT CHARTS ---
         function renderScoutCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico Geral de Combates (Scout)';
+            document.getElementById('titleTable').innerText = 'Histórico Geral de Combates (Scout)';
             document.getElementById('titleChart1').innerText = 'Curva de Saldo de Pontos (Pr�prios vs Oponente)';
             document.getElementById('titleChart2').innerText = 'Win Rate (Taxa de Vit�rias)';
             document.getElementById('titleChart3').innerText = 'Top 5 A��es Ofensivas (Mais Efetivas)';
@@ -2913,8 +2174,8 @@
 
         // --- PERIODIZACAO CHARTS ---
         function renderPeriodizacaoCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
-            document.getElementById('titleTable').innerText = 'Relat�rio de Periodiza��o (Mesociclo Ativo)';
-            document.getElementById('titleChart1').innerText = 'Volume Projetado vs Intensidade Di�ria (PSE)';
+            document.getElementById('titleTable').innerText = 'Relatório de Periodiza��o (Mesociclo Ativo)';
+            document.getElementById('titleChart1').innerText = 'Volume Projetado vs Intensidade Diária (PSE)';
             document.getElementById('titleChart2').innerText = 'Progress�o Acumulada da Carga (Planejado)';
             document.getElementById('titleChart3').innerText = 'Distribui��o de Foco T�tico/T�cnico (Semanal)';
             document.getElementById('titleChart4').innerText = 'Ac�mulo de Carga Geral (Ano Atual)';
@@ -2930,9 +2191,9 @@
                     <tr>
                         <th style="padding: 10px;">Semana (In�cio)</th>
                         <th style="padding: 10px;">Foco T�tico/T�cnico</th>
-                        <th style="padding: 10px;">Foco F�sico</th>
+                        <th style="padding: 10px;">Foco Físico</th>
                         <th style="padding: 10px;">Vol. Semanal (min)</th>
-                        <th style="padding: 10px;">Sess�es Relatadas</th>
+                        <th style="padding: 10px;">Sessões Relatadas</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -3037,12 +2298,12 @@
             });
 
             // Gr�fico 3: Distribui��o de Foco (Pizza)
-            let volType = { 'T�tico': 0, 'F�sico': 0, 'Misto': 0 };
+            let volType = { 'T�tico': 0, 'Físico': 0, 'Misto': 0 };
             semanas.forEach(sem => {
                 let fT = sem.focoTat ? sem.focoTat.toLowerCase() : '';
                 let fF = sem.focoFis ? sem.focoFis.toLowerCase() : '';
                 if (fT && !fF) volType['T�tico']++;
-                else if (fF && !fT) volType['F�sico']++;
+                else if (fF && !fT) volType['Físico']++;
                 else if (fF && fT) volType['Misto']++;
             });
             dynamicCharts.chart3 = new Chart(ctx3, {
@@ -3114,7 +2375,7 @@
             }
 
             document.getElementById('titleTable').innerText = `Últimas Intera��es: ${q.titulo}`;
-            document.getElementById('titleChart1').innerText = 'Ades�o Di�ria (Qtd Respostas)';
+            document.getElementById('titleChart1').innerText = 'Ades�o Diária (Qtd Respostas)';
             document.getElementById('titleChart2').innerText = 'M�dia por Pergunta (Últimos 7 dias)';
             document.getElementById('titleChart3').innerText = 'Radar de Equil�brio das Respostas';
             document.getElementById('titleChart4').innerText = 'Evolu��o da Pontua��o M�dia Total';
@@ -3331,7 +2592,7 @@
         }
 
         function renderTestesFisicosGeral(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Avalia��es F�sicas';
+            document.getElementById('titleTable').innerText = 'Histórico de Avalia��es Físicas';
             document.getElementById('titleChart1').innerText = 'Teia de Val�ncias (Perfil Global)';
             document.getElementById('titleChart2').innerText = 'Evolu��o FSKT (Pot�ncia e Fadiga)';
             document.getElementById('titleChart3').innerText = 'Evolu��o de For�a Explosiva (Saltos)';
@@ -3515,7 +2776,7 @@
         }
 
         function renderTestesFisicosSalto(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de For�a Explosiva (Saltos)';
+            document.getElementById('titleTable').innerText = 'Histórico de For�a Explosiva (Saltos)';
             document.getElementById('titleChart1').innerText = 'Evolu��o: Salto Vertical (cm)';
             document.getElementById('titleChart2').innerText = 'Evolu��o: Salto Horizontal Bilat. (cm)';
             document.getElementById('titleChart3').innerText = 'Salto Unilateral M�dia Hist�rica (cm)';
@@ -3615,7 +2876,7 @@
         }
 
         function renderTestesFisicosFSKT(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico FSKT (Pot�ncia/Resist�ncia)';
+            document.getElementById('titleTable').innerText = 'Histórico FSKT (Pot�ncia/Resist�ncia)';
             document.getElementById('titleChart1').innerText = 'Evolu��o FSKT 10s (Chutes Iniciais)';
             document.getElementById('titleChart2').innerText = 'Evolu��o FSKT 5x10s (Total & Fadiga)';
             document.getElementById('titleChart3').innerText = 'Queda de Desempenho por S�rie (M�dia 5x10s)';
@@ -3738,7 +2999,7 @@
         }
 
         function renderTestesFisicosVO2(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Resist�ncia (VO2 Max)';
+            document.getElementById('titleTable').innerText = 'Histórico de Resist�ncia (VO2 Max)';
             document.getElementById('titleChart1').innerText = 'Evolu��o VO2 Estimado (ml/kg/min)';
             document.getElementById('titleChart2').innerText = 'Desempenho Relativo (N�vel atingido)';
             document.getElementById('titleChart3').innerText = 'Frequ�ncia Card�aca M�xima no YoYo';
@@ -3818,7 +3079,7 @@
         }
 
         function renderTestesFisicosAgilidade(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico: Agilidade e Flexibilidade';
+            document.getElementById('titleTable').innerText = 'Histórico: Agilidade e Flexibilidade';
             document.getElementById('titleChart1').innerText = 'Evolu��o: Agilidade (Segundos) ↓';
             document.getElementById('titleChart2').innerText = 'Evolu��o: Flexibilidade Banco Wells (cm) ↑';
             document.getElementById('titleChart3').innerText = 'Agilidade vs M�dia (Segundos)';
@@ -3926,7 +3187,7 @@
 
         // --- ANTROPOMETRIA CHARTS ---
         function renderAntropometriaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Composi��es Corporais';
+            document.getElementById('titleTable').innerText = 'Histórico de Composi��es Corporais';
             document.getElementById('titleChart1').innerText = 'Evolu��o: Peso (kg) vs % Gordura';
             document.getElementById('titleChart2').innerText = 'Composi��o Corporal Absoluta (Massa Magra vs Gorda)';
             document.getElementById('titleChart3').innerText = 'Mapeamento de Circunfer�ncias (cm)';
@@ -4107,11 +3368,11 @@
 
         // --- HEALTH / LESOES CHARTS ---
         function renderHealthCharts(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Hist�rico de Ocorr�ncia de Les�es';
+            document.getElementById('titleTable').innerText = 'Histórico de Ocorr�ncia de Les�es';
             document.getElementById('titleChart1').innerText = 'Top Regi�es do Corpo Afetadas';
             document.getElementById('titleChart2').innerText = 'Status M�dico Atual';
             document.getElementById('titleChart3').innerText = 'Dias Perdidos por Tipo de Les�o';
-            document.getElementById('titleChart4').innerText = 'Incid�ncia de Novas Les�es por M�s';
+            document.getElementById('titleChart4').innerText = 'Incid�ncia de Novas Les�es por Mês';
             document.getElementById('titleChart5').innerText = 'Classifica��o por Severidade (Dias)';
 
             let lesoes = (db.lesoes || []).sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
@@ -4309,8 +3570,3 @@
                 updateDynamicCharts();
             }, 0);
         }
-    </script>
-</body>
-
-</html>
-

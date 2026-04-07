@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro coach Analytics | Questionários Dinâmicos</title>
+    <title>Pro coach Analytics | QuestionÃ¡rios DinÃ¢micos</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -210,8 +210,8 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="page-title">
-                    <h1 id="turmaName">Equipe de Competição</h1>
-                    <p class="subtitle">Análise Subjetiva e Questionários Dinâmicos</p>
+                    <h1 id="turmaName">Equipe de CompetiÃ§Ã£o</h1>
+                    <p class="subtitle">AnÃ¡lise Subjetiva e QuestionÃ¡rios DinÃ¢micos</p>
                 </div>
                 <div class="user-profile">
                     <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Profile" class="avatar">
@@ -223,10 +223,10 @@
             </header>
 
             <div class="tabs-header">
-                <button class="tab-btn active" onclick="switchTab('responder')">Responder Formulário</button>
-                <button class="tab-btn" onclick="switchTab('historico')">Histórico de Respostas</button>
-                <button class="tab-btn" onclick="switchTab('graficos')">Gráficos por Questionário</button>
-                <button class="tab-btn" onclick="switchTab('builder')">Criador de Questionários</button>
+                <button class="tab-btn active" onclick="switchTab('responder')">Responder FormulÃ¡rio</button>
+                <button class="tab-btn" onclick="switchTab('historico')">HistÃ³rico de Respostas</button>
+                <button class="tab-btn" onclick="switchTab('graficos')">GrÃ¡ficos por QuestionÃ¡rio</button>
+                <button class="tab-btn" onclick="switchTab('builder')">Criador de QuestionÃ¡rios</button>
             </div>
 
             <!-- Tab: Responder -->
@@ -244,9 +244,9 @@
                     </div>
 
                     <div class="form-group" style="margin-bottom: 32px;">
-                        <label>Escolha o Questionário</label>
+                        <label>Escolha o QuestionÃ¡rio</label>
                         <select id="selectQuestionario" class="form-control" onchange="renderActiveQuestionario()">
-                            <option value="">Selecione um questionário...</option>
+                            <option value="">Selecione um questionÃ¡rio...</option>
                         </select>
                     </div>
 
@@ -262,35 +262,35 @@
 
                     <div id="emptyFormMessage" style="text-align: center; color: var(--text-muted); padding: 40px 0;">
                         <i class="ti ti-clipboard" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
-                        <p>Selecione um questionário acima para exibir as perguntas.</p>
+                        <p>Selecione um questionÃ¡rio acima para exibir as perguntas.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab: Histórico -->
+            <!-- Tab: HistÃ³rico -->
             <div id="tab-historico" class="tab-pane">
                 <div class="card" style="margin-bottom: 24px;">
                     <h2>Respostas Recentes</h2>
-                    <p class="subtitle" style="margin-bottom: 24px;">Lista de submissões feitas pelos atletas.</p>
+                    <p class="subtitle" style="margin-bottom: 24px;">Lista de submissÃµes feitas pelos atletas.</p>
                     <div id="historicoGrid" style="display: flex; flex-direction: column; gap: 12px;">
                         <!-- JS Inject -->
                     </div>
                 </div>
             </div>
 
-            <!-- Tab: Gráficos -->
+            <!-- Tab: GrÃ¡ficos -->
             <div id="tab-graficos" class="tab-pane">
                 <div class="card" style="margin-bottom: 24px;">
                     <div class="q-header">
                         <div>
-                            <h2>Análise por Questionário</h2>
+                            <h2>AnÃ¡lise por QuestionÃ¡rio</h2>
                             <p class="subtitle" style="margin-top: 4px;">Visualize os resultados agregados de todos os
                                 atletas.</p>
                         </div>
                         <div style="display: flex; gap: 16px; align-items: center;">
                             <select id="selectGraficoQ" class="form-control" style="width: 240px;"
                                 onchange="renderGraficos()">
-                                <option value="">Selecione um questionário...</option>
+                                <option value="">Selecione um questionÃ¡rio...</option>
                             </select>
                             <select id="selectGraficoAtleta" class="form-control" style="width: 220px;"
                                 onchange="renderGraficos()">
@@ -304,7 +304,7 @@
 
                     <div id="graficosEmpty" style="text-align: center; color: var(--text-muted); padding: 48px 0;">
                         <i class="ti ti-chart-bar" style="font-size: 48px; opacity: 0.3; margin-bottom: 16px;"></i>
-                        <p>Selecione um questionário acima para ver os gráficos de todas as respostas.</p>
+                        <p>Selecione um questionÃ¡rio acima para ver os grÃ¡ficos de todas as respostas.</p>
                     </div>
 
                     <div id="graficosContainer" class="charts-grid" style="display: none;">
@@ -317,20 +317,20 @@
             <div id="tab-builder" class="tab-pane">
                 <div class="card" style="margin-bottom: 24px;">
                     <div class="q-header">
-                        <h2>Criar Novo Questionário</h2>
+                        <h2>Criar Novo QuestionÃ¡rio</h2>
                         <button class="btn btn-primary" onclick="salvarNovoQuestionario()"><i class="ti ti-check"></i>
-                            Salvar Questionário</button>
+                            Salvar QuestionÃ¡rio</button>
                     </div>
 
                     <div class="form-group">
-                        <label>Título do Formulário (ex: Feedback Pós-Luta, Análise Psicológica)</label>
-                        <input type="text" id="builderTitulo" class="form-control" placeholder="Digite o título...">
+                        <label>TÃ­tulo do FormulÃ¡rio (ex: Feedback PÃ³s-Luta, AnÃ¡lise PsicolÃ³gica)</label>
+                        <input type="text" id="builderTitulo" class="form-control" placeholder="Digite o tÃ­tulo...">
                     </div>
 
                     <div style="margin-top: 32px;">
                         <h3>Perguntas</h3>
-                        <p class="subtitle" style="margin-bottom: 16px;">Adicione as perguntas que irão compor este
-                            questionário.</p>
+                        <p class="subtitle" style="margin-bottom: 16px;">Adicione as perguntas que irÃ£o compor este
+                            questionÃ¡rio.</p>
 
                         <div id="builderPerguntasList">
                             <!-- JS Inject Rows -->
@@ -345,7 +345,7 @@
                 </div>
 
                 <div class="card" style="margin-bottom: 24px;">
-                    <h2>Questionários Existentes</h2>
+                    <h2>QuestionÃ¡rios Existentes</h2>
                     <div id="existentesGrid" style="margin-top: 16px;">
                         <!-- JS Inject -->
                     </div>
@@ -358,7 +358,7 @@
     <div class="modal-overlay" id="modalViewResposta">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2 class="modal-title">Detalhe da Submissão</h2>
+                <h2 class="modal-title">Detalhe da SubmissÃ£o</h2>
                 <button class="btn-close" type="button" onclick="closeModalView()"><i class="ti ti-x"></i></button>
             </div>
             <div id="viewRespostaContent" style="margin-top: 16px;">
@@ -405,9 +405,9 @@
                 selectA.appendChild(opt);
             });
 
-            // Questionários
+            // QuestionÃ¡rios
             const selectQ = document.getElementById('selectQuestionario');
-            selectQ.innerHTML = '<option value="">Selecione um questionário...</option>';
+            selectQ.innerHTML = '<option value="">Selecione um questionÃ¡rio...</option>';
             (db.questionarios || []).filter(q => q.ativo).forEach(q => {
                 const opt = document.createElement('option');
                 opt.value = q.id;
@@ -420,7 +420,7 @@
             // Questionnaires
             const sel = document.getElementById('selectGraficoQ');
             const currentQ = sel.value;
-            sel.innerHTML = '<option value="">Selecione um questionário...</option>';
+            sel.innerHTML = '<option value="">Selecione um questionÃ¡rio...</option>';
             (db.questionarios || []).forEach(q => {
                 sel.innerHTML += `<option value="${q.id}">${q.titulo}</option>`;
             });
@@ -438,7 +438,7 @@
         }
 
         // ==========================================
-        //  RENDERIZADOR DE QUESTIONÁRIO DINÂMICO
+        //  RENDERIZADOR DE QUESTIONÃRIO DINÃ‚MICO
         // ==========================================
         let currentQuestionsRaw = [];
 
@@ -472,7 +472,7 @@
                         break;
                     case 'escala_10':
                         inputHtml = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 11px;"><span>1 (Mínimo)</span><span>10 (Máximo)</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 11px;"><span>1 (MÃ­nimo)</span><span>10 (MÃ¡ximo)</span></div>
                         ${renderScaleButtons(1, 10, 5, `q_${p.id}`)}
                         `;
                         break;
@@ -481,7 +481,7 @@
                         <div class="status-options">
                             <input type="hidden" name="q_${p.id}" id="input_${p.id}" value="" required>
                             <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Ruim')">Ruim</div>
-                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Médio')">Médio</div>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'MÃ©dio')">MÃ©dio</div>
                             <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Bom')">Bom</div>
                         </div>
                         `;
@@ -490,7 +490,7 @@
                         inputHtml = `
                         <div class="status-options">
                             <input type="hidden" name="q_${p.id}" id="input_${p.id}" value="" required>
-                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Não')">Não</div>
+                            <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'NÃ£o')">NÃ£o</div>
                             <div class="status-btn" onclick="selectStatus(this, 'input_${p.id}', 'Sim')">Sim</div>
                         </div>
                         `;
@@ -548,7 +548,7 @@
             currentQuestionsRaw = [];
             const container = document.getElementById('perguntasContainer');
             container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--green);"><b>Respostas salvas com sucesso!</b></div>`;
-            showToast("Respostas do questionário salvas!");
+            showToast("Respostas do questionÃ¡rio salvas!");
             setTimeout(() => {
                 document.getElementById('selectQuestionario').value = "";
                 renderActiveQuestionario();
@@ -569,15 +569,15 @@
                 <div class="builder-row" id="${rowId}">
                     <div class="form-group" style="flex: 3; margin-bottom: 0;">
                         <label>Texto da Pergunta</label>
-                        <input type="text" class="form-control b-texto" placeholder="Ex: Avaliação tática...">
+                        <input type="text" class="form-control b-texto" placeholder="Ex: AvaliaÃ§Ã£o tÃ¡tica...">
                     </div>
                     <div class="form-group" style="flex: 2; margin-bottom: 0;">
                         <label>Tipo de Resposta</label>
                         <select class="form-control b-tipo">
                             <option value="escala_5">Nota de 1 a 5</option>
                             <option value="escala_10">Nota de 1 a 10</option>
-                            <option value="status">Bom, Médio, Ruim</option>
-                            <option value="sim_nao">Sim / Não</option>
+                            <option value="status">Bom, MÃ©dio, Ruim</option>
+                            <option value="sim_nao">Sim / NÃ£o</option>
                             <option value="texto">Campo de Texto Livre</option>
                         </select>
                     </div>
@@ -596,7 +596,7 @@
 
         function salvarNovoQuestionario() {
             const titulo = document.getElementById('builderTitulo').value.trim();
-            if (!titulo) return alert("Forneça um título para o formulário.");
+            if (!titulo) return alert("ForneÃ§a um tÃ­tulo para o formulÃ¡rio.");
 
             const rows = document.querySelectorAll('.builder-row');
             let perguntas = [];
@@ -623,12 +623,12 @@
             renderBuilderPreview();
             renderExistentes();
             populateSelects(); // Atualiza dropwodns
-            showToast("Questionário Salvo e Ativado!");
+            showToast("QuestionÃ¡rio Salvo e Ativado!");
         }
 
         function exportQuestionarioCSV() {
             const qId = parseInt(document.getElementById('selectGraficoQ').value);
-            if (!qId) return showToast("Selecione um questionário para exportar", "error");
+            if (!qId) return showToast("Selecione um questionÃ¡rio para exportar", "error");
 
             const quest = db.questionarios.find(q => q.id === qId);
             const respostas = (db.respostas || []).filter(r => r.questionarioId === qId);
@@ -647,7 +647,7 @@
                 let row = [atleta ? atleta.nome : "?", r.data];
                 quest.perguntas.forEach(p => {
                     let ans = r.respostas[p.id] || "";
-                    // Remove semícolons to avoid CSV breaking
+                    // Remove semÃ­colons to avoid CSV breaking
                     if (typeof ans === "string") ans = ans.replace(/;/g, ",");
                     row.push(ans);
                 });
@@ -692,7 +692,7 @@
             const quest = db.questionarios.find(q => q.id === id);
             if (!quest) return;
 
-            if (confirm(`Deseja realmente EXCLUIR o questionário "${quest.titulo}"?\n\nIsso apagará permanentemente o formulário e TODAS as respostas de atletas associadas a ele.`)) {
+            if (confirm(`Deseja realmente EXCLUIR o questionÃ¡rio "${quest.titulo}"?\n\nIsso apagarÃ¡ permanentemente o formulÃ¡rio e TODAS as respostas de atletas associadas a ele.`)) {
                 // Remove questionnaire
                 db.questionarios = db.questionarios.filter(q => q.id !== id);
 
@@ -705,7 +705,7 @@
                 renderExistentes();
                 populateSelects();
                 renderHistorico();
-                showToast("Questionário e respostas excluídos.");
+                showToast("QuestionÃ¡rio e respostas excluÃ­dos.");
             }
         }
 
@@ -750,7 +750,7 @@
 
             let respsHtml = '';
             quest.perguntas.forEach(p => {
-                const answer = resp.respostas[p.id] || 'Não respondido';
+                const answer = resp.respostas[p.id] || 'NÃ£o respondido';
                 respsHtml += `
                     <div style="margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
                         <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">${p.texto}</div>
@@ -768,7 +768,7 @@
         }
 
         // ==========================================
-        //  GRÁFICOS POR QUESTIONÁRIO
+        //  GRÃFICOS POR QUESTIONÃRIO
         // ==========================================
         let chartInstances = {};
 
@@ -789,7 +789,7 @@
             if (!qId) {
                 container.style.display = 'none';
                 empty.style.display = 'block';
-                empty.innerHTML = '<i class="ti ti-chart-bar" style="font-size:48px;opacity:0.3;margin-bottom:16px;"></i><p>Selecione um questionário acima para ver os gráficos.</p>';
+                empty.innerHTML = '<i class="ti ti-chart-bar" style="font-size:48px;opacity:0.3;margin-bottom:16px;"></i><p>Selecione um questionÃ¡rio acima para ver os grÃ¡ficos.</p>';
                 return;
             }
 
@@ -821,7 +821,7 @@
                 'rgba(99,102,241,0.85)', 'rgba(16,185,129,0.85)', 'rgba(245,158,11,0.85)',
                 'rgba(239,68,68,0.85)', 'rgba(168,85,247,0.85)', 'rgba(59,130,246,0.85)'
             ];
-            const colorMap = { 'Bom': 'rgba(16,185,129,0.85)', 'Médio': 'rgba(245,158,11,0.85)', 'Ruim': 'rgba(239,68,68,0.85)', 'Sim': 'rgba(239,68,68,0.85)', 'Não': 'rgba(16,185,129,0.85)' };
+            const colorMap = { 'Bom': 'rgba(16,185,129,0.85)', 'MÃ©dio': 'rgba(245,158,11,0.85)', 'Ruim': 'rgba(239,68,68,0.85)', 'Sim': 'rgba(239,68,68,0.85)', 'NÃ£o': 'rgba(16,185,129,0.85)' };
 
             // 1. CHART: ADHESION (Responses per day)
             const adhesionByDate = {};
@@ -832,7 +832,7 @@
             const adhesionLabels = sortedDates.map(d => { const p = d.split('-'); return `${p[2]}/${p[1]}`; });
             const adhesionValues = sortedDates.map(d => adhesionByDate[d]);
 
-            const adhesionCard = createChartCard('chartAdersion', 'Volume de Respostas (Adesão)', `${respostas.length} submissões no total`,
+            const adhesionCard = createChartCard('chartAdersion', 'Volume de Respostas (AdesÃ£o)', `${respostas.length} submissÃµes no total`,
                 `<div style="width:100%;height:220px;position:relative;"><canvas id="canvasAdhesion"></canvas></div>`);
             container.appendChild(adhesionCard);
 
@@ -878,7 +878,7 @@
                         const overallAvg = atletasComResp.length > 0
                             ? (atletasComResp.reduce((s, a) => s + parseFloat(a.avg), 0) / atletasComResp.length).toFixed(1) : '-';
 
-                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} respostas ��¢ Média geral: ${overallAvg}`, canvasWrapper);
+                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} respostas ��¢ MÃ©dia geral: ${overallAvg}`, canvasWrapper);
                         container.appendChild(cardEl);
 
                         setTimeout(() => {
@@ -889,7 +889,7 @@
                                 data: {
                                     labels: atletasComResp.map(a => a.nome),
                                     datasets: [{
-                                        label: 'Média', data: atletasComResp.map(a => a.avg),
+                                        label: 'MÃ©dia', data: atletasComResp.map(a => a.avg),
                                         backgroundColor: PALETTE, borderRadius: 6, barPercentage: 0.5
                                     }]
                                 },
@@ -913,7 +913,7 @@
                         const avg = vals.length > 0 ? (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) : '-';
                         const xLabels = sortedDates.map(d => { const p = d.split('-'); return `${p[2]}/${p[1]}`; });
 
-                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} registros ��¢ Média: ${avg}`, canvasWrapper);
+                        const cardEl = createChartCard(cardId, pergunta.texto, `${totalResps} registros ��¢ MÃ©dia: ${avg}`, canvasWrapper);
                         container.appendChild(cardEl);
 
                         setTimeout(() => {
