@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPath = window.location.pathname.toLowerCase();
     const isLoginPage = currentPath.includes('index.html') ||
         currentPath.includes('atleta-login.html') ||
-        currentPath.includes('selecionar-treinador.html') ||
         currentPath.endsWith('/');
 
     checkAuth(isLoginPage);
@@ -43,7 +42,7 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
         const isLoginPage = currentPath.includes('index.html') ||
             currentPath.includes('atleta-login.html') ||
             currentPath.endsWith('/');
-        if (isLoginPage) {
+        if (isLoginPage && !currentPath.includes('selecionar-treinador.html')) {
             window.location.href = 'selecionar-treinador.html';
         }
     }
