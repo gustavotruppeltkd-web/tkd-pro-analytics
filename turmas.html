@@ -370,6 +370,37 @@
             closeModalExcluir();
         }
 
+        function populateEditForm() {
+            const id = parseInt(document.getElementById('selectTurmaEdit').value);
+            const turma = db.turmas.find(t => t.id === id);
+            if (turma) {
+                document.getElementById('editNomeTurma').value = turma.nome;
+                document.getElementById('editFields').style.display = 'block';
+            } else {
+                document.getElementById('editFields').style.display = 'none';
+            }
+        }
+
+        function saveEditTurma(event) {
+            event.preventDefault();
+            const id = parseInt(document.getElementById('selectTurmaEdit').value);
+            const newName = document.getElementById('editNomeTurma').value;
+            const turma = db.turmas.find(t => t.id === id);
+            if (turma) {
+                turma.nome = newName;
+                saveDB();
+                renderTurmas();
+                closeModalEditar();
+            }
+        }
+
+        function selectRadio(el, val) {
+            document.querySelectorAll('.radio-card').forEach(rc => rc.classList.remove('selected'));
+            el.classList.add('selected');
+            const input = el.querySelector('input');
+            if (input) input.checked = true;
+        }
+
         function saveFirstTrainer(event) {
             event.preventDefault();
             db.treinadores = [{
