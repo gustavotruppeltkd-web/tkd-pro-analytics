@@ -20,7 +20,7 @@
         .finance-stat-card {
             padding: 24px;
             display: flex;
-            align-items: flex-start;
+            align-itemês: flex-start;
             gap: 16px;
             transition: var(--transition);
         }
@@ -36,7 +36,7 @@
             height: 48px;
             border-radius: var(--radius-md);
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
             font-size: 24px;
             flex-shrink: 0;
@@ -89,7 +89,7 @@
             padding: 16px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            align-items: center;
+            align-itemês: center;
         }
 
         .search-bar {
@@ -209,7 +209,7 @@
         .plan-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-itemês: flex-start;
         }
 
         .plan-price {
@@ -229,7 +229,7 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(2px);
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
@@ -298,7 +298,7 @@
 
         .student-cell {
             display: flex;
-            align-items: center;
+            align-itemês: center;
             gap: 12px;
         }
 
@@ -378,7 +378,7 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="page-title">
-                    <h1>GestÃ£o Financeira Global</h1>
+                    <h1>Gestão Financeira Global</h1>
                     <p class="subtitle">Controle de mensalidades e Planos</p>
                 </div>
                 <div class="user-profile">
@@ -392,7 +392,7 @@
 
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="switchTab('visao-geral')"><i class="ti ti-report-money"></i>
-                    VisÃ£o Geral & Recebimento</button>
+                    Visão Geral & Recebimento</button>
                 <button class="tab-btn" onclick="switchTab('planos')"><i class="ti ti-tags"></i> Planos de
                     Pagamento</button>
             </div>
@@ -413,7 +413,7 @@
                     <select class="filter-select" id="filterStatus">
                         <option value="all">Todos os Status</option>
                         <option value="pago">Em Dia (Pagos)</option>
-                        <option value="avencer">A Vencer (PrÃ³x. 7 dias)</option>
+                        <option value="avencer">A Vencer (Próx. 7 dias)</option>
                         <option value="atrasado">Em Atraso (Inadimplente)</option>
                     </select>
                     <select class="filter-select" id="filterTurma">
@@ -429,8 +429,8 @@
                                 <th>Aluno / Turma</th>
                                 <th>Status da Mensalidade</th>
                                 <th>Valor</th>
-                                <th>Ãšltimo Pag.</th>
-                                <th style="text-align: right;">AÃ§Ãµes</th>
+                                <th>Último Pag.</th>
+                                <th style="text-align: right;">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="financeTableBody">
@@ -442,17 +442,17 @@
 
             <!-- TAB 2: PLANOS -->
             <div class="tab-content" id="tab-planos">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
                     <div>
                         <h2 style="font-size: 18px; margin-bottom: 4px;">Gerenciar Planos</h2>
-                        <p style="color: var(--text-muted); font-size: 14px;">Defina os planos padrÃ£o que podem ser
+                        <p style="color: var(--text-muted); font-size: 14px;">Defina os planos padrão que podem ser
                             aplicados aos alunos nas turmas.</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
                         <button class="btn btn-outline" onclick="openModalGerarContrato()">
                             <i class="ti ti-file-description"></i> Gerar Contrato PDF
                         </button>
-                        <button class="btn btn-primary" onclick="openModalPlano()"><i class="ti ti-plus"></i> Novo
+                        <button class="btn btn-primary" onclick="openModalPlano()"><i class="ti ti-plus"></i> Nãovo
                             Plano</button>
                     </div>
                 </div>
@@ -468,7 +468,7 @@
     <!-- Right Sidebar Form for Receiving Payment -->
     <div class="overlay-dim" id="paymentOverlay" onclick="closePaymentForm()"></div>
     <div class="payment-form-container" id="paymentPanel">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 32px;">
             <h2 style="font-size: 20px;" id="paymentPanelTitle">Registrar Pagamento</h2>
             <button class="btn-close" onclick="closePaymentForm()"><i class="ti ti-x"></i></button>
         </div>
@@ -489,8 +489,8 @@
                 <select class="form-control" id="payMethod" required>
                     <option value="pix">PIX</option>
                     <option value="dinheiro">Dinheiro</option>
-                    <option value="cartao">CartÃ£o de CrÃ©dito/DÃ©bito</option>
-                    <option value="transferencia">TransferÃªncia BancÃ¡ria</option>
+                    <option value="cartao">Cartão de Crédito/Débito</option>
+                    <option value="transferencia">Transferência Bancária</option>
                 </select>
             </div>
 
@@ -517,10 +517,10 @@
         </form>
     </div>
 
-    <!-- Modal Novo/Editar Plano -->
+    <!-- Modal Nãovo/Editar Plano -->
     <div class="modal-overlay" id="modalPlanos">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
                 <h2 style="font-size: 18px;" id="modalPlanoTitle">Adicionar Plano</h2>
                 <button class="btn-close" onclick="closeModalPlano()"><i class="ti ti-x"></i></button>
             </div>
@@ -528,8 +528,8 @@
             <form onsubmit="savePlano(event)" id="formPlano">
                 <input type="hidden" id="planoId">
                 <div class="form-group">
-                    <label>Nome do Plano</label>
-                    <input type="text" class="form-control" id="planoNome" placeholder="Ex: Mensal Livre" required>
+                    <label>Nãome do Plano</label>
+                    <input type="text" class="form-control" id="planoNãome" placeholder="Ex: Mensal Livre" required>
                 </div>
                 <div style="display: flex; gap: 16px;">
                     <div class="form-group" style="flex: 1;">
@@ -537,12 +537,12 @@
                         <input type="number" class="form-control" id="planoValor" step="0.01" required>
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <label>DuraÃ§Ã£o (Meses)</label>
+                        <label>Duração (Meses)</label>
                         <input type="number" class="form-control" id="planoDuracao" min="1" value="1" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>FrequÃªncia Base</label>
+                    <label>Frequência Base</label>
                     <select class="form-control" id="planoFrequencia" required>
                         <option value="Livre">Livre (Todos os dias)</option>
                         <option value="1x/semana">1x na Semana</option>
@@ -551,9 +551,9 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>DescriÃ§Ã£o Opcional</label>
+                    <label>Descrição Opcional</label>
                     <input type="text" class="form-control" id="planoDescricao"
-                        placeholder="InformaÃ§Ãµes de marketing e acesso...">
+                        placeholder="Informações de marketing e acesso...">
                 </div>
                 <div style="margin-top: 24px;">
                     <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Salvar
@@ -566,8 +566,8 @@
     <!-- Modal Gerar Contrato PDF -->
     <div class="modal-overlay" id="modalGerarContrato">
         <div class="modal-content" style="max-width: 600px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                <h2 style="font-size: 18px;">Gerar Contrato de PrestaÃ§Ã£o de ServiÃ§os</h2>
+            <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
+                <h2 style="font-size: 18px;">Gerar Contrato de Prestação de Serviços</h2>
                 <button class="btn-close" onclick="closeModalGerarContrato()"><i class="ti ti-x"></i></button>
             </div>
 
@@ -601,11 +601,11 @@
 
                 <div style="display: flex; gap: 16px;">
                     <div class="form-group" style="flex: 1;">
-                        <label>Data de InÃ­cio</label>
+                        <label>Data de Início</label>
                         <input type="date" class="form-control" id="contratoDataInicio" required>
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <label>Data de TÃ©rmino</label>
+                        <label>Data de Término</label>
                         <input type="date" class="form-control" id="contratoDataFim" required>
                     </div>
                 </div>
@@ -623,14 +623,14 @@
                     </div>
                 </div>
 
-                <!-- Dados do Contratante (EditÃ¡veis) -->
+                <!-- Dados do Contratante (Editáveis) -->
                 <div
                     style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                     <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--primary);">Dados do Contratante
                         (Pagador)</h3>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>Nome Completo</label>
-                        <input type="text" class="form-control" id="contratoContratanteNome" required>
+                        <label>Nãome Completo</label>
+                        <input type="text" class="form-control" id="contratoContratanteNãome" required>
                     </div>
                     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                         <div class="form-group" style="flex: 1;">
@@ -643,7 +643,7 @@
                         </div>
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>EndereÃ§o Completo</label>
+                        <label>Endereço Completo</label>
                         <input type="text" class="form-control" id="contratoContratanteEnd">
                     </div>
                     <div style="display: flex; gap: 10px;">
@@ -660,7 +660,7 @@
                     <div id="responsavel-section"
                         style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--border-color); display: none;">
                         <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
-                            <i class="ti ti-info-circle"></i> O aluno Ã© menor de idade. Preencha os dados do responsÃ¡vel
+                            <i class="ti ti-info-circle"></i> O aluno é menor de idade. Preencha os dados do responsável
                             acima.
                         </p>
                     </div>
@@ -672,17 +672,17 @@
                     <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--primary);">Dados do Contratado
                         (Academia/Escola)</h3>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>Nome da Academia/Escola</label>
-                        <input type="text" class="form-control" id="contratoEmpresaNome"
-                            value="Nome da Academia/Escola">
+                        <label>Nãome da Academia/Escola</label>
+                        <input type="text" class="form-control" id="contratoEmpresaNãome"
+                            value="Nãome da Academia/Escola">
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <label>CNPJ</label>
                         <input type="text" class="form-control" id="contratoEmpresaCNPJ" value="00.000.000/0000-00">
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>EndereÃ§o</label>
-                        <input type="text" class="form-control" id="contratoEmpresaEnd" value="EndereÃ§o Completo">
+                        <label>Endereço</label>
+                        <input type="text" class="form-control" id="contratoEmpresaEnd" value="Endereço Completo">
                     </div>
                     <div class="form-group">
                         <label>Contato</label>
@@ -709,29 +709,29 @@
 
         <div style="margin-bottom: 20px;">
             <p><strong>Dados do Contratante:</strong></p>
-            <p>Nome: <span id="pdf-contratante-nome">_______________________________</span></p>
+            <p>Nãome: <span id="pdf-contratante-nome">_______________________________</span></p>
             <p>CPF: <span id="pdf-contratante-cpf">_______________________________</span></p>
             <p id="pdf-beneficiario-info"
                 style="display: none; font-style: italic; font-size: 11pt; margin-top: 5px; color: #444;">Este contrato
-                Ã© firmado em favor do beneficiÃ¡rio (Aluno): <span id="pdf-beneficiario-nome">________________</span></p>
+                é firmado em favor do beneficiário (Aluno): <span id="pdf-beneficiario-nome">________________</span></p>
             <p>Data de Nascimento: <span id="pdf-contratante-nasc">__________________</span></p>
-            <p>EndereÃ§o: <span id="pdf-contratante-end">___________________________</span></p>
+            <p>Endereço: <span id="pdf-contratante-end">___________________________</span></p>
             <p>Telefone/WhatsApp: <span id="pdf-contratante-tel">__________________</span></p>
             <p>E-mail: <span id="pdf-contratante-email">_____________________________</span></p>
         </div>
 
         <div style="margin-bottom: 20px;">
             <p><strong>Dados do Contratado (Academia/Escola):</strong></p>
-            <p>Nome: <span id="pdf-empresa-nome">_______________________________</span></p>
+            <p>Nãome: <span id="pdf-empresa-nome">_______________________________</span></p>
             <p>CNPJ: <span id="pdf-empresa-cnpj">_______________________________</span></p>
-            <p>EndereÃ§o: <span id="pdf-empresa-end">_______________________________</span></p>
+            <p>Endereço: <span id="pdf-empresa-end">_______________________________</span></p>
             <p>Contato: <span id="pdf-empresa-contato">_______________________________</span></p>
         </div>
 
         <div style="margin-bottom: 20px;">
             <p><strong>Objeto do Contrato:</strong></p>
-            <p>O Contratante contrata os serviÃ§os de treinamento fÃ­sico [Taekwondo] pelo plano escolhido abaixo, com
-                vigÃªncia a partir de <span id="pdf-contrato-inicio">__________</span> atÃ© <span
+            <p>O Contratante contrata os serviços de treinamento físico [Taekwondo] pelo plano escolhido abaixo, com
+                vigência a partir de <span id="pdf-contrato-inicio">__________</span> até <span
                     id="pdf-contrato-fim">__________</span>.</p>
         </div>
 
@@ -741,7 +741,7 @@
                 <thead>
                     <tr style="background: #f2f2f2;">
                         <th style="border: 1px solid #ccc; padding: 8px; text-align: left;">Plano</th>
-                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">DuraÃ§Ã£o</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Duração</th>
                         <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Total (Ã  vista)</th>
                         <th style="border: 1px solid #ccc; padding: 8px; text-align: center;">Parcelado (PIX)</th>
                     </tr>
@@ -766,28 +766,28 @@
         <div style="margin-bottom: 20px;">
             <p><strong>Forma de Pagamento:</strong></p>
             <p>Parcelamento em <span id="pdf-pag-meses">__</span> meses via PIX, com vencimento todo dia <span
-                    id="pdf-pag-venc">__</span> de cada mÃªs.</p>
-            <p>Em caso de atraso, multa de 2% + juros de 1% ao mÃªs.</p>
+                    id="pdf-pag-venc">__</span> de cada mês.</p>
+            <p>Em caso de atraso, multa de 2% + juros de 1% ao mês.</p>
         </div>
 
         <div style="margin-bottom: 20px;">
             <p><strong>Cancelamento Antecipado:</strong></p>
-            <p>Caso o Contratante cancele o plano antes do tÃ©rmino, deverÃ¡ pagar imediatamente a diferenÃ§a entre o valor
-                jÃ¡ pago (com desconto) e o equivalente Ã  mensalidade avulsa pelo perÃ­odo utilizado. NÃ£o hÃ¡ reembolso de
+            <p>Caso o Contratante cancele o plano antes do término, deverá pagar imediatamente a diferença entre o valor
+                já pago (com desconto) e o equivalente Ã  mensalidade avulsa pelo período utilizado. Não há reembolso de
                 valores pagos.</p>
         </div>
 
         <div style="margin-bottom: 20px; page-break-inside: avoid;">
-            <p><strong>ObrigaÃ§Ãµes das Partes:</strong></p>
+            <p><strong>Obrigações das Partes:</strong></p>
             <p>- Contratante: Efetuar pagamentos pontualmente e comparecer Ã s aulas.</p>
-            <p>- Contratado: Fornecer aulas conforme plano e manter instalaÃ§Ãµes seguras.</p>
+            <p>- Contratado: Fornecer aulas conforme plano e manter instalações seguras.</p>
         </div>
 
         <div style="margin-bottom: 20px;">
-            <p><strong>VigÃªncia e RescisÃ£o:</strong></p>
-            <p>VigÃªncia de <span id="pdf-vig-inicio">__________</span> a <span id="pdf-vig-fim">__________</span>.
-                RescisÃ£o
-                por mÃºtuo acordo ou judicialmente.</p>
+            <p><strong>Vigência e Rescisão:</strong></p>
+            <p>Vigência de <span id="pdf-vig-inicio">__________</span> a <span id="pdf-vig-fim">__________</span>.
+                Rescisão
+                por mútuo acordo ou judicialmente.</p>
         </div>
 
         <p style="text-align: right; margin-bottom: 50px;"><span id="pdf-local-cidade">Campinas/SC</span>, <span
@@ -826,9 +826,9 @@
             // Load filters
             let turmaOptions = '<option value="all">Todas as Turmas</option>';
             db.turmas.forEach(t => {
-                const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competiÃ§Ã£o');
+                const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competição');
                 if (!isRend) {
-                    const nomeExibicao = t.nome && t.nome.trim() !== "" ? t.nome : "(Sem Nome)";
+                    const nomeExibicao = t.nome && t.nome.trim() !== "" ? t.nome : "(Sem Nãome)";
                     turmaOptions += `<option value="${t.id}">${nomeExibicao}</option>`;
                 }
             });
@@ -845,7 +845,7 @@
             renderFinanceData();
             renderPlanosGrid();
 
-            // Verifica se hÃ¡ planos na DB, se nÃ£o houver inicializa mock vazio. (app.js jÃ¡ deve gerir)
+            // Verifica se há planos na DB, se não houver inicializa mock vazio. (app.js já deve gerir)
             if (!db.planos) {
                 db.planos = [];
                 saveDB();
@@ -882,7 +882,7 @@
 
             currentAlunos = db.alunos.filter(a => {
                 const aTurma = db.turmas.find(t => t.id === a.turmaId);
-                const isRend = aTurma && (aTurma.tipo.toLowerCase().includes('rendimento') || aTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+                const isRend = aTurma && (aTurma.tipo.toLowerCase().includes('rendimento') || aTurma.tipo.toLowerCase().includes('competição'));
                 if (isRend || a.statusFin === 'isento') return false;
 
                 const matchName = a.nome.toLowerCase().includes(term);
@@ -922,7 +922,7 @@
                 <div class="card finance-stat-card">
                     <div class="stat-icon blue"><i class="ti ti-wallet"></i></div>
                     <div class="stat-content">
-                        <h3>Receita Prevista (MÃªs)</h3>
+                        <h3>Receita Prevista (Mês)</h3>
                         <div class="value">${formatCurrency(totalEsperado)}</div>
                         <div class="meta">Baseado em ${countCalculated} alunos pagantes</div>
                     </div>
@@ -986,14 +986,14 @@
                         <div style="font-weight: 500;">${formatCurrency(a.mensalidade)}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">${getPlanoName(a.planoId) || 'Sem Plano'}</div>
                     </td>
-                    <td style="color: var(--text-muted); font-size: 13px;">${a.statusFin === 'pago' ? 'Neste MÃªs' : '--/--'}</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">${a.statusFin === 'pago' ? 'Neste Mês' : '--/--'}</td>
                     <td style="text-align: right;">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
                             <button class="btn btn-icon btn-success" title="Enviar WhatsApp" onclick="sendWhatsApp(${a.id})" style="border-radius: 5px;"><i class="ti ti-brand-whatsapp"></i></button>
                             <button class="btn btn-icon btn-outline" title="Editar Status" onclick="openPaymentForm(${a.id}, true)" style="border-radius: 5px;"><i class="ti ti-pencil"></i></button>
                             ${a.statusFin !== 'pago'
                         ? `<button class="btn btn-primary" onclick="openPaymentForm(${a.id})" style="padding: 8px 16px;">Baixar Pagamento</button>`
-                        : `<button class="btn btn-outline" onclick="openPaymentForm(${a.id})" style="padding: 8px 16px;">Ver HistÃ³rico</button>`}
+                        : `<button class="btn btn-outline" onclick="openPaymentForm(${a.id})" style="padding: 8px 16px;">Ver Histórico</button>`}
                         </div>
                     </td>
                 `;
@@ -1009,7 +1009,7 @@
 
             const infoDiv = document.getElementById('paymentStudentInfo');
             infoDiv.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <div style="display: flex; align-itemês: center; gap: 12px; margin-bottom: 12px;">
                     <img src="${aluno.avatar}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
                     <div>
                         <h4 style="font-size: 16px; margin-bottom: 2px;">${aluno.nome}</h4>
@@ -1049,14 +1049,14 @@
                 renderFinanceData();
                 closePaymentForm();
 
-                showNotification('Dados financeiros atualizados com sucesso!');
+                showNãotification('Dados financeiros atualizados com sucesso!');
             }
         }
 
         function sendWhatsApp(alunoId) {
             const aluno = db.alunos.find(a => a.id === alunoId);
             if (!aluno || !aluno.contato) {
-                showNotification('Contato nÃ£o cadastrado para este aluno!', 'error');
+                showNãotification('Contato não cadastrado para este aluno!', 'error');
                 return;
             }
 
@@ -1065,18 +1065,18 @@
             const coach = db.treinadores.find(t => t.id === parseInt(coachId));
             const nomeProfessor = coach ? coach.nome : 'seu professor';
 
-            // Limpa o nÃºmero: remove tudo que nÃ£o for dÃ­gito
+            // Limpa o número: remove tudo que não for dígito
             let numero = aluno.contato.replace(/\D/g, '');
 
-            // Adiciona o cÃ³digo do paÃ­s se necessÃ¡rio (Brasil = 55)
+            // Adiciona o código do país se necessário (Brasil = 55)
             if (numero.length <= 11) {
                 numero = '55' + numero;
             }
 
             const saudacao = new Date().getHours() < 12 ? 'Bom dia' : 'Boa tarde';
-            const msg = `${saudacao}, Tudo bem? professor ${nomeProfessor} aqui.`;
+            const mêsg = `${saudacao}, Tudo bem? professor ${nomeProfessor} aqui.`;
 
-            const url = `https://wa.me/${numero}?text=${encodeURIComponent(msg)}`;
+            const url = `https://wa.me/${numero}?text=${encodeURIComponent(mêsg)}`;
             window.open(url, '_blank');
         }
 
@@ -1087,7 +1087,7 @@
             grid.innerHTML = '';
 
             if (!db.planos || db.planos.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted);">VocÃª ainda nÃ£o possui nenhum plano cadastrado.</p>';
+                grid.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted);">Vocêê ainda não possui nenhum plano cadastrado.</p>';
                 return;
             }
 
@@ -1098,13 +1098,13 @@
                     <div class="plan-header">
                         <div>
                             <h3 style="font-size: 16px; font-weight: 600;">${p.nome}</h3>
-                            <div class="plan-price">${formatCurrency(p.valor)} <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">/mÃªs</span></div>
+                            <div class="plan-price">${formatCurrency(p.valor)} <span style="font-size: 14px; font-weight: normal; color: var(--text-muted);">/mês</span></div>
                         </div>
                         <div style="background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 50px; font-size: 12px; color: var(--text-muted);">
                             <i class="ti ti-calendar"></i> ${p.frequencia}
                         </div>
                     </div>
-                    <p style="font-size: 13px; color: var(--text-muted); min-height: 40px;">${p.descricao || 'Sem descriÃ§Ã£o.'}</p>
+                    <p style="font-size: 13px; color: var(--text-muted); min-height: 40px;">${p.descricao || 'Sem descrição.'}</p>
                     <div style="display: flex; border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: auto;">
                         <button class="btn" style="flex:1; justify-content: center;" onclick="openModalPlano(${p.id})"><i class="ti ti-edit"></i> Editar</button>
                     </div>
@@ -1121,7 +1121,7 @@
                 document.getElementById('modalPlanoTitle').innerText = 'Editar Plano';
                 const plano = db.planos.find(p => p.id === id);
                 document.getElementById('planoId').value = plano.id;
-                document.getElementById('planoNome').value = plano.nome;
+                document.getElementById('planoNãome').value = plano.nome;
                 document.getElementById('planoValor').value = plano.valor;
                 document.getElementById('planoFrequencia').value = plano.frequencia;
                 document.getElementById('planoDuracao').value = plano.duracaoMeses || 1;
@@ -1143,7 +1143,7 @@
         function savePlano(e) {
             e.preventDefault();
             const id = document.getElementById('planoId').value;
-            const nome = document.getElementById('planoNome').value;
+            const nome = document.getElementById('planoNãome').value;
             const valor = parseFloat(document.getElementById('planoValor').value);
             const frequencia = document.getElementById('planoFrequencia').value;
             const duracaoMeses = parseInt(document.getElementById('planoDuracao').value) || 1;
@@ -1170,7 +1170,7 @@
             saveDB();
             renderPlanosGrid();
             closeModalPlano();
-            showNotification(id ? 'Plano atualizado com sucesso!' : 'Plano inserido com sucesso!');
+            showNãotification(id ? 'Plano atualizado com sucesso!' : 'Plano inserido com sucesso!');
         }
 
         // --- GESTÃƒO DE CONTRATOS PDF ---
@@ -1180,11 +1180,11 @@
             const studentSelect = document.getElementById('contratoAluno');
             const planSelect = document.getElementById('contratoPlano');
 
-            // Popular Alunos (apenas nÃ£o rendimento)
+            // Popular Alunos (apenas não rendimento)
             let studentOptions = '<option value="">Selecione o aluno...</option>';
             db.alunos.forEach(a => {
                 const aTurma = db.turmas.find(t => t.id === a.turmaId);
-                const isRend = aTurma && (aTurma.tipo.toLowerCase().includes('rendimento') || aTurma.tipo.toLowerCase().includes('competiÃ§Ã£o'));
+                const isRend = aTurma && (aTurma.tipo.toLowerCase().includes('rendimento') || aTurma.tipo.toLowerCase().includes('competição'));
                 if (!isRend) {
                     studentOptions += `<option value="${a.id}">${a.nome}</option>`;
                 }
@@ -1223,7 +1223,7 @@
                     document.getElementById('contratoValorTotal').value = (plano.valor * (plano.duracaoMeses || 1)).toFixed(2);
                     document.getElementById('contratoMensalidade').value = plano.valor.toFixed(2);
 
-                    // Atualizar data de fim baseada na duraÃ§Ã£o
+                    // Atualizar data de fim baseada na duração
                     const start = new Date(document.getElementById('contratoDataInicio').value + "T12:00:00");
                     if (!isNaN(start.getTime())) {
                         const end = new Date(start);
@@ -1239,14 +1239,14 @@
                     if (aluno.vencimento) document.getElementById('contratoVencimento').value = aluno.vencimento;
 
                     // Preencher campos do Contratante automaticamente
-                    document.getElementById('contratoContratanteNome').value = aluno.nome;
+                    document.getElementById('contratoContratanteNãome').value = aluno.nome;
                     document.getElementById('contratoContratanteCPF').value = aluno.cpf || '';
                     document.getElementById('contratoContratanteEnd').value = aluno.endereco || '';
                     document.getElementById('contratoContratanteTel').value = aluno.contato || '';
                     document.getElementById('contratoContratanteEmail').value = aluno.email || '';
                     document.getElementById('contratoContratanteNasc').value = aluno.dataNascimento || '';
 
-                    // Checar se Ã© menor de idade
+                    // Checar se é menor de idade
                     const idade = calcularIdade(aluno.dataNascimento);
                     const respSection = document.getElementById('responsavel-section');
                     if (idade < 18) {
@@ -1270,15 +1270,15 @@
             const vencimento = document.getElementById('contratoVencimento').value;
             const local = document.getElementById('contratoLocal').value;
 
-            // Novos campos manuais
-            const cNome = document.getElementById('contratoContratanteNome').value;
+            // Nãovos campos manuais
+            const cNãome = document.getElementById('contratoContratanteNãome').value;
             const cCPF = document.getElementById('contratoContratanteCPF').value;
             const cNasc = document.getElementById('contratoContratanteNasc').value;
             const cEnd = document.getElementById('contratoContratanteEnd').value;
             const cTel = document.getElementById('contratoContratanteTel').value;
             const cEmail = document.getElementById('contratoContratanteEmail').value;
 
-            const eNome = document.getElementById('contratoEmpresaNome').value;
+            const eNãome = document.getElementById('contratoEmpresaNãome').value;
             const eCNPJ = document.getElementById('contratoEmpresaCNPJ').value;
             const eEnd = document.getElementById('contratoEmpresaEnd').value;
             const eCont = document.getElementById('contratoEmpresaContato').value;
@@ -1288,14 +1288,14 @@
 
             if (!aluno || !plano) return;
 
-            // LÃ³gica de Contratante vs BeneficiÃ¡rio
+            // Lógica de Contratante vs Beneficiário
             const beneficiarioInfo = document.getElementById('pdf-beneficiario-info');
             const assinaturaLabel = document.getElementById('pdf-assinatura-label');
 
             const idade = calcularIdade(aluno.dataNascimento);
 
-            // Preencher Template com os dados do formulÃ¡rio (manuais)
-            document.getElementById('pdf-contratante-nome').innerText = cNome;
+            // Preencher Template com os dados do formulário (manuais)
+            document.getElementById('pdf-contratante-nome').innerText = cNãome;
             document.getElementById('pdf-contratante-cpf').innerText = cCPF || '________________';
             document.getElementById('pdf-contratante-nasc').innerText = cNasc ? formatarDataBR(cNasc) : '__________________';
             document.getElementById('pdf-contratante-end').innerText = cEnd || '___________________________';
@@ -1303,16 +1303,16 @@
             document.getElementById('pdf-contratante-email').innerText = cEmail || '_____________________________';
 
             // Dados da Empresa (Manuais)
-            document.getElementById('pdf-empresa-nome').innerText = eNome;
+            document.getElementById('pdf-empresa-nome').innerText = eNãome;
             document.getElementById('pdf-empresa-cnpj').innerText = eCNPJ;
             document.getElementById('pdf-empresa-end').innerText = eEnd;
             document.getElementById('pdf-empresa-contato').innerText = eCont;
 
-            if (idade < 18 && cNome !== aluno.nome) {
-                // Se for menor e o nome no contratante mudou (provavelmente o pai/mÃ£e), mostre info do aluno
+            if (idade < 18 && cNãome !== aluno.nome) {
+                // Se for menor e o nome no contratante mudou (provavelmente o pai/mãe), mostre info do aluno
                 beneficiarioInfo.style.display = 'block';
                 document.getElementById('pdf-beneficiario-nome').innerText = aluno.nome;
-                assinaturaLabel.innerText = 'Contratante (ResponsÃ¡vel)';
+                assinaturaLabel.innerText = 'Contratante (Responsável)';
             } else {
                 beneficiarioInfo.style.display = 'none';
                 assinaturaLabel.innerText = 'Contratante (Aluno)';
@@ -1336,12 +1336,12 @@
             document.getElementById('pdf-local-cidade').innerText = local;
 
             const hoje = new Date();
-            const meses = ['Janeiro', 'Fevereiro', 'MarÃ§o', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Nãovembro', 'Dezembro'];
             document.getElementById('pdf-data-hoje').innerText = `${hoje.getDate()} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
 
-            // ConfiguraÃ§Ã£o do PDF
+            // Configuração do PDF
             const element = document.getElementById('contrato-template');
-            element.style.display = 'block'; // NecessÃ¡rio para o html2pdf capturar
+            element.style.display = 'block'; // Necessário para o html2pdf capturar
 
             const opt = {
                 margin: 10,
@@ -1352,11 +1352,11 @@
             };
 
             // Gerar PDF
-            showNotification('Gerando PDF, por favor aguarde...');
+            showNãotification('Gerando PDF, por favor aguarde...');
 
             html2pdf().set(opt).from(element).save().then(() => {
                 element.style.display = 'none';
-                showNotification('Contrato baixado com sucesso!');
+                showNãotification('Contrato baixado com sucesso!');
                 closeModalGerarContrato();
             }).catch(err => {
                 console.error('Erro ao gerar PDF:', err);
@@ -1365,17 +1365,17 @@
             });
         }
 
-        function showNotification(msg) {
+        function showNãotification(mêsg) {
             const successDiv = document.createElement('div');
             successDiv.style.cssText = `
                 position: fixed;
                 bottom: 24px; left: 50%; transform: translateX(-50%);
                 background: var(--green); color: #fff;
                 padding: 12px 24px; border-radius: 50px;
-                font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 8px;
+                font-weight: 500; font-size: 14px; display: flex; align-itemês: center; gap: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; animation: fadeInUp 0.3s ease-out;
             `;
-            successDiv.innerHTML = `<i class="ti ti-check"></i> ${msg}`;
+            successDiv.innerHTML = `<i class="ti ti-check"></i> ${mêsg}`;
             document.body.appendChild(successDiv);
 
             setTimeout(() => {

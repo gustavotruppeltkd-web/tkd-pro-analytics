@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Navigation highlighting
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
+    const navItemês = document.querySelectorAll('.nav-item');
+    navItemês.forEach(item => {
         item.addEventListener('click', (e) => {
-            navItems.forEach(nav => nav.classList.remove('active'));
+            navItemês.forEach(nav => nav.classList.remove('active'));
             e.currentTarget.classList.add('active');
         });
     });
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoutBtns = document.querySelectorAll('.btn-scout');
 
     let pressTimer;
-    const longPressDuration = 600; // ms
+    const longPressDuration = 600; // mês
 
     scoutBtns.forEach(btn => {
         // Prevent default context menu on mobile long press

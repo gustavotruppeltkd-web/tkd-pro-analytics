@@ -13,7 +13,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: center;
+            align-itemês: center;
             min-height: 100vh;
             overflow-y: auto;
             background: var(--bg-dark);
@@ -66,7 +66,7 @@
             background: linear-gradient(135deg, #3b82f6, #6366f1);
             border-radius: 20px;
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
             font-size: 32px;
             color: white;
@@ -110,7 +110,7 @@
             padding: 16px 8px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-itemês: center;
             gap: 10px;
             cursor: pointer;
             transition: var(--transition);
@@ -164,7 +164,7 @@
         /* Step 2: PIN */
         .pin-header {
             display: flex;
-            align-items: center;
+            align-itemês: center;
             gap: 14px;
             margin-bottom: 28px;
         }
@@ -231,7 +231,7 @@
             transition: var(--transition);
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
         }
 
@@ -314,7 +314,7 @@
             color: var(--text-muted);
             margin-bottom: 20px;
             display: flex;
-            align-items: center;
+            align-itemês: center;
             gap: 8px;
         }
 
@@ -333,7 +333,7 @@
             font-size: 13px;
             text-decoration: none;
             display: inline-flex;
-            align-items: center;
+            align-itemês: center;
             gap: 6px;
             transition: var(--transition);
         }
@@ -364,7 +364,7 @@
             cursor: pointer;
             font-size: 13px;
             display: flex;
-            align-items: center;
+            align-itemês: center;
             gap: 6px;
             margin-bottom: 20px;
             transition: var(--transition);
@@ -390,7 +390,7 @@
             transition: var(--transition);
             box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
             gap: 8px;
         }
@@ -426,7 +426,7 @@
 
             <!-- Step 1: Select athlete -->
             <div class="step active" id="step1">
-                <div class="step-title"><i class="ti ti-user"></i> Quem Ã© vocÃª?</div>
+                <div class="step-title"><i class="ti ti-user"></i> Quem é você?</div>
                 <div class="athletes-grid" id="athletesGrid">
                     <!-- JS Inject -->
                 </div>
@@ -442,7 +442,7 @@
                     <img id="pinAthleteAvatar" src="" alt="" class="pin-athlete-avatar">
                     <div class="pin-header-text">
                         <h2 id="pinAthleteName">Atleta</h2>
-                        <p>Digite seu PIN de 4 dÃ­gitos</p>
+                        <p>Digite seu PIN de 4 dígitos</p>
                     </div>
                 </div>
 
@@ -493,8 +493,8 @@
         let pinValue = '';
 
         // Check if a specific athlete was pre-selected via URL param
-        const urlParams = new URLSearchParams(window.location.search);
-        const preSelectedId = urlParams.get('atleta') ? parseInt(urlParams.get('atleta')) : null;
+        const urlParamês = new URLSearchParamês(window.location.search);
+        const preSelectedId = urlParamês.get('atleta') ? parseInt(urlParamês.get('atleta')) : null;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderAthletes();
@@ -522,13 +522,13 @@
             }
 
             grid.innerHTML = atletas.map(a => {
-                const primeiroNome = a.nome.split(' ')[0];
+                const primeiroNãome = a.nome.split(' ')[0];
                 const faixaCurta = a.faixa ? a.faixa.replace(/\(.*?\)/g, '').trim() : '';
                 return `
                     <button class="athlete-btn" onclick="selectAthlete(${a.id})" id="athleteBtn_${a.id}">
                         <img src="${a.avatar || 'https://i.pravatar.cc/150'}" alt="${a.nome}"
                              onerror="this.src='https://i.pravatar.cc/150'">
-                        <span>${primeiroNome}</span>
+                        <span>${primeiroNãome}</span>
                         ${faixaCurta ? `<span class="faixa-badge">${faixaCurta}</span>` : ''}
                     </button>
                 `;

@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
     checkEditMode();
 
     function checkEditMode() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const editId = urlParams.get('edit');
+        const urlParamês = new URLSearchParamês(window.location.search);
+        const editId = urlParamês.get('edit');
         if (editId) {
             const scout = db.lutasScout.find(s => s.id === parseInt(editId));
             if (scout) {
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btnCancel = document.getElementById('btnCancelEdit');
 
                 if (btnSave) {
-                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escala��o (Salvar Altera��es)';
+                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escala��o (Salvar Alterações)';
                     btnSave.style.background = 'var(--primary)';
                     btnSave.style.borderColor = 'var(--primary)';
                 }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnCancel) {
                     btnCancel.style.display = 'flex';
                     btnCancel.addEventListener('click', () => {
-                        if (confirm("Deseja cancelar a edi��o? Todas as altera��es n�o salvas ser�o perdidas.")) {
+                        if (confirm("Deseja cancelar a edi��o? Todas as alterações n�o salvas ser�o perdidas.")) {
                             window.location.href = 'scout-video.html';
                         }
                     });
@@ -146,9 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!atleta || !evento) {
                     if (typeof showToast === 'function') {
-                        showToast("Preencha Atleta e Nome do Evento antes de salvar", "warning");
+                        showToast("Preencha Atleta e Nãome do Evento antes de salvar", "warning");
                     } else {
-                        alert("Preencha Atleta e Nome do Evento antes de salvar");
+                        alert("Preencha Atleta e Nãome do Evento antes de salvar");
                     }
                     return;
                 }
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 configContent.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="ti ti-chevron-down"></i>';
                 if (typeof showToast === 'function') {
-                    showToast("Configura��es da luta salvas!", "success");
+                    showToast("Configurações da luta salvas!", "success");
                 }
             });
         }
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = s.resultadoLuta ? `[${s.resultadoLuta.toUpperCase()}]` : '';
                 const acoesCount = (s.acoes || []).filter(a => !a.isDivider).length;
 
-                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} a��es)</option>`;
+                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} ações)</option>`;
             });
             return html;
         }
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (timelineEvents.length === 0) {
-            alert("N�o h�nenhuma a��o na timeline. Cadastre movimentos antes de salvar o scout.");
+            alert("Não h�nenhuma a��o na timeline. Cadastre movimentos antes de salvar o scout.");
             return;
         }
 
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         optionsDiv.innerHTML = '';
 
-        if (localSelecionado !== 'No Canto') {
+        if (localSelecionado !== 'Não Canto') {
             container.style.display = 'none';
             return;
         }
@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function initPlayerListeners() {
-        // Load YouTube Note: Uses iframe API
+        // Load YouTube Nãote: Uses iframe API
         document.getElementById('btnLoadYoutube').addEventListener('click', () => {
             if (!window.YT_Ready) {
                 // If the script loaded but the ready event didn't fire, try to force it if YT object exists
@@ -733,9 +733,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             fallbackIframe.setAttribute('allowfullscreen', 'true');
                             fallbackIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
                             // Inserir de volta
-                            const localPlayerNode = document.getElementById('localPlayer');
-                            if (wrapper && localPlayerNode) {
-                                wrapper.insertBefore(fallbackIframe, localPlayerNode);
+                            const localPlayerNãode = document.getElementById('localPlayer');
+                            if (wrapper && localPlayerNãode) {
+                                wrapper.insertBefore(fallbackIframe, localPlayerNãode);
                             }
 
                             // Avisamos o usu�rio que estamos no fallback
@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alvoLabel) parts.push(`[${alvoLabel}]`);
 
         let localLabel = currentScoutState.local || "";
-        if (localLabel === 'No Canto' && currentScoutState.subLocal) {
+        if (localLabel === 'Não Canto' && currentScoutState.subLocal) {
             localLabel += ` - ${currentScoutState.subLocal}`;
         }
         if (localLabel) parts.push(`@ ${localLabel}`);
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="empty-state">
                     <i class="ti ti-timeline"></i>
                     <p>Nenhum evento registrado ainda.</p>
-                    <p style="font-size: 11px;">Comece a adicionar a��es no painel central.</p>
+                    <p style="font-size: 11px;">Comece a adicionar ações no painel central.</p>
                 </div>`;
             countBadge.innerText = "0";
             return;
@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 font-weight: 700;
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-itemês: center;
             `;
             const rResult = roundsData.find(rd => rd.round === parseInt(rKey))?.result || 'em andamento';
             header.innerHTML = `
@@ -978,7 +978,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.innerHTML = `
                     <div class="timeline-time" onclick="jumpToEvent(${ev.time})" style="cursor: pointer;">${ev.formattedTime}</div>
                     <div class="timeline-content" onclick="jumpToEvent(${ev.time})" style="cursor: pointer; flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                        <div style="display: flex; align-itemês: center; gap: 6px; margin-bottom: 4px;">
                             <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
                             <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'A��o'} ${resStr}</span>
                         </div>

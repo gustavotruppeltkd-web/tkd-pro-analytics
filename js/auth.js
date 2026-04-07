@@ -10,7 +10,7 @@ async function checkAuth(isLoginPage = false) {
     const { data: { session } } = await window.supabaseClient.auth.getSession();
 
     if (!session && !isLoginPage) {
-        // Not logged in, redirect to index (login)
+        // Nãot logged in, redirect to index (login)
         window.location.href = 'index.html';
     } else if (session && isLoginPage) {
         // Logged in but on login page, redirect to trainer selection

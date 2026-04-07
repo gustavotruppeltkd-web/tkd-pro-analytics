@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro coach Analytics | CalendÃ¡rio</title>
+    <title>Pro coach Analytics | Calendário</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
@@ -45,7 +45,7 @@
 
         .event-item {
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: space-between;
             padding: 16px 24px;
             transition: var(--transition);
@@ -60,7 +60,7 @@
         .event-date-box {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-itemês: center;
             min-width: 60px;
             padding-right: 20px;
             border-right: 1px solid var(--border-color);
@@ -109,7 +109,7 @@
             text-transform: uppercase;
         }
 
-        .type-competiÃ§Ã£o {
+        .type-competição {
             background: rgba(59, 130, 246, 0.1);
             color: var(--primary);
         }
@@ -119,7 +119,7 @@
             color: var(--green);
         }
 
-        .type-seminÃ¡rio {
+        .type-seminário {
             background: rgba(245, 158, 11, 0.1);
             color: var(--yellow);
         }
@@ -138,7 +138,7 @@
         .calendar-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-itemês: center;
             padding: 24px;
             border-bottom: 1px solid var(--border-color);
         }
@@ -227,7 +227,7 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="page-title">
-                    <h1>CalendÃ¡rio & Eventos</h1>
+                    <h1>Calendário & Eventos</h1>
                     <p class="subtitle">Planejamento anual da equipe</p>
                 </div>
                 <div class="user-profile">
@@ -240,7 +240,7 @@
             </header>
 
             <div class="section-actions"
-                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                style="display: flex; justify-content: space-between; align-itemês: flex-start; margin-bottom: 24px;">
                 <div class="view-switcher">
                     <button class="view-btn active" onclick="switchView('list')"><i class="ti ti-list"></i>
                         Lista</button>
@@ -249,10 +249,10 @@
                 </div>
                 <div style="display: flex; gap: 12px;">
                     <button class="btn btn-outline" onclick="downloadYearlyCalendar()">
-                        <i class="ti ti-download"></i> Baixar CalendÃ¡rio do Ano
+                        <i class="ti ti-download"></i> Baixar Calendário do Ano
                     </button>
                     <button class="btn btn-primary" onclick="openModalEvent()">
-                        <i class="ti ti-plus"></i> Novo Evento
+                        <i class="ti ti-plus"></i> Nãovo Evento
                     </button>
                 </div>
             </div>
@@ -280,32 +280,32 @@
                     <div class="calendar-weekday">Qua</div>
                     <div class="calendar-weekday">Qui</div>
                     <div class="calendar-weekday">Sex</div>
-                    <div class="calendar-weekday">SÃ¡b</div>
+                    <div class="calendar-weekday">Sáb</div>
                     <!-- Days rendered by JS -->
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal Novo Evento -->
+    <!-- Modal Nãovo Evento -->
     <div class="modal-overlay" id="modalEvent">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalEventTitle">Novo Evento</h2>
+                <h2 class="modal-title" id="modalEventTitle">Nãovo Evento</h2>
                 <button class="btn-close" onclick="closeModalEvent()"><i class="ti ti-x"></i></button>
             </div>
             <form id="formEvent" onsubmit="saveEvent(event)">
                 <div class="form-group">
-                    <label>TÃ­tulo do Evento</label>
+                    <label>Título do Evento</label>
                     <input type="text" class="form-control" name="titulo" placeholder="Ex: Campeonato Brasileiro"
                         required>
                 </div>
                 <div class="form-group">
                     <label>Tipo de Evento</label>
                     <select class="form-control" name="tipo" required>
-                        <option value="CompetiÃ§Ã£o">CompetiÃ§Ã£o</option>
+                        <option value="Competição">Competição</option>
                         <option value="Curso">Curso</option>
-                        <option value="SeminÃ¡rio">SeminÃ¡rio</option>
+                        <option value="Seminário">Seminário</option>
                         <option value="Festival">Festival</option>
                     </select>
                 </div>
@@ -313,29 +313,29 @@
                     <div class="form-group" style="flex: 1;">
                         <label>Grau de Dificuldade</label>
                         <select class="form-control" name="dificuldade">
-                            <option value="">NÃ£o se aplica</option>
+                            <option value="">Não se aplica</option>
                             <option value="Baixo">Baixo</option>
-                            <option value="MÃ©dio">MÃ©dio</option>
+                            <option value="Médio">Médio</option>
                             <option value="Alto">Alto</option>
                             <option value="Muito Elevado">Muito Alto</option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex: 1; display: flex; align-items: flex-end;">
+                    <div class="form-group" style="flex: 1; display: flex; align-itemês: flex-end;">
                         <label
-                            style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer;">
+                            style="display: flex; align-itemês: center; gap: 8px; margin-bottom: 12px; cursor: pointer;">
                             <input type="checkbox" name="classificatorio"
                                 style="width: 18px; height: 18px; accent-color: var(--primary);">
-                            <span style="font-size: 14px; font-weight: 500;">Evento ClassificatÃ³rio</span>
+                            <span style="font-size: 14px; font-weight: 500;">Evento Classificatório</span>
                         </label>
                     </div>
                 </div>
                 <div style="display: flex; gap: 16px;">
                     <div class="form-group" style="flex: 1;">
-                        <label>Data de InÃ­cio</label>
+                        <label>Data de Início</label>
                         <input type="date" class="form-control" name="data" required>
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <label>Data de TÃ©rmino (Opcional)</label>
+                        <label>Data de Término (Opcional)</label>
                         <input type="date" class="form-control" name="dataFim">
                     </div>
                 </div>
@@ -344,8 +344,8 @@
                     <input type="text" class="form-control" name="organizador" placeholder="Ex: CBTKD">
                 </div>
                 <div class="form-group">
-                    <label>LocalizaÃ§Ã£o</label>
-                    <input type="text" class="form-control" name="local" placeholder="Ex: GinÃ¡sio Municipal, SP">
+                    <label>Localização</label>
+                    <input type="text" class="form-control" name="local" placeholder="Ex: Ginásio Municipal, SP">
                 </div>
                 <div class="form-group" style="margin-top: 24px;">
                     <button type="submit" id="btnSubmitEvent" class="btn btn-primary btn-block"
@@ -399,11 +399,11 @@
                     form.classificatorio.checked = ev.classificatorio || false;
 
                     title.innerText = 'Editar Evento';
-                    btn.innerText = 'Salvar AlteraÃ§Ãµes';
+                    btn.innerText = 'Salvar Alterações';
                 }
             } else {
                 form.reset();
-                title.innerText = 'Novo Evento';
+                title.innerText = 'Nãovo Evento';
                 btn.innerText = 'Criar Evento';
             }
 
@@ -464,7 +464,7 @@
             if (confirm('Tem certeza que deseja excluir este evento?')) {
                 db.eventos = db.eventos.filter(ev => ev.id !== id);
                 saveDB();
-                showToast('Evento excluÃ­do.', 'info');
+                showToast('Evento excluído.', 'info');
                 if (currentView === 'list') renderListView();
                 else renderCalendarView();
             }
@@ -510,12 +510,12 @@
                         ${dateDisplay}
                     </div>
                     <div class="event-info">
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-itemês: center; gap: 8px;">
                             <span class="event-title">${ev.titulo}</span>
                             <span class="event-type-badge type-${ev.tipo.toLowerCase()}">${ev.tipo}</span>
                         </div>
                         <div class="event-meta">
-                            <span><i class="ti ti-map-pin"></i> ${ev.local || 'Local nÃ£o definido'}</span>
+                            <span><i class="ti ti-map-pin"></i> ${ev.local || 'Local não definido'}</span>
                             <span><i class="ti ti-building"></i> ${ev.organizador || 'N/A'}</span>
                         </div>
                     </div>
@@ -600,19 +600,19 @@
                 return;
             }
 
-            // ConfiguraÃ§Ãµes EstÃ©ticas
+            // Configurações Estéticas
             const primaryColor = [37, 99, 235]; // Blue
             const textColor = [31, 41, 55];
             const secondaryText = [107, 114, 128];
 
-            // CabeÃ§alho do PDF
+            // Cabeçalho do PDF
             doc.setFillColor(...primaryColor);
             doc.rect(0, 0, 210, 40, 'F');
 
             doc.setTextColor(255, 255, 255);
             doc.setFontSize(22);
             doc.setFont("helvetica", "bold");
-            doc.text("CALENDÃRIO ANUAL - " + currentYear, 15, 20);
+            doc.text("CALENDÁRIO ANUAL - " + currentYear, 15, 20);
 
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
@@ -624,7 +624,7 @@
                 "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
             ];
 
-            // Agrupa por mÃªs
+            // Agrupa por mês
             const eventsByMonth = {};
             yearlyEvents.forEach(ev => {
                 const month = new Date(ev.data + "T00:00:00").getMonth();
@@ -636,13 +636,13 @@
             for (let m = 0; m < 12; m++) {
                 if (!eventsByMonth[m]) continue;
 
-                // Verifica quebra de pÃ¡gina
+                // Verifica quebra de página
                 if (currentY > 250) {
                     doc.addPage();
                     currentY = 20;
                 }
 
-                // TÃ­tulo do MÃªs
+                // Título do Mês
                 doc.setTextColor(...primaryColor);
                 doc.setFontSize(14);
                 doc.setFont("helvetica", "bold");
@@ -653,12 +653,12 @@
                 doc.line(15, currentY, 195, currentY);
                 currentY += 10;
 
-                // Eventos do MÃªs
+                // Eventos do Mês
                 eventsByMonth[m].forEach(ev => {
                     const d = new Date(ev.data + "T00:00:00");
                     const dateStr = d.toLocaleDateString('pt-BR');
 
-                    // Verifica quebra de pÃ¡gina por evento
+                    // Verifica quebra de página por evento
                     if (currentY > 270) {
                         doc.addPage();
                         currentY = 20;
@@ -684,21 +684,21 @@
                     currentY += 10;
                 });
 
-                currentY += 5; // EspaÃ§o extra apÃ³s o mÃªs
+                currentY += 5; // Espaço extra após o mês
             }
 
-            // RodapÃ©
+            // Rodapé
             const pageCount = doc.internal.getNumberOfPages();
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
                 doc.setFontSize(8);
                 doc.setTextColor(...secondaryText);
                 doc.text(`Documento gerado em ${new Date().toLocaleDateString()} | Pro Coach Analytics`, 105, 290, { align: 'center' });
-                doc.text(`PÃ¡gina ${i} de ${pageCount}`, 195, 290, { align: 'right' });
+                doc.text(`Página ${i} de ${pageCount}`, 195, 290, { align: 'right' });
             }
 
             doc.save(`Calendario_ProCoach_${currentYear}.pdf`);
-            showToast('CalendÃ¡rio baixado com sucesso!');
+            showToast('Calendário baixado com sucesso!');
         }
 
         function changeMonth(offset) {

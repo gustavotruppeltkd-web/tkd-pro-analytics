@@ -68,7 +68,7 @@ function loadDB() {
                 'width:44px', 'height:44px', 'border-radius:10px',
                 'background:var(--bg-card)', 'border:1px solid var(--border-color)',
                 'color:var(--text-main)', 'font-size:22px',
-                'display:flex', 'align-items:center', 'justify-content:center',
+                'display:flex', 'align-itemês:center', 'justify-content:center',
                 'cursor:pointer', 'transition:var(--transition)'
             ].join(';');
             btn.onclick = () => {
@@ -254,19 +254,19 @@ function checkTrainerOnboarding() {
     overlay.style.cssText = [
         'position:fixed', 'inset:0', 'z-index:99999',
         'background:rgba(10,14,26,0.97)',
-        'display:flex', 'align-items:center', 'justify-content:center',
+        'display:flex', 'align-itemês:center', 'justify-content:center',
         'font-family:Inter,system-ui,sans-serif'
     ].join(';');
 
     overlay.innerHTML = `
         <div style="background:#111827;border:1px solid #1e40af;border-radius:20px;padding:48px 40px;max-width:480px;width:90%;box-shadow:0 0 60px rgba(59,130,246,0.2);text-align:center;">
-            <div style="width:72px;height:72px;background:rgba(59,130,246,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+            <div style="width:72px;height:72px;background:rgba(59,130,246,0.12);border-radius:50%;display:flex;align-itemês:center;justify-content:center;margin:0 auto 24px;">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
             <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
             <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relatórios e dashboards.</p>
             <div style="text-align:left;margin-bottom:20px;">
-                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nome Completo *</label>
+                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nãome Completo *</label>
                 <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva"
                     style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;"
                     onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
@@ -278,7 +278,7 @@ function checkTrainerOnboarding() {
                     onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
             </div>
             <button id="__ob_btn" onclick="window.__saveOnboarding()"
-                style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;"
+                style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-itemês:center;justify-content:center;gap:8px;transition:background 0.2s;"
                 onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
                 Começar a Usar &rarr;
             </button>
@@ -407,7 +407,7 @@ function showToast(message, type = 'success') {
         toast.classList.add('show');
     }, 10);
 
-    // Remover ap�s 3 segundos
+    // Removeráá ap�s 3 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
@@ -432,7 +432,7 @@ function calcularIdade(dataNasc) {
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
     let idade = anoAtual - parseInt(ns[0]);
-    // Simplificado para UI. Nnum app real, subtrai 1 se m�s/dia ainda n�o passou
+    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda n�o passou
     return idade;
 }
 
@@ -443,7 +443,7 @@ function formatarDataBR(dataSql) {
     return `${ns[2]}/${ns[1]}/${ns[0]}`;
 }
 
-// Formatar m�s ex: Ago
+// Formatar mês ex: Ago
 function formatarMesCurto(dataSql) {
     if (!dataSql) return '';
     const date = new Date(dataSql + "T00:00:00");
@@ -517,7 +517,7 @@ function replaceRangesWithButtons(container = document) {
             if (display) display.style.display = 'none';
         }
 
-        input.replaceWith(...wrapper.childNodes);
+        input.replaceWith(...wrapper.childNãodes);
     });
 }
 
@@ -565,7 +565,7 @@ function openConfigFaixas(e) {
                     <button class="btn-close" type="button" onclick="closeConfigFaixas()"><i class="ti ti-x"></i></button>
                 </div>
                 <div style="display: flex; gap: 8px; margin-bottom: 24px;">
-                    <input type="text" id="novaFaixaInput" class="form-control" placeholder="Nova cor...">
+                    <input type="text" id="novaFaixaInput" class="form-control" placeholder="Nãova cor...">
                     <button type="button" class="btn btn-primary" onclick="addFaixa()"><i class="ti ti-plus"></i></button>
                 </div>
                 <div id="listaFaixas" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">
@@ -589,7 +589,7 @@ function renderListaFaixas() {
     const list = document.getElementById('listaFaixas');
     if (!list) return;
     list.innerHTML = db.faixas.map((f, i) => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+        <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
             <span style="font-size: 14px; font-weight: 500;">${f}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removeFaixa(${i})"><i class="ti ti-trash"></i></button>
         </div>
@@ -657,7 +657,7 @@ function renderListaPesos() {
     const list = document.getElementById('listaPesos');
     if (!list) return;
     list.innerHTML = (db.categoriasPeso || []).map((p, i) => `
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+        <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
             <span style="font-size: 14px; font-weight: 500;">${p}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removePeso(${i})"><i class="ti ti-trash"></i></button>
         </div>
@@ -759,9 +759,9 @@ function renderSidebar() {
     const tipo = (turma && turma.tipo || '').toLowerCase();
     const isRendimento = tipo.includes('rendimento') || tipo.includes('competi\u00e7\u00e3o');
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    let menuItems = [];
+    let menuItemês = [];
     if (isRendimento) {
-        menuItems = [
+        menuItemês = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-calendar-event', label: 'Vis\u00e3o da Equipe' },
             { href: 'dashboard-rendimento.html', icon: 'ti-activity', label: 'Monitoramento' },
             { href: 'dashboard-questionarios.html', icon: 'ti-clipboard-list', label: 'Question\u00e1rios' },
@@ -770,14 +770,14 @@ function renderSidebar() {
             { href: 'scout-video.html', icon: 'ti-video', label: 'An\u00e1lise de Lutas' }
         ];
     } else {
-        menuItems = [
+        menuItemês = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-users', label: 'Dados da Turma' },
             { href: 'dashboard-aulas.html', icon: 'ti-checklist', label: 'Chamada Di\u00e1ria' },
             { href: 'financeiro.html', icon: 'ti-cash', label: 'Financeiro' }
         ];
     }
-    menuItems.push({ href: 'perfil.html', icon: 'ti-user-circle', label: 'Meu Perfil' });
-    const html = menuItems.map(item => {
+    menuItemês.push({ href: 'perfil.html', icon: 'ti-user-circle', label: 'Meu Perfil' });
+    const html = menuItemês.map(item => {
         const isActive = currentPage === item.href;
         const isPerformanceActive = currentPage === 'atleta-performance.html' && item.href === 'dashboard-turma-dados.html' && isRendimento;
         return `
@@ -835,7 +835,7 @@ function renderGlobalCropperModal() {
                     <h2 class="modal-title">Ajustar Foto</h2>
                     <button class="btn-close" onclick="closeGlobalCropper()"><i class="ti ti-x"></i></button>
                 </div>
-                <div style="width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; background: #000; overflow: hidden; margin-bottom: 16px;">
+                <div style="width: 100%; height: 300px; display: flex; justify-content: center; align-itemês: center; background: #000; overflow: hidden; margin-bottom: 16px;">
                     <img id="imageToCrop" src="" style="max-width: 100%; max-height: 100%; display: block;">
                 </div>
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -877,7 +877,7 @@ function openGlobalCropper(file, callback) {
                 viewMode: 1,
                 dragMode: 'move',
                 autoCropArea: 0.8,
-                restore: false,
+                restãore: false,
                 guides: true,
                 center: true,
                 highlight: false,
@@ -925,7 +925,7 @@ function confirmGlobalCrop() {
 }
 
 /**
- * Abre um modal detalhado com as informa��es de um scout salvo.
+ * Abre um modal detalhado com as informações de um scout salvo.
  * @param {number} scoutId - ID do scout no db.lutasScout
  */
 function openScoutDetail(scoutId) {
@@ -967,7 +967,7 @@ function openScoutDetail(scoutId) {
         `;
     }
 
-    // Timeline das A��es
+    // Timeline das Ações
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
@@ -992,7 +992,7 @@ function openScoutDetail(scoutId) {
             const resStr = ev.resultado ? ` - <span style="color: ${ev.resultado === 'Com ponto' ? 'var(--green)' : 'var(--text-muted)'}; font-weight: 600;">${ev.resultado}</span>` : '';
 
             return `
-                <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-itemês: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
                         <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A��o'} ${resStr}</div>
@@ -1083,7 +1083,7 @@ function openScoutDetail(scoutId) {
             
             <div style="overflow-y: auto; padding: 24px; flex: 1;">
                 <!-- Header Atleta/Evento -->
-                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
+                <div style="display: flex; align-itemês: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
                     ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Advers�rio')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
                     <div>
                         <div style="font-size: 18px; font-weight: 700;">${nomeAtleta}</div>
@@ -1103,7 +1103,7 @@ function openScoutDetail(scoutId) {
 
                 <div style="display: grid; grid-template-columns: 1fr 300px; gap: 24px;">
                     <div>
-                        <h3 style="font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                        <h3 style="font-size: 16px; margin-bottom: 16px; display: flex; align-itemês: center; gap: 8px;">
                             <i class="ti ti-history" style="color: var(--primary);"></i> Timeline de Eventos
                         </h3>
                         <div style="margin-bottom: 24px;">
@@ -1112,13 +1112,13 @@ function openScoutDetail(scoutId) {
                     </div>
                     
                     <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content;">
-                        <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; justify-content: center;">
-                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avalia��o T�cnica
+                        <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-itemês: center; gap: 8px; justify-content: center;">
+                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação T�cnica
                         </h3>
                         <div style="height: 250px; width: 100%; position: relative;">
                             <canvas id="scoutRadarChart"></canvas>
                         </div>
-                        <div id="noAssessmentMsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;">
+                        <div id="noAssessmentMêsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;">
                             Nenhuma avalia��o registrada para este scout.
                         </div>
                     </div>
@@ -1156,7 +1156,7 @@ function openScoutDetail(scoutId) {
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'For�a', 'T�tica', 'Defesa', 'Varia��o', 'Precis�o', 'Obedi�ncia'],
+                    labels: ['Velocidade', 'Força', 'T�tica', 'Defesa', 'Varia��o', 'Precis�o', 'Obedi�ncia'],
                     datasets: [{
                         label: 'Desempenho nesta Luta',
                         data: dataArr,
@@ -1193,7 +1193,7 @@ function openScoutDetail(scoutId) {
             });
         } else {
             radarCtx.style.display = 'none';
-            document.getElementById('noAssessmentMsg').style.display = 'block';
+            document.getElementById('noAssessmentMêsg').style.display = 'block';
         }
     }
 }
@@ -1250,7 +1250,7 @@ async function downloadScoutPDF(scoutId) {
         matriz: {},
         alvos: { 'Colete': 0, 'Capacete': 0 },
         subAlvos: {}, // { 'Colete': { 'Peito': 0... }, 'Capacete': { 'Face': 0... } }
-        locais: { 'Meio': 0, 'No Canto': 0 },
+        locais: { 'Meio': 0, 'Não Canto': 0 },
         subLocais: { 'Pressionando': 0, 'Pressionado': 0 },
         pernas: { 'Direita': 0, 'Esquerda': 0 },
         subPernas: { 'Direita': { 'Frente': 0, 'Tr�s': 0 }, 'Esquerda': { 'Frente': 0, 'Tr�s': 0 } },
@@ -1298,7 +1298,7 @@ async function downloadScoutPDF(scoutId) {
         }
         if (ev.local) {
             tgt.locais[ev.local]++;
-            if (ev.local === 'No Canto' && ev.subLocal) {
+            if (ev.local === 'Não Canto' && ev.subLocal) {
                 tgt.subLocais[ev.subLocal]++;
             }
         }
@@ -1311,7 +1311,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.base) tgt.bases[ev.base]++;
     });
 
-    // --- PDF Helper: Se��o T�tulo (Compacta) ---
+    // --- PDF Helper: Se��o Título (Compacta) ---
     const drawSectionHeader = (title, y) => {
         doc.setFillColor(241, 245, 249);
         doc.rect(15, y, 180, 6, 'F');
@@ -1460,7 +1460,7 @@ async function downloadScoutPDF(scoutId) {
         yPos += 3;
     };
 
-    printIndicatorGroup("Alvos Alcan�ados / Sofridos (Apenas A��es c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
+    printIndicatorGroup("Alvos Alcançados / Sofridos (Apenas Ações c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
     printIndicatorGroup("Localiza��o da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
     printIndicatorGroup("Uso de Pernas (Tentativas)", 'pernas', ofensiva, defensiva, 'subPernas');
     printIndicatorGroup("Posicionamento de Base (Tentativas)", 'bases', ofensiva, defensiva);
@@ -1516,7 +1516,7 @@ async function downloadScoutPDF(scoutId) {
     // --- RADAR Chart (Agora ap�s a Timeline) ---
     if (scout.avaliacaoTreinador) {
         if (yPos > 200) { doc.addPage(); yPos = 20; } else { yPos += 10; }
-        yPos = drawSectionHeader("Avalia��o T�cnica (Radar)", yPos);
+        yPos = drawSectionHeader("Avaliação T�cnica (Radar)", yPos);
         const canvas = document.getElementById('scoutRadarChart');
         if (canvas) {
             const chartImg = canvas.toDataURL('image/png');

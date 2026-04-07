@@ -12,7 +12,7 @@
         body {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-itemês: center;
             height: 100vh;
             background-color: var(--bg-dark);
             margin: 0;
@@ -51,7 +51,7 @@
             background: linear-gradient(135deg, var(--primary), var(--primary-light, #6366f1));
             border-radius: 50%;
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
             font-size: 32px;
             color: white;
@@ -115,7 +115,7 @@
             transition: var(--transition);
             margin-bottom: 16px;
             display: flex;
-            align-items: center;
+            align-itemês: center;
             justify-content: center;
             gap: 8px;
         }
@@ -137,7 +137,7 @@
             text-decoration: underline;
         }
 
-        .error-msg {
+        .error-mêsg {
             color: var(--red);
             font-size: 13px;
             margin-bottom: 16px;
@@ -147,7 +147,7 @@
             border-radius: var(--radius-sm);
         }
 
-        .success-msg {
+        .success-mêsg {
             color: var(--green);
             font-size: 13px;
             margin-bottom: 16px;
@@ -181,8 +181,8 @@
         <h1 id="formTitle">Bem-vindo(a)</h1>
         <p id="formSubtitle">Acesso Seguro Supabase</p>
 
-        <div class="error-msg" id="errorMsg"></div>
-        <div class="success-msg" id="successMsg"></div>
+        <div class="error-mêsg" id="errorMêsg"></div>
+        <div class="success-mêsg" id="successMêsg"></div>
 
         <form id="authForm">
             <div class="input-group">
@@ -216,11 +216,11 @@
             const subtitle = document.getElementById('formSubtitle');
             const btn = document.getElementById('submitBtn');
             const toggleBtn = document.getElementById('toggleModeBtn');
-            const errorMsg = document.getElementById('errorMsg');
-            const successMsg = document.getElementById('successMsg');
+            const errorMêsg = document.getElementById('errorMêsg');
+            const successMêsg = document.getElementById('successMêsg');
 
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
+            errorMêsg.style.display = 'none';
+            successMêsg.style.display = 'none';
 
             if (isSignup) {
                 title.innerText = "Criar Conta";
@@ -239,12 +239,12 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMsg');
-            const successMsg = document.getElementById('successMsg');
+            const errorMêsg = document.getElementById('errorMêsg');
+            const successMêsg = document.getElementById('successMêsg');
             const btn = document.getElementById('submitBtn');
 
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
+            errorMêsg.style.display = 'none';
+            successMêsg.style.display = 'none';
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
@@ -255,11 +255,11 @@
                 });
 
                 if (error) {
-                    errorMsg.innerText = error.message;
-                    errorMsg.style.display = 'block';
+                    errorMêsg.innerText = error.message;
+                    errorMêsg.style.display = 'block';
                 } else {
-                    successMsg.innerText = "Conta criada com sucesso! Faça login.";
-                    successMsg.style.display = 'block';
+                    successMêsg.innerText = "Conta criada com sucesso! Faça login.";
+                    successMêsg.style.display = 'block';
                     toggleMode(new Event('click')); // switch back to login
                 }
             } else {
@@ -269,8 +269,8 @@
                 });
 
                 if (error) {
-                    errorMsg.innerText = "E-mail ou senha inválidos.";
-                    errorMsg.style.display = 'block';
+                    errorMêsg.innerText = "E-mail ou senha inválidos.";
+                    errorMêsg.style.display = 'block';
                 }
                 // If success, auth.js onAuthStateChange will automatically redirect to turmas.html
             }
