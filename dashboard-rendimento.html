@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.uMédia.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         .class-list {
@@ -25,7 +25,7 @@
             justify-content: space-between;
             background: var(--bg-card);
             padding: 16px 24px;
-            border-radius: var(--radius-Média);
+            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             transition: var(--transition);
             cursor: pointer;
@@ -923,7 +923,7 @@
             };
         }
 
-        function getSemaforoStatus(score, acwr, strain, forMédiaor, formMenstrual) {
+        function getSemaforoStatus(score, acwr, strain, formDor, formMenstrual) {
             // Regras Avan�adas de Risco Clínico (Vermelho overriding)
             let isRed = false;
             let isYellow = false;
@@ -940,7 +940,7 @@
             if (strain > 6000) { isRed = true; motivo.push('Strain Cr�tico (>6000)'); }
 
             // Dor Muscular (1 = Dor Forte)
-            if (parseInt(forMédiaor) <= 2) { isYellow = true; motivo.push('Dor Muscular Relevante'); }
+            if (parseInt(formDor) <= 2) { isYellow = true; motivo.push('Dor Muscular Relevante'); }
 
             if (formMenstrual) { isYellow = true; motivo.push('Fase Menstrual'); } // Preven��o preventiva padr�o
 
@@ -4086,7 +4086,7 @@
             });
 
             // Gr�fico 5: Dobras Cut�neas Acumuladas
-            const suMédiaobras = labelsTime.map(d => {
+            const sumDobras = labelsTime.map(d => {
                 const logs = antro.filter(a => a.data === d);
                 return logs.length ? (logs.reduce((acc, l) => acc + (parseFloat(l.triceps) || 0) + (parseFloat(l.panturrilha) || 0), 0) / logs.length).toFixed(1) : 0;
             });
@@ -4096,7 +4096,7 @@
                     labels: labelsTime.length > 0 ? formatDataList(labelsTime) : ['-'],
                     datasets: [{
                         label: 'Soma: Tr�ceps + Pant (mm)',
-                        data: suMédiaobras.length > 0 ? suMédiaobras : [0],
+                        data: sumDobras.length > 0 ? sumDobras : [0],
                         backgroundColor: '#f59e0b',
                         borderRadius: 4
                     }]
@@ -4313,11 +4313,4 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
 
