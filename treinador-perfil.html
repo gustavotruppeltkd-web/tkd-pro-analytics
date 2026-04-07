@@ -343,7 +343,7 @@
                     <div class="coach-info-main">
                         <div class="coach-main-titles">
                             <h1 id="coachHeroName">Nome do Treinador</h1>
-                            <h3 id="coachHeroRole">Cargo / <span class="user-role">Treinador</span></h3>
+                            <h3 id="coachHeroRole">Cargo / Head Coach</h3>
                             <div class="coach-badges">
                                 <div class="coach-badge"><i class="ti ti-certificate"></i> <span
                                         id="coachGraduation">Faixa
@@ -407,8 +407,7 @@
                                         <div class="list-item-title">Campeonato Brasileiro de Taekwondo</div>
                                         <div class="list-item-date">2023</div>
                                     </div>
-                                    <div class="list-item-desc">TÃ©cnico da equipe campeÃ£ geral no Campeonato
-                                        Brasileiro,
+                                    <div class="list-item-desc">TÃ©cnico da equipe campeÃ£ geral no Campeonato Brasileiro,
                                         categoria Juvenil e Adulto.</div>
                                 </div>
                                 <div class="list-item-card">
@@ -416,24 +415,21 @@
                                         <div class="list-item-title">Copa do Mundo Regional</div>
                                         <div class="list-item-date">2022</div>
                                     </div>
-                                    <div class="list-item-desc">AtuaÃ§Ã£o como head coach, levando 5 atletas Ã  medalha
-                                        de
+                                    <div class="list-item-desc">AtuaÃ§Ã£o como head coach, levando 5 atletas Ã  medalha de
                                         ouro.</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card coach-section">
-                            <h2 class="coach-section-title"><i class="ti ti-books"></i> CertificaÃ§Ãµes e FormaÃ§Ã£o
-                            </h2>
+                            <h2 class="coach-section-title"><i class="ti ti-books"></i> CertificaÃ§Ãµes e FormaÃ§Ã£o</h2>
                             <div id="coachCoursesList">
                                 <div class="list-item-card">
                                     <div class="list-item-header">
                                         <div class="list-item-title">LicenÃ§a WT (World Taekwondo) NÃ­vel II</div>
                                         <div class="list-item-date">ConcluÃ­do no Exterior</div>
                                     </div>
-                                    <div class="list-item-desc">CertificaÃ§Ã£o oficial internacional para tÃ©cnicos
-                                        atuarem
+                                    <div class="list-item-desc">CertificaÃ§Ã£o oficial internacional para tÃ©cnicos atuarem
                                         em eventos chancelados G1/G2.</div>
                                 </div>
                                 <div class="list-item-card">
@@ -496,26 +492,6 @@
                         </div>
 
 
-                        <div class="card coach-section" id="adminPanel" style="display: none;">
-                            <h2 class="coach-section-title"><i class="ti ti-shield-lock"></i> Gerenciar Acessos (Admin)
-                            </h2>
-                            <p class="subtitle" style="font-size: 12px; margin-bottom: 16px;">E-mails autorizados a
-                                criar conta no sistema.</p>
-
-                            <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-                                <input type="email" id="newAuthEmail" class="form-control" placeholder="novo@email.com"
-                                    style="flex: 1;">
-                                <button class="btn btn-primary" onclick="authorizeNewEmail()" style="padding: 0 16px;">
-                                    <i class="ti ti-plus"></i>
-                                </button>
-                            </div>
-
-                            <div id="authorizedEmailsList" style="display: flex; flex-direction: column; gap: 8px;">
-                                <div style="text-align: center; padding: 10px;">
-                                    <i class="ti ti-loader" style="animation: spin 1s linear infinite;"></i>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -540,7 +516,7 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
-                        <label class="form-label">Cargo Principal (Ex: <span class="user-role">Treinador</span>)</label>
+                        <label class="form-label">Cargo Principal (Ex: Head Coach)</label>
                         <input type="text" id="editCoachRole" class="form-control" placeholder="Cargo">
                     </div>
                     <div class="form-group">
@@ -642,7 +618,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             // Pequeno timeout para garantir que app.js carregou os dados
-            setTimeout(async () => {
+            setTimeout(() => {
                 const coachId = localStorage.getItem('tkd_active_coach_id');
                 if (!coachId || !db.treinadores) {
                     alert("Dados do treinador nÃ£o encontrados.");
@@ -655,17 +631,9 @@
 
                 renderProfileScreen();
 
-                // Exibe página
+                // Exibe pÃ¡gina
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('profileContent').style.display = 'block';
-
-                // Check Admin Access
-                if (window.supabaseClient) {
-                    const { data: { session } } = await window.supabaseClient.auth.getSession();
-                    if (session && session.user && session.user.email === 'gustavotruppeltkd@gmail.com') {
-                        document.getElementById('adminPanel').style.display = 'block';
-                    }
-                }
 
             }, 500);
         });
@@ -747,80 +715,9 @@
             document.getElementById('statAtletas').innerText = countAtletas;
             document.getElementById('statScouts').innerText = db.lutasScout ? db.lutasScout.length : 0;
             document.getElementById('statTurmas').innerText = db.turmas ? db.turmas.length : 0;
-
-            // Inicia a lista de e-mails autorizados
-            renderAuthorizedEmails();
         }
 
-        async function renderAuthorizedEmails() {
-            const container = document.getElementById('authorizedEmailsList');
-            if (!window.supabaseClient) return;
-
-            const { data, error } = await supabaseClient
-                .from('authorized_emails')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                container.innerHTML = '<p style="color: var(--red); font-size: 11px;">Erro ao carregar e-mails.</p>';
-                return;
-            }
-
-            if (data.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-muted); font-size: 11px;">Nenhum e-mail autorizado.</p>';
-                return;
-            }
-
-            container.innerHTML = data.map(item => `
-                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color);">
-                    <span style="font-size: 12px; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">${item.email}</span>
-                    <button onclick="removeAuthorizedEmail('${item.id}')" style="background: none; border: none; color: #ff4d4f; cursor: pointer; padding: 2px;">
-                        <i class="ti ti-trash" style="font-size: 14px;"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        async function authorizeNewEmail() {
-            const input = document.getElementById('newAuthEmail');
-            const email = input.value.trim().toLowerCase();
-
-            if (!email || !email.includes('@')) {
-                alert("Por favor, insira um e-mail v�lido.");
-                return;
-            }
-
-            const { error } = await supabaseClient
-                .from('authorized_emails')
-                .insert([{ email }]);
-
-            if (error) {
-                if (error.code === '23505') alert("Este e-mail j�est�autorizado.");
-                else alert("Erro ao autorizar e-mail: " + error.message);
-                return;
-            }
-
-            input.value = '';
-            renderAuthorizedEmails();
-        }
-
-        async function removeAuthorizedEmail(id) {
-            if (!confirm("Tem certeza? Esta pessoa n�o poder�mais se registrar.")) return;
-
-            const { error } = await supabaseClient
-                .from('authorized_emails')
-                .delete()
-                .eq('id', id);
-
-            if (error) {
-                alert("Erro ao remover: " + error.message);
-                return;
-            }
-
-            renderAuthorizedEmails();
-        }
-
-        // --- FUNÃ‡Ã�ES DO MODAL ---
+        // --- FUNÃ‡Ã•ES DO MODAL ---
         function openEditCoachModal() {
             const coach = currentCoachObj;
 
@@ -990,7 +887,7 @@
             doc.setFont("helvetica", "normal");
             doc.text((coach.role || "Treinador").toUpperCase() + " DE TAEKWONDO", 55, 26);
 
-            // GRID DE INFORMAÃ‡Ã�ES (Mudei de 8 para 7 e ajustei recuo dos valores)
+            // GRID DE INFORMAÃ‡Ã•ES (Mudei de 8 para 7 e ajustei recuo dos valores)
             doc.setFontSize(7);
             const birthDate = coach.nascimento ? new Date(coach.nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '---';
 
@@ -1020,7 +917,7 @@
 
             let currentY = 70;
 
-            // --- SEÃ‡Ã�ES DO CURRÃCULO ---
+            // --- SEÃ‡Ã•ES DO CURRÃCULO ---
             const drawSectionHeader = (title, y) => {
                 doc.setTextColor(...colorText);
                 doc.setFont("helvetica", "bold");
@@ -1067,7 +964,7 @@
             // FormaÃ§Ã£o
             currentY += 5;
             if (currentY > pageHeight - 30) { doc.addPage(); currentY = 20; }
-            currentY = drawSectionHeader("FORMAÃ‡ÃƒO E CERTIFICAÃ‡Ã�ES", currentY);
+            currentY = drawSectionHeader("FORMAÃ‡ÃƒO E CERTIFICAÃ‡Ã•ES", currentY);
             if (coach.formacao && coach.formacao.length > 0) {
                 coach.formacao.forEach(f => {
                     if (currentY > pageHeight - 25) { doc.addPage(); currentY = 20; }
@@ -1102,3 +999,4 @@
 </body>
 
 </html>
+

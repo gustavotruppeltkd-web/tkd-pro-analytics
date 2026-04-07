@@ -177,7 +177,7 @@
             align-items: center;
         }
 
-        /* F�sico */
+        /* Físico */
         .tipo-forca {
             background: rgba(239, 68, 68, 0.18);
             border-color: #ef4444;
@@ -719,7 +719,7 @@
             color: var(--primary);
         }
 
-        /* F�sico */
+        /* Físico */
         .tipo-btn.active.tipo-forca {
             background: rgba(239, 68, 68, 0.2);
             border-color: #ef4444;
@@ -1426,14 +1426,14 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="page-title">
-                    <h1 id="turmaName">Equipe de Competi��o</h1>
-                    <p class="subtitle">Planejamento e Gest�o de Sess�es de Treino</p>
+                    <h1 id="turmaName">Equipe de Competição</h1>
+                    <p class="subtitle">Planejamento e Gestão de Sessões de Treino</p>
                 </div>
                 <div class="user-profile">
-                    <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Profile" class="avatar">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile" class="avatar">
                     <div class="user-info">
                         <span class="user-name" id="userName">Carregando...</span>
-                        <span class="user-role"><span class="user-role">Treinador</span></span>
+                        <span class="user-role">Head Coach</span>
                     </div>
                 </div>
             </header>
@@ -1442,7 +1442,7 @@
             <div class="cal-controls">
                 <div class="cal-nav">
                     <button class="btn btn-icon" onclick="navCalendar(-1)"><i class="ti ti-chevron-left"></i></button>
-                    <h2 id="calTitle">�</h2>
+                    <h2 id="calTitle">—</h2>
                     <button class="btn btn-icon" onclick="navCalendar(1)"><i class="ti ti-chevron-right"></i></button>
                     <button class="btn" style="font-size:13px;" onclick="goToToday()">Hoje</button>
                 </div>
@@ -1450,7 +1450,7 @@
                     <button id="btnWeek" class="active" onclick="setView('week')"><i class="ti ti-layout-columns"
                             style="margin-right:6px;"></i>Semana</button>
                     <button id="btnMonth" onclick="setView('month')"><i class="ti ti-layout-grid"
-                            style="margin-right:6px;"></i>M�s</button>
+                            style="margin-right:6px;"></i>Mês</button>
                     <button id="btnMeso" onclick="setView('meso')"><i class="ti ti-chart-gantt"
                             style="margin-right:6px;"></i>Mesociclo</button>
                 </div>
@@ -1464,44 +1464,44 @@
             <!-- ===== PAINEL DE PERIODIZAÇÃO ===== -->
             <div id="painelPeriodizacao" class="periodo-panel" style="display:none;">
 
-                <!-- Linha 1: m�tricas -->
+                <!-- Linha 1: métricas -->
                 <div>
-                    <div class="section-title"><i class="ti ti-chart-bar"></i> An�lise de Carga � Microciclo Atual</div>
+                    <div class="section-title"><i class="ti ti-chart-bar"></i> Análise de Carga — Microciclo Atual</div>
                     <div class="metricas-grid">
                         <div class="card metrica-card">
                             <div class="metrica-label">Carga Aguda (semana)</div>
-                            <div class="metrica-value" id="mCargaAguda">�</div>
+                            <div class="metrica-value" id="mCargaAguda">—</div>
                             <div class="metrica-sub" id="mCargaAgudaSub"></div>
                         </div>
                         <div class="metrica-card">
                             <div class="metrica-label">ACWR <span
                                     style="font-weight:400;text-transform:none;letter-spacing:0;">(aguda ÷
                                     crônica)</span></div>
-                            <div class="metrica-value" id="mAcwr">�</div>
+                            <div class="metrica-value" id="mAcwr">—</div>
                             <div class="metrica-sub" id="mAcwrStatus"></div>
                         </div>
                         <div class="metrica-card">
                             <div class="metrica-label">Monotonia</div>
-                            <div class="metrica-value" id="mMonotonia">�</div>
+                            <div class="metrica-value" id="mMonotonia">—</div>
                             <div class="metrica-sub" id="mMonotoniaSub"></div>
                         </div>
                         <div class="card metrica-card">
                             <div class="metrica-label">Strain Semanal</div>
-                            <div class="metrica-value" id="mStrain">�</div>
+                            <div class="metrica-value" id="mStrain">—</div>
                             <div class="metrica-sub" id="mStrainSub"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Linha 2: gr�fico + distribui��o -->
+                <!-- Linha 2: gráfico + distribuição -->
                 <div class="charts-row">
                     <div class="card chart-card">
-                        <div class="section-title"><i class="ti ti-timeline"></i> Carga Semanal � Últimas 6 Semanas
+                        <div class="section-title"><i class="ti ti-timeline"></i> Carga Semanal — Últimas 6 Semanas
                         </div>
                         <canvas id="chartCarga" height="120"></canvas>
                     </div>
                     <div class="card chart-card">
-                        <div class="section-title"><i class="ti ti-chart-pie"></i> Distribui��o por Tipo (semana)</div>
+                        <div class="section-title"><i class="ti ti-chart-pie"></i> Distribuição por Tipo (semana)</div>
                         <div class="dist-bars" id="distTipos"></div>
                         <div id="faseMesociclo" style="margin-top:14px;"></div>
                     </div>
@@ -1514,7 +1514,7 @@
     <div class="modal-overlay" id="modalTreino">
         <div class="modal-content modal-treino">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTreinoTitle">Nova Sess�o de Treino</h2>
+                <h2 class="modal-title" id="modalTreinoTitle">Nova Sessão de Treino</h2>
                 <div style="display:flex; gap:10px; align-items:center;">
                     <button id="btnDownloadPDF" class="btn"
                         style="padding: 6px 10px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); display:none;">
@@ -1531,25 +1531,25 @@
 
             <!-- EDIT PANEL (form) -->
             <div id="treinoEditPanel">
-                <!-- Data + Hor�rio -->
+                <!-- Data + Horário -->
                 <div class="row-2" style="margin-bottom:16px;">
                     <div class="form-group" style="margin:0;">
-                        <label>Data da Sess�o</label>
+                        <label>Data da Sessão</label>
                         <input type="date" id="treinoData" class="form-control">
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>Hor�rio de In�cio</label>
+                        <label>Horário de Início</label>
                         <input type="time" id="treinoHorario" class="form-control" value="17:00">
                     </div>
                 </div>
 
-                <!-- T�tulo -->
+                <!-- Título -->
                 <div class="form-group">
-                    <label>T�tulo da Sess�o</label>
+                    <label>Título da Sessão</label>
                     <div class="titulo-selector">
                         <div class="custom-dropdown" id="treinoTituloDropdown">
                             <div class="dropdown-trigger" onclick="toggleTitleDropdown()">
-                                <span id="dropdownSelectedTitle">� Selecione ou crie um treino...</span>
+                                <span id="dropdownSelectedTitle">— Selecione ou crie um treino...</span>
                                 <i class="ti ti-chevron-down"></i>
                             </div>
                             <div class="dropdown-menu" id="dropdownMenu">
@@ -1564,16 +1564,16 @@
                     </div>
                 </div>
 
-                <!-- Classifica��o Macro -->
+                <!-- Classificação Macro -->
                 <div class="form-group" style="margin-bottom:16px;">
-                    <label>Classifica��o do Treino</label>
+                    <label>Classificação do Treino</label>
                     <div style="display:flex; gap:16px; margin-top:5px;">
                         <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
                             <input type="radio" name="treinoMacro" value="taekwondo" checked
                                 onchange="updateTipoOpcoes()"> Taekwondo
                         </label>
                         <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
-                            <input type="radio" name="treinoMacro" value="fisico" onchange="updateTipoOpcoes()"> F�sico
+                            <input type="radio" name="treinoMacro" value="fisico" onchange="updateTipoOpcoes()"> Físico
                         </label>
                     </div>
                 </div>
@@ -1581,33 +1581,33 @@
                 <!-- Tipo -->
                 <div class="row-2" style="margin-bottom:16px;">
                     <div class="form-group" style="margin:0;">
-                        <label>Tipo Espec�fico</label>
+                        <label>Tipo Específico</label>
                         <div class="tipo-selector" id="tipoSelectorContainer">
                             <!-- Populated by JS -->
                         </div>
                         <input type="hidden" id="treinoTipo" value="tecnico">
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>Prote��o?</label>
+                        <label>Proteção?</label>
                         <div style="display:flex; gap:10px; margin-top:5px;">
                             <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
                                 <input type="radio" name="treinoProtecao" value="sim" checked> Sim
                             </label>
                             <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
-                                <input type="radio" name="treinoProtecao" value="nao"> N�o
+                                <input type="radio" name="treinoProtecao" value="nao"> Não
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Dura��o + PSE -->
+                <!-- Duração + PSE -->
                 <div class="row-2" style="margin-bottom:20px;">
                     <div class="form-group" style="margin:0;">
-                        <label>Dura��o Total (min)</label>
+                        <label>Duração Total (min)</label>
                         <input type="number" id="treinoDuracao" class="form-control" value="90" min="10" max="360">
                     </div>
                     <div class="form-group" style="margin:0;">
-                        <label>PSE Planejada (1�10)</label>
+                        <label>PSE Planejada (1–10)</label>
                         <input type="range" id="treinoPse" min="1" max="10" value="6"
                             style="width:100%; margin-top:8px;"
                             oninput="document.getElementById('pseVal').innerText = this.value">
@@ -1624,11 +1624,11 @@
                     <i class="ti ti-plus"></i> Adicionar Bloco
                 </button>
 
-                <!-- Observa��es -->
-                <div class="section-label"><i class="ti ti-notes" style="margin-right:6px;"></i>Observa��es</div>
+                <!-- Observações -->
+                <div class="section-label"><i class="ti ti-notes" style="margin-right:6px;"></i>Observações</div>
                 <div class="form-group">
                     <textarea id="treinoObs" class="form-control" rows="3"
-                        placeholder="Anota��es, foco do treino, condi��es especiais..."></textarea>
+                        placeholder="Anotações, foco do treino, condições especiais..."></textarea>
                 </div>
 
                 <!-- Edit Actions -->
@@ -1640,7 +1640,7 @@
                     <div style="display:flex;gap:12px;margin-left:auto;">
                         <button class="btn" id="btnCancelarEdit" onclick="cancelarEdicao()">Cancelar</button>
                         <button class="btn btn-primary" onclick="saveTreino()">
-                            <i class="ti ti-device-floppy"></i> Salvar Sess�o
+                            <i class="ti ti-device-floppy"></i> Salvar Sessão
                         </button>
                     </div>
                 </div>
@@ -1658,16 +1658,16 @@
             <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
                 <div class="form-group">
                     <label class="form-label">Nome do Mesociclo</label>
-                    <input id="mesoNome" class="form-control" placeholder="Ex: Pr�-Temporada Mar�o/Abril">
+                    <input id="mesoNome" class="form-control" placeholder="Ex: Pré-Temporada Março/Abril">
                 </div>
                 <div class="form-group">
                     <label class="form-label"><i class="ti ti-trophy"
-                            style="margin-right:4px;color:var(--yellow);"></i>Competi��o Alvo</label>
-                    <input id="mesoObjetivo" class="form-control" placeholder="Ex: Grand Slam de Bras�lia">
+                            style="margin-right:4px;color:var(--yellow);"></i>Competição Alvo</label>
+                    <input id="mesoObjetivo" class="form-control" placeholder="Ex: Grand Slam de Brasília">
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                     <div class="form-group">
-                        <label class="form-label">Data In�cio</label>
+                        <label class="form-label">Data Início</label>
                         <input id="mesoDataInicio" type="date" class="form-control">
                     </div>
                     <div class="form-group">
@@ -1677,7 +1677,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Carga Alvo Total (CARGA) <span
-                            style="font-weight:400;color:var(--text-muted);">� opcional, ser�distribu�da nas
+                            style="font-weight:400;color:var(--text-muted);">— opcional, será distribuída nas
                             semanas</span></label>
                     <input id="mesoCargaTotal" type="number" class="form-control" placeholder="Ex: 4000" min="0">
                 </div>
@@ -1706,20 +1706,20 @@
         let selectedTipo = 'tecnico';
 
         const TIPOS_TAEKWONDO = [
-            { id: 'tatico', label: 'T�tico', icon: 'ti-chess' },
-            { id: 'tecnico', label: 'T�cnico', icon: 'ti-focus' },
-            { id: 'tecnico_tatico', label: 'T�cnico/T�tico', icon: 'ti-arrows-cross' },
-            { id: 'simulatorio', label: 'Simulat�rio', icon: 'ti-swords' },
+            { id: 'tatico', label: 'Tático', icon: 'ti-chess' },
+            { id: 'tecnico', label: 'Técnico', icon: 'ti-focus' },
+            { id: 'tecnico_tatico', label: 'Técnico/Tático', icon: 'ti-arrows-cross' },
+            { id: 'simulatorio', label: 'Simulatório', icon: 'ti-swords' },
             { id: 'sparring', label: 'Sparring', icon: 'ti-boxing-glove' }
         ];
 
         const TIPOS_FISICO = [
-            { id: 'forca', label: 'For�a', icon: 'ti-barbell' },
-            { id: 'potencia', label: 'Pot�ncia', icon: 'ti-bolt' },
-            { id: 'transferencia', label: 'Transfer�ncia', icon: 'ti-exchange' },
+            { id: 'forca', label: 'Força', icon: 'ti-barbell' },
+            { id: 'potencia', label: 'Potência', icon: 'ti-bolt' },
+            { id: 'transferencia', label: 'Transferência', icon: 'ti-exchange' },
             { id: 'hiit', label: 'HIIT', icon: 'ti-flame' },
             { id: 'cardio', label: 'Cardio', icon: 'ti-heart-rate-monitor' },
-            { id: 'glicolitico', label: 'Glicol�tico', icon: 'ti-activity' },
+            { id: 'glicolitico', label: 'Glicolítico', icon: 'ti-activity' },
             { id: 'regenerativo', label: 'Regenerativo', icon: 'ti-battery-charging' },
             { id: 'mobilidade', label: 'Mobilidade', icon: 'ti-stretching' },
             { id: 'flexibilidade', label: 'Flexibilidade', icon: 'ti-yoga' },
@@ -1727,10 +1727,10 @@
         ];
 
         const TIPO_LABELS = {
-            forca: 'For�a', potencia: 'Pot�ncia', transferencia: 'Transfer�ncia', hiit: 'HIIT', cardio: 'Cardio',
-            glicolitico: 'Glicol�tico', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
-            tatico: 'T�tico', tecnico: 'T�cnico', tecnico_tatico: 'T�cnico/T�tico', simulatorio: 'Simulat�rio', sparring: 'Sparring',
-            fisico: 'F�sico', recuperacao: 'Recupera��o', competicao: 'Competi��o', reuniao: 'Reuni�o'
+            forca: 'Força', potencia: 'Potência', transferencia: 'Transferência', hiit: 'HIIT', cardio: 'Cardio',
+            glicolitico: 'Glicolítico', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
+            tatico: 'Tático', tecnico: 'Técnico', tecnico_tatico: 'Técnico/Tático', simulatorio: 'Simulatório', sparring: 'Sparring',
+            fisico: 'Físico', recuperacao: 'Recuperação', competicao: 'Competição', reuniao: 'Reunião'
         };
 
         function updateTipoOpcoes() {
@@ -1759,8 +1759,8 @@
             }
         }
 
-        const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b'];
-        const MESES = ['Janeiro', 'Fevereiro', 'Mar�o', 'Abril', 'Maio', 'Junho',
+        const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
             'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
         // ============================================================
@@ -1796,7 +1796,7 @@
             document.getElementById('btnMonth').classList.toggle('active', v === 'month');
             document.getElementById('btnMeso').classList.toggle('active', v === 'meso');
 
-            // Toggle cal-nav visibility (n�o faz sentido em Mesociclo)
+            // Toggle cal-nav visibility (não faz sentido em Mesociclo)
             const calNav = document.querySelector('.cal-nav');
             if (calNav) calNav.style.display = v === 'meso' ? 'none' : '';
 
@@ -1836,7 +1836,7 @@
                 document.getElementById('viewMonth').style.display = '';
                 renderMonth();
             }
-            // Atualizar painel de periodiza��o
+            // Atualizar painel de periodização
             renderPainelCarga();
         }
 
@@ -1860,7 +1860,7 @@
             const s = weekStart, e = weekEnd;
             const sStr = `${s.getDate()} ${s.getMonth() !== e.getMonth() ? MESES[s.getMonth()].slice(0, 3) + ' ' : ''}`;
             const eStr = `${e.getDate()} ${MESES[e.getMonth()]}`;
-            document.getElementById('calTitle').innerText = `${sStr}� ${eStr}, ${e.getFullYear()}`;
+            document.getElementById('calTitle').innerText = `${sStr}– ${eStr}, ${e.getFullYear()}`;
 
             const today = toDateStr(new Date());
             const container = document.getElementById('viewWeek');
@@ -1911,7 +1911,7 @@
             const startOffset = (firstDay.getDay() + 6) % 7;
 
             let html = '<div class="month-grid">';
-            ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b', 'Dom'].forEach(d => {
+            ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'].forEach(d => {
                 html += `<div class="month-header-cell">${d}</div>`;
             });
 
@@ -1974,13 +1974,13 @@
             const protText = protecao === 'sim' ? 'Com Prot.' : 'Sem Prot.';
             const tipoText = TIPO_LABELS[t.tipo] || t.tipo;
 
-            // Carga Foster: PSE × Dura��o
+            // Carga Foster: PSE × Duração
             let cargaHtml = '';
             if (t.cargaTreino) {
                 const c = t.cargaTreino;
                 const cColor = c >= 1000 ? 'var(--red)' : c >= 500 ? 'var(--yellow)' : 'var(--green)';
                 const cBg = c >= 1000 ? 'rgba(239,68,68,0.15)' : c >= 500 ? 'rgba(245,158,11,0.15)' : 'rgba(16,185,129,0.15)';
-                cargaHtml = `<span style="font-size:10px; background:${cBg}; color:${cColor}; padding:1px 5px; border-radius:4px; font-weight:700;" title="Carga Foster: PSE × Dura��o">${c} CARGA</span>`;
+                cargaHtml = `<span style="font-size:10px; background:${cBg}; color:${cColor}; padding:1px 5px; border-radius:4px; font-weight:700;" title="Carga Foster: PSE × Duração">${c} CARGA</span>`;
             }
 
             return `<div class="treino-chip tipo-${t.tipo}"
@@ -2028,7 +2028,7 @@
         }
 
         function onDayDragLeave(event) {
-            // S�remove se sair do pr�prio body (n�o de filho para filho)
+            // Só remove se sair do próprio body (não de filho para filho)
             if (!event.currentTarget.contains(event.relatedTarget)) {
                 event.currentTarget.classList.remove('drag-over');
             }
@@ -2084,7 +2084,7 @@
             const uniqueTitles = (db.treinos || [])
                 .filter(t => t.turmaId === turmaId)
                 .slice().reverse()
-                .map(t => (t.titulo || '').replace(/\s*\(C�pia\)\s*$/i, '').trim())
+                .map(t => (t.titulo || '').replace(/\s*\(Cópia\)\s*$/i, '').trim())
                 .filter(t => t && !seen.has(t) && seen.add(t));
 
             let html = '';
@@ -2092,7 +2092,7 @@
             if (uniqueTitles.length === 0) {
                 html = `
                     <div class="dropdown-item new-title" onclick="selectTitleOption('__novo__')">
-                        <i class="ti ti-plus" style="margin-right:8px;"></i> Novo t�tulo...
+                        <i class="ti ti-plus" style="margin-right:8px;"></i> Novo título...
                     </div>
                 `;
             } else {
@@ -2100,7 +2100,7 @@
                     html += `
                         <div class="dropdown-item" onclick="selectTitleOption('${t.replace(/'/g, "\\'")}')">
                             <span class="item-text">${t}</span>
-                            <button type="button" class="btn-delete-title" onclick="event.stopPropagation(); deleteSavedTitle('${t.replace(/'/g, "\\'")}')" title="Excluir t�tulo">
+                            <button type="button" class="btn-delete-title" onclick="event.stopPropagation(); deleteSavedTitle('${t.replace(/'/g, "\\'")}')" title="Excluir título">
                                 <i class="ti ti-trash"></i>
                             </button>
                         </div>
@@ -2108,7 +2108,7 @@
                 });
                 html += `
                     <div class="dropdown-item new-title" onclick="selectTitleOption('__novo__')">
-                        <i class="ti ti-plus" style="margin-right:8px;"></i> Novo t�tulo...
+                        <i class="ti ti-plus" style="margin-right:8px;"></i> Novo título...
                     </div>
                 `;
             }
@@ -2120,7 +2120,7 @@
                 hiddenValue.value = currentTitle;
                 onTitleSelectChange(currentTitle);
             } else {
-                triggerText.innerText = '� Selecione ou crie um treino...';
+                triggerText.innerText = '— Selecione ou crie um treino...';
                 hiddenValue.value = '';
                 onTitleSelectChange('');
             }
@@ -2132,9 +2132,9 @@
             const menu = document.getElementById('dropdownMenu');
 
             if (val === '__novo__') {
-                triggerText.innerHTML = '<i class="ti ti-plus" style="margin-right:8px;"></i> Novo t�tulo...';
+                triggerText.innerHTML = '<i class="ti ti-plus" style="margin-right:8px;"></i> Novo título...';
             } else {
-                triggerText.innerText = val || '� Selecione ou crie um treino...';
+                triggerText.innerText = val || '— Selecione ou crie um treino...';
             }
 
             hiddenValue.value = val;
@@ -2186,7 +2186,7 @@
         function deleteSavedTitle(title) {
             if (!title) return;
 
-            if (!confirm(`Deseja excluir o t�tulo "${title}" das sugest�es? Isso remover�o nome desta sess�o de todos os treinos desta equipe que a utilizam.`)) {
+            if (!confirm(`Deseja excluir o título "${title}" das sugestões? Isso removerá o nome desta sessão de todos os treinos desta equipe que a utilizam.`)) {
                 return;
             }
 
@@ -2195,18 +2195,18 @@
 
             db.treinos.forEach(t => {
                 if (t.turmaId === turmaId && t.titulo === title) {
-                    t.titulo = ""; // Remove o t�tulo para que n�o seja mais lincado
+                    t.titulo = ""; // Remove o título para que não seja mais lincado
                     count++;
                 }
             });
 
             saveDB();
 
-            // Se o t�tulo deletado era o que estava selecionado, limpa
+            // Se o título deletado era o que estava selecionado, limpa
             const currentSelected = document.getElementById('treinoTituloValue').value;
             populateTitleSelect(currentSelected === title ? null : currentSelected);
 
-            showToast(`T�tulo removido. ${count} treino(s) atualizado(s).`);
+            showToast(`Título removido. ${count} treino(s) atualizado(s).`);
         }
 
         // ============================================================
@@ -2214,7 +2214,7 @@
         // ============================================================
         function openModalTreino(dateStr) {
             document.getElementById('treinoEditId').value = '';
-            document.getElementById('modalTreinoTitle').innerText = 'Nova Sess�o de Treino';
+            document.getElementById('modalTreinoTitle').innerText = 'Nova Sessão de Treino';
             document.getElementById('btnDeleteTreino').style.display = 'none';
             document.getElementById('treinoData').value = dateStr;
             document.getElementById('treinoHorario').value = '17:00';
@@ -2300,7 +2300,7 @@
                     ${t.horario ? `<span class="view-meta-item"><i class="ti ti-clock"></i> ${t.horario}</span>` : ''}
                     <span class="view-tipo-badge tipo-${t.tipo}">${TIPO_LABELS[t.tipo] || t.tipo}</span>
                     <span class="prot-badge ${protecao === 'sim' ? 'prot-sim' : 'prot-nao'}">
-                        ${protecao === 'sim' ? 'Com Prote��o' : 'Sem Prote��o'}
+                        ${protecao === 'sim' ? 'Com Proteção' : 'Sem Proteção'}
                     </span>
                 </div>
                 <div class="view-stats-row">
@@ -2309,13 +2309,13 @@
                     ${t.cargaTreino ? (() => {
                     const c = t.cargaTreino;
                     const cColor = c >= 1000 ? 'var(--red)' : c >= 500 ? 'var(--yellow)' : 'var(--green)';
-                    return `<div class="view-stat" title="Carga Foster = PSE × Dura��o (Unidades Arbitr�rias)" style="color:${cColor};font-weight:700;">
+                    return `<div class="view-stat" title="Carga Foster = PSE × Duração (Unidades Arbitrárias)" style="color:${cColor};font-weight:700;">
                             <i class="ti ti-bolt" style="color:${cColor};"></i> ${c} CARGA
                         </div>`;
                 })() : ''}
                 </div>
                 ${blocosHtml ? `<div class="view-section-label">Blocos de Trabalho</div>${blocosHtml}` : ''}
-                ${t.obs ? `<div class="view-section-label">Observa��es</div><div class="view-obs-text">${t.obs}</div>` : ''}
+                ${t.obs ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
                 <div class="view-actions">
                     <button class="btn" onclick="deleteTreinoAtual()" style="color:var(--red);background:rgba(239,68,68,0.1);">
                         <i class="ti ti-trash"></i> Excluir
@@ -2428,7 +2428,7 @@
                 doc.setPage(i);
                 doc.setFontSize(8);
                 doc.setTextColor(150, 150, 150);
-                doc.text(`Gerado por TKD Scout - P�gina ${i} de ${pageCount}`, 105, 290, { align: 'center' });
+                doc.text(`Gerado por TKD Scout - Página ${i} de ${pageCount}`, 105, 290, { align: 'center' });
             }
 
             doc.save(`treino_${t.titulo.replace(/\s+/g, '_')}_${dataFmt.replace(/\//g, '-')}.pdf`);
@@ -2511,28 +2511,28 @@
                 <div class="bloco-header">
                     <i class="ti ti-grip-vertical bloco-drag"></i>
                     <input type="text" class="form-control bloco-nome" style="flex:2;" placeholder="Nome do bloco (ex: Aquecimento)" value="${nome}">
-                    <input type="number" class="form-control bloco-dur" style="width:80px;" min="1" max="120" value="${dur}" title="Dura��o (min)">
+                    <input type="number" class="form-control bloco-dur" style="width:80px;" min="1" max="120" value="${dur}" title="Duração (min)">
                     <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">min</span>
                     <button class="btn-icon" onclick="document.getElementById('bloco_${id}').remove()" title="Remover bloco">
                         <i class="ti ti-trash" style="color:var(--red);"></i>
                     </button>
                 </div>
-                <textarea class="form-control bloco-desc" rows="2" placeholder="Descri��o / orienta��es deste bloco..." style="margin-bottom:10px;">${desc}</textarea>
-                <div style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;">Exerc�cios</div>
+                <textarea class="form-control bloco-desc" rows="2" placeholder="Descrição / orientações deste bloco..." style="margin-bottom:10px;">${desc}</textarea>
+                <div style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;">Exercícios</div>
                 <div class="exercicios-container" id="exContainer_${id}"></div>
                 <div class="ex-add-row">
                     <input type="text" list="exLib_${id}" id="exNome_${id}" class="form-control ex-nome-input"
-                        placeholder="Nome do exerc�cio..."
+                        placeholder="Nome do exercício..."
                         onkeydown="if(event.key==='Enter'){event.preventDefault();addExercicio(${id});}">
                     <datalist id="exLib_${id}"></datalist>
                     <select id="exTipo_${id}" class="form-control ex-tipo-sel" onchange="updateExValInput(${id})">
-                        <option value="series">S�ries × Rep</option>
+                        <option value="series">Séries × Rep</option>
                         <option value="tempo">Tempo</option>
                         <option value="quantidade">Quantidade</option>
                         <option value="texto">Texto livre</option>
                     </select>
                     <div id="exValWrap_${id}" class="ex-val-wrap">
-                        <input type="number" id="exSets_${id}" class="form-control" min="1" max="20" value="3" style="width:48px;" title="S�ries">
+                        <input type="number" id="exSets_${id}" class="form-control" min="1" max="20" value="3" style="width:48px;" title="Séries">
                         <span class="ex-sep">×</span>
                         <input type="number" id="exReps_${id}" class="form-control" min="1" max="200" value="10" style="width:52px;" title="Reps">
                     </div>
@@ -2541,7 +2541,7 @@
                     </button>
                 </div>
                 <input type="text" id="exObs_${id}" class="form-control ex-obs-input"
-                    placeholder="Observa��o ou link do exerc�cio... (opcional)">`;
+                    placeholder="Observação ou link do exercício... (opcional)">`;
 
             document.getElementById('blocosContainer').appendChild(div);
             populateExLibDatalist(id);
@@ -2556,17 +2556,17 @@
             const wrap = document.getElementById(`exValWrap_${blocoId}`);
             if (tipo === 'series') {
                 wrap.innerHTML = `
-                    <input type="number" id="exSets_${blocoId}" class="form-control" min="1" max="20" value="3" style="width:48px;" title="S�ries">
+                    <input type="number" id="exSets_${blocoId}" class="form-control" min="1" max="20" value="3" style="width:48px;" title="Séries">
                     <span class="ex-sep">×</span>
                     <input type="number" id="exReps_${blocoId}" class="form-control" min="1" max="200" value="10" style="width:52px;" title="Reps">`;
             } else if (tipo === 'tempo') {
-                wrap.innerHTML = `<input type="text" id="exVal_${blocoId}" class="form-control" placeholder="ex: 3:00" style="width:80px;" title="Dura��o (mm:ss ou seg)">`;
+                wrap.innerHTML = `<input type="text" id="exVal_${blocoId}" class="form-control" placeholder="ex: 3:00" style="width:80px;" title="Duração (mm:ss ou seg)">`;
             } else if (tipo === 'quantidade') {
                 wrap.innerHTML = `
                     <input type="number" id="exVal_${blocoId}" class="form-control" min="1" value="10" style="width:56px;" title="Quantidade">
                     <input type="text" id="exUnit_${blocoId}" class="form-control" placeholder="unid." style="width:60px;" title="Unidade (m, kg, vezes...)">`;
             } else {
-                wrap.innerHTML = `<input type="text" id="exVal_${blocoId}" class="form-control" placeholder="Descri��o..." style="width:160px;">`;
+                wrap.innerHTML = `<input type="text" id="exVal_${blocoId}" class="form-control" placeholder="Descrição..." style="width:160px;">`;
             }
         }
 
@@ -2697,8 +2697,8 @@
 
             const clone = JSON.parse(JSON.stringify(original));
             clone.id = Date.now();
-            // Garante que o t�tulo seja identico mas limpo de sufixos de c�pia antigos
-            clone.titulo = (clone.titulo || '').replace(/\s*\(C�pia\)\s*$/i, '').trim();
+            // Garante que o título seja identico mas limpo de sufixos de cópia antigos
+            clone.titulo = (clone.titulo || '').replace(/\s*\(Cópia\)\s*$/i, '').trim();
 
             db.treinos.push(clone);
             saveDB();
@@ -2709,7 +2709,7 @@
 
         function saveTreino(e) {
             const titulo = getTituloFinal();
-            if (!titulo) { alert('Digite ou selecione um t�tulo para a sess�o.'); return; }
+            if (!titulo) { alert('Digite ou selecione um título para a sessão.'); return; }
 
             const editId = document.getElementById('treinoEditId').value;
             const trainingId = editId ? parseInt(editId) : Date.now();
@@ -2718,7 +2718,7 @@
 
             const duracaoMins = parseInt(document.getElementById('treinoDuracao').value) || 90;
             const psePlanejada = parseInt(document.getElementById('treinoPse').value);
-            // C�lculo de Foster: Carga Total (CARGA) = PSE (Borg 0-10) × Dura��o (min)
+            // Cálculo de Foster: Carga Total (CARGA) = PSE (Borg 0-10) × Duração (min)
             const cargaTreino = psePlanejada * duracaoMins;
 
             const treino = {
@@ -2747,7 +2747,7 @@
 
             saveDB();
             renderCalendar();
-            showToast(`Sess�o "${titulo}" salva com sucesso!`);
+            showToast(`Sessão "${titulo}" salva com sucesso!`);
 
             // Re-render view panel so next time it opens in view mode
             document.getElementById('modalTreinoTitle').innerText = treino.titulo;
@@ -2761,12 +2761,12 @@
         function deleteTreinoAtual() {
             const editId = parseInt(document.getElementById('treinoEditId').value);
             if (!editId) return;
-            if (!confirm('Excluir esta sess�o de treino?')) return;
+            if (!confirm('Excluir esta sessão de treino?')) return;
             db.treinos = db.treinos.filter(t => t.id !== editId);
             saveDB();
             closeModalTreino();
             renderCalendar();
-            showToast('Treino exclu�do.');
+            showToast('Treino excluído.');
         }
 
         // ============================================================
@@ -2783,10 +2783,10 @@
         }
 
         // ============================================================
-        //  PERIODIZAÇÃO � FUNÇÕES DE CÁLCULO
+        //  PERIODIZAÇÃO — FUNÇÕES DE CÁLCULO
         // ============================================================
 
-        /** Retorna data de in�cio de semana (segunda-feira) para uma data */
+        /** Retorna data de início de semana (segunda-feira) para uma data */
         function getWeekStartFor(date) {
             const d = new Date(date);
             d.setHours(0, 0, 0, 0);
@@ -2796,7 +2796,7 @@
             return d;
         }
 
-        /** Soma todas as cargas (CARGA) de treinos da semana que come�a em weekStart */
+        /** Soma todas as cargas (CARGA) de treinos da semana que começa em weekStart */
         function calcWeekLoad(weekStart) {
             const ws = toDateStr(weekStart);
             const we = new Date(weekStart);
@@ -2807,7 +2807,7 @@
                 .reduce((sum, t) => sum + (t.cargaTreino || 0), 0);
         }
 
-        /** Retorna cargas das �ltimas N semanas (mais recente primeiro) */
+        /** Retorna cargas das últimas N semanas (mais recente primeiro) */
         function calcWeekLoads(n, referenceDate) {
             const ref = getWeekStartFor(referenceDate || new Date());
             const loads = [];
@@ -2816,10 +2816,10 @@
                 ws.setDate(ref.getDate() - i * 7);
                 loads.push({ weekStart: ws, load: calcWeekLoad(ws) });
             }
-            return loads; // �ndice 0 = semana atual
+            return loads; // índice 0 = semana atual
         }
 
-        /** ACWR = Carga Aguda (semana 0) / Carga Crônica (m�dia semanas 0-3) */
+        /** ACWR = Carga Aguda (semana 0) / Carga Crônica (média semanas 0-3) */
         function calcACWR(weekLoads) {
             const acute = weekLoads[0]?.load || 0;
             const chronic4 = weekLoads.slice(0, 4).map(w => w.load);
@@ -2827,7 +2827,7 @@
             return { acute, chronic: Math.round(chronic), acwr: chronic > 0 ? +(acute / chronic).toFixed(2) : null };
         }
 
-        /** Monotonia = m�dia_diaria / DP_diaria (�ltimos 7 dias) */
+        /** Monotonia = média_diaria / DP_diaria (últimos 7 dias) */
         function calcMonotonia(referenceDate) {
             const ref = new Date(referenceDate || new Date());
             const dailyLoads = [];
@@ -2847,28 +2847,28 @@
             return { mean: Math.round(mean), sd: Math.round(sd), mono };
         }
 
-        /** Fase do mesociclo com base no ACWR e varia��o da carga */
+        /** Fase do mesociclo com base no ACWR e variação da carga */
         function getWeekPhase(acwr, currentLoad, previousLoad) {
             if (acwr === null) return null;
-            // Detec��o de taper/competi��o: carga muito baixa ap�s carga alta
+            // Detecção de taper/competição: carga muito baixa após carga alta
             if (currentLoad < previousLoad * 0.6 && previousLoad > 200) {
-                return { label: 'Recupera��o / Taper', icon: 'ti-heart-rate-monitor', cls: 'fase-recuperacao' };
+                return { label: 'Recuperação / Taper', icon: 'ti-heart-rate-monitor', cls: 'fase-recuperacao' };
             }
             if (acwr > 1.3) {
-                return { label: 'Intensifica��o / Choque', icon: 'ti-bolt', cls: 'fase-intensificacao' };
+                return { label: 'Intensificação / Choque', icon: 'ti-bolt', cls: 'fase-intensificacao' };
             }
             if (acwr < 0.7) {
-                return { label: 'Recupera��o', icon: 'ti-heart-rate-monitor', cls: 'fase-recuperacao' };
+                return { label: 'Recuperação', icon: 'ti-heart-rate-monitor', cls: 'fase-recuperacao' };
             }
             // Progresso normal
             if (currentLoad >= previousLoad) {
-                return { label: 'Acumula��o / Volume', icon: 'ti-trending-up', cls: 'fase-acumulacao' };
+                return { label: 'Acumulação / Volume', icon: 'ti-trending-up', cls: 'fase-acumulacao' };
             }
-            return { label: 'Manuten��o', icon: 'ti-equal', cls: 'fase-recuperacao' };
+            return { label: 'Manutenção', icon: 'ti-equal', cls: 'fase-recuperacao' };
         }
 
         // ============================================================
-        //  PERIODIZAÇÃO � RENDER
+        //  PERIODIZAÇÃO — RENDER
         // ============================================================
         let _cargaChartObj = null;
 
@@ -2897,17 +2897,17 @@
             const acwrEl = document.getElementById('mAcwr');
             const acwrStatusEl = document.getElementById('mAcwrStatus');
             if (acwr === null) {
-                acwrEl.textContent = '�';
+                acwrEl.textContent = '—';
                 acwrEl.className = 'metrica-value';
                 acwrStatusEl.textContent = 'Dados insuficientes';
             } else {
                 acwrEl.textContent = acwr.toFixed(2);
                 if (acwr >= 0.8 && acwr <= 1.3) {
                     acwrEl.className = 'metrica-value acwr-verde';
-                    acwrStatusEl.innerHTML = '🟢 Zona segura (0.80�1.30)';
+                    acwrStatusEl.innerHTML = '🟢 Zona segura (0.80–1.30)';
                 } else if ((acwr >= 0.5 && acwr < 0.8) || (acwr > 1.3 && acwr <= 1.5)) {
                     acwrEl.className = 'metrica-value acwr-amarelo';
-                    acwrStatusEl.innerHTML = '🟡 Aten��o � monitorar';
+                    acwrStatusEl.innerHTML = '🟡 Atenção — monitorar';
                 } else {
                     acwrEl.className = 'metrica-value acwr-vermelho';
                     acwrStatusEl.innerHTML = acwr > 1.5 ? '🔴 Risco de overtraining' : '🔴 Subcarga / destreinamento';
@@ -2918,13 +2918,13 @@
             const monoEl = document.getElementById('mMonotonia');
             monoEl.textContent = mono.toFixed(2);
             monoEl.className = 'metrica-value ' + (mono > 2 ? 'acwr-vermelho' : mono > 1.5 ? 'acwr-amarelo' : 'acwr-verde');
-            document.getElementById('mMonotoniaSub').textContent = mono > 2 ? 'Alta � est�mulo repetitivo' : mono > 1.5 ? 'Moderada' : 'Boa varia��o';
+            document.getElementById('mMonotoniaSub').textContent = mono > 2 ? 'Alta — estímulo repetitivo' : mono > 1.5 ? 'Moderada' : 'Boa variação';
 
             // --- Strain ---
             const strainEl = document.getElementById('mStrain');
             strainEl.textContent = strain;
             strainEl.className = 'metrica-value ' + (strain > 3000 ? 'acwr-vermelho' : strain > 1500 ? 'acwr-amarelo' : 'acwr-verde');
-            document.getElementById('mStrainSub').textContent = strain > 3000 ? 'Elevado � risco overtraining' : strain > 1500 ? 'Moderado' : 'Controlado';
+            document.getElementById('mStrainSub').textContent = strain > 3000 ? 'Elevado — risco overtraining' : strain > 1500 ? 'Moderado' : 'Controlado';
 
             // --- Fase do mesociclo ---
             const faseEl = document.getElementById('faseMesociclo');
@@ -2936,10 +2936,10 @@
                 faseEl.innerHTML = '';
             }
 
-            // --- Distribui��o por tipo ---
+            // --- Distribuição por tipo ---
             renderDistTipos();
 
-            // --- Gr�fico ---
+            // --- Gráfico ---
             renderCargaChart(weekLoads6, chronic);
         }
 
@@ -2992,7 +2992,7 @@
             const ctx = document.getElementById('chartCarga');
             if (!ctx || typeof Chart === 'undefined') return;
 
-            // Destruir gr�fico anterior se existir
+            // Destruir gráfico anterior se existir
             if (_cargaChartObj) { _cargaChartObj.destroy(); _cargaChartObj = null; }
 
             const labels = weekLoads6.map((w, i) => {
@@ -3018,7 +3018,7 @@
                         },
                         {
                             type: 'line',
-                            label: 'Carga Crônica (m�dia 4 sem.)',
+                            label: 'Carga Crônica (média 4 sem.)',
                             data: chronicLine,
                             borderColor: 'rgba(245,158,11,0.9)',
                             borderWidth: 2,
@@ -3050,19 +3050,19 @@
         //  PLANEJADOR DE MESOCICLO
         // ============================================================
 
-        // Fases do mesociclo � termos usados no Brasil
+        // Fases do mesociclo — termos usados no Brasil
         const FASES_MESO = [
-            { value: 'ordinario', label: 'Ordin�rio', color: '#c084fc' }, // base/fundamento
-            { value: 'acumulacao', label: 'Acumula��o', color: '#60a5fa' }, // volume
+            { value: 'ordinario', label: 'Ordinário', color: '#c084fc' }, // base/fundamento
+            { value: 'acumulacao', label: 'Acumulação', color: '#60a5fa' }, // volume
             { value: 'choque', label: 'Choque', color: '#f97316' }, // sobrecarga
-            { value: 'intensificacao', label: 'Intensifica��o', color: '#facc15' }, // intensidade
-            { value: 'transformacao', label: 'Transforma��o', color: '#a3e635' }, // transmu��o
-            { value: 'precompetitivo', label: 'Pr�-Competitivo', color: '#fb923c' }, // ajuste final
-            { value: 'competicao', label: 'Competi��o', color: '#f87171' }, // competi��o
-            { value: 'recuperacao', label: 'Recupera��o', color: '#34d399' }, // taper/descanso
-            { value: 'transicao', label: 'Transi��o', color: '#94a3b8' }, // entre mesociclos
+            { value: 'intensificacao', label: 'Intensificação', color: '#facc15' }, // intensidade
+            { value: 'transformacao', label: 'Transformação', color: '#a3e635' }, // transmução
+            { value: 'precompetitivo', label: 'Pré-Competitivo', color: '#fb923c' }, // ajuste final
+            { value: 'competicao', label: 'Competição', color: '#f87171' }, // competição
+            { value: 'recuperacao', label: 'Recuperação', color: '#34d399' }, // taper/descanso
+            { value: 'transicao', label: 'Transição', color: '#94a3b8' }, // entre mesociclos
         ];
-        const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'S�b', 'Dom'];
+        const DIAS_LABELS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
 
         let _activeMesoId = null;
 
@@ -3081,14 +3081,14 @@
             } else {
                 document.getElementById('mesoNome').value = '';
                 document.getElementById('mesoObjetivo').value = '';
-                // Pr�-preencher datas: in�cio = pr�xima segunda
+                // Pré-preencher datas: início = próxima segunda
                 const hoje = new Date();
                 const dow = hoje.getDay();
                 const diasAteSegunda = (dow === 0 ? 1 : 8 - dow);
                 const inicio = new Date(hoje);
                 inicio.setDate(hoje.getDate() + diasAteSegunda);
                 const fim = new Date(inicio);
-                fim.setDate(inicio.getDate() + 27); // 4 semanas padr�o
+                fim.setDate(inicio.getDate() + 27); // 4 semanas padrão
                 document.getElementById('mesoDataInicio').value = toDateStr(inicio);
                 document.getElementById('mesoDataFim').value = toDateStr(fim);
                 document.getElementById('mesoCargaTotal').value = '';
@@ -3105,12 +3105,12 @@
             if (!nome) { alert('Informe um nome para o mesociclo.'); return; }
             const dataInicio = document.getElementById('mesoDataInicio').value;
             const dataFim = document.getElementById('mesoDataFim').value;
-            if (!dataInicio || !dataFim || dataFim <= dataInicio) { alert('Datas inv�lidas.'); return; }
+            if (!dataInicio || !dataFim || dataFim <= dataInicio) { alert('Datas inválidas.'); return; }
 
             const editId = document.getElementById('mesoEditId').value;
             const cargaTotalAlvo = parseInt(document.getElementById('mesoCargaTotal').value) || 0;
 
-            // Gerar semanas do per�odo
+            // Gerar semanas do período
             const semanas = gerarSemanasMeso(dataInicio, dataFim, cargaTotalAlvo, editId);
 
             const meso = {
@@ -3139,7 +3139,7 @@
         }
 
         function gerarSemanasMeso(dataInicio, dataFim, cargaTotalAlvo, editId) {
-            // Preservar dados existentes se for edi��o
+            // Preservar dados existentes se for edição
             const existing = editId
                 ? ((db.mesociclos || []).find(m => m.id === parseInt(editId))?.semanas || [])
                 : [];
@@ -3173,7 +3173,7 @@
             saveDB();
             if (_activeMesoId === mesoId) _activeMesoId = null;
             renderMesoView();
-            showToast('Mesociclo exclu�do.');
+            showToast('Mesociclo excluído.');
         }
 
         function renderMesoView() {
@@ -3258,7 +3258,7 @@
                 // Datas da semana
                 const ws = new Date(sem.weekStart + 'T00:00:00');
                 const we = new Date(ws); we.setDate(ws.getDate() + 6);
-                const label = `Sem ${idx + 1} � ${ws.getDate()}/${ws.getMonth() + 1}`;
+                const label = `Sem ${idx + 1} — ${ws.getDate()}/${ws.getMonth() + 1}`;
 
                 // Percentage of this week relative to the whole meso
                 const pctOfTotal = totalAlvo > 0 ? Math.round((alvo / totalAlvo) * 100) : 0;
@@ -3293,7 +3293,7 @@
                             <select class="meso-dia-input" style="width: 100%; padding: 3px; font-size: 10px; border-radius: 3px; background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);"
                                 onchange="onMesoSessionChange(${meso.id},'${sem.weekStart}',${di},${sIdx},'tipo',this.value)">
                                 <option value="Taekwondo" style="background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);" ${(!sess.tipo || sess.tipo === 'Taekwondo') ? 'selected' : ''}>Taekwondo</option>
-                                <option value="F�sico" style="background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);" ${sess.tipo === 'F�sico' ? 'selected' : ''}>F�sico</option>
+                                <option value="Físico" style="background-color: var(--card-bg, #1e293b); color: var(--text-color, #e2e8f0);" ${sess.tipo === 'Físico' ? 'selected' : ''}>Físico</option>
                             </select>
                         </div>
                     `).join('');
@@ -3310,7 +3310,7 @@
                             </button>
                         </div>
 
-                        <div class="meso-dia-real" style="margin-top: 8px; width: 100%; text-align: center; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05);" title="Realizado">${realDia > 0 ? realDia + ' CARGA Real.' : '<span style="opacity: 0.5;">�</span>'}</div>
+                        <div class="meso-dia-real" style="margin-top: 8px; width: 100%; text-align: center; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05);" title="Realizado">${realDia > 0 ? realDia + ' CARGA Real.' : '<span style="opacity: 0.5;">—</span>'}</div>
                     </div>`;
                 }).join('');
 
@@ -3348,7 +3348,7 @@
                         </div>
                     </div>
                     <div class="meso-dias-expand" style="display:${_expandedWeeks.has(sem.weekStart) ? 'block' : 'none'};">
-                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Carga planejada por dia (CARGA) � clique na linha para expandir</div>
+                        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Carga planejada por dia (CARGA) — clique na linha para expandir</div>
                         <div class="meso-dias-grid">${diasHtml}</div>
                         <div class="meso-dias-total" style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:right;">
                             Total dos dias: <strong>${totalDias} CARGA</strong>
@@ -3373,12 +3373,12 @@
                 <div class="meso-total-row">
                     <span>TOTAL DO MESOCICLO</span>
                     <span>${totalReal} / ${totalAlvo} CARGA
-                        <span style="margin-left:8px;font-size:12px;color:${pctTotal > 100 ? 'var(--red)' : pctTotal > 70 ? 'var(--green)' : 'var(--text-muted)'};">${pctTotal}% conclu�do</span>
+                        <span style="margin-left:8px;font-size:12px;color:${pctTotal > 100 ? 'var(--red)' : pctTotal > 70 ? 'var(--green)' : 'var(--text-muted)'};">${pctTotal}% concluído</span>
                     </span>
                 </div>`;
         }
 
-        // Semanas cujos pain�is di�rios est�o expandidos
+        // Semanas cujos painéis diários estão expandidos
         const _expandedWeeks = new Set();
 
         function toggleMesoDias(rowTop) {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Coach Analytics | Autentica��o</title>
+    <title>Pro Coach Analytics | Autenticação</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
@@ -191,7 +191,7 @@
             </div>
             <div class="input-group">
                 <label>Senha</label>
-                <input type="password" class="form-control" id="password" required placeholder="��������">
+                <input type="password" class="form-control" id="password" required placeholder="••••••••">
             </div>
             <button type="submit" class="btn-enter" id="submitBtn">
                 <i class="ti ti-login"></i> Entrar
@@ -249,21 +249,6 @@
             btn.style.opacity = '0.7';
 
             if (isSignup) {
-                // Check if email is authorized
-                const { data: authData, error: authError } = await supabaseClient
-                    .from('authorized_emails')
-                    .select('email')
-                    .eq('email', email.toLowerCase().trim())
-                    .single();
-
-                if (authError || !authData) {
-                    errorMsg.innerText = "Este e-mail não está autorizado a criar conta. Entre em contato com o administrador.";
-                    errorMsg.style.display = 'block';
-                    btn.disabled = false;
-                    btn.style.opacity = '1';
-                    return;
-                }
-
                 const { data, error } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password,
