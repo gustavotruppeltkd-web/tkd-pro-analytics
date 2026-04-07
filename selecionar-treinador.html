@@ -244,6 +244,46 @@
             animation: fadeIn 0.5s ease 0.2s both;
         }
 
+        /* Device Selector */
+        .device-selector {
+            display: flex;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 4px;
+            border-radius: 14px;
+            gap: 4px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease 0.15s both;
+        }
+
+        .device-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .device-option i {
+            font-size: 18px;
+        }
+
+        .device-option:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .device-option.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: var(--shadow-glow);
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -275,6 +315,21 @@
 
     <div class="coaches-grid" id="coachesGrid">
         <!-- Populated by JS -->
+    </div>
+
+    <div class="device-selector">
+        <div class="device-option" id="mode-desktop" onclick="setDeviceMode('desktop')">
+            <i class="ti ti-device-desktop"></i>
+            <span>Desktop</span>
+        </div>
+        <div class="device-option" id="mode-tablet" onclick="setDeviceMode('tablet')">
+            <i class="ti ti-device-tablet"></i>
+            <span>Tablet</span>
+        </div>
+        <div class="device-option" id="mode-mobile" onclick="setDeviceMode('mobile')">
+            <i class="ti ti-device-mobile"></i>
+            <span>Celular</span>
+        </div>
     </div>
 
     <p class="footer-note">Sessão autenticada via Supabase &bull; Dados sincronizados em nuvem</p>
@@ -326,9 +381,32 @@
             window.location.href = 'index.html';
         }
 
+        function setDeviceMode(mode) {
+            localStorage.setItem('tkd_device_mode', mode);
+
+            // Apply to current body immediately
+            document.body.classList.remove('mode-tablet', 'mode-mobile');
+            if (mode === 'tablet') document.body.classList.add('mode-tablet');
+            if (mode === 'mobile') document.body.classList.add('mode-mobile');
+
+            updateDeviceUI();
+
+            // Inform user
+            const msg = mode === 'desktop' ? 'Modo Desktop' : (mode === 'tablet' ? 'Modo Tablet' : 'Modo Celular');
+            if (window.showToast) window.showToast(`Visualização ajustada: ${msg}`, 'info');
+        }
+
+        function updateDeviceUI() {
+            const current = localStorage.getItem('tkd_device_mode') || 'desktop';
+            document.querySelectorAll('.device-option').forEach(el => el.classList.remove('active'));
+            const activeEl = document.getElementById(`mode-${current}`);
+            if (activeEl) activeEl.classList.add('active');
+        }
+
         // Render when data is ready
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(renderCoaches, 150);
+            updateDeviceUI();
         });
 
         // Also hook into app.js data-loaded event in case Supabase fetch arrives later

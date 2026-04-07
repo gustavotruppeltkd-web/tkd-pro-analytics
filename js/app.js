@@ -49,6 +49,52 @@ var lastSyncTime = 0;
 
 // Load Database from LocalStorage or initialize with MOCK_DATA
 function loadDB() {
+    // ── Device mode ──────────────────────────────────────────
+    const deviceMode = localStorage.getItem('tkd_device_mode') || 'desktop';
+    document.body.classList.remove('mode-tablet', 'mode-mobile');
+    if (deviceMode === 'tablet') document.body.classList.add('mode-tablet');
+    if (deviceMode === 'mobile') document.body.classList.add('mode-mobile');
+
+    // Inject hamburger button for mobile mode on pages that have a sidebar
+    if (deviceMode === 'mobile' && !document.getElementById('__mobileMenuBtn')) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            const btn = document.createElement('button');
+            btn.id = '__mobileMenuBtn';
+            btn.innerHTML = '<i class="ti ti-menu-2"></i>';
+            btn.title = 'Menu';
+            btn.style.cssText = [
+                'position:fixed', 'top:16px', 'left:16px', 'z-index:950',
+                'width:44px', 'height:44px', 'border-radius:10px',
+                'background:var(--bg-card)', 'border:1px solid var(--border-color)',
+                'color:var(--text-main)', 'font-size:22px',
+                'display:flex', 'align-items:center', 'justify-content:center',
+                'cursor:pointer', 'transition:var(--transition)'
+            ].join(';');
+            btn.onclick = () => {
+                sidebar.classList.toggle('open');
+                // Tap backdrop to close
+                const bd = document.getElementById('__sidebarBackdrop');
+                if (bd) bd.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+            };
+            document.body.appendChild(btn);
+
+            // Backdrop
+            const backdrop = document.createElement('div');
+            backdrop.id = '__sidebarBackdrop';
+            backdrop.style.cssText = [
+                'position:fixed', 'inset:0', 'z-index:849',
+                'background:rgba(0,0,0,0.5)', 'display:none'
+            ].join(';');
+            backdrop.onclick = () => {
+                sidebar.classList.remove('open');
+                backdrop.style.display = 'none';
+            };
+            document.body.appendChild(backdrop);
+        }
+    }
+    // ─────────────────────────────────────────────────────────
+
     const stored = localStorage.getItem('tkd_scout_db');
     if (stored) {
         db = JSON.parse(stored);
