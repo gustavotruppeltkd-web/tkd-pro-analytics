@@ -753,48 +753,33 @@ function renderActiveCoach() {
 function renderSidebar() {
     const nav = document.getElementById('navMenuContainer');
     if (!nav) return;
-
     const turma = db.turmas ? db.turmas.find(t => t.id === db.activeTurmaId) : null;
-    const isRendimento = turma && (turma.tipo.toLowerCase().includes('rendimento') || turma.tipo.toLowerCase().includes('competi��o'));
+    const tipo = (turma && turma.tipo || '').toLowerCase();
+    const isRendimento = tipo.includes('rendimento') || tipo.includes('competi\u00e7\u00e3o');
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-
     let menuItems = [];
-
     if (isRendimento) {
         menuItems = [
-            { href: 'dashboard-turma-dados.html', icon: 'ti-calendar-event', label: 'Vis�o da Equipe' },
+            { href: 'dashboard-turma-dados.html', icon: 'ti-calendar-event', label: 'Vis\u00e3o da Equipe' },
             { href: 'dashboard-rendimento.html', icon: 'ti-activity', label: 'Monitoramento' },
-            { href: 'dashboard-questionarios.html', icon: 'ti-clipboard-list', label: 'Questionários' },
+            { href: 'dashboard-questionarios.html', icon: 'ti-clipboard-list', label: 'Question\u00e1rios' },
             { href: 'treino-equipe.html', icon: 'ti-barbell', label: 'Treinos' },
-            { href: 'calendario.html', icon: 'ti-calendar', label: 'Calendário' },
-            { href: 'scout-video.html', icon: 'ti-video', label: 'Análise de Lutas' }
+            { href: 'calendario.html', icon: 'ti-calendar', label: 'Calend\u00e1rio' },
+            { href: 'scout-video.html', icon: 'ti-video', label: 'An\u00e1lise de Lutas' }
         ];
     } else {
         menuItems = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-users', label: 'Dados da Turma' },
-            { href: 'dashboard-aulas.html', icon: 'ti-checklist', label: 'Chamada Diária' },
+            { href: 'dashboard-aulas.html', icon: 'ti-checklist', label: 'Chamada Di\u00e1ria' },
             { href: 'financeiro.html', icon: 'ti-cash', label: 'Financeiro' }
         ];
     }
-
+    menuItems.push({ href: 'perfil.html', icon: 'ti-user-circle', label: 'Meu Perfil' });
     const html = menuItems.map(item => {
         const isActive = currentPage === item.href;
-        // Special case for athlete profile which belongs to Rendimento flow but isn't in core nav
         const isPerformanceActive = currentPage === 'atleta-performance.html' && item.href === 'dashboard-turma-dados.html' && isRendimento;
-
-        return `
-            <a href="${item.href}" class="nav-item ${isActive || isPerformanceActive ? 'active' : ''}">
-                <i class="ti ${item.icon}"></i>
-                <span>${item.label}</span>
-            </a>
-        `;
-    }).join('') + `
-        <a href="turmas.html" class="nav-item" style="margin-top: 24px; color: var(--text-muted);">
-            <i class="ti ti-arrow-left"></i>
-            <span>Trocar de Turma</span>
-        </a>
-    `;
-
+        return \<a href="\" class="nav-item \"><i class="ti \"></i><span>\</span></a>\;
+    }).join('') + \<a href="turmas.html" class="nav-item" style="margin-top: 24px; color: var(--text-muted);"><i class="ti ti-arrow-left"></i><span>Trocar de Turma</span></a>\;
     nav.innerHTML = html;
 }
 
@@ -1531,4 +1516,5 @@ async function downloadScoutPDF(scoutId) {
 
     doc.save(`Analise_Scout_${nomeAtleta.replace(/\s+/g, '_')}_ID${scout.id}.pdf`);
 }
+
 

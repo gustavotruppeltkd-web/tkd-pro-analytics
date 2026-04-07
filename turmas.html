@@ -76,6 +76,9 @@
             cursor: pointer;
             text-decoration: none;
             transition: var(--transition);
+            position: relative;
+            z-index: 5;
+            pointer-events: auto !important;
         }
 
         .profile-card:hover {
@@ -96,6 +99,7 @@
             font-size: 40px;
             margin-bottom: 24px;
             transition: var(--transition);
+            pointer-events: none;
         }
 
         .profile-card:hover .profile-icon {
@@ -104,46 +108,18 @@
             box-shadow: var(--shadow-glow);
         }
 
-        .profile-card.infantil .profile-icon {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--green);
-        }
-
-        .profile-card.infantil:hover .profile-icon {
-            background: var(--green);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-        }
-
-        .profile-card.infantil:hover {
-            border-color: var(--green);
-        }
-
-        .profile-card.iniciante .profile-icon {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--yellow);
-        }
-
-        .profile-card.iniciante:hover .profile-icon {
-            background: var(--yellow);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
-        }
-
-        .profile-card.iniciante:hover {
-            border-color: var(--yellow);
-        }
-
         .profile-name {
             font-size: 18px;
             font-weight: 600;
             color: var(--text-main);
             margin-bottom: 4px;
+            pointer-events: none;
         }
 
         .profile-meta {
             font-size: 14px;
             color: var(--text-muted);
+            pointer-events: none;
         }
 
         @keyframes fadeIn {
@@ -157,29 +133,16 @@
                 transform: scale(1);
             }
         }
-
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            to {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-        }
     </style>
 </head>
 
 <body>
-
     <div class="user-profile top-left-profile"
-        style="position: absolute; top: 30px; left: 40px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-items: center; gap: 12px; cursor: pointer;">
+        style="position: absolute; top: 30px; left: 40px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-items: center; gap: 12px; cursor: pointer; z-index: 10;">
         <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar"
             style="width: 32px; height: 32px; border-radius: 50%;">
         <div class="user-info" style="display: flex; flex-direction: column;">
-            <span class="user-name" style="font-weight: 600; font-size: 13px;">Configure seu Perfil</span>
+            <span class="user-name" style="font-weight: 600; font-size: 13px;">Carregando...</span>
             <span class="user-role" style="color: var(--text-muted); font-size: 11px;">Treinador</span>
         </div>
     </div>
@@ -201,18 +164,17 @@
                 </button>
             </div>
         </div>
-        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Treinador</span>.
-            Qual equipe deseja gerenciar
-            agora?</p>
+        <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Treinador</span>. Qual
+            equipe deseja gerenciar agora?</p>
 
         <div style="text-align: left; margin-bottom: 16px;">
             <h2 style="color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Alto
-                Rendimento (Competição)</h2>
+                Rendimento (Competi&ccedil;&atilde;o)</h2>
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin-top: 8px; margin-bottom: 24px;">
         </div>
 
         <div class="profiles-grid" style="justify-content: flex-start; margin-bottom: 48px;" id="grid-rendimento">
-            <!-- Renderizado via JS -->
+            <!-- Populated via JS -->
         </div>
 
         <div style="text-align: left; margin-bottom: 16px;">
@@ -222,105 +184,23 @@
         </div>
 
         <div class="profiles-grid" style="justify-content: flex-start;" id="grid-comercial">
-            <!-- Renderizado via JS -->
+            <!-- Populated via JS -->
         </div>
     </div>
 
-    <!-- Modal Editar Turma -->
-    <div class="modal-overlay" id="modalEditarTurma">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Editar Turma</h2>
-                <button class="btn-close" type="button" onclick="closeModalEditar()"><i class="ti ti-x"></i></button>
-            </div>
-
-            <form id="formEditarTurma" onsubmit="saveEditTurma(event)">
-                <div class="form-group">
-                    <label>Selecione a turma para editar:</label>
-                    <select class="form-control" id="selectTurmaEdit" required onchange="populateEditForm()">
-                        <!-- Preenchido via JS -->
-                    </select>
-                </div>
-
-                <div class="form-group" id="editFields" style="display: none;">
-                    <div class="form-group">
-                        <label>Nome da Turma</label>
-                        <input type="text" id="editNomeTurma" class="form-control"
-                            placeholder="Ex: Preparatório Faixa Preta" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Perfil (Tipo de Turma)</label>
-                        <div class="radio-group" id="editRadioGroup">
-                            <label class="radio-card" onclick="selectEditRadio(this, 'rendimento')">
-                                <input type="radio" name="editTipoTurma" value="rendimento">
-                                <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
-                                <div class="radio-title" style="font-size: 16px;">Rendimento</div>
-                                <div class="radio-desc">Foco em performance, scout militar e testes f�sicos.</div>
-                            </label>
-
-                            <label class="radio-card" onclick="selectEditRadio(this, 'comercial')">
-                                <input type="radio" name="editTipoTurma" value="comercial">
-                                <i class="ti ti-cash radio-icon"
-                                    style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
-                                <div class="radio-title" style="font-size: 16px;">Comercial</div>
-                                <div class="radio-desc">Foco em mensalidade, presen�a e reten��o de alunos.</div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 32px;">
-                        <button type="submit" class="btn btn-primary"
-                            style="border-radius: 50px; padding: 14px; font-size: 18px; width: 100%; justify-content: center;">Salvar
-                            Altera��es</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Excluir Turma -->
-    <div class="modal-overlay" id="modalExcluirTurma">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" style="color: var(--red);">Excluir Turma</h2>
-                <button class="btn-close" type="button" onclick="closeModalExcluir()"><i class="ti ti-x"></i></button>
-            </div>
-
-            <form id="formExcluirTurma" onsubmit="deleteTurma(event)">
-                <div class="form-group">
-                    <label>Selecione a turma para remover do sistema:</label>
-                    <select class="form-control" id="selectTurmaDelete" required>
-                        <!-- Preenchido via JS -->
-                    </select>
-                </div>
-
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Avisão: Isso removerá a
-                    equipe
-                    e todos os escouts/fichas associados a ela permanentemente.</p>
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-danger"
-                        style="border-radius: 50px; padding: 14px; font-size: 16px; width: 100%; justify-content: center;">Confirmar
-                        Exclus�o</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Modals -->
     <div class="modal-overlay" id="modalNovaTurma">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">Criar Nova Turma</h2>
                 <button class="btn-close" type="button" onclick="closeModal()"><i class="ti ti-x"></i></button>
             </div>
-
             <form id="formNovaTurma" onsubmit="saveTurma(event)">
                 <div class="form-group">
                     <label>Nome da Turma</label>
                     <input type="text" id="novaTurmaNome" class="form-control"
-                        placeholder="Ex: Preparatório Faixa Preta" required>
+                        placeholder="Ex: Preparat&oacute;rio Faixa Preta" required>
                 </div>
-
                 <div class="form-group">
                     <label>Perfil (Tipo de Turma)</label>
                     <div class="radio-group">
@@ -328,24 +208,78 @@
                             <input type="radio" name="tipoTurma" value="rendimento" checked>
                             <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
                             <div class="radio-title" style="font-size: 16px;">Rendimento</div>
-                            <div class="radio-desc">Foco em performance, scout militar e testes f�sicos.</div>
+                            <div class="radio-desc">Foco em performance e scout.</div>
                         </label>
-
                         <label class="radio-card" onclick="selectRadio(this, 'comercial')">
                             <input type="radio" name="tipoTurma" value="comercial">
                             <i class="ti ti-cash radio-icon"
                                 style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
                             <div class="radio-title" style="font-size: 16px;">Comercial</div>
-                            <div class="radio-desc">Foco em mensalidade, presen�a e reten��o de alunos.</div>
+                            <div class="radio-desc">Foco em mensalidades e presen&ccedil;a.</div>
                         </label>
                     </div>
                 </div>
-
                 <div class="form-group" style="margin-top: 32px;">
                     <button type="submit" class="btn btn-primary"
-                        style="border-radius: 50px; padding: 14px; font-size: 18px; width: 100%; justify-content: center;">Criar
-                        Nova Turma</button>
+                        style="width: 100%; justify-content: center; padding: 14px;">Criar Nova Turma</button>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalEditarTurma">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Turma</h2>
+                <button class="btn-close" type="button" onclick="closeModalEditar()"><i class="ti ti-x"></i></button>
+            </div>
+            <form id="formEditarTurma" onsubmit="saveEditTurma(event)">
+                <div class="form-group">
+                    <label>Selecione a turma:</label>
+                    <select class="form-control" id="selectTurmaEdit" required onchange="populateEditForm()"></select>
+                </div>
+                <div class="form-group" id="editFields" style="display: none;">
+                    <label>Novo Nome</label>
+                    <input type="text" id="editNomeTurma" class="form-control" required>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px;">Salvar
+                        Altera&ccedil;&otilde;es</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalExcluirTurma">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--red);">Excluir Turma</h2>
+                <button class="btn-close" type="button" onclick="closeModalExcluir()"><i class="ti ti-x"></i></button>
+            </div>
+            <form onsubmit="deleteTurma(event)">
+                <div class="form-group">
+                    <label>Selecione para excluir:</label>
+                    <select class="form-control" id="selectTurmaDelete" required></select>
+                </div>
+                <button type="submit" class="btn btn-danger" style="width: 100%; margin-top: 24px;">Excluir
+                    Permanentemente</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalFirstTrainer"
+        style="display: none; z-index: 2000; background: rgba(15, 23, 42, 0.95);">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 style="text-align: center; color: var(--primary); margin-bottom: 24px;">Bem-vindo(a)!</h2>
+            <form onsubmit="saveFirstTrainer(event)">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" class="form-control" id="firstTrainerName" required>
+                </div>
+                <div class="form-group" style="margin-top: 16px;">
+                    <label>Cargo</label>
+                    <input type="text" class="form-control" id="firstTrainerRole" required>
+                </div>
+                <button type="submit" class="btn btn-primary"
+                    style="width: 100%; margin-top: 32px;">Come&ccedil;ar</button>
             </form>
         </div>
     </div>
@@ -365,239 +299,96 @@
         function closeModalEditar() { modalEdit.classList.remove('active'); }
 
         function openModalEditar() {
-            renderTurmas(); // Garante o select populado
+            renderTurmas();
             document.getElementById('editFields').style.display = 'none';
-            const selectEdit = document.getElementById('selectTurmaEdit');
-            if (selectEdit) selectEdit.value = '';
             modalEdit.classList.add('active');
         }
 
-        // Renderização Dinâmica
         function renderTurmas() {
             const gridRend = document.getElementById('grid-rendimento');
             const gridCom = document.getElementById('grid-comercial');
             gridRend.innerHTML = '';
             gridCom.innerHTML = '';
 
-            const selectDel = document.getElementById('selectTurmaDelete');
-            selectDel.innerHTML = '<option value="">Selecione...</option>';
-
-            const selectEdit = document.getElementById('selectTurmaEdit');
-            if (selectEdit) selectEdit.innerHTML = '<option value="">Selecione...</option>';
+            const selDel = document.getElementById('selectTurmaDelete');
+            const selEdit = document.getElementById('selectTurmaEdit');
+            selDel.innerHTML = '<option value="">Selecione...</option>';
+            selEdit.innerHTML = '<option value="">Selecione...</option>';
 
             db.turmas.forEach(t => {
-                const tipoLower = (t.tipo || '').toLowerCase();
-                const isRend = tipoLower.includes('rendimento') || tipoLower.includes('competi\u00e7\u00e3o');
-
-                const icon = isRend ? 'ti-medal' : 'ti-users';
+                const isRend = (t.tipo || '').toLowerCase().includes('rendimento');
                 const target = isRend ? 'dashboard-turma-dados.html' : 'dashboard-aulas.html';
-                const label = isRend ? 'Atletas' : 'Alunos';
-                const focus = isRend ? 'Scout e Carga' : 'Chamada/Financ.';
-                const cardClass = isRend ? 'competicao' : 'iniciante';
 
                 const card = document.createElement('div');
-                card.className = `profile-card ${cardClass}`;
-                card.style.animation = 'fadeIn 0.4s ease-out';
-                card.style.cursor = 'pointer';
+                card.className = "profile-card " + (isRend ? 'competicao' : 'iniciante');
                 card.onclick = () => {
-                    setActiveTurma(t.id);
+                    db.activeTurmaId = t.id;
+                    saveDB();
                     window.location.href = target;
                 };
 
                 card.innerHTML = `
-                    <div class="profile-icon"><i class="ti ${icon}"></i></div>
+                    <div class="profile-icon"><i class="ti ${isRend ? 'ti-medal' : 'ti-users'}"></i></div>
                     <span class="profile-name">${t.nome}</span>
-                    <span class="profile-meta">${t.alunosCount} ${label} \u2022 Foco: ${focus}</span>
+                    <span class="profile-meta">${t.alunosCount} ${isRend ? 'Atletas' : 'Alunos'} \u2022 Foco: ${isRend ? 'Scout' : 'Chamada'}</span>
                 `;
 
                 if (isRend) gridRend.appendChild(card);
                 else gridCom.appendChild(card);
 
-                selectDel.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
-                if (selectEdit) selectEdit.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+                const opt = `<option value="${t.id}">${t.nome}</option>`;
+                selDel.innerHTML += opt;
+                selEdit.innerHTML += opt;
             });
         }
 
-        function setActiveTurma(id) {
-            db.activeTurmaId = id;
+        function saveTurma(event) {
+            event.preventDefault();
+            const nt = {
+                id: Date.now(),
+                nome: document.getElementById('novaTurmaNome').value,
+                alunosCount: 0,
+                tipo: document.querySelector('input[name="tipoTurma"]:checked').value === 'rendimento' ? 'Rendimento' : 'Comercial'
+            };
+            db.turmas.push(nt);
             saveDB();
-        }
-
-        function openModalExcluir() {
-            renderTurmas(); // Garante o select populado
-            modalDel.classList.add('active');
+            renderTurmas();
+            closeModal();
         }
 
         function deleteTurma(event) {
             event.preventDefault();
             const id = parseInt(document.getElementById('selectTurmaDelete').value);
-            if (!id) return;
-
-            db.turmas = db.turmas.filter(t => t.id !== id);
+            db.turmas = db.turmas.filter(x => x.id !== id);
             saveDB();
             renderTurmas();
             closeModalExcluir();
         }
 
-        function selectRadio(element, type) {
-            document.querySelectorAll('#formNovaTurma .radio-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            element.querySelector('input').checked = true;
-        }
-
-        function populateEditForm() {
-            const id = parseInt(document.getElementById('selectTurmaEdit').value);
-            if (!id) {
-                document.getElementById('editFields').style.display = 'none';
-                return;
-            }
-            const t = db.turmas.find(x => x.id === id);
-            if (t) {
-                document.getElementById('editFields').style.display = 'block';
-                document.getElementById('editNomeTurma').value = t.nome;
-
-                const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competi��o');
-
-                const radios = document.querySelectorAll('#editRadioGroup .radio-card');
-                radios.forEach(el => el.classList.remove('selected'));
-
-                if (isRend) {
-                    radios[0].classList.add('selected');
-                    radios[0].querySelector('input').checked = true;
-                } else {
-                    radios[1].classList.add('selected');
-                    radios[1].querySelector('input').checked = true;
-                }
-            }
-        }
-
-        function selectEditRadio(element, type) {
-            document.querySelectorAll('#editRadioGroup .radio-card').forEach(el => el.classList.remove('selected'));
-            element.classList.add('selected');
-            element.querySelector('input').checked = true;
-        }
-
-        function saveEditTurma(event) {
-            event.preventDefault();
-            const id = parseInt(document.getElementById('selectTurmaEdit').value);
-            if (!id) return;
-
-            const t = db.turmas.find(x => x.id === id);
-            if (t) {
-                t.nome = document.getElementById('editNomeTurma').value;
-                const tipoValue = document.querySelector('input[name="editTipoTurma"]:checked').value;
-                t.tipo = tipoValue === 'rendimento' ? 'Rendimento' : 'Comercial';
-
-                saveDB();
-                renderTurmas();
-                closeModalEditar();
-            }
-        }
-
-        function saveTurma(event) {
-            event.preventDefault();
-
-            const nomeTurma = document.getElementById('novaTurmaNome').value;
-            const tipoTurma = document.querySelector('#formNovaTurma input[name="tipoTurma"]:checked').value;
-
-            const novaTurma = {
-                id: Date.now(),
-                nome: nomeTurma,
-                alunosCount: 0,
-                dia: 'A Definir',
-                horario: 'A Definir',
-                tipo: tipoTurma === 'rendimento' ? 'Rendimento' : 'Comercial'
-            };
-
-            db.turmas.push(novaTurma);
-            saveDB();
-            renderTurmas();
-
-            document.getElementById('formNovaTurma').reset();
-            closeModal();
-        }
-
-        <!-- Modal Primeiro Acesso (Onboarding Treinador) -->
-        <div class="modal-overlay" id="modalFirstTrainer" style="display: none; z-index: 2000; background: rgba(15, 23, 42, 0.95);">
-            <div class="modal-content" style="max-width: 500px; border: 1px solid var(--primary); box-shadow: 0 0 40px rgba(59, 130, 246, 0.2);">
-                <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
-                    <h2 class="modal-title" style="text-align: center; color: var(--primary); font-size: 24px;">Bem-vindo(a) ao Pro Coach!</h2>
-                </div>
-                <div style="text-align: center; margin-bottom: 32px;">
-                    <p style="color: var(--text-muted); font-size: 15px;">Para começar, por favor, insira seus dados. Isso personalizará os seus relatórios e dashboards.</p>
-                </div>
-                <form onsubmit="saveFirstTrainer(event)">
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="color: var(--text-main);">Seu Nome Completo</label>
-                        <input type="text" class="form-control" id="firstTrainerName" placeholder="Ex: Mestre Carlos Silva" required style="background: rgba(0,0,0,0.2) !important;">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 32px;">
-                        <label style="color: var(--text-main);">Cargo Principal (Ex: Head Coach, Preparador Físico)</label>
-                        <input type="text" class="form-control" id="firstTrainerRole" placeholder="Ex: Treinador Principal" required style="background: rgba(0,0,0,0.2) !important;">
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-block" style="width: 100%; justify-content: center; padding: 14px; font-size: 16px;">
-                            Começar a Usar <i class="ti ti-arrow-right" style="margin-left: 8px;"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Verifica se o loadDB ja preencheu o db e se nao ha treinador
-            setTimeout(() => {
-                if (!db.treinadores || db.treinadores.length === 0) {
-                    const firstModal = document.getElementById('modalFirstTrainer');
-                    firstModal.style.display = 'flex';
-                    firstModal.classList.add('active');
-                }
-                renderTurmas();
-
-                // Fallback username
-                const userNameEl = document.querySelector('.user-name');
-                if (userNameEl && userNameEl.innerText === 'Carregando...') {
-                    userNameEl.innerText = 'Treinador';
-                }
-            }, 100);
-        });
-
         function saveFirstTrainer(event) {
             event.preventDefault();
-            const nomeStr = document.getElementById('firstTrainerName').value.trim();
-            const papelStr = document.getElementById('firstTrainerRole').value.trim();
-            if (!nomeStr || !papelStr) return;
-
             db.treinadores = [{
                 id: 1,
-                nome: nomeStr,
-                papel: papelStr,
-                role: papelStr,
-                avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png',
-                experiencia: '',
-                graduacao: '',
-                localizacao: '',
-                bio: '',
-                conquistas: [],
-                formacao: []
+                nome: document.getElementById('firstTrainerName').value,
+                role: document.getElementById('firstTrainerRole').value,
+                avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png'
             }];
-
             saveDB();
-
-            // Re-render UI top-left
+            document.getElementById('modalFirstTrainer').style.display = 'none';
+            renderTurmas();
             if (typeof renderUserProfile === 'function') renderUserProfile();
-
-            document.getElementById('modalFirstTrainer').classList.remove('active');
-
-            // Show toast using existing HTML
-            const toast = document.createElement('div');
-            toast.className = 'toast show';
-            toast.style.borderLeftColor = 'var(--green)';
-            toast.innerHTML = `<i class="ti ti-check" style="color: var(--green);"></i> Plataforma configurada com sucesso!`;
-            const container = document.querySelector('.toast-container') || document.body;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (!db.treinadores || db.treinadores.length === 0) {
+                    document.getElementById('modalFirstTrainer').style.display = 'flex';
+                }
+                renderTurmas();
+                const un = document.querySelector('.user-name');
+                if (un && un.innerText === 'Carregando...') un.innerText = 'Treinador';
+            }, 100);
+        });
     </script>
 </body>
 

@@ -94,7 +94,7 @@
         .status-btn {
             flex: 1;
             padding: 12px;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-M&eacute;d);
             border: 1px solid var(--border-color);
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
@@ -117,7 +117,7 @@
             margin-bottom: 16px;
             background: rgba(0, 0, 0, 0.2);
             padding: 16px;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-M&eacute;d);
         }
 
         /* Chart Grid */
@@ -527,11 +527,11 @@
 
             if (!aId) return alert("Selecione um atleta primeiro.");
 
-            const formData = new FormData(e.target);
+            const forM&eacute;data = new ForM&eacute;data(e.target);
             let respostasVal = {};
 
             currentQuestionsRaw.forEach(p => {
-                respostasVal[p.id] = formData.get(`q_${p.id}`);
+                respostasVal[p.id] = forM&eacute;data.get(`q_${p.id}`);
             });
 
             db.respostas.push({
@@ -672,7 +672,7 @@
             list.innerHTML = '';
             (db.questionarios || []).forEach(q => {
                 list.insertAdjacentHTML('beforeend', `
-                    <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-M&eacute;d); display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div>
                             <h4 style="margin:0; font-size:16px;">${q.titulo}</h4>
                             <p style="margin:0; font-size:12px; color:var(--text-muted);">${q.perguntas.length} perguntas cadastradas</p>
@@ -728,7 +728,7 @@
                 if (!atleta || !quest) return;
 
                 grid.insertAdjacentHTML('beforeend', `
-                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-M&eacute;d); display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; gap: 16px; align-items: center;">
                             <img src="${atleta.avatar}" style="width: 40px; height: 40px; border-radius: 50%;">
                             <div>
@@ -1005,4 +1005,5 @@
 </body>
 
 </html>
+
 
