@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Coach Analytics | Selecionar Treinador</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            margin: 0;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 28px;
+            right: 32px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .page-logo .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .page-logo .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 10px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* Trainer grid */
+        .coaches-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 900px;
+            animation: fadeIn 0.5s ease 0.1s both;
+        }
+
+        .coach-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px 28px;
+            width: 220px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coach-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .coach-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(37, 99, 235, 0.4);
+            border-color: rgba(37, 99, 235, 0.5);
+        }
+
+        .coach-card:hover::before {
+            opacity: 1;
+        }
+
+        .coach-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border-color);
+            margin: 0 auto 16px;
+            display: block;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .coach-card:hover .coach-avatar {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+        }
+
+        .coach-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .coach-role {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .coach-enter-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(37, 99, 235, 0.12);
+            color: #60a5fa;
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .coach-card:hover .coach-enter-btn {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+        }
+
+        /* Add new trainer card */
+        .coach-card.add-new {
+            border-style: dashed;
+            opacity: 0.7;
+        }
+
+        .coach-card.add-new:hover {
+            opacity: 1;
+        }
+
+        .add-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 60px 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            color: var(--text-muted);
+            font-size: 12px;
+            text-align: center;
+            animation: fadeIn 0.5s ease 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="logout-btn" onclick="handleLogout()">
+        <i class="ti ti-logout"></i> Sair
+    </button>
+
+    <header class="page-header">
+        <div class="page-logo">
+            <div class="logo-icon"><i class="ti ti-chart-radar"></i></div>
+            <span class="logo-text">Pro Coach Analytics</span>
+        </div>
+        <h1 class="page-title">Quem vai treinar hoje?</h1>
+        <p class="page-subtitle">Selecione o perfil do treinador para acessar o painel</p>
+    </header>
+
+    <div class="coaches-grid" id="coachesGrid">
+        <!-- Populated by JS -->
+    </div>
+
+    <p class="footer-note">Sessão autenticada via Supabase &bull; Dados sincronizados em nuvem</p>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        function renderCoaches() {
+            const grid = document.getElementById('coachesGrid');
+            const coaches = db.treinadores || [];
+
+            if (coaches.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="ti ti-user-off"></i>
+                        <p>Nenhum treinador cadastrado ainda.<br>Preencha seu perfil para começar.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = coaches.map(coach => `
+                <div class="coach-card" onclick="selectCoach(${coach.id})">
+                    <img class="coach-avatar"
+                         src="${coach.avatar || 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png'}"
+                         alt="${coach.nome}"
+                         onerror="this.src='https://cdn-icons-png.flaticon.com/512/10337/10337579.png'">
+                    <div class="coach-name">${coach.nome}</div>
+                    <div class="coach-role">${coach.papel || coach.role || 'Treinador'}</div>
+                    <span class="coach-enter-btn">
+                        <i class="ti ti-arrow-right"></i> Entrar
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function selectCoach(id) {
+            localStorage.setItem('tkd_active_coach_id', String(id));
+            window.location.href = 'turmas.html';
+        }
+
+        async function handleLogout() {
+            if (window.supabaseClient) {
+                await window.supabaseClient.auth.signOut();
+            }
+            localStorage.removeItem('tkd_active_coach_id');
+            window.location.href = 'index.html';
+        }
+
+        // Render when data is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(renderCoaches, 150);
+        });
+
+        // Also hook into app.js data-loaded event in case Supabase fetch arrives later
+        window.onDataLoaded = function () {
+            renderCoaches();
+        };
+    </script>
+</body>
+
+</html>

@@ -185,9 +185,9 @@ function renderUserProfile() {
 // GLOBAL ONBOARDING GATE
 // ========================
 function checkTrainerOnboarding() {
-    // Skip on login page and atleta pages
+    // Skip on login page, atleta pages, and trainer selection page
     const page = window.location.pathname;
-    if (page.includes('index.html') || page === '/' || page.includes('atleta-')) return;
+    if (page.includes('index.html') || page === '/' || page.includes('atleta-') || page.includes('selecionar-treinador')) return;
 
     const hasTrainer = db.treinadores && db.treinadores.length > 0 &&
         db.treinadores[0].nome && db.treinadores[0].nome.trim() !== '';

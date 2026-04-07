@@ -13,8 +13,8 @@ async function checkAuth(isLoginPage = false) {
         // Not logged in, redirect to index (login)
         window.location.href = 'index.html';
     } else if (session && isLoginPage) {
-        // Logged in but on login page, redirect to dashboard
-        window.location.href = 'turmas.html';
+        // Logged in but on login page, redirect to trainer selection
+        window.location.href = 'selecionar-treinador.html';
     }
 }
 
@@ -22,7 +22,10 @@ async function checkAuth(isLoginPage = false) {
 document.addEventListener('DOMContentLoaded', () => {
     // Avoid redirect loop if we are already on index.html or atleta-login.html
     const currentPath = window.location.pathname.toLowerCase();
-    const isLoginPage = currentPath.includes('index.html') || currentPath.includes('atleta-login.html') || currentPath.endsWith('/');
+    const isLoginPage = currentPath.includes('index.html') ||
+        currentPath.includes('atleta-login.html') ||
+        currentPath.includes('selecionar-treinador.html') ||
+        currentPath.endsWith('/');
 
     checkAuth(isLoginPage);
 });
@@ -37,9 +40,11 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
         }
     } else if (event === 'SIGNED_IN') {
         const currentPath = window.location.pathname.toLowerCase();
-        const isLoginPage = currentPath.includes('index.html') || currentPath.includes('atleta-login.html') || currentPath.endsWith('/');
+        const isLoginPage = currentPath.includes('index.html') ||
+            currentPath.includes('atleta-login.html') ||
+            currentPath.endsWith('/');
         if (isLoginPage) {
-            window.location.href = 'turmas.html';
+            window.location.href = 'selecionar-treinador.html';
         }
     }
 });
