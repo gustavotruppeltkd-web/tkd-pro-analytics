@@ -778,8 +778,18 @@ function renderSidebar() {
     const html = menuItems.map(item => {
         const isActive = currentPage === item.href;
         const isPerformanceActive = currentPage === 'atleta-performance.html' && item.href === 'dashboard-turma-dados.html' && isRendimento;
-        return \<a href="\" class="nav-item \"><i class="ti \"></i><span>\</span></a>\;
-    }).join('') + \<a href="turmas.html" class="nav-item" style="margin-top: 24px; color: var(--text-muted);"><i class="ti ti-arrow-left"></i><span>Trocar de Turma</span></a>\;
+        return `
+            <a href="${item.href}" class="nav-item ${isActive || isPerformanceActive ? 'active' : ''}">
+                <i class="ti ${item.icon}"></i>
+                <span>${item.label}</span>
+            </a>
+        `;
+    }).join('') + `
+        <a href="turmas.html" class="nav-item" style="margin-top: 24px; color: var(--text-muted);">
+            <i class="ti ti-arrow-left"></i>
+            <span>Trocar de Turma</span>
+        </a>
+    `;
     nav.innerHTML = html;
 }
 
