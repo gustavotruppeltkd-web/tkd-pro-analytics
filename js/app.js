@@ -175,7 +175,7 @@ function fetchFromSupabase() {
                         lastSyncTime = remoteDate;
 
                         if (document.visibilityState === 'visible') {
-                            showToast("Atualização remota recebida! Recarregando os dados...", "info");
+                            showToast("Atualiza\u00e7\u00e3oção remota recebida! Recarregando os dados...", "info");
                             setTimeout(() => location.reload(), 2000);
                         } else {
                             location.reload();
@@ -348,7 +348,7 @@ function setupRealtimeSubscription() {
             if (remoteData && remoteData._last_updated > lastSyncTime) {
                 console.log("Realtime: New data received!");
                 localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
-                showToast("Dados atualizados remotamente!", "info");
+                showToast("Dados Atualiza\u00e7\u00e3odos remotamente!", "info");
                 setTimeout(() => location.reload(), 1500);
             }
         })
@@ -487,7 +487,7 @@ function selScale(el, hiddenId, val) {
 
     if (hiddenInput) {
         hiddenInput.value = val;
-        // Dispara eventos para atualizar outros componentes que dependam do input
+        // Dispara eventos para Atualiza\u00e7\u00e3or outros componentes que dependam do input
         hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
         hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
     }
@@ -1204,7 +1204,7 @@ function openScoutDetail(scoutId) {
 /**
  * Exclui um scout permanentemente.
  * @param {number} scoutId 
- * @param {function} callback - Fun��o para atualizar a UI ap�s exclus�o
+ * @param {function} callback - Fun��o para Atualiza\u00e7\u00e3or a UI ap�s exclus�o
  */
 function deleteScout(scoutId, callback) {
     if (!confirm("Tem certeza que deseja excluir esta an�lise de scout permanentemente?")) return;
@@ -1531,3 +1531,4 @@ async function downloadScoutPDF(scoutId) {
 
     doc.save(`Analise_Scout_${nomeAtleta.replace(/\s+/g, '_')}_ID${scout.id}.pdf`);
 }
+

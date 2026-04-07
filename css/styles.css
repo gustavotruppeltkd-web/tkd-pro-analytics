@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg-dark: #0f172a;
     --bg-sidebar: #1e293b;
     --bg-card: #1e293b;
@@ -204,7 +204,7 @@ body {
     font-size: 12px;
 }
 
-/* Dashboard Semáforo Stats */
+/* Dashboard SemÃ¡foro Stats */
 .dashboard-grid {
     display: flex;
     flex-direction: column;
@@ -925,7 +925,7 @@ body.mode-mobile .list-header {
     display: none !important;
 }
 
-body.mode-mobile .athlete-row {
+body.mode-mobile .athlete-row, .student-row {
     flex-direction: column;
     align-items: flex-start !important;
     gap: 12px;

@@ -386,24 +386,33 @@
             if (selectEdit) selectEdit.innerHTML = '<option value="">Selecione...</option>';
 
             db.turmas.forEach(t => {
-                let isRend = (t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competi��o'));
-                let iconElement = isRend ? '<i class="ti ti-medal"></i>' : '<i class="ti ti-users"></i>';
-                let targetPage = isRend ? 'dashboard-turma-dados.html' : 'dashboard-aulas.html';
-                let desc = isRend ? `${t.alunosCount} Atletas ��¢ Foco: Scout e Carga` : `${t.alunosCount} Alunos ��¢ Foco: Chamada/Financ.`;
-                let cardClass = isRend ? 'competicao' : 'iniciante';
+                const tipoLower = (t.tipo || '').toLowerCase();
+                const isRend = tipoLower.includes('rendimento') || tipoLower.includes('competi\u00e7\u00e3o');
 
-                const cardHTML = `
-                    <a href="${targetPage}" onclick="setActiveTurma(${t.id})" class="profile-card ${cardClass}" style="animation: fadeIn 0.4s ease-out;">
-                        <div class="profile-icon">${iconElement}</div>
-                        <span class="profile-name">${t.nome}</span>
-                        <span class="profile-meta">${desc}</span>
-                    </a>
+                const icon = isRend ? 'ti-medal' : 'ti-users';
+                const target = isRend ? 'dashboard-turma-dados.html' : 'dashboard-aulas.html';
+                const label = isRend ? 'Atletas' : 'Alunos';
+                const focus = isRend ? 'Scout e Carga' : 'Chamada/Financ.';
+                const cardClass = isRend ? 'competicao' : 'iniciante';
+
+                const card = document.createElement('div');
+                card.className = `profile-card ${cardClass}`;
+                card.style.animation = 'fadeIn 0.4s ease-out';
+                card.style.cursor = 'pointer';
+                card.onclick = () => {
+                    setActiveTurma(t.id);
+                    window.location.href = target;
+                };
+
+                card.innerHTML = `
+                    <div class="profile-icon"><i class="ti ${icon}"></i></div>
+                    <span class="profile-name">${t.nome}</span>
+                    <span class="profile-meta">${t.alunosCount} ${label} \u2022 Foco: ${focus}</span>
                 `;
 
-                if (isRend) gridRend.insertAdjacentHTML('beforeend', cardHTML);
-                else gridCom.insertAdjacentHTML('beforeend', cardHTML);
+                if (isRend) gridRend.appendChild(card);
+                else gridCom.appendChild(card);
 
-                // Option for delete modal and edit modal
                 selectDel.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
                 if (selectEdit) selectEdit.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
             });
@@ -593,4 +602,3 @@
 </body>
 
 </html>
-
