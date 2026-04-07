@@ -101,20 +101,42 @@ function fetchFromSupabase() {
             }
             if (data && data.data) {
                 const remoteDate = data.data._last_updated || 0;
-                // If remote is newer, update local and prompt reload
-                if (remoteDate > lastSyncTime) {
-                    console.log("Supabase has newer data. Updating local...");
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(data.data));
+                const localDate = lastSyncTime;
 
-                    // Simple auto-reload logic or just show toast
-                    if (document.visibilityState === 'visible') {
-                        showToast("Atualiza��o remota recebida! Recarregando os dados...", "info");
-                        setTimeout(() => location.reload(), 2000);
+                if (remoteDate > localDate) {
+                    const remoteDB = data.data;
+
+                    // MERGE GUARD: never overwrite a locally saved trainer
+                    // with stale remote data that doesn't have one yet.
+                    const localHasTrainer = db.treinadores &&
+                        db.treinadores.length > 0 &&
+                        db.treinadores[0].nome &&
+                        db.treinadores[0].nome.trim() !== '';
+                    const remoteHasTrainer = remoteDB.treinadores &&
+                        remoteDB.treinadores.length > 0 &&
+                        remoteDB.treinadores[0].nome &&
+                        remoteDB.treinadores[0].nome.trim() !== '';
+
+                    if (localHasTrainer && !remoteHasTrainer) {
+                        // Trainer was just saved locally but hasn't synced to Supabase yet.
+                        // Push it up — do NOT reload.
+                        console.log("Local trainer not in Supabase yet. Pushing local data up.");
+                        syncToSupabase();
                     } else {
-                        location.reload();
+                        // Remote data is genuinely newer — safe to accept it.
+                        console.log("Supabase has newer data. Updating local...");
+                        localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
+                        lastSyncTime = remoteDate;
+
+                        if (document.visibilityState === 'visible') {
+                            showToast("Atualização remota recebida! Recarregando os dados...", "info");
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            location.reload();
+                        }
                     }
-                } else if (remoteDate === 0 && lastSyncTime > 0) {
-                    // Supabase is empty but we have local data, force a push
+                } else if (remoteDate === 0 && localDate > 0) {
+                    // Supabase is empty but we have local data — force a push
                     syncToSupabase();
                 }
             } else {
