@@ -146,10 +146,12 @@ function fetchFromSupabase() {
                 return;
             }
             if (data && data.data) {
-                const remoteDate = data.data._last_updated || 0;
-                const localDate = lastSyncTime;
+                const remoteDate = data.data._last_updated || 1;
+                const localDate = lastSyncTime || 0;
 
-                if (remoteDate > localDate) {
+                const remoteHasValidTrainer = data.data.treinadores && data.data.treinadores.length > 0;
+
+                if (remoteDate > localDate || (!localDate && remoteHasValidTrainer)) {
                     const remoteDB = data.data;
 
                     // MERGE GUARD: never overwrite a locally saved trainer
