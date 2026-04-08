@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Coach Analytics | Redefinir Senha</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-dark);
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-card);
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 24px;
+            color: var(--text-main);
+            margin: 0 0 8px;
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin: 0 0 32px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-hover);
+            color: var(--text-main);
+            font-size: 14px;
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            outline: none;
+        }
+
+        .btn-enter {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-enter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .error-msg {
+            color: var(--red);
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            background: var(--red-bg);
+            padding: 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        .success-msg {
+            color: var(--green);
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 8px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* Background decor */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px;">
+            <i class="ti ti-shield-up" style="font-size: 36px; color: var(--primary);"></i>
+            <h2 style="font-size: 28px; color: var(--text-main); margin: 0; font-weight: 700;">Pro coach Analytics</h2>
+        </div>
+
+        <h1>Nova Senha</h1>
+        <p>Digite e confirme a sua nova senha de acesso.</p>
+
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="success-msg" id="successMsg"></div>
+
+        <form id="resetForm">
+            <div class="input-group">
+                <label>Nova Senha</label>
+                <input type="password" class="form-control" id="password" required placeholder="••••••••">
+            </div>
+            <div class="input-group">
+                <label>Confirmar Nova Senha</label>
+                <input type="password" class="form-control" id="confirmPassword" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-enter" id="submitBtn">
+                <i class="ti ti-lock-check"></i> Redefinir Senha
+            </button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script>
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const successMsg = document.getElementById('successMsg');
+            const btn = document.getElementById('submitBtn');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            if (password !== confirm) {
+                errorMsg.innerText = "As senhas não coincidem.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMsg.innerText = "A senha deve ter pelo menos 6 caracteres.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            // By the time the user is here, they are already authenticated via the hash link
+            const { error } = await supabaseClient.auth.updateUser({
+                password: password
+            });
+
+            if (error) {
+                errorMsg.innerText = error.message || "Erro ao redefinir a senha.";
+                errorMsg.style.display = 'block';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            } else {
+                successMsg.innerText = "Senha redefinida com sucesso! Redirecionando...";
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+
+</html>

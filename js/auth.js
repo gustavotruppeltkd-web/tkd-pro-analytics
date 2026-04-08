@@ -37,7 +37,12 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
         if (!isLoginPage) {
             window.location.href = 'index.html';
         }
-    } else if (event === 'SIGNED_IN') {
+    } else if (event === 'SIGNED_IN' || event === 'PASSWORD_RECOVERY') {
+        if (window.location.hash && window.location.hash.includes('type=recovery')) {
+            window.location.href = 'redefinir-senha.html' + window.location.hash;
+            return;
+        }
+
         const currentPath = window.location.pathname.toLowerCase();
         const isLoginPage = currentPath.includes('index.html') ||
             currentPath.includes('atleta-login.html') ||

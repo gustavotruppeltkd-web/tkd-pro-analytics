@@ -190,10 +190,17 @@
                 <label>E-mail</label>
                 <input type="email" class="form-control" id="email" required placeholder="seu@email.com">
             </div>
-            <div class="input-group">
+            <div class="input-group" id="passwordGroup">
                 <label>Senha</label>
                 <input type="password" class="form-control" id="password" required placeholder="••••••••">
             </div>
+
+            <div style="text-align: right; margin-top: -12px; margin-bottom: 20px;" id="forgotPasswordDiv">
+                <a href="#" onclick="toggleRecovery(event)"
+                    style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 600;">Esqueceu a
+                    senha?</a>
+            </div>
+
             <button type="submit" class="btn-enter" id="submitBtn">
                 <i class="ti ti-login"></i> Entrar
             </button>
@@ -209,9 +216,43 @@
     <script src="js/auth.js"></script>
     <script>
         let isSignup = false;
+        let isRecovery = false;
+
+        function toggleRecovery(e) {
+            if (e) e.preventDefault();
+            isRecovery = !isRecovery;
+            const title = document.getElementById('formTitle');
+            const subtitle = document.getElementById('formSubtitle');
+            const btn = document.getElementById('submitBtn');
+            const toggleBtn = document.getElementById('toggleModeBtn');
+            const forgotDiv = document.getElementById('forgotPasswordDiv');
+            const pwGroup = document.getElementById('passwordGroup');
+
+            document.getElementById('errorMêsg').style.display = 'none';
+            document.getElementById('successMêsg').style.display = 'none';
+
+            if (isRecovery) {
+                isSignup = false;
+                title.innerText = "Recuperar Senha";
+                subtitle.innerText = "Enviaremos as instruções para seu e-mail";
+                btn.innerHTML = `<i class="ti ti-mail"></i> Enviar Link`;
+                toggleBtn.innerText = "Voltar para Login";
+                forgotDiv.style.display = 'none';
+                pwGroup.style.display = 'none';
+                document.getElementById('password').removeAttribute('required');
+            } else {
+                toggleMode(new Event('click'));
+                toggleMode(new Event('click')); // reset to login
+            }
+        }
 
         function toggleMode(e) {
-            e.preventDefault();
+            if (e) e.preventDefault();
+            if (isRecovery) {
+                isRecovery = false;
+                document.getElementById('passwordGroup').style.display = 'block';
+                document.getElementById('password').setAttribute('required', 'true');
+            }
             isSignup = !isSignup;
             const title = document.getElementById('formTitle');
             const subtitle = document.getElementById('formSubtitle');
@@ -219,6 +260,7 @@
             const toggleBtn = document.getElementById('toggleModeBtn');
             const errorMêsg = document.getElementById('errorMêsg');
             const successMêsg = document.getElementById('successMêsg');
+            const forgotDiv = document.getElementById('forgotPasswordDiv');
 
             errorMêsg.style.display = 'none';
             successMêsg.style.display = 'none';
@@ -228,11 +270,13 @@
                 subtitle.innerText = "Criação de usuário Supabase";
                 btn.innerHTML = `<i class="ti ti-user-plus"></i> Registrar`;
                 toggleBtn.innerText = "Já tem uma conta? Faça Login";
+                forgotDiv.style.display = 'none';
             } else {
                 title.innerText = "Bem-vindo(a)";
                 subtitle.innerText = "Acesso Seguro Supabase";
                 btn.innerHTML = `<i class="ti ti-login"></i> Entrar`;
                 toggleBtn.innerText = "Não tem uma conta? Cadastre-se";
+                forgotDiv.style.display = 'block';
             }
         }
 
@@ -249,7 +293,20 @@
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
-            if (isSignup) {
+            if (isRecovery) {
+                const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname.replace('index.html', 'redefinir-senha.html')
+                });
+
+                if (error) {
+                    errorMêsg.innerText = error.message;
+                    errorMêsg.style.display = 'block';
+                } else {
+                    successMêsg.innerText = "E-mail de recuperação enviado! Verifique sua caixa de entrada.";
+                    successMêsg.style.display = 'block';
+                    setTimeout(() => toggleRecovery(), 3000);
+                }
+            } else if (isSignup) {
                 const { data, error } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password,
