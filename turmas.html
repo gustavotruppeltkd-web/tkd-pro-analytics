@@ -184,12 +184,10 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
             <h1 class="splash-title" style="margin-bottom: 0;">Selecione a Turma</h1>
             <div style="display: flex; gap: 8px;">
-                <button class="btn btn-icon btn-outline" onclick="openModalEditar()"
-                    title="Editar Turma">
+                <button class="btn btn-icon btn-outline" onclick="openModalEditar()" title="Editar Turma">
                     <i class="ti ti-pencil" style="font-size: 20px;"></i>
                 </button>
-                <button class="btn btn-icon btn-danger" onclick="openModalExcluir()"
-                    title="Excluir Turma">
+                <button class="btn btn-icon btn-danger" onclick="openModalExcluir()" title="Excluir Turma">
                     <i class="ti ti-trash" style="font-size: 20px;"></i>
                 </button>
                 <button class="btn btn-primary" style="border-radius: 50px; padding: 12px 24px;" onclick="openModal()">
@@ -230,8 +228,8 @@
             </div>
             <form id="formNovaTurma" onsubmit="saveTurma(event)">
                 <div class="form-group">
-                    <label>Nãome da Turma</label>
-                    <input type="text" id="novaTurmaNãome" class="form-control"
+                    <label>Nome da Turma</label>
+                    <input type="text" id="novaTurmaName" class="form-control"
                         placeholder="Ex: Preparat&oacute;rio Faixa Preta" required>
                 </div>
                 <div class="form-group">
@@ -272,8 +270,8 @@
                     <select class="form-control" id="selectTurmaEdit" required onchange="populateEditForm()"></select>
                 </div>
                 <div class="form-group" id="editFields" style="display: none;">
-                    <label>Novo Nãome</label>
-                    <input type="text" id="editNãomeTurma" class="form-control" required>
+                    <label>Novo Nome</label>
+                    <input type="text" id="editNomeTurma" class="form-control" required>
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px;">Salvar
                         Altera&ccedil;&otilde;es</button>
                 </div>
@@ -304,7 +302,7 @@
             <h2 style="text-align: center; color: var(--primary); margin-bottom: 24px;">Bem-vindo(a)!</h2>
             <form onsubmit="saveFirstTrainer(event)">
                 <div class="form-group">
-                    <label>Nãome Completo</label>
+                    <label>Nome Completo</label>
                     <input type="text" class="form-control" id="firstTrainerName" required>
                 </div>
                 <div class="form-group" style="margin-top: 16px;">
@@ -326,7 +324,16 @@
         const modalDel = document.getElementById('modalExcluirTurma');
         const modalEdit = document.getElementById('modalEditarTurma');
 
-        function openModal() { modal.classList.add('active'); }
+        function openModal() {
+            document.getElementById('novaTurmaName').value = '';
+            // Reset radio to default
+            const radios = document.querySelectorAll('input[name="tipoTurma"]');
+            radios.forEach(r => r.checked = r.value === 'rendimento');
+            document.querySelectorAll('.radio-card').forEach((c, i) => {
+                c.classList.toggle('selected', i === 0);
+            });
+            modal.classList.add('active');
+        }
         function closeModal() { modal.classList.remove('active'); }
         function closeModalExcluir() { modalDel.classList.remove('active'); }
         function closeModalEditar() { modalEdit.classList.remove('active'); }
@@ -384,7 +391,7 @@
             event.preventDefault();
             const nt = {
                 id: Date.now(),
-                nome: document.getElementById('novaTurmaNãome').value,
+                nome: document.getElementById('novaTurmaName').value,
                 alunosCount: 0,
                 tipo: document.querySelector('input[name="tipoTurma"]:checked').value === 'rendimento' ? 'Rendimento' : 'Comercial'
             };
@@ -407,7 +414,7 @@
             const id = parseInt(document.getElementById('selectTurmaEdit').value);
             const turma = db.turmas.find(t => t.id === id);
             if (turma) {
-                document.getElementById('editNãomeTurma').value = turma.nome;
+                document.getElementById('editNomeTurma').value = turma.nome;
                 document.getElementById('editFields').style.display = 'block';
             } else {
                 document.getElementById('editFields').style.display = 'none';
@@ -417,7 +424,7 @@
         function saveEditTurma(event) {
             event.preventDefault();
             const id = parseInt(document.getElementById('selectTurmaEdit').value);
-            const newName = document.getElementById('editNãomeTurma').value;
+            const newName = document.getElementById('editNomeTurma').value;
             const turma = db.turmas.find(t => t.id === id);
             if (turma) {
                 turma.nome = newName;
