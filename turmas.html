@@ -31,11 +31,32 @@
             gap: 8px;
             font-size: 16px;
             font-weight: 500;
-            transition: var(--transition);
+            color: var(--text-main);
         }
 
-        .btn-back:hover {
-            color: var(--text-main);
+        .logout-btn-global {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .logout-btn-global:hover {
+            color: var(--red);
+            border-color: var(--red);
         }
 
         .splash-container {
@@ -146,6 +167,11 @@
             <span class="user-role" style="color: var(--text-muted); font-size: 11px;">Treinador</span>
         </div>
     </div>
+
+    <!-- Botão de Sair Global -->
+    <button class="logout-btn-global" onclick="window.logoutUser()">
+        <i class="ti ti-logout"></i> Sair
+    </button>
 
     <!-- Escudo e Logo Central -->
     <div
