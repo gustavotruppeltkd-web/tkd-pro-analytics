@@ -22,6 +22,14 @@ const targetFiles = findFiles(__dirname);
 let totalModifications = 0;
 
 const fixes = [
+    { p: "Novo", r: "Novo" },
+    { p: "novo", r: "novo" },
+    { p: "Nova", r: "Nova" },
+    { p: "nova", r: "nova" },
+    { p: "Novos", r: "Novos" },
+    { p: "novos", r: "novos" },
+    { p: "Novas", r: "Novas" },
+    { p: "novas", r: "novas" },
     { p: "Nov", r: "Nov" },
     { p: "nov", r: "nov" }
 ];
@@ -32,8 +40,6 @@ targetFiles.forEach(filepath => {
         let originalContent = content;
 
         fixes.forEach(({ p, r }) => {
-            // Because Novo was already fixed, "Nov" will only match things like "Nov" in the months array, or "Novas" if we missed it.
-            // Wait, if there's "Novas", it becomes "Novas". So this works universally.
             if (content.includes(p)) {
                 content = content.split(p).join(r);
             }
@@ -49,4 +55,4 @@ targetFiles.forEach(filepath => {
     }
 });
 
-console.log(`Scan complete. Reverted typos in ${totalModifications} files.`);
+console.log(`Scan complete. Fixed edge cases in ${totalModifications} files.`);

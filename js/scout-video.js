@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast("Scout atualizado com sucesso!", "success");
                 closeModalAvaliacao();
 
-                if (confirm("Deseja voltar para a vis�o geral ou continuar editando?")) {
+                if (confirm("Deseja voltar para a visão geral ou continuar editando?")) {
                     window.location.href = 'scout-video.html';
                 }
                 return;

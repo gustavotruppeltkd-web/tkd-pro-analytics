@@ -21,27 +21,32 @@ function findFiles(dir, filesList = []) {
 const targetFiles = findFiles(__dirname);
 let totalModifications = 0;
 
-const fixes = [
-    { p: "Novo", r: "Novo" },
-    { p: "novo", r: "novo" },
-    { p: "Nova", r: "Nova" },
-    { p: "nova", r: "nova" },
-    { p: "Novos", r: "Novos" },
-    { p: "novos", r: "novos" },
-    { p: "Novas", r: "Novas" },
-    { p: "novas", r: "novas" }
-];
-
 targetFiles.forEach(filepath => {
     try {
         let content = fs.readFileSync(filepath, 'utf-8');
         let originalContent = content;
 
-        fixes.forEach(({ p, r }) => {
-            if (content.includes(p)) {
-                content = content.split(p).join(r);
-            }
-        });
+        // Custom list based on user image reports. Using regex to handle `?`, `\ufffd`, or other garbled chars.
+        content = content.replace(/Nota/g, "Nota");
+        content = content.replace(/nota/g, "nota");
+
+        // Diária / Diário
+        content = content.replace(/Di[\?\ufffd]ria/g, "Diária");
+        content = content.replace(/Di[\?\ufffd]rio/g, "Diário");
+        content = content.replace(/di[\?\ufffd]ria/g, "diária");
+        content = content.replace(/di[\?\ufffd]rio/g, "diário");
+
+        // Visão
+        content = content.replace(/Vis[\?\ufffd]o/g, "Visão");
+        content = content.replace(/vis[\?\ufffd]o/g, "visão");
+
+        // RECUPERAÇÃO
+        content = content.replace(/RECUPERA[\?\ufffd]+O/g, "RECUPERAÇÃO");
+        content = content.replace(/Recupera[\?\ufffd]+o/gi, "Recuperação");
+
+        // Avaliação F?sico etc
+        content = content.replace(/Avalia[\?\ufffd]+o/g, "Avaliação");
+        content = content.replace(/avalia[\?\ufffd]+o/g, "avaliação");
 
         if (content !== originalContent) {
             fs.writeFileSync(filepath, content, 'utf-8');
@@ -53,4 +58,4 @@ targetFiles.forEach(filepath => {
     }
 });
 
-console.log(`Scan complete. Reverted typos in ${totalModifications} files.`);
+console.log(`Scan complete. Fixed edge cases in ${totalModifications} files.`);

@@ -364,7 +364,7 @@
 
             if (!db.antropometria) db.antropometria = [];
 
-            // Adiciona nova avalia��o
+            // Adiciona nova avaliação
             db.antropometria.push({
                 id: Date.now(),
                 atletaId: atletaId,
@@ -567,7 +567,7 @@
             if (chartsInstance.scout) chartsInstance.scout.destroy();
             if (chartsInstance.bemEstar) chartsInstance.bemEstar.destroy();
 
-            // Radar de avalia��o t�cnica � inicializa com zeros, atualizado via updateComparisonCharts
+            // Radar de avaliação t�cnica � inicializa com zeros, atualizado via updateComparisonCharts
             chartsInstance.scout = new Chart(ctxScout, {
                 type: 'radar',
                 data: {
@@ -3214,7 +3214,7 @@
 
             let sortedAntrs = [...antro].sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0)).slice(0, 30);
             if (sortedAntrs.length === 0) {
-                tableHTML += `<tr><td colspan="5" style="text-align:center; padding: 20px;">Nenhuma avalia��o registrada.</td></tr>`;
+                tableHTML += `<tr><td colspan="5" style="text-align:center; padding: 20px;">Nenhuma avaliação registrada.</td></tr>`;
             } else {
                 sortedAntrs.forEach(a => {
                     const al = db.alunos.find(x => x.id === a.atletaId);

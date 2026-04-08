@@ -1119,7 +1119,7 @@ function openScoutDetail(scoutId) {
                             <canvas id="scoutRadarChart"></canvas>
                         </div>
                         <div id="noAssessmentMêsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;">
-                            Nenhuma avalia��o registrada para este scout.
+                            Nenhuma avaliação registrada para este scout.
                         </div>
                     </div>
                 </div>
