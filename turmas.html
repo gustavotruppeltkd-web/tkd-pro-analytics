@@ -160,7 +160,7 @@
                     <i class="ti ti-trash" style="font-size: 20px;"></i>
                 </button>
                 <button class="btn btn-primary" style="border-radius: 50px; padding: 12px 24px;" onclick="openModal()">
-                    <i class="ti ti-plus"></i> Nãova Turma
+                    <i class="ti ti-plus"></i> Nova Turma
                 </button>
             </div>
         </div>
@@ -189,13 +189,13 @@
     </div>
 
     <!-- Modals -->
-    <div class="modal-overlay" id="modalNãovaTurma">
+    <div class="modal-overlay" id="modalNovaTurma">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Criar Nãova Turma</h2>
+                <h2 class="modal-title">Criar Nova Turma</h2>
                 <button class="btn-close" type="button" onclick="closeModal()"><i class="ti ti-x"></i></button>
             </div>
-            <form id="formNãovaTurma" onsubmit="saveTurma(event)">
+            <form id="formNovaTurma" onsubmit="saveTurma(event)">
                 <div class="form-group">
                     <label>Nãome da Turma</label>
                     <input type="text" id="novaTurmaNãome" class="form-control"
@@ -221,7 +221,7 @@
                 </div>
                 <div class="form-group" style="margin-top: 32px;">
                     <button type="submit" class="btn btn-primary"
-                        style="width: 100%; justify-content: center; padding: 14px;">Criar Nãova Turma</button>
+                        style="width: 100%; justify-content: center; padding: 14px;">Criar Nova Turma</button>
                 </div>
             </form>
         </div>
@@ -239,7 +239,7 @@
                     <select class="form-control" id="selectTurmaEdit" required onchange="populateEditForm()"></select>
                 </div>
                 <div class="form-group" id="editFields" style="display: none;">
-                    <label>Nãovo Nãome</label>
+                    <label>Novo Nãome</label>
                     <input type="text" id="editNãomeTurma" class="form-control" required>
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px;">Salvar
                         Altera&ccedil;&otilde;es</button>
@@ -289,7 +289,7 @@
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
-        const modal = document.getElementById('modalNãovaTurma');
+        const modal = document.getElementById('modalNovaTurma');
         const modalDel = document.getElementById('modalExcluirTurma');
         const modalEdit = document.getElementById('modalEditarTurma');
 

@@ -452,7 +452,7 @@
                         <button class="btn btn-outline" onclick="openModalGerarContrato()">
                             <i class="ti ti-file-description"></i> Gerar Contrato PDF
                         </button>
-                        <button class="btn btn-primary" onclick="openModalPlano()"><i class="ti ti-plus"></i> Nãovo
+                        <button class="btn btn-primary" onclick="openModalPlano()"><i class="ti ti-plus"></i> Novo
                             Plano</button>
                     </div>
                 </div>
@@ -517,7 +517,7 @@
         </form>
     </div>
 
-    <!-- Modal Nãovo/Editar Plano -->
+    <!-- Modal Novo/Editar Plano -->
     <div class="modal-overlay" id="modalPlanos">
         <div class="modal-content">
             <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
@@ -1270,7 +1270,7 @@
             const vencimento = document.getElementById('contratoVencimento').value;
             const local = document.getElementById('contratoLocal').value;
 
-            // Nãovos campos manuais
+            // Novos campos manuais
             const cNãome = document.getElementById('contratoContratanteNãome').value;
             const cCPF = document.getElementById('contratoContratanteCPF').value;
             const cNasc = document.getElementById('contratoContratanteNasc').value;
@@ -1336,7 +1336,7 @@
             document.getElementById('pdf-local-cidade').innerText = local;
 
             const hoje = new Date();
-            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Nãovembro', 'Dezembro'];
+            const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
             document.getElementById('pdf-data-hoje').innerText = `${hoje.getDate()} de ${meses[hoje.getMonth()]} de ${hoje.getFullYear()}`;
 
             // Configuração do PDF

@@ -233,7 +233,7 @@
             <div id="tab-responder" class="tab-pane active">
                 <div class="card" style="margin-bottom: 24px;">
                     <div class="q-header">
-                        <h2>Nãova Resposta</h2>
+                        <h2>Nova Resposta</h2>
                         <div style="display: flex; gap: 16px; align-itemês: center;">
                             <input type="date" id="dataResposta" class="form-control"
                                 style="width: 150px; padding: 10px;">
@@ -317,8 +317,8 @@
             <div id="tab-builder" class="tab-pane">
                 <div class="card" style="margin-bottom: 24px;">
                     <div class="q-header">
-                        <h2>Criar Nãovo Questionário</h2>
-                        <button class="btn btn-primary" onclick="salvarNãovoQuestionario()"><i class="ti ti-check"></i>
+                        <h2>Criar Novo Questionário</h2>
+                        <button class="btn btn-primary" onclick="salvarNovoQuestionario()"><i class="ti ti-check"></i>
                             Salvar Questionário</button>
                     </div>
 
@@ -339,7 +339,7 @@
                         <button class="btn"
                             style="border: 1px dashed var(--border-color); width: 100%; justify-content: center; padding: 16px; margin-top: 16px;"
                             onclick="addBuilderPergunta()">
-                            <i class="ti ti-plus"></i> Adicionar Nãova Pergunta
+                            <i class="ti ti-plus"></i> Adicionar Nova Pergunta
                         </button>
                     </div>
                 </div>
@@ -594,7 +594,7 @@
             addBuilderPergunta();
         }
 
-        function salvarNãovoQuestionario() {
+        function salvarNovoQuestionario() {
             const titulo = document.getElementById('builderTitulo').value.trim();
             if (!titulo) return alert("Forneça um título para o formulário.");
 

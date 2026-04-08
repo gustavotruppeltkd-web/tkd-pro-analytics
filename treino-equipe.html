@@ -1514,7 +1514,7 @@
     <div class="modal-overlay" id="modalTreino">
         <div class="modal-content modal-treino">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTreinoTitle">Nãova Sessão de Treino</h2>
+                <h2 class="modal-title" id="modalTreinoTitle">Nova Sessão de Treino</h2>
                 <div style="display:flex; gap:10px; align-itemês:center;">
                     <button id="btnDownloadPDF" class="btn"
                         style="padding: 6px 10px; font-size: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); display:none;">
@@ -1558,7 +1558,7 @@
                         </div>
                         <input type="hidden" id="treinoTituloValue" value="">
                         <div id="novoTituloRow">
-                            <input type="text" id="treinoTituloNãovo" class="form-control"
+                            <input type="text" id="treinoTituloNovo" class="form-control"
                                 placeholder="Digite o nome do novo treino...">
                         </div>
                     </div>
@@ -1652,7 +1652,7 @@
     <div class="modal-overlay" id="modalMeso">
         <div class="modal-box" style="max-width:520px;">
             <div class="modal-header">
-                <h3 id="modalMesoTitle">Nãovo Mesociclo</h3>
+                <h3 id="modalMesoTitle">Novo Mesociclo</h3>
                 <button class="btn-close" onclick="closeMesoModal()"><i class="ti ti-x"></i></button>
             </div>
             <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
@@ -1761,7 +1761,7 @@
 
         const DIAS_SEMANA = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
         const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Nãovembro', 'Dezembro'];
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
         // ============================================================
         //  INIT
@@ -2092,7 +2092,7 @@
             if (uniqueTitles.length === 0) {
                 html = `
                     <div class="dropdown-item new-title" onclick="selectTitleOption('__novo__')">
-                        <i class="ti ti-plus" style="margin-right:8px;"></i> Nãovo título...
+                        <i class="ti ti-plus" style="margin-right:8px;"></i> Novo título...
                     </div>
                 `;
             } else {
@@ -2108,7 +2108,7 @@
                 });
                 html += `
                     <div class="dropdown-item new-title" onclick="selectTitleOption('__novo__')">
-                        <i class="ti ti-plus" style="margin-right:8px;"></i> Nãovo título...
+                        <i class="ti ti-plus" style="margin-right:8px;"></i> Novo título...
                     </div>
                 `;
             }
@@ -2132,7 +2132,7 @@
             const menu = document.getElementById('dropdownMenu');
 
             if (val === '__novo__') {
-                triggerText.innerHTML = '<i class="ti ti-plus" style="margin-right:8px;"></i> Nãovo título...';
+                triggerText.innerHTML = '<i class="ti ti-plus" style="margin-right:8px;"></i> Novo título...';
             } else {
                 triggerText.innerText = val || '— Selecione ou crie um treino...';
             }
@@ -2144,7 +2144,7 @@
 
         function onTitleSelectChange(val, keepTitle) {
             const novoRow = document.getElementById('novoTituloRow');
-            const novoInput = document.getElementById('treinoTituloNãovo');
+            const novoInput = document.getElementById('treinoTituloNovo');
 
             if (val === '__novo__') {
                 novoRow.style.display = 'block';
@@ -2178,7 +2178,7 @@
         function getTituloFinal() {
             const val = document.getElementById('treinoTituloValue').value;
             if (val === '__novo__' || val === '') {
-                return document.getElementById('treinoTituloNãovo').value.trim();
+                return document.getElementById('treinoTituloNovo').value.trim();
             }
             return val;
         }
@@ -2214,7 +2214,7 @@
         // ============================================================
         function openModalTreino(dateStr) {
             document.getElementById('treinoEditId').value = '';
-            document.getElementById('modalTreinoTitle').innerText = 'Nãova Sessão de Treino';
+            document.getElementById('modalTreinoTitle').innerText = 'Nova Sessão de Treino';
             document.getElementById('btnDeleteTreino').style.display = 'none';
             document.getElementById('treinoData').value = dateStr;
             document.getElementById('treinoHorario').value = '17:00';
@@ -2260,7 +2260,7 @@
         }
 
         function renderViewPanel(t) {
-            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nãov', 'Dez'];
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const [y, m, d] = (t.data || '').split('-');
             const dataFmt = t.data ? `${d}/${m}/${y}` : '';
             const protecao = t.protecao || 'sim';
@@ -3067,7 +3067,7 @@
         let _activeMesoId = null;
 
         function openMesoModal(mesoId) {
-            document.getElementById('modalMesoTitle').textContent = mesoId ? 'Editar Mesociclo' : 'Nãovo Mesociclo';
+            document.getElementById('modalMesoTitle').textContent = mesoId ? 'Editar Mesociclo' : 'Novo Mesociclo';
             document.getElementById('mesoEditId').value = mesoId || '';
 
             if (mesoId) {
@@ -3215,7 +3215,7 @@
             }).join('');
 
             listHtml += `<button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="openMesoModal(null)">
-                <i class="ti ti-plus"></i> Nãovo Mesociclo
+                <i class="ti ti-plus"></i> Novo Mesociclo
             </button>`;
 
             const activeMeso = mesosDaTurma.find(m => m.id === _activeMesoId);

@@ -2321,7 +2321,7 @@
             });
 
             // Gráfico 4: Ac�mulo Real Macrociclo (Ano Atual)
-            const macroLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nãov', 'Dez'];
+            const macroLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const macroData = Array(12).fill(0);
             const currentYear = new Date().getFullYear();
             (db.cargaTreino || []).forEach(l => {
@@ -3372,7 +3372,7 @@
             document.getElementById('titleChart1').innerText = 'Top Regiões do Corpo Afetadas';
             document.getElementById('titleChart2').innerText = 'Status Médico Atual';
             document.getElementById('titleChart3').innerText = 'Dias Perdidos por Tipo de Lesão';
-            document.getElementById('titleChart4').innerText = 'Incidência de Nãovas Lesões por Mês';
+            document.getElementById('titleChart4').innerText = 'Incidência de Novas Lesões por Mês';
             document.getElementById('titleChart5').innerText = 'Classificação por Severidade (Dias)';
 
             let lesoes = (db.lesoes || []).sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
@@ -3507,7 +3507,7 @@
                 data: {
                     labels: labelMes.length > 0 ? labelMes : ['-'],
                     datasets: [{
-                        label: 'Nãovas Ocorrências',
+                        label: 'Novas Ocorrências',
                         data: inciSorted.length > 0 ? inciSorted.map(v => v[1]) : [0],
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',

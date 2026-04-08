@@ -565,7 +565,7 @@ function openConfigFaixas(e) {
                     <button class="btn-close" type="button" onclick="closeConfigFaixas()"><i class="ti ti-x"></i></button>
                 </div>
                 <div style="display: flex; gap: 8px; margin-bottom: 24px;">
-                    <input type="text" id="novaFaixaInput" class="form-control" placeholder="Nãova cor...">
+                    <input type="text" id="novaFaixaInput" class="form-control" placeholder="Nova cor...">
                     <button type="button" class="btn btn-primary" onclick="addFaixa()"><i class="ti ti-plus"></i></button>
                 </div>
                 <div id="listaFaixas" style="display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">

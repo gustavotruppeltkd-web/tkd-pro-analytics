@@ -546,7 +546,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Foto de Perfil (Nãova Foto do Computador)</label>
+                    <label>Foto de Perfil (Nova Foto do Computador)</label>
                     <input type="file" class="form-control" name="fotoAluno" accept="image/*"
                         onchange="handleFotoUploadPerfil(event)" style="padding: 9px 16px;">
                     <div id="fotoPreviewContainer"
@@ -707,7 +707,7 @@
             // Legado: db.competicoes
             (db.competicoes || []).filter(c => c.atletaId == currentAlunoId).forEach(c => allComps.push(c));
 
-            // Nãovo: db.eventos do calendário
+            // Novo: db.eventos do calendário
             (db.eventos || []).forEach(e => {
                 if (e.tipo === 'Competição' || e.tipo === 'Evento') {
                     const part = (e.participantes || []).find(p => p.atletaId == currentAlunoId);

@@ -988,10 +988,10 @@
                 <button class="btn-close" onclick="closeModalHorario()"><i class="ti ti-x"></i></button>
             </div>
 
-            <!-- Formulário Nãovo Horário -->
+            <!-- Formulário Novo Horário -->
             <form onsubmit="saveHorario(event)" id="formAddHorario"
                 style="background: var(--bg-dark); padding: 16px; border-radius: var(--radius-md); margin-bottom: 24px; border: 1px solid var(--border-color);">
-                <h4 style="margin-bottom: 12px; font-size: 14px;">Adicionar Nãovo Bloco</h4>
+                <h4 style="margin-bottom: 12px; font-size: 14px;">Adicionar Novo Bloco</h4>
                 <div style="display: flex; gap: 12px; align-itemês: flex-end;">
                     <div class="form-group" style="flex: 2; margin-bottom: 0;">
                         <label>Dia da Semana</label>
@@ -1231,7 +1231,7 @@
                             <option value="8">Agosto</option>
                             <option value="9">Setembro</option>
                             <option value="10">Outubro</option>
-                            <option value="11">Nãovembro</option>
+                            <option value="11">Novembro</option>
                             <option value="12">Dezembro</option>
                         </select>
                         <button class="btn btn-primary" onclick="generateRelatorioChamada()">
@@ -1258,7 +1258,7 @@
                             <option value="8">Agosto</option>
                             <option value="9">Setembro</option>
                             <option value="10">Outubro</option>
-                            <option value="11">Nãovembro</option>
+                            <option value="11">Novembro</option>
                             <option value="12">Dezembro</option>
                         </select>
                         <button class="btn btn-primary" onclick="generateRelatorioFinanceiro()">
@@ -1513,7 +1513,7 @@
             const todayStr = `${Y}-${M}-${D}`;
 
             const diasNãome = ['Domingo', 'Segunda', 'Ter\u00e7a', 'Quarta', 'Quinta', 'Sexta', 'S\u00e1bado'];
-            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nãov', 'Dez'];
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const diaNãome = diasNãome[agora.getDay()];
             const diaMes = `${agora.getDate()} ${meses[agora.getMonth()]}`;
 
