@@ -116,7 +116,9 @@ function loadDB() {
         if (!db.periodizacao) { db.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao)); saveDB(); }
     } else {
         db = JSON.parse(JSON.stringify(MOCK_DATA)); // Deep copy
-        saveDB();
+        // Do NOT call saveDB() here — that would push empty data to Supabase
+        // and destroy any cloud data the user has. Just cache locally.
+        localStorage.setItem('tkd_scout_db', JSON.stringify(db));
     }
     window.db = db;
     lastSyncTime = db._last_updated || 0;
@@ -194,8 +196,11 @@ function fetchFromSupabase() {
                         syncToSupabase();
                     }
                 } else {
-                    // Supabase doesn't have the row at all, do initial push
-                    syncToSupabase();
+                    // Supabase has no row for this user yet.
+                    // Only push if we actually have local data worth saving.
+                    if (lastSyncTime > 0) {
+                        syncToSupabase();
+                    }
                 }
 
                 // Subscribe to remote changes
