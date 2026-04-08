@@ -492,48 +492,98 @@
         let selectedAthleteId = null;
         let pinValue = '';
 
-        // Check if a specific athlete was pre-selected via URL param
-        const urlParamês = new URLSearchParamês(window.location.search);
-        const preSelectedId = urlParamês.get('atleta') ? parseInt(urlParamês.get('atleta')) : null;
+        // URL params
+        const urlParams = new URLSearchParams(window.location.search);
+        const preSelectedId = urlParams.get('atleta') ? parseInt(urlParams.get('atleta')) : null;
+        const coachIdParam = urlParams.get('coach') || null;
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderAthletes();
-
-            // Pre-select from URL param
-            if (preSelectedId) {
-                const atleta = db.alunos.find(a => a.id === preSelectedId);
-                if (atleta) selectAthlete(preSelectedId);
+            if (coachIdParam) {
+                // Athlete opened a shared link — load coach's data directly from Supabase
+                loadCoachDataForAthlete(coachIdParam);
+            } else {
+                // Normal flow — trainer is on their own device with local data
+                renderAthletes();
+                if (preSelectedId) {
+                    const atleta = db.alunos?.find(a => a.id === preSelectedId);
+                    if (atleta) selectAthlete(preSelectedId);
+                }
             }
         });
 
+        async function loadCoachDataForAthlete(coachId) {
+            // Show a subtle loading state in the athlete grid
+            const grid = document.getElementById('athletesGrid');
+            grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
+                <i class="ti ti-loader-2" style="font-size:32px; animation: spin 1s linear infinite; display:block; margin-bottom:12px;"></i>
+                Carregando...
+            </div>
+            <style>@keyframes spin { to { transform: rotate(360deg); } }</style>`;
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('app_state')
+                    .select('data')
+                    .eq('project_id', coachId)
+                    .single();
+
+                if (error || !data || !data.data) {
+                    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
+                        <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color: var(--red);"></i>
+                        Link inválido ou expirado.
+                    </div>`;
+                    return;
+                }
+
+                // Load this coach's db into memory (read-only, no localStorage override)
+                db = data.data;
+                window.db = db;
+
+                renderAthletes();
+
+                // Auto-select athlete if pre-selected via URL
+                if (preSelectedId) {
+                    const atleta = db.alunos?.find(a => a.id === preSelectedId);
+                    if (atleta) selectAthlete(preSelectedId);
+                }
+            } catch (err) {
+                console.error('Erro ao carregar dados do treinador:', err);
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:32px;">Erro ao carregar dados.</div>`;
+            }
+        }
+
+
         function renderAthletes() {
             const grid = document.getElementById('athletesGrid');
-            const turmaId = db.activeTurmaId;
-            const atletas = db.alunos.filter(a => a.turmaId === turmaId);
+            // In shared-link mode, show all athletes; in normal mode filter by active turma
+            const atletas = coachIdParam
+                ? (db.alunos || [])
+                : (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
 
             if (atletas.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-athletes" style="grid-column: 1/-1">
                         <i class="ti ti-user-off"></i>
-                        <p>Nenhum atleta cadastrado na turma ativa.</p>
+                        <p>Nenhum atleta encontrado.</p>
                     </div>
                 `;
                 return;
             }
 
             grid.innerHTML = atletas.map(a => {
-                const primeiroNãome = a.nome.split(' ')[0];
+                const primeiroNome = a.nome.split(' ')[0];
                 const faixaCurta = a.faixa ? a.faixa.replace(/\(.*?\)/g, '').trim() : '';
                 return `
                     <button class="athlete-btn" onclick="selectAthlete(${a.id})" id="athleteBtn_${a.id}">
                         <img src="${a.avatar || 'https://i.pravatar.cc/150'}" alt="${a.nome}"
                              onerror="this.src='https://i.pravatar.cc/150'">
-                        <span>${primeiroNãome}</span>
+                        <span>${primeiroNome}</span>
                         ${faixaCurta ? `<span class="faixa-badge">${faixaCurta}</span>` : ''}
                     </button>
                 `;
             }).join('');
         }
+
 
         function selectAthlete(id) {
             selectedAthleteId = id;
@@ -627,4 +677,3 @@
 </body>
 
 </html>
-

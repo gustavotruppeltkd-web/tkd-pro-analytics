@@ -1013,8 +1013,7 @@
                         <label>Fim</label>
                         <input type="time" class="form-control" name="horaFim" required>
                     </div>
-                    <button type="submit" class="btn btn-primary"><i
-                            class="ti ti-plus"></i></button>
+                    <button type="submit" class="btn btn-primary"><i class="ti ti-plus"></i></button>
                 </div>
             </form>
 
@@ -1898,13 +1897,19 @@
             }
         }
         function copiarLinkAtleta(id) {
-            const url = window.location.href.split('/').slice(0, -1).join('/') + '/atleta-login.html?atleta=' + id;
-            navigator.clipboard.writeText(url).then(() => {
-                showToast('Link copiado! Envie ao atleta.');
-            }).catch(() => {
-                prompt('Copie o link abaixo:', url);
+            // Include coach's user_id so the athlete page can fetch data from Supabase directly
+            window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+                const coachId = authData?.user?.id || '';
+                const base = window.location.href.split('/').slice(0, -1).join('/');
+                const url = `${base}/atleta-login.html?atleta=${id}&coach=${coachId}`;
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
+                }).catch(() => {
+                    prompt('Copie o link abaixo:', url);
+                });
             });
         }
+
 
         function openModalAluno() {
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
@@ -2272,4 +2277,3 @@
 </body>
 
 </html>
-
