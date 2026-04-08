@@ -2513,7 +2513,7 @@
                     <input type="text" class="form-control bloco-nome" style="flex:2;" placeholder="Nãome do bloco (ex: Aquecimento)" value="${nome}">
                     <input type="number" class="form-control bloco-dur" style="width:80px;" min="1" max="120" value="${dur}" title="Duração (min)">
                     <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">min</span>
-                    <button class="btn-icon" onclick="document.getElementById('bloco_${id}').remove()" title="Removeráá bloco">
+                    <button class="btn btn-icon danger" onclick="document.getElementById('bloco_${id}').remove()" title="Removeráá bloco">
                         <i class="ti ti-trash" style="color:var(--red);"></i>
                     </button>
                 </div>
@@ -2626,7 +2626,7 @@
                     </div>
                     ${obsHtml}
                 </div>
-                <button class="btn-icon" onclick="document.getElementById('${itemId}').remove()" title="Removeráá">
+                <button class="btn btn-icon danger" onclick="document.getElementById('${itemId}').remove()" title="Removeráá">
                     <i class="ti ti-x" style="font-size:11px;"></i>
                 </button>`;
             container.appendChild(item);
@@ -3286,7 +3286,7 @@
                                         value="${sess.pse || ''}" title="PSE 0-10"
                                         onchange="onMesoSessionChange(${meso.id},'${sem.weekStart}',${di},${sIdx},'pse',this.value)">
                                 </div>
-                                <button class="btn-icon" style="min-width: 16px; width: 16px; height: 16px; color: var(--red);" title="Removeráá" onclick="removeMesoSession(${meso.id},'${sem.weekStart}',${di},${sIdx})">
+                                <button class="btn btn-icon" style="min-width: 16px; width: 16px; height: 16px; color: var(--red);" title="Removeráá" onclick="removeMesoSession(${meso.id},'${sem.weekStart}',${di},${sIdx})">
                                     <i class="ti ti-x" style="font-size: 10px;"></i>
                                 </button>
                             </div>

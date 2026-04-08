@@ -989,11 +989,11 @@
                     <td style="color: var(--text-muted); font-size: 13px;">${a.statusFin === 'pago' ? 'Neste Mês' : '--/--'}</td>
                     <td style="text-align: right;">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                            <button class="btn btn-icon btn-success" title="Enviar WhatsApp" onclick="sendWhatsApp(${a.id})" style="border-radius: 5px;"><i class="ti ti-brand-whatsapp"></i></button>
-                            <button class="btn btn-icon btn-outline" title="Editar Status" onclick="openPaymentForm(${a.id}, true)" style="border-radius: 5px;"><i class="ti ti-pencil"></i></button>
+                            <button class="btn btn-icon btn-success" title="Enviar WhatsApp" onclick="sendWhatsApp(${a.id})"><i class="ti ti-brand-whatsapp"></i></button>
+                            <button class="btn btn-icon btn-outline" title="Editar Status" onclick="openPaymentForm(${a.id}, true)"><i class="ti ti-pencil"></i></button>
                             ${a.statusFin !== 'pago'
-                        ? `<button class="btn btn-primary" onclick="openPaymentForm(${a.id})" style="padding: 8px 16px;">Baixar Pagamento</button>`
-                        : `<button class="btn btn-outline" onclick="openPaymentForm(${a.id})" style="padding: 8px 16px;">Ver Histórico</button>`}
+                        ? `<button class="btn btn-primary" onclick="openPaymentForm(${a.id})">Baixar Pagamento</button>`
+                        : `<button class="btn btn-outline" onclick="openPaymentForm(${a.id})">Ver Histórico</button>`}
                         </div>
                     </td>
                 `;
@@ -1106,7 +1106,7 @@
                     </div>
                     <p style="font-size: 13px; color: var(--text-muted); min-height: 40px;">${p.descricao || 'Sem descrição.'}</p>
                     <div style="display: flex; border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: auto;">
-                        <button class="btn" style="flex:1; justify-content: center;" onclick="openModalPlano(${p.id})"><i class="ti ti-edit"></i> Editar</button>
+                        <button class="btn btn-outline" style="flex:1; justify-content: center;" onclick="openModalPlano(${p.id})"><i class="ti ti-edit"></i> Editar</button>
                     </div>
                 `;
                 grid.appendChild(card);

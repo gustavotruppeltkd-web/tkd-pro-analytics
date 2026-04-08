@@ -272,20 +272,34 @@ Let's fix that layout using CSS grid */
     color: var(--red);
 }
 
-/* Buttons */
+/* ================================================
+   BUTTON SYSTEM — Standardized Design
+   ================================================ */
+
+/* Base */
 .btn {
-    padding: 10px 16px;
-    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+    border-radius: 8px;
     border: none;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     font-family: 'Inter', sans-serif;
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    text-decoration: none;
 }
 
+.btn i {
+    font-size: 15px;
+    line-height: 1;
+}
+
+/* Primary — main saving / confirm actions */
 .btn-primary {
     background: var(--primary);
     color: white;
@@ -293,22 +307,27 @@ Let's fix that layout using CSS grid */
 
 .btn-primary:hover {
     background: var(--primary-hover);
-    box-shadow: var(--shadow-glow);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+    transform: translateY(-1px);
 }
 
-.btn-secondary {
-    background: var(--bg-hover);
+/* Outline — navigation (Voltar, Editar, Baixar, Exportar) */
+.btn-outline {
+    background: transparent;
     color: var(--text-main);
     border: 1px solid var(--border-color);
 }
 
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
+.btn-outline:hover {
+    background: var(--bg-hover);
+    border-color: var(--text-muted);
 }
 
+/* Danger — destructive actions (Excluir, Resetar) */
 .btn-danger {
     background: var(--red-bg);
     color: var(--red);
+    border: 1px solid transparent;
 }
 
 .btn-danger:hover {
@@ -316,6 +335,31 @@ Let's fix that layout using CSS grid */
     color: white;
 }
 
+/* Ghost — soft subtle actions (Cancelar, Adicionar item, Novo) */
+.btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px dashed var(--border-color);
+}
+
+.btn-ghost:hover {
+    color: var(--text-main);
+    border-color: var(--text-muted);
+    background: var(--bg-hover);
+}
+
+/* Secondary — neutral alternate (used in modals, toggles) */
+.btn-secondary {
+    background: var(--bg-hover);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+/* Success & Warning retain for status use */
 .btn-success {
     background: var(--green-bg);
     color: var(--green);
@@ -336,34 +380,36 @@ Let's fix that layout using CSS grid */
     color: white;
 }
 
-.btn-outline {
-    background: transparent;
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-}
-
-.btn-outline:hover {
-    background: var(--bg-hover);
-}
-
+/* Icon-only square button (Excluir, Ver, etc.) */
 .btn-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 8px;
     border: 1px solid var(--border-color);
     background: transparent;
     color: var(--text-muted);
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    font-size: 16px;
+    flex-shrink: 0;
 }
 
 .btn-icon:hover {
     background: var(--bg-hover);
     color: var(--text-main);
 }
+
+.btn-icon.danger:hover {
+    background: var(--red-bg);
+    color: var(--red);
+    border-color: transparent;
+}
+
+
 
 /* Athletes Section */
 .section-header {
@@ -925,7 +971,8 @@ body.mode-mobile .list-header {
     display: none !important;
 }
 
-body.mode-mobile .athlete-row, .student-row {
+body.mode-mobile .athlete-row,
+.student-row {
     flex-direction: column;
     align-items: flex-start !important;
     gap: 12px;
