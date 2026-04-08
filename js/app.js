@@ -759,9 +759,9 @@ function renderSidebar() {
     const tipo = (turma && turma.tipo || '').toLowerCase();
     const isRendimento = tipo.includes('rendimento') || tipo.includes('competi\u00e7\u00e3o');
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    let menuItemês = [];
+    let menuItens = [];
     if (isRendimento) {
-        menuItemês = [
+        menuItens = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-calendar-event', label: 'Vis\u00e3o da Equipe' },
             { href: 'dashboard-rendimento.html', icon: 'ti-activity', label: 'Monitoramento' },
             { href: 'dashboard-questionarios.html', icon: 'ti-clipboard-list', label: 'Question\u00e1rios' },
@@ -770,14 +770,14 @@ function renderSidebar() {
             { href: 'scout-video.html', icon: 'ti-video', label: 'An\u00e1lise de Lutas' }
         ];
     } else {
-        menuItemês = [
+        menuItens = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-users', label: 'Dados da Turma' },
             { href: 'dashboard-aulas.html', icon: 'ti-checklist', label: 'Chamada Di\u00e1ria' },
             { href: 'financeiro.html', icon: 'ti-cash', label: 'Financeiro' }
         ];
     }
-    menuItemês.push({ href: 'perfil.html', icon: 'ti-user-circle', label: 'Meu Perfil' });
-    const html = menuItemês.map(item => {
+    menuItens.push({ href: 'treinador-perfil.html', icon: 'ti-user-circle', label: 'Meu Perfil' });
+    const html = menuItens.map(item => {
         const isActive = currentPage === item.href;
         const isPerformanceActive = currentPage === 'atleta-performance.html' && item.href === 'dashboard-turma-dados.html' && isRendimento;
         return `
