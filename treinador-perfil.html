@@ -650,26 +650,28 @@
     <script>
         let currentCoachObj = null;
 
+        function tryRenderProfile() {
+            const coachId = localStorage.getItem('tkd_active_coach_id');
+            if (!coachId || !db || !db.treinadores) return false;
+
+            const coach = db.treinadores.find(t => t.id === parseInt(coachId));
+            if (!coach) return false;
+
+            currentCoachObj = coach;
+            renderProfileScreen();
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+            return true;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Pequeno timeout para garantir que app.js carregou os dados
+            // Try immediately with local data, retry a bit later in case Supabase fills it in
             setTimeout(() => {
-                const coachId = localStorage.getItem('tkd_active_coach_id');
-                if (!coachId || !db.treinadores) {
-                    alert("Dados do treinador não encontrados.");
-                    return;
+                if (!tryRenderProfile()) {
+                    // If no data yet, wait for onDataLoaded to fire
+                    console.log('Profile: waiting for Supabase data...');
                 }
-
-                const coach = db.treinadores.find(t => t.id === parseInt(coachId));
-                if (!coach) return;
-                currentCoachObj = coach;
-
-                renderProfileScreen();
-
-                // Exibe página
-                document.getElementById('loadingState').style.display = 'none';
-                document.getElementById('profileContent').style.display = 'block';
-
-            }, 500);
+            }, 300);
         });
 
         function renderProfileScreen() {
@@ -1101,12 +1103,13 @@
             loadAuthorizedEmails();
         }
 
-        // Call admin panel init after page data loads
+        // Called by app.js when Supabase data is ready — renders profile immediately without page reload
         window.onDataLoaded = function () {
+            tryRenderProfile();
             initAdminPanel();
         };
 
-        // Also try on DOMContentLoaded (in case Supabase is already ready)
+        // Also try on DOMContentLoaded (in case Supabase is already ready before this fires)
         document.addEventListener('DOMContentLoaded', () => {
             if (window.supabaseClient) initAdminPanel();
         });
