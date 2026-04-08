@@ -198,6 +198,36 @@
             border-color: #2563eb;
         }
 
+        .delete-coach-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0;
+            z-index: 20;
+        }
+
+        .coach-card:hover .delete-coach-btn {
+            opacity: 1;
+        }
+
+        .delete-coach-btn:hover {
+            background: #ef4444;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
         /* Add new trainer card */
         .coach-card.add-new {
             border-style: dashed;
@@ -359,6 +389,9 @@
 
             grid.innerHTML = coaches.map(coach => `
                 <div class="coach-card" onclick="selectCoach(${coach.id})">
+                    <button class="delete-coach-btn" onclick="deleteTrainerData(event)" title="Excluir tudo e resetar conta">
+                        <i class="ti ti-trash"></i>
+                    </button>
                     <img class="coach-avatar"
                          src="${coach.avatar || 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png'}"
                          alt="${coach.nome}"
@@ -370,6 +403,37 @@
                     </span>
                 </div>
             `).join('');
+        }
+
+        async function deleteTrainerData(event) {
+            event.stopPropagation(); // Don't trigger selectCoach
+
+            const confirmed = confirm("ATENÇÃO: Isso irá excluir PERMANENTEMENTE todos os dados desta conta (treinadores, turmas, atletas, etc) e resetar o sistema ao zero.\n\nDeseja continuar?");
+
+            if (!confirmed) return;
+
+            try {
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (!user) throw new Error("Usuário não autenticado.");
+
+                // Overwrite with empty object to force reset
+                const { error } = await window.supabaseClient
+                    .from('app_state')
+                    .update({ data: {} })
+                    .eq('project_id', user.id);
+
+                if (error) throw error;
+
+                // Clear everything locally
+                localStorage.removeItem('tkd_scout_db');
+                localStorage.removeItem('tkd_active_coach_id');
+
+                alert("Conta resetada com sucesso! O sistema irá reiniciar.");
+                location.reload();
+            } catch (err) {
+                console.error("Erro ao resetar conta:", err);
+                alert("Erro ao excluir dados: " + (err.message || err));
+            }
         }
 
         function selectCoach(id) {
