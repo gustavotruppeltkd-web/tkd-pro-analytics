@@ -338,17 +338,22 @@
                                 <p><strong>${a.faixa}</strong></p>
                             </div>
                         </div>
-                        <div class="col-presenca">
-                            <button class="btn-attendance present ${isPresent ? 'active' : ''}" 
-                                ${(registroExistente && !isEditing) ? 'disabled style="cursor:not-allowed"' : ''} 
-                                onclick="toggleAttendance(this, 'present')">
-                                <i class="ti ti-check"></i>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button class="btn btn-icon" title="Copiar Link do Aluno" style="color:var(--green); border-color:rgba(16,185,129,0.3);" onclick="copiarLinkAluno(${a.id})">
+                                <i class="ti ti-link"></i>
                             </button>
-                            <button class="btn-attendance absent ${!isPresent ? 'active' : ''}" 
-                                ${(registroExistente && !isEditing) ? 'disabled style="cursor:not-allowed"' : ''} 
-                                onclick="toggleAttendance(this, 'absent')">
-                                <i class="ti ti-x"></i>
-                            </button>
+                            <div class="col-presenca">
+                                <button class="btn-attendance present ${isPresent ? 'active' : ''}" 
+                                    ${(registroExistente && !isEditing) ? 'disabled style="cursor:not-allowed"' : ''} 
+                                    onclick="toggleAttendance(this, 'present')">
+                                    <i class="ti ti-check"></i>
+                                </button>
+                                <button class="btn-attendance absent ${!isPresent ? 'active' : ''}" 
+                                    ${(registroExistente && !isEditing) ? 'disabled style="cursor:not-allowed"' : ''} 
+                                    onclick="toggleAttendance(this, 'absent')">
+                                    <i class="ti ti-x"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -425,6 +430,15 @@
             renderChamadaUI();
         }
 
+        function copiarLinkAluno(id) {
+            const url = window.location.href.split('/').slice(0, -1).join('/') + '/atleta-login.html?atleta=' + id;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Link copiado! Envie ao aluno.');
+            }).catch(() => {
+                prompt('Copie o link abaixo:', url);
+            });
+        }
+
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadPageData, 100);
@@ -433,4 +447,3 @@
 </body>
 
 </html>
-
