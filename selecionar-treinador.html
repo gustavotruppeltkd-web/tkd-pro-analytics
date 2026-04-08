@@ -382,6 +382,7 @@
                 await window.supabaseClient.auth.signOut();
             }
             localStorage.removeItem('tkd_active_coach_id');
+            localStorage.removeItem('tkd_scout_db');
             window.location.href = 'index.html';
         }
 
