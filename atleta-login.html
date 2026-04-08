@@ -652,6 +652,10 @@
                 // Store logged-in athlete in sessionStorage
                 sessionStorage.setItem('tkd_atleta_id', atleta.id);
                 sessionStorage.setItem('tkd_atleta_nome', atleta.nome);
+                // Store coachId so atleta-portal.html can fetch the right data from Supabase
+                if (coachIdParam) {
+                    sessionStorage.setItem('tkd_coach_id', coachIdParam);
+                }
 
                 // Redirect to athlete portal
                 window.location.href = 'atleta-portal.html';

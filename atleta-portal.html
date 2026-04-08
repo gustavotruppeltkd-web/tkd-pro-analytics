@@ -2218,8 +2218,25 @@
 
         // â”€â”€ START â”€â”€
         // Wait for app.js to initialize the db
+        // Detect if athlete came via a shared link (coach ID stored in sessionStorage)
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(loadPortal, 100); // Small delay to ensure loadDB() finished
+            const storedCoachId = sessionStorage.getItem('tkd_coach_id');
+            if (storedCoachId && window.supabaseClient) {
+                window.supabaseClient
+                    .from('app_state')
+                    .select('data')
+                    .eq('project_id', storedCoachId)
+                    .single()
+                    .then(({ data, error }) => {
+                        if (!error && data && data.data) {
+                            window.db = data.data;
+                            db = window.db;
+                        }
+                        loadPortal();
+                    });
+            } else {
+                setTimeout(loadPortal, 100);
+            }
         });
     </script>
 </body>

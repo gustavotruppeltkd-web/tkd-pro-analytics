@@ -9,8 +9,15 @@ async function checkAuth(isLoginPage = false) {
 
     const { data: { session } } = await window.supabaseClient.auth.getSession();
 
+    // Allow athlete portal access if the athlete logged in via PIN (shared link)
+    const athleteSession = sessionStorage.getItem('tkd_atleta_id');
+    const currentPath = window.location.pathname.toLowerCase();
+    if (athleteSession && currentPath.includes('atleta-portal')) {
+        return; // Athlete has a valid PIN session — no trainer auth required
+    }
+
     if (!session && !isLoginPage) {
-        // Nãot logged in, redirect to index (login)
+        // Not logged in, redirect to index (login)
         window.location.href = 'index.html';
     } else if (session && isLoginPage) {
         // Logged in but on login page, redirect to trainer selection
@@ -20,10 +27,11 @@ async function checkAuth(isLoginPage = false) {
 
 // Automatically check auth on load
 document.addEventListener('DOMContentLoaded', () => {
-    // Avoid redirect loop if we are already on index.html or atleta-login.html
+    // Avoid redirect loop if we are already on index.html, atleta-login.html or atleta-portal.html (PIN-gated)
     const currentPath = window.location.pathname.toLowerCase();
     const isLoginPage = currentPath.includes('index.html') ||
         currentPath.includes('atleta-login.html') ||
+        currentPath.includes('atleta-portal.html') ||
         currentPath.endsWith('/');
 
     checkAuth(isLoginPage);
