@@ -500,6 +500,36 @@
                 </div>
             </div>
 
+            <!-- ADMIN PANEL: Emails Autorizados (apenas gustavotruppeltkd@gmail.com) -->
+            <div id="adminEmailPanel" style="display:none; margin-top: 24px;">
+                <div class="card coach-section">
+                    <h2 class="coach-section-title">
+                        <i class="ti ti-shield-lock"></i> Gerenciar Emails Autorizados
+                        <span
+                            style="font-size:11px; color: var(--primary); background: rgba(59,130,246,0.1); padding: 2px 8px; border-radius: 4px; margin-left: 8px;">Admin</span>
+                    </h2>
+                    <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Apenas e-mails nesta
+                        lista podem criar uma conta no sistema.</p>
+
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <input type="email" id="newAuthEmail" class="form-control" placeholder="novo@email.com"
+                            style="flex:1;">
+                        <button class="btn btn-primary" onclick="addAuthorizedEmail()">
+                            <i class="ti ti-plus"></i> Adicionar
+                        </button>
+                    </div>
+
+                    <div id="authEmailError"
+                        style="display:none; color:var(--red); font-size:12px; margin-bottom: 12px;"></div>
+                    <div id="authEmailSuccess"
+                        style="display:none; color:var(--green); font-size:12px; margin-bottom: 12px;"></div>
+
+                    <div id="authorizedEmailsList" style="display: flex; flex-direction: column; gap: 8px;">
+                        <p style="color: var(--text-muted); font-size: 13px;">Carregando lista...</p>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -999,6 +1029,87 @@
             const fileName = coach.nome.replace(/\s+/g, '_').toLowerCase();
             doc.save(`curriculo_${fileName}.pdf`);
         }
+        // ===== ADMIN EMAIL PANEL =====
+        const OWNER_EMAIL = 'gustavotruppeltkd@gmail.com';
+
+        async function initAdminPanel() {
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (!user || user.email.toLowerCase() !== OWNER_EMAIL.toLowerCase()) return;
+
+            document.getElementById('adminEmailPanel').style.display = 'block';
+            loadAuthorizedEmails();
+        }
+
+        async function loadAuthorizedEmails() {
+            const listEl = document.getElementById('authorizedEmailsList');
+            const { data, error } = await window.supabaseClient.from('authorized_emails').select('*').order('email');
+
+            if (error) {
+                listEl.innerHTML = `<p style="color:var(--red); font-size:13px;">Erro ao carregar: ${error.message}</p>`;
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                listEl.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">Nenhum e-mail autorizado ainda.</p>`;
+                return;
+            }
+
+            listEl.innerHTML = data.map(item => `
+                <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:8px; padding: 10px 16px;">
+                    <span style="font-size:14px; color:var(--text-main);"><i class="ti ti-mail" style="color:var(--primary); margin-right:8px;"></i>${item.email}</span>
+                    <button onclick="removeAuthorizedEmail('${item.email}')" class="btn btn-outline" style="padding:4px 10px; font-size:12px; border-color:var(--red); color:var(--red);">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function addAuthorizedEmail() {
+            const email = document.getElementById('newAuthEmail').value.trim().toLowerCase();
+            const errEl = document.getElementById('authEmailError');
+            const succEl = document.getElementById('authEmailSuccess');
+            errEl.style.display = 'none';
+            succEl.style.display = 'none';
+
+            if (!email || !email.includes('@')) {
+                errEl.innerText = 'Digite um e-mail válido.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            const { error } = await window.supabaseClient.from('authorized_emails').insert({ email });
+            if (error) {
+                errEl.innerText = error.code === '23505' ? 'Este e-mail já está na lista.' : error.message;
+                errEl.style.display = 'block';
+                return;
+            }
+
+            document.getElementById('newAuthEmail').value = '';
+            succEl.innerText = 'E-mail adicionado com sucesso!';
+            succEl.style.display = 'block';
+            setTimeout(() => succEl.style.display = 'none', 3000);
+            loadAuthorizedEmails();
+        }
+
+        async function removeAuthorizedEmail(email) {
+            if (!confirm(`Remover "${email}" da lista de autorizados?`)) return;
+            const { error } = await window.supabaseClient.from('authorized_emails').delete().eq('email', email);
+            if (error) {
+                alert('Erro ao remover: ' + error.message);
+                return;
+            }
+            loadAuthorizedEmails();
+        }
+
+        // Call admin panel init after page data loads
+        window.onDataLoaded = function () {
+            initAdminPanel();
+        };
+
+        // Also try on DOMContentLoaded (in case Supabase is already ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.supabaseClient) initAdminPanel();
+        });
     </script>
 </body>
 
