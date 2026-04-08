@@ -10,13 +10,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             background-color: var(--bg-dark);
             margin: 0;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
         }
 
@@ -35,9 +33,9 @@
         }
 
         .logout-btn-global {
-            position: absolute;
-            top: 30px;
-            right: 40px;
+            position: fixed;
+            top: 20px;
+            right: 32px;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -51,12 +49,34 @@
             background: var(--bg-card);
             cursor: pointer;
             transition: var(--transition);
-            z-index: 10;
+            z-index: 100;
         }
 
         .logout-btn-global:hover {
             color: var(--red);
             border-color: var(--red);
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 0 32px;
+        }
+
+        .page-content {
+            max-width: 1000px;
+            width: 100%;
+            margin: 96px auto 80px;
+            padding: 0 32px;
         }
 
         .splash-container {
@@ -158,29 +178,33 @@
 </head>
 
 <body>
-    <div class="user-profile top-left-profile"
-        style="position: absolute; top: 30px; left: 40px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-items: center; gap: 12px; cursor: pointer; z-index: 10;">
-        <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar"
-            style="width: 32px; height: 32px; border-radius: 50%;">
-        <div class="user-info" style="display: flex; flex-direction: column;">
-            <span class="user-name" style="font-weight: 600; font-size: 13px;">Carregando...</span>
-            <span class="user-role" style="color: var(--text-muted); font-size: 11px;">Treinador</span>
+    <!-- Fixed top bar -->
+    <div class="topbar">
+        <!-- Left: Trainer profile chip -->
+        <div class="user-profile top-left-profile"
+            style="position: absolute; left: 32px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-items: center; gap: 12px; cursor: pointer;">
+            <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar"
+                style="width: 32px; height: 32px; border-radius: 50%;">
+            <div class="user-info" style="display: flex; flex-direction: column;">
+                <span class="user-name" style="font-weight: 600; font-size: 13px;">Carregando...</span>
+                <span class="user-role" style="color: var(--text-muted); font-size: 11px;">Treinador</span>
+            </div>
         </div>
+
+        <!-- Center: Logo -->
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="ti ti-shield-up" style="font-size: 26px; color: var(--primary);"></i>
+            <span style="font-size: 20px; color: var(--text-main); font-weight: 700;">Pro coach Analytics</span>
+        </div>
+
+        <!-- Right: Logout -->
+        <button class="logout-btn-global" onclick="window.logoutUser()">
+            <i class="ti ti-logout"></i> Sair
+        </button>
     </div>
 
-    <!-- Botão de Sair Global -->
-    <button class="logout-btn-global" onclick="window.logoutUser()">
-        <i class="ti ti-logout"></i> Sair
-    </button>
-
-    <!-- Escudo e Logo Central -->
-    <div
-        style="position: absolute; top: 40px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; z-index: 10;">
-        <i class="ti ti-shield-up" style="font-size: 32px; color: var(--primary);"></i>
-        <h2 style="font-size: 24px; color: var(--text-main); margin: 0; font-weight: 700;">Pro coach Analytics</h2>
-    </div>
-
-    <div class="splash-container" style="max-width: 1000px; width: 100%;">
+    <!-- Scrollable main content -->
+    <div class="page-content">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
             <h1 class="splash-title" style="margin-bottom: 0;">Selecione a Turma</h1>
             <div style="display: flex; gap: 8px;">
