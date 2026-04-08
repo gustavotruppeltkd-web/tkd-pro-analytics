@@ -43,6 +43,21 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
             return;
         }
 
+        // Smart cache management: only wipe if a DIFFERENT user is logging in
+        if (session && session.user) {
+            const newUserId = session.user.id;
+            const lastUserId = localStorage.getItem('tkd_last_user_id');
+
+            if (lastUserId && lastUserId !== newUserId) {
+                // Different user — purge old data so it doesn't bleed into the new account
+                localStorage.removeItem('tkd_scout_db');
+                localStorage.removeItem('tkd_active_coach_id');
+            }
+
+            // Always update the stored user id
+            localStorage.setItem('tkd_last_user_id', newUserId);
+        }
+
         const currentPath = window.location.pathname.toLowerCase();
         const isLoginPage = currentPath.includes('index.html') ||
             currentPath.includes('atleta-login.html') ||

@@ -293,10 +293,6 @@
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
-            // SECURITY: Wipe any old local cache so we don't accidentally sync it UP to a new account 
-            localStorage.removeItem('tkd_scout_db');
-            localStorage.removeItem('tkd_active_coach_id');
-
             if (isRecovery) {
                 const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin + window.location.pathname.replace('index.html', 'redefinir-senha.html')
