@@ -131,78 +131,85 @@ function loadDB() {
     checkTrainerOnboarding();
 }
 
-// Fetch latest state from Supabase
 function fetchFromSupabase() {
     if (!window.supabaseClient) return;
 
-    window.supabaseClient
-        .from('app_state')
-        .select('data')
-        .eq('project_id', '00000000-0000-0000-0000-000000000001')
-        .single()
-        .then(({ data, error }) => {
-            if (error && error.code !== 'PGRST116') {
-                console.error("Erro ao buscar Supabase:", error);
-                return;
-            }
-            if (data && data.data) {
-                const remoteDate = data.data._last_updated || 1;
-                const localDate = lastSyncTime || 0;
+    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+        if (!authData || !authData.user) {
+            checkTrainerOnboarding();
+            return;
+        }
+        const userId = authData.user.id;
 
-                const remoteHasValidTrainer = data.data.treinadores && data.data.treinadores.length > 0;
+        window.supabaseClient
+            .from('app_state')
+            .select('data')
+            .eq('project_id', userId)
+            .single()
+            .then(({ data, error }) => {
+                if (error && error.code !== 'PGRST116') {
+                    console.error("Erro ao buscar Supabase:", error);
+                    return;
+                }
+                if (data && data.data) {
+                    const remoteDate = data.data._last_updated || 1;
+                    const localDate = lastSyncTime || 0;
 
-                if (remoteDate > localDate || (!localDate && remoteHasValidTrainer)) {
-                    const remoteDB = data.data;
+                    const remoteHasValidTrainer = data.data.treinadores && data.data.treinadores.length > 0;
 
-                    // MERGE GUARD: never overwrite a locally saved trainer
-                    // with stale remote data that doesn't have one yet.
-                    const localHasTrainer = db.treinadores &&
-                        db.treinadores.length > 0 &&
-                        db.treinadores[0].nome &&
-                        db.treinadores[0].nome.trim() !== '';
-                    const remoteHasTrainer = remoteDB.treinadores &&
-                        remoteDB.treinadores.length > 0 &&
-                        remoteDB.treinadores[0].nome &&
-                        remoteDB.treinadores[0].nome.trim() !== '';
+                    if (remoteDate > localDate || (!localDate && remoteHasValidTrainer)) {
+                        const remoteDB = data.data;
 
-                    if (localHasTrainer && !remoteHasTrainer) {
-                        // Trainer was just saved locally but hasn't synced to Supabase yet.
-                        // Push it up — do NOT reload.
-                        console.log("Local trainer not in Supabase yet. Pushing local data up.");
-                        syncToSupabase();
-                    } else {
-                        // Remote data is genuinely newer — safe to accept it.
-                        console.log("Supabase has newer data. Updating local...");
-                        localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
-                        lastSyncTime = remoteDate;
+                        // MERGE GUARD: never overwrite a locally saved trainer
+                        // with stale remote data that doesn't have one yet.
+                        const localHasTrainer = db.treinadores &&
+                            db.treinadores.length > 0 &&
+                            db.treinadores[0].nome &&
+                            db.treinadores[0].nome.trim() !== '';
+                        const remoteHasTrainer = remoteDB.treinadores &&
+                            remoteDB.treinadores.length > 0 &&
+                            remoteDB.treinadores[0].nome &&
+                            remoteDB.treinadores[0].nome.trim() !== '';
 
-                        if (document.visibilityState === 'visible') {
-                            showToast("Atualiza\u00e7\u00e3oção remota recebida! Recarregando os dados...", "info");
-                            setTimeout(() => location.reload(), 2000);
+                        if (localHasTrainer && !remoteHasTrainer) {
+                            // Trainer was just saved locally but hasn't synced to Supabase yet.
+                            // Push it up — do NOT reload.
+                            console.log("Local trainer not in Supabase yet. Pushing local data up.");
+                            syncToSupabase();
                         } else {
-                            location.reload();
+                            // Remote data is genuinely newer — safe to accept it.
+                            console.log("Supabase has newer data. Updating local...");
+                            localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
+                            lastSyncTime = remoteDate;
+
+                            if (document.visibilityState === 'visible') {
+                                showToast("Atualiza\u00e7\u00e3oção remota recebida! Recarregando os dados...", "info");
+                                setTimeout(() => location.reload(), 2000);
+                            } else {
+                                location.reload();
+                            }
                         }
+                    } else if (remoteDate === 0 && localDate > 0) {
+                        // Supabase is empty but we have local data — force a push
+                        syncToSupabase();
                     }
-                } else if (remoteDate === 0 && localDate > 0) {
-                    // Supabase is empty but we have local data — force a push
+                } else {
+                    // Supabase doesn't have the row at all, do initial push
                     syncToSupabase();
                 }
-            } else {
-                // Supabase doesn't have the row at all, do initial push
-                syncToSupabase();
-            }
 
-            // Subscribe to remote changes
-            setupRealtimeSubscription();
+                // Subscribe to remote changes
+                setupRealtimeSubscription();
 
-            // Call a potential global hook if implemented
-            if (typeof window.onDataLoaded === 'function') {
-                window.onDataLoaded();
-            }
+                // Call a potential global hook if implemented
+                if (typeof window.onDataLoaded === 'function') {
+                    window.onDataLoaded();
+                }
 
-            // Re-check onboarding after remote data loads (trainer might have been set remotely)
-            checkTrainerOnboarding();
-        });
+                // Re-check onboarding after remote data loads (trainer might have been set remotely)
+                checkTrainerOnboarding();
+            });
+    });
 }
 
 function renderUserProfile() {
@@ -341,20 +348,27 @@ function checkTrainerOnboarding() {
 
 function setupRealtimeSubscription() {
     if (window._supabaseSubscribed) return;
-    window._supabaseSubscribed = true;
+    if (!window.supabaseClient) return;
 
-    window.supabaseClient
-        .channel('public:app_state')
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state' }, payload => {
-            const remoteData = payload.new.data;
-            if (remoteData && remoteData._last_updated > lastSyncTime) {
-                console.log("Realtime: New data received!");
-                localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
-                showToast("Dados Atualiza\u00e7\u00e3odos remotamente!", "info");
-                setTimeout(() => location.reload(), 1500);
-            }
-        })
-        .subscribe();
+    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+        if (!authData || !authData.user) return;
+        const userId = authData.user.id;
+
+        window._supabaseSubscribed = true;
+
+        window.supabaseClient
+            .channel('public:app_state:' + userId)
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
+                const remoteData = payload.new.data;
+                if (remoteData && remoteData._last_updated > lastSyncTime) {
+                    console.log("Realtime: New data received!");
+                    localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
+                    showToast("Dados Atualizados remotamente!", "info");
+                    setTimeout(() => location.reload(), 1500);
+                }
+            })
+            .subscribe();
+    });
 }
 
 // Salva estado do banco no Local Storage e Sincroniza
@@ -372,15 +386,20 @@ function syncToSupabase() {
     if (!window.supabaseClient) return;
     const currentData = window.db || db;
 
-    window.supabaseClient
-        .from('app_state')
-        .upsert({
-            project_id: '00000000-0000-0000-0000-000000000001',
-            data: currentData
-        })
-        .then(({ error }) => {
-            if (error) console.error("Erro no Upsert Supabase:", error);
-        });
+    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+        if (!authData || !authData.user) return;
+        const userId = authData.user.id;
+
+        window.supabaseClient
+            .from('app_state')
+            .upsert({
+                project_id: userId,
+                data: currentData
+            })
+            .then(({ error }) => {
+                if (error) console.error("Erro no Upsert Supabase:", error);
+            });
+    });
 }
 
 // --- GLOBAL TOAST SYSTEM ---
