@@ -162,8 +162,6 @@ function fetchFromSupabase() {
                     if (remoteDate > localDate || (!localDate && remoteHasValidTrainer)) {
                         const remoteDB = data.data;
 
-                        // MERGE GUARD: never overwrite a locally saved trainer
-                        // with stale remote data that doesn't have one yet.
                         const localHasTrainer = db.treinadores &&
                             db.treinadores.length > 0 &&
                             db.treinadores[0].nome &&
@@ -174,30 +172,21 @@ function fetchFromSupabase() {
                             remoteDB.treinadores[0].nome.trim() !== '';
 
                         if (localHasTrainer && !remoteHasTrainer) {
-                            // Trainer was just saved locally but hasn't synced to Supabase yet.
-                            // Push it up — do NOT reload.
                             console.log("Local trainer not in Supabase yet. Pushing local data up.");
                             syncToSupabase();
                         } else {
-                            // Remote data is genuinely newer — safe to accept it.
-                            console.log("Supabase has newer data. Updating local...");
+                            // Remote data is genuinely newer — update in-memory and re-render without page reload
+                            console.log("Supabase has newer data. Updating in-memory and re-rendering...");
+                            db = remoteDB;
+                            window.db = db;
                             localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
                             lastSyncTime = remoteDate;
-
-                            if (document.visibilityState === 'visible') {
-                                showToast("Atualiza\u00e7\u00e3oção remota recebida! Recarregando os dados...", "info");
-                                setTimeout(() => location.reload(), 2000);
-                            } else {
-                                location.reload();
-                            }
                         }
                     } else if (remoteDate === 0 && localDate > 0) {
-                        // Supabase is empty but we have local data — force a push
                         syncToSupabase();
                     }
                 } else {
                     // Supabase has no row for this user yet.
-                    // Only push if we actually have local data worth saving.
                     if (lastSyncTime > 0) {
                         syncToSupabase();
                     }
@@ -206,13 +195,12 @@ function fetchFromSupabase() {
                 // Subscribe to remote changes
                 setupRealtimeSubscription();
 
-                // Call a potential global hook if implemented
+                // Always call the page's render hook after remote data arrives
+                renderUserProfile();
+                checkTrainerOnboarding();
                 if (typeof window.onDataLoaded === 'function') {
                     window.onDataLoaded();
                 }
-
-                // Re-check onboarding after remote data loads (trainer might have been set remotely)
-                checkTrainerOnboarding();
             });
     });
 }

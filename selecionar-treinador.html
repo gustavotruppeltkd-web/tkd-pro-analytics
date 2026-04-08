@@ -266,6 +266,44 @@
             opacity: 0.5;
         }
 
+        /* Loading skeleton for cards */
+        .skeleton-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px 28px;
+            width: 220px;
+            text-align: center;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .skeleton-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--bg-hover);
+            margin: 0 auto 16px;
+        }
+
+        .skeleton-line {
+            height: 12px;
+            border-radius: 6px;
+            background: var(--bg-hover);
+            margin: 0 auto 10px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
         .footer-note {
             margin-top: 40px;
             color: var(--text-muted);
@@ -474,9 +512,23 @@
 
         // Render when data is ready
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(renderCoaches, 150);
+            // Immediately show skeleton cards while waiting for Supabase
+            const grid = document.getElementById('coachesGrid');
+            grid.innerHTML = [1, 2].map(() => `
+                <div class="skeleton-card">
+                    <div class="skeleton-circle"></div>
+                    <div class="skeleton-line" style="width:60%;"></div>
+                    <div class="skeleton-line" style="width:40%;"></div>
+                </div>
+            `).join('');
+
             updateDeviceUI();
         });
+
+        // Called by app.js when Supabase data is ready — renders immediately without page reload
+        window.onDataLoaded = function () {
+            renderCoaches();
+        };
 
         // Also hook into app.js data-loaded event in case Supabase fetch arrives later
         window.onDataLoaded = function () {
