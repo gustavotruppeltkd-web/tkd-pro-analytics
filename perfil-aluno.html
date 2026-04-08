@@ -14,7 +14,7 @@
         .profile-header-card {
             padding: 32px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 24px;
             margin-bottom: 24px;
             position: relative;
@@ -54,7 +54,7 @@
             border-radius: 50px;
             padding: 10px 20px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 8px;
             cursor: pointer;
             transition: var(--transition);
@@ -111,7 +111,7 @@
             font-weight: 700;
             margin-bottom: 24px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 10px;
             color: var(--text-main);
         }
@@ -138,7 +138,7 @@
         .info-row {
             display: flex;
             justify-content: space-between;
-            align-itemês: center;
+            align-items: center;
             margin-bottom: 12px;
             font-size: 14px;
             padding: 8px 12px;
@@ -233,7 +233,7 @@
             font-size: 12px;
             font-weight: 600;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 6px;
         }
 
@@ -285,7 +285,7 @@
         <main class="main-content">
             <div style="margin-bottom: 24px;">
                 <a href="dashboard-turma-dados.html"
-                    style="color: var(--text-muted); text-decoration: none; display: flex; align-itemês: center; gap: 8px; font-size: 14px;">
+                    style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px;">
                     <i class="ti ti-arrow-left"></i> Voltar para Dados da Turma
                 </a>
             </div>
@@ -352,7 +352,7 @@
 
                 <!-- Card 2: Treino -->
                 <div class="card detail-card card-green" id="cardFrequencia">
-                    <h3><i class="ti ti-activity"></i> Frequência de Treino</h3>
+                    <h3><i class="ti ti-shield-up"></i> Frequência de Treino</h3>
                     <div class="info-row" style="margin-bottom: 4px;">
                         <span class="info-label">Últimos 2 Meses (16 Aulas)</span>
                     </div>
@@ -390,7 +390,7 @@
                     <h3><i class="ti ti-cash"></i> Status Financeiro</h3>
 
                     <div
-                        style="display: flex; align-itemês: center; justify-content: space-between; margin-bottom: 24px;">
+                        style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
                         <div>
                             <span class="info-label" style="display: block; margin-bottom: 4px;">Mensalidade
                                 Atual</span>
@@ -508,7 +508,7 @@
                     <input type="file" class="form-control" name="fotoAluno" accept="image/*"
                         onchange="handleFotoUploadPerfil(event)" style="padding: 9px 16px;">
                     <div id="fotoPreviewContainer"
-                        style="margin-top: 10px; display: none; align-itemês: center; gap: 12px;">
+                        style="margin-top: 10px; display: none; align-items: center; gap: 12px;">
                         <img id="fotoPreview" src=""
                             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
                         <span style="font-size: 13px; color: var(--green);"><i class="ti ti-check"></i> Foto
@@ -519,7 +519,7 @@
                 <div id="editFieldsComercial">
                     <h4 style="font-size: 14px; margin-bottom: 16px; margin-top: 24px; color: var(--primary);">2. Dados
                         Financeiros</h4>
-                    <div style="display: flex; gap: 16px; align-itemês: flex-end;">
+                    <div style="display: flex; gap: 16px; align-items: flex-end;">
                         <div class="form-group" style="flex: 2;">
                             <label>Plano Contratado</label>
                             <select class="form-control" name="planoAluno" id="planoAluno" onchange="calcVencimento()">
@@ -544,7 +544,7 @@
                 </div>
 
                 <div
-                    style="display: flex; gap: 12px; margin-top: 32px; justify-content: space-between; align-itemês: center;">
+                    style="display: flex; gap: 12px; margin-top: 32px; justify-content: space-between; align-items: center;">
                     <button type="button" class="btn"
                         style="color: var(--red); border: 1px solid var(--red-bg); background: rgba(239, 68, 68, 0.05);"
                         onclick="deleteAluno()">
@@ -617,7 +617,7 @@
                 if (isRendimento && nav) {
                     nav.innerHTML = `
                     <a href="dashboard-rendimento.html" class="nav-item">
-                        <i class="ti ti-activity"></i>
+                        <i class="ti ti-shield-up"></i>
                         <span>Performance (Semáforo)</span>
                     </a>
                     <a href="dashboard-questionarios.html" class="nav-item">
@@ -746,7 +746,7 @@
 
             const freqCard = document.querySelectorAll('.detail-card')[1];
             freqCard.innerHTML = `
-                <h3><i class="ti ti-activity"></i> Frequência de Treino</h3>
+                <h3><i class="ti ti-shield-up"></i> Frequência de Treino</h3>
                 <div class="info-row" style="margin-bottom: 4px;">
                     <span class="info-label">Histórico Geral (${nPresencas + nFaltas} Aulas registradas)</span>
                 </div>

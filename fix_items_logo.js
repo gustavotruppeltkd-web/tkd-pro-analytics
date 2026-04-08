@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+// Fix global align-items typo from previous scripts
 function findFiles(dir, filesList = []) {
     const files = fs.readdirSync(dir);
     for (const file of files) {
@@ -10,7 +11,7 @@ function findFiles(dir, filesList = []) {
                 findFiles(fullPath, filesList);
             }
         } else {
-            if (fullPath.endsWith('.html') || fullPath.endsWith('.js')) {
+            if (fullPath.endsWith('.html') || fullPath.endsWith('.css') || fullPath.endsWith('.js')) {
                 filesList.push(fullPath);
             }
         }
@@ -21,29 +22,15 @@ function findFiles(dir, filesList = []) {
 const targetFiles = findFiles(__dirname);
 let totalModifications = 0;
 
-const fixes = [
-    { p: "Novo", r: "Novo" },
-    { p: "novo", r: "novo" },
-    { p: "Nova", r: "Nova" },
-    { p: "nova", r: "nova" },
-    { p: "Novos", r: "Novos" },
-    { p: "novos", r: "novos" },
-    { p: "Novas", r: "Novas" },
-    { p: "novas", r: "novas" },
-    { p: "Nov", r: "Nov" },
-    { p: "nov", r: "nov" }
-];
-
 targetFiles.forEach(filepath => {
     try {
         let content = fs.readFileSync(filepath, 'utf-8');
         let originalContent = content;
 
-        fixes.forEach(({ p, r }) => {
-            if (content.includes(p)) {
-                content = content.split(p).join(r);
-            }
-        });
+        content = content.replace(/align-items/g, 'align-items');
+        content = content.replace(/Pro coach Analytics/g, 'Pro coach Analytics');
+        content = content.replace(/Pro coach Analytics/g, 'Pro coach Analytics');
+        content = content.replace(/ti ti-shield-up/g, 'ti ti-shield-up');
 
         if (content !== originalContent) {
             fs.writeFileSync(filepath, content, 'utf-8');
@@ -55,4 +42,4 @@ targetFiles.forEach(filepath => {
     }
 });
 
-console.log(`Scan complete. Fixed edge cases in ${totalModifications} files.`);
+console.log(`Scan complete. Fixed itemês typos and injected logo text in ${totalModifications} files.`);

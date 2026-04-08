@@ -68,7 +68,7 @@ function loadDB() {
                 'width:44px', 'height:44px', 'border-radius:10px',
                 'background:var(--bg-card)', 'border:1px solid var(--border-color)',
                 'color:var(--text-main)', 'font-size:22px',
-                'display:flex', 'align-itemês:center', 'justify-content:center',
+                'display:flex', 'align-items:center', 'justify-content:center',
                 'cursor:pointer', 'transition:var(--transition)'
             ].join(';');
             btn.onclick = () => {
@@ -254,13 +254,13 @@ function checkTrainerOnboarding() {
     overlay.style.cssText = [
         'position:fixed', 'inset:0', 'z-index:99999',
         'background:rgba(10,14,26,0.97)',
-        'display:flex', 'align-itemês:center', 'justify-content:center',
+        'display:flex', 'align-items:center', 'justify-content:center',
         'font-family:Inter,system-ui,sans-serif'
     ].join(';');
 
     overlay.innerHTML = `
         <div style="background:#111827;border:1px solid #1e40af;border-radius:20px;padding:48px 40px;max-width:480px;width:90%;box-shadow:0 0 60px rgba(59,130,246,0.2);text-align:center;">
-            <div style="width:72px;height:72px;background:rgba(59,130,246,0.12);border-radius:50%;display:flex;align-itemês:center;justify-content:center;margin:0 auto 24px;">
+            <div style="width:72px;height:72px;background:rgba(59,130,246,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
             <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
@@ -278,7 +278,7 @@ function checkTrainerOnboarding() {
                     onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
             </div>
             <button id="__ob_btn" onclick="window.__saveOnboarding()"
-                style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-itemês:center;justify-content:center;gap:8px;transition:background 0.2s;"
+                style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;"
                 onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
                 Começar a Usar &rarr;
             </button>
@@ -589,7 +589,7 @@ function renderListaFaixas() {
     const list = document.getElementById('listaFaixas');
     if (!list) return;
     list.innerHTML = db.faixas.map((f, i) => `
-        <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
             <span style="font-size: 14px; font-weight: 500;">${f}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removeFaixa(${i})"><i class="ti ti-trash"></i></button>
         </div>
@@ -657,7 +657,7 @@ function renderListaPesos() {
     const list = document.getElementById('listaPesos');
     if (!list) return;
     list.innerHTML = (db.categoriasPeso || []).map((p, i) => `
-        <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
             <span style="font-size: 14px; font-weight: 500;">${p}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removePeso(${i})"><i class="ti ti-trash"></i></button>
         </div>
@@ -835,7 +835,7 @@ function renderGlobalCropperModal() {
                     <h2 class="modal-title">Ajustar Foto</h2>
                     <button class="btn-close" onclick="closeGlobalCropper()"><i class="ti ti-x"></i></button>
                 </div>
-                <div style="width: 100%; height: 300px; display: flex; justify-content: center; align-itemês: center; background: #000; overflow: hidden; margin-bottom: 16px;">
+                <div style="width: 100%; height: 300px; display: flex; justify-content: center; align-items: center; background: #000; overflow: hidden; margin-bottom: 16px;">
                     <img id="imageToCrop" src="" style="max-width: 100%; max-height: 100%; display: block;">
                 </div>
                 <div style="display: flex; gap: 12px; justify-content: flex-end;">
@@ -992,7 +992,7 @@ function openScoutDetail(scoutId) {
             const resStr = ev.resultado ? ` - <span style="color: ${ev.resultado === 'Com ponto' ? 'var(--green)' : 'var(--text-muted)'}; font-weight: 600;">${ev.resultado}</span>` : '';
 
             return `
-                <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-itemês: flex-start;">
+                <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
                         <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A��o'} ${resStr}</div>
@@ -1083,7 +1083,7 @@ function openScoutDetail(scoutId) {
             
             <div style="overflow-y: auto; padding: 24px; flex: 1;">
                 <!-- Header Atleta/Evento -->
-                <div style="display: flex; align-itemês: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
                     ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Advers�rio')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
                     <div>
                         <div style="font-size: 18px; font-weight: 700;">${nomeAtleta}</div>
@@ -1103,7 +1103,7 @@ function openScoutDetail(scoutId) {
 
                 <div style="display: grid; grid-template-columns: 1fr 300px; gap: 24px;">
                     <div>
-                        <h3 style="font-size: 16px; margin-bottom: 16px; display: flex; align-itemês: center; gap: 8px;">
+                        <h3 style="font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
                             <i class="ti ti-history" style="color: var(--primary);"></i> Timeline de Eventos
                         </h3>
                         <div style="margin-bottom: 24px;">
@@ -1112,7 +1112,7 @@ function openScoutDetail(scoutId) {
                     </div>
                     
                     <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content;">
-                        <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-itemês: center; gap: 8px; justify-content: center;">
+                        <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; justify-content: center;">
                             <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação T�cnica
                         </h3>
                         <div style="height: 250px; width: 100%; position: relative;">

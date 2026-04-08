@@ -20,7 +20,7 @@
         .finance-stat-card {
             padding: 24px;
             display: flex;
-            align-itemês: flex-start;
+            align-items: flex-start;
             gap: 16px;
             transition: var(--transition);
         }
@@ -36,7 +36,7 @@
             height: 48px;
             border-radius: var(--radius-md);
             display: flex;
-            align-itemês: center;
+            align-items: center;
             justify-content: center;
             font-size: 24px;
             flex-shrink: 0;
@@ -89,7 +89,7 @@
             padding: 16px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            align-itemês: center;
+            align-items: center;
         }
 
         .search-bar {
@@ -209,7 +209,7 @@
         .plan-header {
             display: flex;
             justify-content: space-between;
-            align-itemês: flex-start;
+            align-items: flex-start;
         }
 
         .plan-price {
@@ -229,7 +229,7 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(2px);
             display: flex;
-            align-itemês: center;
+            align-items: center;
             justify-content: center;
             z-index: 1000;
             opacity: 0;
@@ -298,7 +298,7 @@
 
         .student-cell {
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 12px;
         }
 
@@ -442,7 +442,7 @@
 
             <!-- TAB 2: PLANOS -->
             <div class="tab-content" id="tab-planos">
-                <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                     <div>
                         <h2 style="font-size: 18px; margin-bottom: 4px;">Gerenciar Planos</h2>
                         <p style="color: var(--text-muted); font-size: 14px;">Defina os planos padrão que podem ser
@@ -468,7 +468,7 @@
     <!-- Right Sidebar Form for Receiving Payment -->
     <div class="overlay-dim" id="paymentOverlay" onclick="closePaymentForm()"></div>
     <div class="payment-form-container" id="paymentPanel">
-        <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 32px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
             <h2 style="font-size: 20px;" id="paymentPanelTitle">Registrar Pagamento</h2>
             <button class="btn-close" onclick="closePaymentForm()"><i class="ti ti-x"></i></button>
         </div>
@@ -520,7 +520,7 @@
     <!-- Modal Novo/Editar Plano -->
     <div class="modal-overlay" id="modalPlanos">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h2 style="font-size: 18px;" id="modalPlanoTitle">Adicionar Plano</h2>
                 <button class="btn-close" onclick="closeModalPlano()"><i class="ti ti-x"></i></button>
             </div>
@@ -566,7 +566,7 @@
     <!-- Modal Gerar Contrato PDF -->
     <div class="modal-overlay" id="modalGerarContrato">
         <div class="modal-content" style="max-width: 600px;">
-            <div style="display: flex; justify-content: space-between; align-itemês: center; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h2 style="font-size: 18px;">Gerar Contrato de Prestação de Serviços</h2>
                 <button class="btn-close" onclick="closeModalGerarContrato()"><i class="ti ti-x"></i></button>
             </div>
@@ -1009,7 +1009,7 @@
 
             const infoDiv = document.getElementById('paymentStudentInfo');
             infoDiv.innerHTML = `
-                <div style="display: flex; align-itemês: center; gap: 12px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
                     <img src="${aluno.avatar}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;">
                     <div>
                         <h4 style="font-size: 16px; margin-bottom: 2px;">${aluno.nome}</h4>
@@ -1372,7 +1372,7 @@
                 bottom: 24px; left: 50%; transform: translateX(-50%);
                 background: var(--green); color: #fff;
                 padding: 12px 24px; border-radius: 50px;
-                font-weight: 500; font-size: 14px; display: flex; align-itemês: center; gap: 8px;
+                font-weight: 500; font-size: 14px; display: flex; align-items: center; gap: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; animation: fadeInUp 0.3s ease-out;
             `;
             successDiv.innerHTML = `<i class="ti ti-check"></i> ${mêsg}`;

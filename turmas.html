@@ -12,7 +12,7 @@
         body {
             display: flex;
             justify-content: center;
-            align-itemês: center;
+            align-items: center;
             height: 100vh;
             background-color: var(--bg-dark);
             margin: 0;
@@ -27,7 +27,7 @@
             color: var(--text-muted);
             text-decoration: none;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 8px;
             font-size: 16px;
             font-weight: 500;
@@ -67,7 +67,7 @@
         .profile-card {
             display: flex;
             flex-direction: column;
-            align-itemês: center;
+            align-items: center;
             background: var(--bg-card);
             padding: 32px 24px;
             border-radius: var(--radius-lg);
@@ -95,7 +95,7 @@
             color: var(--primary);
             display: flex;
             justify-content: center;
-            align-itemês: center;
+            align-items: center;
             font-size: 40px;
             margin-bottom: 24px;
             transition: var(--transition);
@@ -138,7 +138,7 @@
 
 <body>
     <div class="user-profile top-left-profile"
-        style="position: absolute; top: 30px; left: 40px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-itemês: center; gap: 12px; cursor: pointer; z-index: 10;">
+        style="position: absolute; top: 30px; left: 40px; border: 1px solid var(--border-color); padding: 8px 16px 8px 8px; border-radius: 50px; background: var(--bg-card); display: flex; align-items: center; gap: 12px; cursor: pointer; z-index: 10;">
         <img src="https://cdn-icons-png.flaticon.com/512/10337/10337579.png" alt="Coach Profile" class="avatar"
             style="width: 32px; height: 32px; border-radius: 50%;">
         <div class="user-info" style="display: flex; flex-direction: column;">
@@ -147,8 +147,15 @@
         </div>
     </div>
 
+    <!-- Escudo e Logo Central -->
+    <div
+        style="position: absolute; top: 40px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; z-index: 10;">
+        <i class="ti ti-shield-up" style="font-size: 32px; color: var(--primary);"></i>
+        <h2 style="font-size: 24px; color: var(--text-main); margin: 0; font-weight: 700;">Pro coach Analytics</h2>
+    </div>
+
     <div class="splash-container" style="max-width: 1000px; width: 100%;">
-        <div style="display: flex; justify-content: space-between; align-itemês: flex-end; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
             <h1 class="splash-title" style="margin-bottom: 0;">Selecione a Turma</h1>
             <div style="display: flex; gap: 8px;">
                 <button class="btn btn-icon btn-outline" style="border-radius: 50%;" onclick="openModalEditar()"

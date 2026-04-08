@@ -17,7 +17,7 @@
             border-radius: var(--radius-lg);
             padding: 32px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 24px;
             margin-bottom: 24px;
             position: relative;
@@ -57,7 +57,7 @@
             border-radius: 50px;
             padding: 10px 20px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 8px;
             cursor: pointer;
             transition: var(--transition);
@@ -72,7 +72,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
-            align-itemês: stretch;
+            align-items: stretch;
         }
 
         .detail-card {
@@ -89,7 +89,7 @@
             font-size: 16px;
             margin-bottom: 20px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 8px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 12px;
@@ -176,7 +176,7 @@
         .timeline-medal {
             font-size: 12px;
             display: inline-flex;
-            align-itemês: center;
+            align-items: center;
             gap: 4px;
             margin-top: 4px;
             padding: 2px 8px;
@@ -215,7 +215,7 @@
         <main class="main-content">
             <div style="margin-bottom: 24px;">
                 <a href="dashboard-turma-dados.html"
-                    style="color: var(--text-muted); text-decoration: none; display: flex; align-itemês: center; gap: 8px; font-size: 14px;">
+                    style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px;">
                     <i class="ti ti-arrow-left"></i> Voltar para Dados da Equipe
                 </a>
             </div>
@@ -224,7 +224,7 @@
                 <img src="https://i.pravatar.cc/150" alt="Avatar" class="profile-avatar-large" id="displayPic">
                 <div class="profile-main-info" style="flex: 1;">
                     <h1 id="displayNãome">Atleta</h1>
-                    <div style="display: flex; align-itemês: center; gap: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
                         <div class="belt-tag" id="displayFaixa" style="margin-bottom: 0;">Faixa</div>
                         <span style="color: var(--text-muted); font-size: 14px;" id="displaySubInfo">Equipe de
                             Competição</span>
@@ -296,7 +296,7 @@
 
                 <div style="position: absolute; top: 32px; right: 32px; display: flex; gap: 8px;">
                     <button class="btn btn-primary" onclick="openModalEdit()"
-                        style="padding: 10px 20px; border-radius: 50px; display: flex; align-itemês: center; gap: 8px;">
+                        style="padding: 10px 20px; border-radius: 50px; display: flex; align-items: center; gap: 8px;">
                         <i class="ti ti-edit"></i> Editar Dados
                     </button>
                     <button class="btn-header-action" onclick="window.location.href='scout-video.html'"
@@ -311,7 +311,7 @@
                 <div style="display: flex; flex-direction: column; gap: 24px;">
                     <div class="detail-card">
                         <div
-                            style="display: flex; justify-content: space-between; align-itemês: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
+                            style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
                             <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-radar"></i> Radar Tático
                             </h3>
                             <select id="selectRadarSource" class="form-control"
@@ -351,7 +351,7 @@
                 <!-- COLUNA 3 (Competições Alvo e Passadas + Carga Diária) -->
                 <div style="display: flex; flex-direction: column; gap: 24px;">
                     <div class="detail-card" style="flex: 1;">
-                        <h3><i class="ti ti-activity-heartbeat"></i> Última Carga Diária</h3>
+                        <h3><i class="ti ti-shield-up-heartbeat"></i> Última Carga Diária</h3>
                         <div id="cargaArea"
                             style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
                             <div
@@ -372,16 +372,16 @@
 
                     <div class="detail-card" style="flex: 1;">
                         <div
-                            style="display:flex; justify-content:space-between; align-itemês:center; border-bottom: 1px solid var(--border-color); padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+                            style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
                             <h3 style="border:none; margin:0; padding:0;"><i class="ti ti-medal"></i> Últimas
                                 Competições</h3>
                             <div id="medalCounter"
-                                style="display:flex; align-itemês:center; gap:10px; font-weight:700; font-size:14px;">
-                                <span style="display:inline-flex;align-itemês:center;gap:4px;color:#FFD700;"><i
+                                style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px;">
+                                <span style="display:inline-flex;align-items:center;gap:4px;color:#FFD700;"><i
                                         class="ti ti-medal"></i><span id="cntOuro">0</span></span>
-                                <span style="display:inline-flex;align-itemês:center;gap:4px;color:#C0C0C0;"><i
+                                <span style="display:inline-flex;align-items:center;gap:4px;color:#C0C0C0;"><i
                                         class="ti ti-medal"></i><span id="cntPrata">0</span></span>
-                                <span style="display:inline-flex;align-itemês:center;gap:4px;color:#CD7F32;"><i
+                                <span style="display:inline-flex;align-items:center;gap:4px;color:#CD7F32;"><i
                                         class="ti ti-medal"></i><span id="cntBronze">0</span></span>
                                 <span style="font-size:11px;color:var(--text-muted);">Total: <span
                                         id="cntTotal">0</span></span>
@@ -398,11 +398,11 @@
                 <!-- LINHA 3 (Base - Gráficos Span) -->
                 <div class="detail-card" style="grid-column: 1 / -1;">
                     <div
-                        style="display: flex; justify-content: space-between; align-itemês: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
+                        style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 16px;">
                         <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-chart-bar"></i> Gráficos de
                             Monitoramento</h3>
 
-                        <div class="comparison-controls" style="display: flex; gap: 12px; align-itemês: center;">
+                        <div class="comparison-controls" style="display: flex; gap: 12px; align-items: center;">
                             <div>
                                 <span class="selector-label"
                                     style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Dado:</span>
@@ -550,7 +550,7 @@
                     <input type="file" class="form-control" name="fotoAluno" accept="image/*"
                         onchange="handleFotoUploadPerfil(event)" style="padding: 9px 16px;">
                     <div id="fotoPreviewContainer"
-                        style="margin-top: 10px; display: none; align-itemês: center; gap: 12px;">
+                        style="margin-top: 10px; display: none; align-items: center; gap: 12px;">
                         <img id="fotoPreview" src=""
                             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">
                         <span style="font-size: 13px; color: var(--green);"><i class="ti ti-check"></i> Foto
@@ -560,7 +560,7 @@
 
                 <div class="form-group"
                     style="margin-top: 8px; padding-top: 20px; border-top: 1px solid var(--border-color);">
-                    <label style="display:flex;align-itemês:center;gap:6px;">
+                    <label style="display:flex;align-items:center;gap:6px;">
                         <i class="ti ti-lock" style="color:var(--primary);font-size:14px;"></i>
                         PIN de Acesso do Portal (4 dígitos)
                     </label>
@@ -572,7 +572,7 @@
                 </div>
 
                 <div
-                    style="display: flex; gap: 12px; margin-top: 32px; justify-content: flex-end; align-itemês: center;">
+                    style="display: flex; gap: 12px; margin-top: 32px; justify-content: flex-end; align-items: center;">
                     <button type="button" class="btn" onclick="closeModalEdit()">Cancelar</button>
                     <button type="submit" class="btn btn-primary btn-edit-profile">Salvar Alterações</button>
                 </div>
@@ -1251,7 +1251,7 @@
 
             if (logs.length === 0) {
                 area.innerHTML = `
-                        <div style="padding: 12px 16px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--primary); display: flex; align-itemês: flex-start; gap: 12px;">
+                        <div style="padding: 12px 16px; border-radius: 8px; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--primary); display: flex; align-items: flex-start; gap: 12px;">
                         <i class="ti ti-info-circle" style="color: var(--primary); font-size: 20px; flex-shrink: 0;"></i>
                         <div>
                             <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Sem Dados de Wellness</div>
@@ -1279,8 +1279,8 @@
                 }
 
                 return `
-                    <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 10px 14px; background: rgba(0,0,0,0.15); border-radius: 8px; margin-bottom: 8px;">
-                        <span style="color: var(--text-main); display:flex; align-itemês:center; gap:8px; font-size:13px; font-weight: 500;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(0,0,0,0.15); border-radius: 8px; margin-bottom: 8px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:8px; font-size:13px; font-weight: 500;">
                             <i class="${icon}" style="font-size:16px; color: var(--text-muted);"></i> ${label}
                         </span>
                         <div style="display: flex; gap: 4px;">${dots}</div>
@@ -1300,7 +1300,7 @@
 
             html += renderWellnessDots('Sono', 'ti ti-bed', todayLog.sono);
             html += renderWellnessDots('Estresse', 'ti ti-brain', todayLog.estresse, true);
-            html += renderWellnessDots('Dor Muscular', 'ti ti-activity', todayLog.dor, true);
+            html += renderWellnessDots('Dor Muscular', 'ti ti-shield-up', todayLog.dor, true);
             html += renderWellnessDots('Humor', 'ti ti-mood-smile', todayLog.humor);
             html += renderWellnessDots('Fadiga', 'ti ti-battery-2', todayLog.fadiga, true);
             html += renderWellnessDots('Alimentação', 'ti ti-apple', todayLog.alimentacao);
@@ -1315,7 +1315,7 @@
 
             if (logs.length === 0) {
                 area.innerHTML = `
-                        <div style="padding: 12px 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); display: flex; align-itemês: flex-start; gap: 12px;">
+                        <div style="padding: 12px 16px; border-radius: 8px; background: rgba(255, 255, 255, 0.05); display: flex; align-items: flex-start; gap: 12px;">
                         <i class="ti ti-info-circle" style="color: var(--text-muted); font-size: 20px; flex-shrink: 0;"></i>
                         <div>
                             <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--text-muted)">Sem Dados de Carga</div>
@@ -1339,22 +1339,22 @@
                         <strong>${log.tipoTreino || 'Desconhecido'}</strong> â€¢ ${dataFormatada}
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
-                        <span style="color: var(--text-main); display:flex; align-itemês:center; gap:6px; font-size:12px; font-weight: 500;">
-                            <i class="ti ti-activity" style="font-size:14px; color: var(--text-muted);"></i> PSE
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
+                            <i class="ti ti-shield-up" style="font-size:14px; color: var(--text-muted);"></i> PSE
                         </span>
                         <strong style="color: ${pseColor}; font-size: 14px;">${log.pse}/10</strong>
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
-                        <span style="color: var(--text-main); display:flex; align-itemês:center; gap:6px; font-size:12px; font-weight: 500;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
                             <i class="ti ti-clock" style="font-size:14px; color: var(--text-muted);"></i> Duração
                         </span>
                         <strong style="color: var(--text-main); font-size: 13px;">${log.duracaoMins} min</strong>
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-itemês: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
-                        <span style="color: var(--text-main); display:flex; align-itemês:center; gap:6px; font-size:12px; font-weight: 500;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(0,0,0,0.15); border-radius: 6px;">
+                        <span style="color: var(--text-main); display:flex; align-items:center; gap:6px; font-size:12px; font-weight: 500;">
                             <i class="ti ti-bolt" style="font-size:14px; color: var(--text-muted);"></i> Carga
                         </span>
                         <strong style="color: ${pseColor}; font-size: 13px;">${log.cargaCalculada} U.A.</strong>

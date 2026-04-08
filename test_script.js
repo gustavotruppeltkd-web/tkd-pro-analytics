@@ -265,7 +265,7 @@
                             </div>
                         </div>
                         <div class="col-wellness">
-                            <span class="wellness-score" style="color: ${scoreColor}; display: flex; align-itemês: center;">${scoreText}</span>
+                            <span class="wellness-score" style="color: ${scoreColor}; display: flex; align-items: center;">${scoreText}</span>
                             <div class="semaforo-dot ${dotClass}"></div>
                         </div>
                     </a>

@@ -14,7 +14,7 @@
             margin-bottom: 32px;
             display: flex;
             justify-content: space-between;
-            align-itemês: flex-start;
+            align-items: flex-start;
         }
 
         .event-title-area h1 {
@@ -41,7 +41,7 @@
             padding: 20px;
             flex: 1;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 16px;
         }
 
@@ -51,7 +51,7 @@
             border-radius: 50%;
             display: flex;
             justify-content: center;
-            align-itemês: center;
+            align-items: center;
             font-size: 24px;
         }
 
@@ -62,7 +62,7 @@
         .section-header {
             display: flex;
             justify-content: space-between;
-            align-itemês: center;
+            align-items: center;
             margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border-color);
@@ -70,7 +70,7 @@
 
         .athlete-row {
             display: flex;
-            align-itemês: center;
+            align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -81,7 +81,7 @@
 
         .athlete-info {
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 12px;
             flex: 1;
         }
@@ -164,7 +164,7 @@
         .medal-breakdown span {
             font-size: 15px;
             display: flex;
-            align-itemês: center;
+            align-items: center;
             gap: 4px;
         }
     </style>
@@ -214,7 +214,7 @@
                         <i class="ti ti-medal"></i>
                     </div>
                     <div style="flex: 1;">
-                        <div style="display: flex; justify-content: space-between; align-itemês: flex-end;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                             <div>
                                 <p style="color: var(--text-muted); font-size: 13px;">Medalhas</p>
                                 <h3 id="statMedalhas">0</h3>
@@ -433,16 +433,16 @@
                         <img src="${athlete.avatar}" class="athlete-avatar">
                         <span class="athlete-name">${athlete.nome}</span>
                     </div>
-                    <div class="col-result" style="display: flex; align-itemês: center; justify-content: flex-end; gap: 4px; width: 150px; margin-right: 16px;">
+                    <div class="col-result" style="display: flex; align-items: center; justify-content: flex-end; gap: 4px; width: 150px; margin-right: 16px;">
                         <span style="font-size: 13px; color: var(--text-muted);">Lutas ${p.lutas || 0}</span>
                         <button class="btn btn-icon" style="background: transparent; color: var(--text-muted); font-size: 18px; padding: 0; margin-left: 2px;" onclick="toggleFightsView(${athlete.id})">
                             <i class="ti ti-chevron-down" id="toggleIcon-${athlete.id}"></i>
                         </button>
                     </div>
-                    <div class="col-medal" style="display: flex; align-itemês: center; justify-content: center; width: 120px;">
+                    <div class="col-medal" style="display: flex; align-items: center; justify-content: center; width: 120px;">
                         ${medalIcon || roundDisplay || '<span style="font-size: 12px; color: var(--text-muted);">-</span>'}
                     </div>
-                    <div class="col-actions" style="display: flex; align-itemês: center; gap: 8px; width: auto;">
+                    <div class="col-actions" style="display: flex; align-items: center; gap: 8px; width: auto;">
                         <button class="btn-icon" style="color: var(--text-muted);" onclick="openAthleteDetails(${athlete.id})" title="Detalhes">
                             <i class="ti ti-edit"></i>
                         </button>
@@ -461,9 +461,9 @@
                         if (luta.resultado && luta.resultado.startsWith('Perdeu')) resultColor = 'var(--red)';
 
                         fightsHtml += `
-                            <div style="display: flex; align-itemês: center; margin-bottom: 8px; font-size: 12.5px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px; font-size: 12.5px;">
                                 <div style="width: 70px; color: var(--primary); font-weight: 600;">Luta ${index + 1}</div>
-                                <div style="flex: 1; display: flex; align-itemês: center; gap: 8px;">
+                                <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
                                     <span style="color: var(--text-muted);">vs</span> 
                                     <span style="font-weight: 500;">${luta.oponente || 'Oponente não definido'}</span>
                                 </div>

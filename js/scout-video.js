@@ -928,7 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 font-weight: 700;
                 display: flex;
                 justify-content: space-between;
-                align-itemês: center;
+                align-items: center;
             `;
             const rResult = roundsData.find(rd => rd.round === parseInt(rKey))?.result || 'em andamento';
             header.innerHTML = `
@@ -978,7 +978,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.innerHTML = `
                     <div class="timeline-time" onclick="jumpToEvent(${ev.time})" style="cursor: pointer;">${ev.formattedTime}</div>
                     <div class="timeline-content" onclick="jumpToEvent(${ev.time})" style="cursor: pointer; flex: 1;">
-                        <div style="display: flex; align-itemês: center; gap: 6px; margin-bottom: 4px;">
+                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
                             <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
                             <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'A��o'} ${resStr}</span>
                         </div>
