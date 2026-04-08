@@ -305,9 +305,10 @@
     </button>
 
     <header class="page-header">
-        <div class="page-logo">
-            <div class="logo-icon"><i class="ti ti-chart-radar"></i></div>
-            <span class="logo-text">Pro Coach Analytics</span>
+        <div class="page-logo"
+            style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px;">
+            <i class="ti ti-shield-up" style="font-size: 36px; color: var(--primary);"></i>
+            <h2 style="font-size: 28px; color: var(--text-main); margin: 0; font-weight: 700;">Pro coach Analytics</h2>
         </div>
         <h1 class="page-title">Quem vai treinar hoje?</h1>
         <p class="page-subtitle">Selecione o perfil do treinador para acessar o painel</p>
@@ -348,6 +349,9 @@
                     <div class="empty-state">
                         <i class="ti ti-user-off"></i>
                         <p>Nenhum treinador cadastrado ainda.<br>Preencha seu perfil para começar.</p>
+                        <button class="btn-enter" onclick="openNewTrainerModal()" style="margin-top: 24px; padding: 12px 24px; font-size: 14px; max-width: 250px; margin-left: auto; margin-right: auto;">
+                            <i class="ti ti-plus"></i> Cadastrar Treinador
+                        </button>
                     </div>
                 `;
                 return;
@@ -413,7 +417,66 @@
         window.onDataLoaded = function () {
             renderCoaches();
         };
+
+        function openNewTrainerModal() {
+            document.getElementById('newTrainerModal').style.display = 'flex';
+        }
+
+        async function createBasicTrainer() {
+            const name = document.getElementById('newTrainerName').value.trim();
+            if (!name) return alert('Digite um nome válido.');
+
+            const newId = Date.now();
+            const newTrainer = {
+                id: newId,
+                nome: name,
+                papel: 'Treinador Principal',
+                avatar: 'https://cdn-icons-png.flaticon.com/512/10337/10337579.png',
+                turmasIds: []
+            };
+
+            db.treinadores = db.treinadores || [];
+            db.treinadores.push(newTrainer);
+
+            if (window.supabaseClient) {
+                const userObj = await window.supabaseClient.auth.getUser();
+                if (userObj.data && userObj.data.user) {
+                    await window.supabaseClient.from('treinadores').insert([{
+                        user_id: userObj.data.user.id,
+                        nome: newTrainer.nome,
+                        papel: newTrainer.papel
+                    }]);
+                }
+            }
+
+            localStorage.setItem('tkd_active_coach_id', String(newId));
+            window.location.href = 'treinador-perfil.html';
+        }
     </script>
+
+    <!-- Modal Cadastrar Treinador (Fallback/Vazio) -->
+    <div id="newTrainerModal"
+        style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:999; align-items:center; justify-content:center; padding:16px;">
+        <div
+            style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:32px; width:100%; max-width:400px; animation:fadeIn 0.3s ease;">
+            <h2 style="margin-top:0; color:var(--text-main); font-size:22px; font-weight:700;">Novo Treinador</h2>
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:24px;">Digite seu nome para criar um perfil
+                básico e entrar no sistema.</p>
+
+            <label
+                style="display:block; font-size:13px; font-weight:600; color:var(--text-muted); margin-bottom:8px;">Nome
+                Completo</label>
+            <input type="text" id="newTrainerName" placeholder="Seu nome"
+                style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; border:1px solid var(--border-color); background:rgba(255,255,255,0.05); color:white; margin-bottom:24px;">
+
+            <div style="display:flex; justify-content:flex-end; gap:12px;">
+                <button onclick="document.getElementById('newTrainerModal').style.display='none'"
+                    style="background:transparent; border:1px solid var(--border-color); color:var(--text-main); padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:500;">Cancelar</button>
+                <button onclick="createBasicTrainer()"
+                    style="background:var(--primary); border:none; color:white; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600;">Cadastrar</button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
