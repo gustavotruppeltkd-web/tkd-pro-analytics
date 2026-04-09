@@ -806,7 +806,7 @@
             renderComps(pastComps, tlContainer);
             renderMedals(pastComps, document.getElementById('timelineMedalhas'));
 
-            // â”€â”€ Atualiza o contador de medalhas no topo do card â”€â”€
+            // ── Atualiza o contador de medalhas no topo do card ──
             const medalColocacoes = ['ouro', 'prata', 'bronze'];
             let cOuro = 0, cPrata = 0, cBronze = 0;
 
@@ -922,26 +922,26 @@
             let count = athleteScouts.length;
 
             if (count > 0) {
-                const sumês = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
+                const sums = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
                 athleteScouts.forEach(s => {
-                    sumês.velocidade += (s.avaliacaoTreinador.velocidade || 0);
-                    sumês.forca += (s.avaliacaoTreinador.forca || 0);
-                    sumês.tatica += (s.avaliacaoTreinador.tatica || 0);
-                    sumês.defesa += (s.avaliacaoTreinador.defesa || 0);
-                    sumês.variacao += (s.avaliacaoTreinador.variacao || 0);
-                    sumês.precisao += (s.avaliacaoTreinador.precisao || 0);
-                    sumês.obediencia += (s.avaliacaoTreinador.obediencia || 0);
+                    sums.velocidade += (s.avaliacaoTreinador.velocidade || 0);
+                    sums.forca += (s.avaliacaoTreinador.forca || 0);
+                    sums.tatica += (s.avaliacaoTreinador.tatica || 0);
+                    sums.defesa += (s.avaliacaoTreinador.defesa || 0);
+                    sums.variacao += (s.avaliacaoTreinador.variacao || 0);
+                    sums.precisao += (s.avaliacaoTreinador.precisao || 0);
+                    sums.obediencia += (s.avaliacaoTreinador.obediencia || 0);
                 });
 
                 // Média (0-10) -> Escala 0-100 para o gráfico radar ficar mais visível
                 dataArr = [
-                    (sumês.velocidade / count) * 10,
-                    (sumês.forca / count) * 10,
-                    (sumês.tatica / count) * 10,
-                    (sumês.defesa / count) * 10,
-                    (sumês.variacao / count) * 10,
-                    (sumês.precisao / count) * 10,
-                    (sumês.obediencia / count) * 10
+                    (sums.velocidade / count) * 10,
+                    (sums.forca / count) * 10,
+                    (sums.tatica / count) * 10,
+                    (sums.defesa / count) * 10,
+                    (sums.variacao / count) * 10,
+                    (sums.precisao / count) * 10,
+                    (sums.obediencia / count) * 10
                 ];
             } else {
                 // Tenta buscar da tabela legada scoutEstatisticas se não houver avaliações novas
@@ -1365,22 +1365,22 @@
             const logTaekwondo = logs.find(l => l.tipoTreino === 'Taekwondo');
             const logFisico = logs.find(l => l.tipoTreino === 'Físico');
 
-            let itemêsToRender = [];
-            if (logTaekwondo) itemêsToRender.push(logTaekwondo);
-            if (logFisico) itemêsToRender.push(logFisico);
+            let itemsToRender = [];
+            if (logTaekwondo) itemsToRender.push(logTaekwondo);
+            if (logFisico) itemsToRender.push(logFisico);
 
-            if (itemêsToRender.length === 0) {
+            if (itemsToRender.length === 0) {
                 // Caso não tenha específicos, mostrar o mais recente (dados antigos)
-                itemêsToRender.push(logs[0]);
+                itemsToRender.push(logs[0]);
             }
 
             // Ordenar para mostrar o item mais recente lançado no topo
-            itemêsToRender.sort((a, b) => new Date(b.data) - new Date(a.data));
+            itemsToRender.sort((a, b) => new Date(b.data) - new Date(a.data));
 
             let html = '<div style="display: flex; gap: 12px; w-full">';
-            itemêsToRender.forEach((log, index) => {
+            itemsToRender.forEach((log, index) => {
                 html += renderLog(log);
-                if (index < itemêsToRender.length - 1) {
+                if (index < itemsToRender.length - 1) {
                     html += '<div style="width: 1px; background: rgba(255,255,255,0.05); margin: 0 4px;"></div>';
                 }
             });

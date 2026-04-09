@@ -419,12 +419,12 @@ function showToast(message, type = 'success') {
         toast.classList.add('show');
     }, 10);
 
-    // Removeráá ap�s 3 segundos
+    // Removeráá aps 3 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
             toast.remove();
-        }, 400); // tempo da transi��o css
+        }, 400); // tempo da transio css
     }, 3000);
 }
 
@@ -444,7 +444,7 @@ function calcularIdade(dataNasc) {
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
     let idade = anoAtual - parseInt(ns[0]);
-    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda n�o passou
+    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda não passou
     return idade;
 }
 
@@ -493,7 +493,7 @@ function selScale(el, hiddenId, val) {
     parent.querySelectorAll('.btn-scale').forEach(btn => btn.classList.remove('active'));
     el.classList.add('active');
 
-    // Suporte para IDs tradicionais ou arrays name (usados nos formul�rios din�micos de Qs)
+    // Suporte para IDs tradicionais ou arrays name (usados nos formulrios dinmicos de Qs)
     let hiddenInput = document.getElementById(hiddenId);
     if (!hiddenInput) {
         hiddenInput = document.querySelector(`input[name="${hiddenId}"]`);
@@ -507,7 +507,7 @@ function selScale(el, hiddenId, val) {
     }
 }
 
-// Converter ranges est�ticos em bot�es
+// Converter ranges estticos em botes
 function replaceRangesWithButtons(container = document) {
     container.querySelectorAll('input[type="range"]:not(.no-btn-convert)').forEach(input => {
         const min = parseInt(input.min || '0');
@@ -621,7 +621,7 @@ function addFaixa() {
 }
 
 function removeFaixa(index) {
-    if (confirm('Tem certeza que deseja remover esta faixa? Alunos ainda podem t�-la listada se j�atribu�da no passado.')) {
+    if (confirm('Tem certeza que deseja remover esta faixa? Alunos ainda podem t-la listada se jatribuda no passado.')) {
         db.faixas.splice(index, 1);
         saveDB();
         renderListaFaixas();
@@ -808,7 +808,7 @@ function renderSidebar() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Carrega o Banco de Dados no carregamento da p�gina
+    // Carrega o Banco de Dados no carregamento da pgina
     loadDB();
     populateFaixaSelects();
     populatePesoSelects();
@@ -870,14 +870,14 @@ function openGlobalCropper(file, callback) {
     const modal = document.getElementById('modalGlobalCropper');
     const imagePreview = document.getElementById('imageToCrop');
 
-    // L�o arquivo como URL
+    // Lo arquivo como URL
     const reader = new FileReader();
     reader.onload = function (e) {
         imagePreview.src = e.target.result;
 
         modal.classList.add('active');
 
-        // Destruir inst�ncia anterior se existir
+        // Destruir instncia anterior se existir
         if (globalCropperInstance) {
             globalCropperInstance.destroy();
         }
@@ -943,13 +943,13 @@ function confirmGlobalCrop() {
 function openScoutDetail(scoutId) {
     const scout = db.lutasScout.find(s => s.id === parseInt(scoutId));
     if (!scout) {
-        showToast("Scout n�o encontrado!", "error");
+        showToast("Scout não encontrado!", "error");
         return;
     }
 
-    const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers�rio', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => a.id === scout.atletaId);
+    const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => a.id === scout.atletaId);
 
-    // Fallback para atleta n�o encontrado
+    // Fallback para atleta não encontrado
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const avatarAtleta = atleta ? (atleta.avatar || 'https://i.pravatar.cc/150') : 'https://i.pravatar.cc/150';
 
@@ -964,7 +964,7 @@ function openScoutDetail(scoutId) {
     const dataObj = new Date(scout.dataRegistro);
     const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-    // Sum�rio de Rounds
+    // Sumário de Rounds
     let roundsHtml = '';
     if (scout.rounds && scout.rounds.length > 0) {
         roundsHtml = `
@@ -983,7 +983,7 @@ function openScoutDetail(scoutId) {
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
-        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma a��o registrada nesta luta.</p>';
+        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma ao registrada nesta luta.</p>';
     } else {
         timelineHtml = acoes.map(ev => {
             if (ev.isDivider) {
@@ -1007,8 +1007,8 @@ function openScoutDetail(scoutId) {
                 <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A��o'} ${resStr}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' �')}</div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'Ação'} ${resStr}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' ')}</div>
                     </div>
                     <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">R${ev.round}</div>
                 </div>
@@ -1052,7 +1052,7 @@ function openScoutDetail(scoutId) {
     const totalAtaques = Object.values(tecnicaCount).reduce((a, b) => a + b, 0);
     let tecnicasHtml = topTecnicas.length > 0 ? topTecnicas.map(t => {
         const pct = Math.round((t[1] / totalAtaques) * 100);
-        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">�${t[0]}: ${pct}%</div>`;
+        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">${t[0]}: ${pct}%</div>`;
     }).join('') : '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
 
     let topFaltaHtml = '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
@@ -1073,7 +1073,7 @@ function openScoutDetail(scoutId) {
                 <div style="font-weight: 700; font-size: 14px;">${basePredominanteHtml}</div>
             </div>
             <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top T�cnicas</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top Técnicas</div>
                 <div>${tecnicasHtml}</div>
             </div>
             <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
@@ -1096,7 +1096,7 @@ function openScoutDetail(scoutId) {
             <div style="overflow-y: auto; padding: 24px; flex: 1;">
                 <!-- Header Atleta/Evento -->
                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
-                    ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Advers�rio')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
+                    ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Adversário')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
                     <div>
                         <div style="font-size: 18px; font-weight: 700;">${nomeAtleta}</div>
                         <div style="color: var(--text-muted); font-size: 14px;">${scout.evento}</div>
@@ -1125,7 +1125,7 @@ function openScoutDetail(scoutId) {
                     
                     <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content;">
                         <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; justify-content: center;">
-                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação T�cnica
+                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação Técnica
                         </h3>
                         <div style="height: 250px; width: 100%; position: relative;">
                             <canvas id="scoutRadarChart"></canvas>
@@ -1168,7 +1168,7 @@ function openScoutDetail(scoutId) {
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'Força', 'T�tica', 'Defesa', 'Varia��o', 'Precis�o', 'Obedi�ncia'],
+                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variação', 'Precisão', 'Obediência'],
                     datasets: [{
                         label: 'Desempenho nesta Luta',
                         data: dataArr,
@@ -1213,42 +1213,42 @@ function openScoutDetail(scoutId) {
 /**
  * Exclui um scout permanentemente.
  * @param {number} scoutId 
- * @param {function} callback - Fun��o para Atualiza\u00e7\u00e3or a UI ap�s exclus�o
+ * @param {function} callback - Função para Atualiza\u00e7\u00e3or a UI aps excluso
  */
 function deleteScout(scoutId, callback) {
-    if (!confirm("Tem certeza que deseja excluir esta an�lise de scout permanentemente?")) return;
+    if (!confirm("Tem certeza que deseja excluir esta anlise de scout permanentemente?")) return;
 
     const index = db.lutasScout.findIndex(s => s.id === scoutId);
     if (index !== -1) {
         db.lutasScout.splice(index, 1);
         saveDB();
-        showToast("Scout exclu�do com sucesso!", "success");
+        showToast("Scout excluído com sucesso!", "success");
         if (callback) callback();
     }
 }
 
 /**
- * Redireciona para a tela de scout carregando os dados para edi��o.
+ * Redireciona para a tela de scout carregando os dados para edição.
  * @param {number} scoutId 
  */
 function editScout(scoutId) {
-    // Redireciona para a p�gina de scout com o ID na URL
+    // Redireciona para a pgina de scout com o ID na URL
     window.location.href = `scout-video.html?edit=${scoutId}`;
 }
 
 /**
- * Gera e baixa um PDF de alto n�vel com an�lise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
+ * Gera e baixa um PDF de alto nível com anlise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
  * @param {number} scoutId 
  */
 /**
- * Gera e baixa um PDF de alto n�vel com an�lise granular e matriz anal�tica (T�cnica + Perna + Base).
+ * Gera e baixa um PDF de alto nível com anlise granular e matriz analtica (Técnica + Perna + Base).
  * @param {number} scoutId 
  */
 async function downloadScoutPDF(scoutId) {
     const scout = db.lutasScout.find(s => s.id === scoutId);
     if (!scout) return;
 
-    const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers�rio' } : db.alunos.find(a => a.id === scout.atletaId);
+    const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário' } : db.alunos.find(a => a.id === scout.atletaId);
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -1265,7 +1265,7 @@ async function downloadScoutPDF(scoutId) {
         locais: { 'Meio': 0, 'Não Canto': 0 },
         subLocais: { 'Pressionando': 0, 'Pressionado': 0 },
         pernas: { 'Direita': 0, 'Esquerda': 0 },
-        subPernas: { 'Direita': { 'Frente': 0, 'Tr�s': 0 }, 'Esquerda': { 'Frente': 0, 'Tr�s': 0 } },
+        subPernas: { 'Direita': { 'Frente': 0, 'Trás': 0 }, 'Esquerda': { 'Frente': 0, 'Trás': 0 } },
         bases: { 'Aberta': 0, 'Fechada': 0 }
     });
 
@@ -1291,7 +1291,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.resultado === 'Com ponto') tgt.pontos++;
 
         if (ev.tecnica) {
-            // Matriz anal�tica para ofensiva usa Perna e Base. Para defensiva, apenas t�cnica/resultado.
+            // Matriz analtica para ofensiva usa Perna e Base. Para defensiva, apenas tcnica/resultado.
             const key = isOfp
                 ? `${ev.tecnica} | ${ev.perna || '?'} | ${ev.base || '?'}`
                 : ev.tecnica;
@@ -1323,7 +1323,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.base) tgt.bases[ev.base]++;
     });
 
-    // --- PDF Helper: Se��o Título (Compacta) ---
+    // --- PDF Helper: Seo Título (Compacta) ---
     const drawSectionHeader = (title, y) => {
         doc.setFillColor(241, 245, 249);
         doc.rect(15, y, 180, 6, 'F');
@@ -1366,28 +1366,28 @@ async function downloadScoutPDF(scoutId) {
 
     doc.text(`Ataques Efetuados: ${ofensiva.total}`, 15, yPos);
     doc.text(`Pontos Marcados: ${ofensiva.pontos}`, 15, yPos + 4.5);
-    doc.text(`Efici�ncia: ${ofpEfic}%`, 15, yPos + 9);
+    doc.text(`Eficiência: ${ofpEfic}%`, 15, yPos + 9);
     doc.text(`Faltas Cometidas: ${faltasFeitas}`, 15, yPos + 13.5);
 
     doc.text(`Ataques Recebidos: ${defensiva.total}`, 110, yPos);
     doc.text(`Pontos Sofridos: ${defensiva.pontos}`, 110, yPos + 4.5);
-    doc.text(`Efici�ncia da Defesa: ${defEfic}%`, 110, yPos + 9);
+    doc.text(`Eficiência da Defesa: ${defEfic}%`, 110, yPos + 9);
     doc.text(`Faltas Sofridas: ${faltasSofridas}`, 110, yPos + 13.5);
 
     yPos += 20;
 
-    // --- T�CNICAS (Top 6) ---
+    // --- TCNICAS (Top 6) ---
     doc.setFillColor(239, 246, 255);
     doc.rect(15, yPos, 85, 5, 'F');
     doc.rect(110, yPos, 85, 5, 'F');
     doc.setFontSize(8); doc.setFont('helvetica', 'bold');
-    doc.text("TOP T�CNICAS APLICADAS", 20, yPos + 3.5);
-    doc.text("TOP T�CNICAS RECEBIDAS", 115, yPos + 3.5);
+    doc.text("TOP TCNICAS APLICADAS", 20, yPos + 3.5);
+    doc.text("TOP TCNICAS RECEBIDAS", 115, yPos + 3.5);
     yPos += 7;
 
     doc.setFontSize(7); doc.setTextColor(71, 85, 105);
-    doc.text("T�CNICA", 15, yPos); doc.text("USO", 75, yPos); doc.text("PT(%)", 90, yPos);
-    doc.text("T�CNICA", 110, yPos); doc.text("USO", 170, yPos); doc.text("PT(%)", 185, yPos);
+    doc.text("TCNICA", 15, yPos); doc.text("USO", 75, yPos); doc.text("PT(%)", 90, yPos);
+    doc.text("TCNICA", 110, yPos); doc.text("USO", 170, yPos); doc.text("PT(%)", 185, yPos);
     yPos += 4;
 
     doc.setTextColor(30, 41, 59); doc.setFont('helvetica', 'normal');
@@ -1473,7 +1473,7 @@ async function downloadScoutPDF(scoutId) {
     };
 
     printIndicatorGroup("Alvos Alcançados / Sofridos (Apenas Ações c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
-    printIndicatorGroup("Localiza��o da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
+    printIndicatorGroup("Localização da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
     printIndicatorGroup("Uso de Pernas (Tentativas)", 'pernas', ofensiva, defensiva, 'subPernas');
     printIndicatorGroup("Posicionamento de Base (Tentativas)", 'bases', ofensiva, defensiva);
 
@@ -1517,7 +1517,7 @@ async function downloadScoutPDF(scoutId) {
             if (ev.local) sub.push(ev.local + (ev.subLocal ? ` (${ev.subLocal})` : ''));
 
             doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(100);
-            doc.text(sub.join(' �'), 30, yPos + 3.5);
+            doc.text(sub.join(' '), 30, yPos + 3.5);
 
             yPos += 8;
             doc.setTextColor(30);
@@ -1525,10 +1525,10 @@ async function downloadScoutPDF(scoutId) {
         yPos += 4;
     });
 
-    // --- RADAR Chart (Agora ap�s a Timeline) ---
+    // --- RADAR Chart (Agora aps a Timeline) ---
     if (scout.avaliacaoTreinador) {
         if (yPos > 200) { doc.addPage(); yPos = 20; } else { yPos += 10; }
-        yPos = drawSectionHeader("Avaliação T�cnica (Radar)", yPos);
+        yPos = drawSectionHeader("Avaliação Técnica (Radar)", yPos);
         const canvas = document.getElementById('scoutRadarChart');
         if (canvas) {
             const chartImg = canvas.toDataURL('image/png');

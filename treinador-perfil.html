@@ -533,7 +533,7 @@
         </main>
     </div>
 
-    <!-- MODAL DE EDIÃ‡ÃƒO DO TREINADOR -->
+    <!-- MODAL DE EDIÇÃƒO DO TREINADOR -->
     <div id="modalEditCoach" class="modal"
         style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000;">
         <div class="modal-content" style="max-width: 800px; width: 90%;">
@@ -611,7 +611,7 @@
 
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 24px 0;">
 
-                <!-- FORMULAÃ‡ÃƒO DINÃ‚MICA: CONQUISTAS -->
+                <!-- FORMULAÇÃƒO DINÂMICA: CONQUISTAS -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h3 style="font-size: 16px; color: #fff;">Conquistas e Títulos Principais</h3>
                     <button class="btn btn-outline" onclick="addEditTitleRow()"><i class="ti ti-plus"></i>
@@ -622,7 +622,7 @@
 
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 24px 0;">
 
-                <!-- FORMULAÃ‡ÃƒO DINÃ‚MICA: CURSOS -->
+                <!-- FORMULAÇÃƒO DINÂMICA: CURSOS -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h3 style="font-size: 16px; color: #fff;">Certificações e Formação Acadêmica</h3>
                     <button class="btn btn-outline" onclick="addEditCourseRow()"><i class="ti ti-plus"></i>
@@ -753,7 +753,7 @@
             document.getElementById('statTurmas').innerText = db.turmas ? db.turmas.length : 0;
         }
 
-        // --- FUNÃ‡Ã•ES DO MODAL ---
+        // --- FUNÇÕES DO MODAL ---
         function openEditCoachModal() {
             const coach = currentCoachObj;
 
@@ -900,7 +900,7 @@
             const colorMuted = [107, 114, 128]; // Cinza
             const white = [255, 255, 255];
 
-            // --- CABEÃ‡ALHO ---
+            // --- CABEÇALHO ---
             doc.setFillColor(...colorPrimary);
             doc.rect(0, 0, pageWidth, 55, 'F');
 
@@ -923,14 +923,14 @@
             doc.setFont("helvetica", "normal");
             doc.text((coach.role || "Treinador").toUpperCase() + " DE TAEKWONDO", 55, 26);
 
-            // GRID DE INFORMAÃ‡Ã•ES (Mudei de 8 para 7 e ajustei recuo dos valores)
+            // GRID DE INFORMAÇÕES (Mudei de 8 para 7 e ajustei recuo dos valores)
             doc.setFontSize(7);
             const birthDate = coach.nascimento ? new Date(coach.nascimento).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : '---';
 
             // Coluna 1
             doc.setFont("helvetica", "bold"); doc.text("NASCIMENTO:", 55, 35);
             doc.setFont("helvetica", "normal"); doc.text(birthDate, 78, 35);
-            doc.setFont("helvetica", "bold"); doc.text("GRADUAÃ‡ÃƒO:", 55, 40);
+            doc.setFont("helvetica", "bold"); doc.text("GRADUAÇÃƒO:", 55, 40);
             doc.setFont("helvetica", "normal"); doc.text(coach.graduacao || '---', 78, 40);
             doc.setFont("helvetica", "bold"); doc.text("EXPERIÃŠNCIA:", 55, 45);
             doc.setFont("helvetica", "normal"); doc.text(coach.experiencia || '---', 78, 45);
@@ -953,7 +953,7 @@
 
             let currentY = 70;
 
-            // --- SEÃ‡Ã•ES DO CURRÍCULO ---
+            // --- SEÇÕES DO CURRÍCULO ---
             const drawSectionHeader = (title, y) => {
                 doc.setTextColor(...colorText);
                 doc.setFont("helvetica", "bold");
@@ -1000,7 +1000,7 @@
             // Formação
             currentY += 5;
             if (currentY > pageHeight - 30) { doc.addPage(); currentY = 20; }
-            currentY = drawSectionHeader("FORMAÃ‡ÃƒO E CERTIFICAÃ‡Ã•ES", currentY);
+            currentY = drawSectionHeader("FORMAÇÃƒO E CERTIFICAÇÕES", currentY);
             if (coach.formacao && coach.formacao.length > 0) {
                 coach.formacao.forEach(f => {
                     if (currentY > pageHeight - 25) { doc.addPage(); currentY = 20; }

@@ -1399,25 +1399,25 @@
             let dataScout = [0, 0, 0, 0, 0, 0, 0];
 
             if (scoutsFiltrados.length > 0) {
-                const sumês = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
+                const sums = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
                 scoutsFiltrados.forEach(s => {
-                    sumês.velocidade += (s.avaliacaoTreinador.velocidade || 0);
-                    sumês.forca += (s.avaliacaoTreinador.forca || 0);
-                    sumês.tatica += (s.avaliacaoTreinador.tatica || 0);
-                    sumês.defesa += (s.avaliacaoTreinador.defesa || 0);
-                    sumês.variacao += (s.avaliacaoTreinador.variacao || 0);
-                    sumês.precisao += (s.avaliacaoTreinador.precisao || 0);
-                    sumês.obediencia += (s.avaliacaoTreinador.obediencia || 0);
+                    sums.velocidade += (s.avaliacaoTreinador.velocidade || 0);
+                    sums.forca += (s.avaliacaoTreinador.forca || 0);
+                    sums.tatica += (s.avaliacaoTreinador.tatica || 0);
+                    sums.defesa += (s.avaliacaoTreinador.defesa || 0);
+                    sums.variacao += (s.avaliacaoTreinador.variacao || 0);
+                    sums.precisao += (s.avaliacaoTreinador.precisao || 0);
+                    sums.obediencia += (s.avaliacaoTreinador.obediencia || 0);
                 });
                 const n = scoutsFiltrados.length;
                 dataScout = [
-                    (sumês.velocidade / n).toFixed(1),
-                    (sumês.forca / n).toFixed(1),
-                    (sumês.tatica / n).toFixed(1),
-                    (sumês.defesa / n).toFixed(1),
-                    (sumês.variacao / n).toFixed(1),
-                    (sumês.precisao / n).toFixed(1),
-                    (sumês.obediencia / n).toFixed(1)
+                    (sums.velocidade / n).toFixed(1),
+                    (sums.forca / n).toFixed(1),
+                    (sums.tatica / n).toFixed(1),
+                    (sums.defesa / n).toFixed(1),
+                    (sums.variacao / n).toFixed(1),
+                    (sums.precisao / n).toFixed(1),
+                    (sums.obediencia / n).toFixed(1)
                 ].map(Number);
             }
 
@@ -2869,18 +2869,18 @@
             const evaluableScouts = scouts.filter(s => s.avaliacaoTreinador);
             let technicalAverages = [0, 0, 0, 0, 0, 0, 0];
             if (evaluableScouts.length > 0) {
-                const sumês = { v: 0, f: 0, t: 0, d: 0, vr: 0, p: 0, o: 0 };
+                const sums = { v: 0, f: 0, t: 0, d: 0, vr: 0, p: 0, o: 0 };
                 evaluableScouts.forEach(s => {
-                    sumês.v += (s.avaliacaoTreinador.velocidade || 0);
-                    sumês.f += (s.avaliacaoTreinador.forca || 0);
-                    sumês.t += (s.avaliacaoTreinador.tatica || 0);
-                    sumês.d += (s.avaliacaoTreinador.defesa || 0);
-                    sumês.vr += (s.avaliacaoTreinador.variacao || 0);
-                    sumês.p += (s.avaliacaoTreinador.precisao || 0);
-                    sumês.o += (s.avaliacaoTreinador.obediencia || 0);
+                    sums.v += (s.avaliacaoTreinador.velocidade || 0);
+                    sums.f += (s.avaliacaoTreinador.forca || 0);
+                    sums.t += (s.avaliacaoTreinador.tatica || 0);
+                    sums.d += (s.avaliacaoTreinador.defesa || 0);
+                    sums.vr += (s.avaliacaoTreinador.variacao || 0);
+                    sums.p += (s.avaliacaoTreinador.precisao || 0);
+                    sums.o += (s.avaliacaoTreinador.obediencia || 0);
                 });
                 const count = evaluableScouts.length;
-                technicalAverages = [(sumês.v / count), (sumês.f / count), (sumês.t / count), (sumês.d / count), (sumês.vr / count), (sumês.p / count), (sumês.o / count)];
+                technicalAverages = [(sums.v / count), (sums.f / count), (sums.t / count), (sums.d / count), (sums.vr / count), (sums.p / count), (sums.o / count)];
             }
 
             dynamicCharts.chart5 = new Chart(ctx5, {
@@ -3535,11 +3535,11 @@
             // Tabela
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">Tipo</th><th style="padding:10px;">Resultado</th></tr></thead><tbody>`;
-            let sortedTrs = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
-            if (sortedTrs.length === 0) {
+            let sortedTrás = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="4" style="text-align:center; padding:20px;">Nenhum salto registrado.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     const dataBR = t.data ? t.data.split('-').reverse().join('/') : '-';
@@ -3633,11 +3633,11 @@
 
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">Tipo</th><th style="padding:10px;">Resumo</th></tr></thead><tbody>`;
-            let sortedTrs = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
-            if (sortedTrs.length === 0) {
+            let sortedTrás = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="4" style="text-align:center; padding:20px;">Nenhum FSKT registrado.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     const dataBR = t.data ? t.data.split('-').reverse().join('/') : '-';
@@ -3753,11 +3753,11 @@
 
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">VO2 Max</th></tr></thead><tbody>`;
-            let sortedTrs = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
-            if (sortedTrs.length === 0) {
+            let sortedTrás = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="3" style="text-align:center; padding:20px;">Nenhum teste de VO2 registrado.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${t.resultados.valor || 0}</td></tr>`;
@@ -3842,12 +3842,12 @@
                 if (t.tipo === 'agilidade') aggMap[k].ag = t.resultados.valor;
                 if (t.tipo === 'flexibilidade') aggMap[k].fl = t.resultados.valor;
             });
-            let sortedTrs = Object.values(aggMap).sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            let sortedTrás = Object.values(aggMap).sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
 
-            if (sortedTrs.length === 0) {
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="4" style="text-align:center; padding:20px;">Sem registros.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px;">${t.ag}</td><td style="padding:10px;">${t.fl}</td></tr>`;

@@ -247,7 +247,7 @@
                 </div>
 
                 <div id="athletesList">
-                    <!-- List itemês injected by JS -->
+                    <!-- List items injected by JS -->
                 </div>
             </div>
         </main>
@@ -258,8 +258,8 @@
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
-        const urlParamês = new URLSearchParamês(window.location.search);
-        const eventId = parseInt(urlParamês.get('id'));
+        const params = new URLSearchParams(window.location.search);
+        const eventId = parseInt(params.get('id'));
         let currentEvent = null;
 
         function initPage() {
@@ -633,7 +633,8 @@
             <div class="modal-header">
                 <div>
                     <h2 class="modal-title">Detalhes da Participação</h2>
-                    <p id="modalAthleteName" style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Nãome do
+                    <p id="modalAthleteName" style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Nãome
+                        do
                         Atleta</p>
                 </div>
                 <button class="btn-close" onclick="closeAthleteDetails()"><i class="ti ti-x"></i></button>
@@ -677,4 +678,3 @@
 </body>
 
 </html>
-

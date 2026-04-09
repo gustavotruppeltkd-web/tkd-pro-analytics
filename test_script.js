@@ -40,7 +40,7 @@
         // --- MOTOR FISIOLÓGICO ---
 
         function calcWellnessScore(sono, estresse, dor, humor, fadiga, alimentacao) {
-            // Cada um vai de 1 a 5, exceto alimenta��o que �0 a 5. Max total = 30. Min total = 5.
+            // Cada um vai de 1 a 5, exceto alimentao que 0 a 5. Max total = 30. Min total = 5.
             // Para %, ((Soma - Min) / (Max - Min)) * 100
             const aliScore = alimentacao !== undefined && !isNaN(alimentacao) ? parseInt(alimentacao) : 3;
             const soma = parseInt(sono) + parseInt(estresse) + parseInt(dor) + parseInt(humor) + parseInt(fadiga) + aliScore;
@@ -97,7 +97,7 @@
             averageChartObj = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimenta��o'],
+                    labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentao'],
                     datasets: [{
                         label: chartLabel,
                         data: [avgSono.toFixed(1), avgEstresse.toFixed(1), avgDor.toFixed(1), avgHumor.toFixed(1), avgFadiga.toFixed(1), avgAlimentacao.toFixed(1)],
@@ -107,7 +107,7 @@
                             'rgba(239, 68, 68, 0.8)',    // Vermelho (Dor)
                             'rgba(139, 92, 246, 0.8)',   // Roxo (Humor)
                             'rgba(16, 185, 129, 0.8)',   // Esmeralda (Fadiga)
-                            'rgba(236, 72, 153, 0.8)'    // Rosa (Alimenta��o)
+                            'rgba(236, 72, 153, 0.8)'    // Rosa (Alimentao)
                         ],
                         borderRadius: 6,
                         barPercentage: 0.6
@@ -139,7 +139,7 @@
 
             // Format text of date
             const dFormat = dataFiltro.split('-');
-            document.getElementById('dataChartFiltro').innerText = `Refer�ncia: ${dFormat[2]}/${dFormat[1]}`;
+            document.getElementById('dataChartFiltro').innerText = `Referncia: ${dFormat[2]}/${dFormat[1]}`;
         }
 
         function calculateFosterMetrics(atletaId, targetDate) {
@@ -147,7 +147,7 @@
             if (historyObj.length === 0) return { acwr: 0, strain: 0, alertaM: false };
 
             // ACWR (Acute:Chronic Workload Ratio)
-            // Aguda: Média de carga dos �ltimos 7 dias. Crônica: Média dos �ltimos 28 dias.
+            // Aguda: Média de carga dos ltimos 7 dias. Crônica: Média dos ltimos 28 dias.
             const acuteDates = getDatesInRange(targetDate, 7);
             const chronicDates = getDatesInRange(targetDate, 28);
 
@@ -185,7 +185,7 @@
         }
 
         function getSemaforoStatus(score, acwr, strain, formDor, formMenstrual) {
-            // Regras Avan�adas de Risco Clínico (Vermelho overriding)
+            // Regras Avanadas de Risco Clínico (Vermelho overriding)
             let isRed = false;
             let isYellow = false;
             let motivo = [];
@@ -198,12 +198,12 @@
             else if (acwr > 1.3) { isYellow = true; motivo.push('ACWR Atenção'); }
 
             // Strain (Foster): > 6000
-            if (strain > 6000) { isRed = true; motivo.push('Strain Cr�tico (>6000)'); }
+            if (strain > 6000) { isRed = true; motivo.push('Strain Crtico (>6000)'); }
 
             // Dor Muscular (1 = Dor Forte)
             if (parseInt(formDor) <= 2) { isYellow = true; motivo.push('Dor Muscular Relevante'); }
 
-            if (formMenstrual) { isYellow = true; motivo.push('Fase Menstrual'); } // Preven��o preventiva padr�o
+            if (formMenstrual) { isYellow = true; motivo.push('Fase Menstrual'); } // Preveno preventiva padro
 
             if (isRed) return { color: 'semaforo-red', warnings: motivo };
             if (isYellow) return { color: 'semaforo-yellow', warnings: motivo };
@@ -231,7 +231,7 @@
                 const log = (db.wellnessLogs || []).find(l => l.atletaId === aluno.id && l.data === dataFiltro);
 
                 let dotClass = 'semaforo-gray';
-                let scoreText = 'Não Lan�ado';
+                let scoreText = 'Não Lanado';
                 let scoreColor = 'var(--text-muted)';
 
                 if (log) {
@@ -242,7 +242,7 @@
                     dotClass = status.color;
                     scoreText = `W: ${score}%`;
 
-                    // Exibir �cone se houver alerta
+                    // Exibir cone se houver alerta
                     let extraIcons = '';
                     if (status.warnings.length > 0) {
                         extraIcons = `<i class="ti ti-alert-triangle" style="color: var(--yellow); margin-left: 6px; font-size: 14px;" title="${status.warnings.join(', ')}"></i>`;
@@ -345,7 +345,7 @@
             const aluno = db.alunos.find(a => a.id === atletaId);
             const isFemale = aluno && aluno.sexo && aluno.sexo.toLowerCase().startsWith('f');
 
-            // F�rnula de Slaughter et al. (1988) para % Gordura usando Tríceps e Panturrilha
+            // Frnula de Slaughter et al. (1988) para % Gordura usando Tríceps e Panturrilha
             const somaDobras = triceps + panturrilha;
             let percentGordura = 0;
 
@@ -383,10 +383,10 @@
             });
 
             saveDB();
-            showToast(`Avaliação Antropom�trica de ${aluno.nome} salva! %G: ${percentGordura.toFixed(1)}%`);
+            showToast(`Avaliação Antropomtrica de ${aluno.nome} salva! %G: ${percentGordura.toFixed(1)}%`);
             closeModalAntropo();
 
-            // Atualiza o gr�fico se for necess�rio (a p�gina recarrega os gr�ficos via select onchange)
+            // Atualiza o grfico se for necessrio (a pgina recarrega os grficos via select onchange)
             updateDynamicCharts();
         }
 
@@ -515,7 +515,7 @@
             renderSemaforo();
 
             // Populate Treinos Hoje (baseado no dia da semana real)
-            const diasSemana = ['Domingo', 'Segunda-feira', 'Ter�a-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Tera-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
             const hojeStr = diasSemana[new Date().getDay()];
 
             const treinosHoje = (db.horarios || []).filter(h => h.turmaId === db.activeTurmaId && h.dia === hojeStr);
@@ -538,7 +538,7 @@
             }, 100);
         });
 
-        // Gráficos de Compara��o (Migrados da Visão de Equipe)
+        // Gráficos de Comparao (Migrados da Visão de Equipe)
         let chartsInstance = {};
 
         function populateComparisonSelect() {
@@ -567,13 +567,13 @@
             if (chartsInstance.scout) chartsInstance.scout.destroy();
             if (chartsInstance.bemEstar) chartsInstance.bemEstar.destroy();
 
-            // Radar de avaliação t�cnica � inicializa com zeros, atualizado via updateComparisonCharts
+            // Radar de avaliação tcnica  inicializa com zeros, atualizado via updateComparisonCharts
             chartsInstance.scout = new Chart(ctxScout, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'Força', 'T�tica', 'Defesa', 'Varia��o', 'Precis�o', 'Obedi�ncia'],
+                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variao', 'Precisão', 'Obediência'],
                     datasets: [{
-                        label: 'Avaliação T�cnica (0-10)',
+                        label: 'Avaliação Técnica (0-10)',
                         data: [0, 0, 0, 0, 0, 0, 0],
                         fill: true,
                         backgroundColor: 'rgba(59, 130, 246, 0.2)',
@@ -655,33 +655,33 @@
                 scoutsFiltrados = scoutsFiltrados.filter(s => db.alunos.find(a => a.id === s.atletaId && a.turmaId === db.activeTurmaId));
             }
 
-            const label = val === 'equipe' ? 'Avaliação T�cnica � Média da Equipe' : 'Avaliação T�cnica � Individual';
+            const label = val === 'equipe' ? 'Avaliação Técnica  Média da Equipe' : 'Avaliação Técnica  Individual';
             let dataScout = [0, 0, 0, 0, 0, 0, 0];
 
             if (scoutsFiltrados.length > 0) {
-                const sumês = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
+                const sums = { velocidade: 0, forca: 0, tatica: 0, defesa: 0, variacao: 0, precisao: 0, obediencia: 0 };
                 scoutsFiltrados.forEach(s => {
-                    sumês.velocidade += (s.avaliacaoTreinador.velocidade || 0);
-                    sumês.forca += (s.avaliacaoTreinador.forca || 0);
-                    sumês.tatica += (s.avaliacaoTreinador.tatica || 0);
-                    sumês.defesa += (s.avaliacaoTreinador.defesa || 0);
-                    sumês.variacao += (s.avaliacaoTreinador.variacao || 0);
-                    sumês.precisao += (s.avaliacaoTreinador.precisao || 0);
-                    sumês.obediencia += (s.avaliacaoTreinador.obediencia || 0);
+                    sums.velocidade += (s.avaliacaoTreinador.velocidade || 0);
+                    sums.forca += (s.avaliacaoTreinador.forca || 0);
+                    sums.tatica += (s.avaliacaoTreinador.tatica || 0);
+                    sums.defesa += (s.avaliacaoTreinador.defesa || 0);
+                    sums.variacao += (s.avaliacaoTreinador.variacao || 0);
+                    sums.precisao += (s.avaliacaoTreinador.precisao || 0);
+                    sums.obediencia += (s.avaliacaoTreinador.obediencia || 0);
                 });
                 const n = scoutsFiltrados.length;
                 dataScout = [
-                    (sumês.velocidade / n).toFixed(1),
-                    (sumês.forca / n).toFixed(1),
-                    (sumês.tatica / n).toFixed(1),
-                    (sumês.defesa / n).toFixed(1),
-                    (sumês.variacao / n).toFixed(1),
-                    (sumês.precisao / n).toFixed(1),
-                    (sumês.obediencia / n).toFixed(1)
+                    (sums.velocidade / n).toFixed(1),
+                    (sums.forca / n).toFixed(1),
+                    (sums.tatica / n).toFixed(1),
+                    (sums.defesa / n).toFixed(1),
+                    (sums.variacao / n).toFixed(1),
+                    (sums.precisao / n).toFixed(1),
+                    (sums.obediencia / n).toFixed(1)
                 ].map(Number);
             }
 
-            // ─── Score de Bem-Estar (�ltimos 7 dias � dados REAIS) ───
+            // ─── Score de Bem-Estar (ltimos 7 dias  dados REAIS) ───
             const targetDate = dataFiltro;
             const dates7 = getDatesInRange(targetDate, 7).reverse();
             const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -920,9 +920,9 @@
             } else if (source === 'questionarios') {
                 const qId = parseInt(document.getElementById('selectSubSource').value);
                 if (qId) exportQuestionarioRendimentoCSV(qId, athleteId);
-                else showToast("Selecione um question�rio", "error");
+                else showToast("Selecione um questionrio", "error");
             } else {
-                showToast("Exporta��o indispon�vel para esta fonte", "info");
+                showToast("Exportao indisponível para esta fonte", "info");
             }
         }
 
@@ -1038,7 +1038,7 @@
                 list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
             }
 
-            if (list.length === 0) return showToast("Nenhum dado antropom�trico encontrado", "error");
+            if (list.length === 0) return showToast("Nenhum dado antropomtrico encontrado", "error");
 
             list.sort((a, b) => new Date(a.data) - new Date(b.data));
 
@@ -1150,10 +1150,10 @@
         // --- WELLNESS CHARTS ---
         function renderWellnessCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Registros Consolidados de Bem-Estar';
-            document.getElementById('titleChart1').innerText = 'Evolução do Score Geral (Tend�ncia)';
+            document.getElementById('titleChart1').innerText = 'Evolução do Score Geral (Tendncia)';
             document.getElementById('titleChart2').innerText = 'Mapeamento de Médias (1-5)';
-            document.getElementById('titleChart3').innerText = 'Distribuição de Zonas de Prontid�o (Risco)';
-            document.getElementById('titleChart4').innerText = 'Fatores Físicos vs Psicol�gicos';
+            document.getElementById('titleChart3').innerText = 'Distribuição de Zonas de Prontido (Risco)';
+            document.getElementById('titleChart4').innerText = 'Fatores Físicos vs Psicolgicos';
             document.getElementById('titleChart5').innerText = 'Média por Dia da Semana (Histórico)';
 
             let allLogs = (db.wellnessLogs || []).filter(l => dates.includes(l.data));
@@ -1182,7 +1182,7 @@
 
             let sortedLogs = [...allLogs].sort((a, b) => new Date(b.data) - new Date(a.data));
             if (sortedLogs.length === 0) {
-                tableHTML += `<tr><td colspan="8" style="text-align:center; padding: 20px;">Nenhum registro no per�odo.</td></tr>`;
+                tableHTML += `<tr><td colspan="8" style="text-align:center; padding: 20px;">Nenhum registro no perodo.</td></tr>`;
             } else {
                 sortedLogs.forEach(l => {
                     const al = db.alunos.find(a => a.id === l.atletaId);
@@ -1257,7 +1257,7 @@
                 data: {
                     labels: ['Sono', 'Estresse', 'Dor', 'Fadiga', 'Humor'],
                     datasets: [{
-                        label: 'Média do Per�odo',
+                        label: 'Média do Perodo',
                         data: [avgSono, avgEstresse, avgDor, avgFadiga, avgHumor],
                         backgroundColor: 'rgba(139, 92, 246, 0.2)', // violet
                         borderColor: '#8b5cf6',
@@ -1308,7 +1308,7 @@
                 }
             });
 
-            // Gráfico 4: Físico vs Psicol�gico
+            // Gráfico 4: Físico vs Psicolgico
             const dataFis = dates.map(d => {
                 let dlogs = allLogs.filter(l => l.data === d);
                 if (dlogs.length === 0) return null;
@@ -1328,7 +1328,7 @@
                     labels: labels,
                     datasets: [
                         { label: 'Fator Físico', data: dataFis, borderColor: '#ef4444', backgroundColor: 'transparent', tension: 0.3 },
-                        { label: 'Fator Psicol�gico', data: dataPsi, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.3 }
+                        { label: 'Fator Psicolgico', data: dataPsi, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.3 }
                     ]
                 },
                 options: {
@@ -1361,9 +1361,9 @@
             dynamicCharts.chart5 = new Chart(ctx5, {
                 type: 'bar',
                 data: {
-                    labels: ['Domingo', 'Segunda', 'Ter�a', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+                    labels: ['Domingo', 'Segunda', 'Tera', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
                     datasets: [{
-                        label: 'Média Hist�rica',
+                        label: 'Média Histrica',
                         data: daysAvg,
                         backgroundColor: daysAvg.map(s => s === null ? 'transparent' : s >= 70 ? 'rgba(16,185,129,0.8)' : s >= 40 ? 'rgba(245,158,11,0.8)' : 'rgba(239,68,68,0.8)'),
                         borderRadius: 4
@@ -1384,11 +1384,11 @@
         // --- PSE & CARGA CHARTS ---
         function renderPseCargaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Diário de Treinos (PSE e Carga)';
-            document.getElementById('titleChart1').innerText = 'Flutua��o da Carga Diária (Duração × PSE)';
-            document.getElementById('titleChart2').innerText = 'Rela��o: Volume vs Intensidade';
-            document.getElementById('titleChart3').innerText = 'Propor��o por Tipo de Treino';
+            document.getElementById('titleChart1').innerText = 'Flutuao da Carga Diária (Duração × PSE)';
+            document.getElementById('titleChart2').innerText = 'Relao: Volume vs Intensidade';
+            document.getElementById('titleChart3').innerText = 'Proporo por Tipo de Treino';
             document.getElementById('titleChart4').innerText = 'Distribuição de Intensidade (Zonas de PSE)';
-            document.getElementById('titleChart5').innerText = 'Ac�mulo de Carga (Últimas Semanas)';
+            document.getElementById('titleChart5').innerText = 'Acmulo de Carga (Últimas Semanas)';
 
             let allLogs = (db.cargaTreino || []).filter(l => dates.includes(l.data));
             if (athleteId !== 'equipe') {
@@ -1414,7 +1414,7 @@
 
             let sortedLogs = [...allLogs].sort((a, b) => new Date(b.data) - new Date(a.data));
             if (sortedLogs.length === 0) {
-                tableHTML += `<tr><td colspan="6" style="text-align:center; padding: 20px;">Nenhum registro no per�odo.</td></tr>`;
+                tableHTML += `<tr><td colspan="6" style="text-align:center; padding: 20px;">Nenhum registro no perodo.</td></tr>`;
             } else {
                 sortedLogs.forEach(l => {
                     const al = db.alunos.find(a => a.id === l.atletaId);
@@ -1434,7 +1434,7 @@
             tableHTML += `</tbody></table>`;
             tableContainer.innerHTML = tableHTML;
 
-            // Gráfico 1: Flutua��o da Carga (Linha com Área)
+            // Gráfico 1: Flutuao da Carga (Linha com Área)
             const cargaDiaria = dates.map(d => {
                 let dlogs = allLogs.filter(l => l.data === d);
                 if (dlogs.length === 0) return 0;
@@ -1491,7 +1491,7 @@
                 }
             });
 
-            // Gráfico 3: Propor��o por Tipo de Treino (Pizza)
+            // Gráfico 3: Proporo por Tipo de Treino (Pizza)
             let fis = 0, tkd = 0;
             allLogs.forEach(l => {
                 if (l.tipoTreino === 'Físico') fis++;
@@ -1532,7 +1532,7 @@
                 options: { ...getCommonOptions(), plugins: { legend: { display: false } }, scales: { y: { ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
             });
 
-            // Gráfico 5: Ac�mulo de Carga (Últimas Semanas)
+            // Gráfico 5: Acmulo de Carga (Últimas Semanas)
             let histLogs = (db.cargaTreino || []);
             if (athleteId !== 'equipe') {
                 histLogs = histLogs.filter(l => l.atletaId === parseInt(athleteId));
@@ -1569,7 +1569,7 @@
                 data: {
                     labels: weeksLabels,
                     datasets: [{
-                        label: 'Ac�mulo',
+                        label: 'Acmulo',
                         data: weeksData,
                         backgroundColor: 'rgba(59,130,246,0.8)',
                         borderRadius: 4
@@ -1638,7 +1638,7 @@
             } else if (tipo === 'flexibilidade') {
                 html = `
                     <div class="form-group">
-                        <label>Dist�ncia Alcançada (cm) - Banco de Wells</label>
+                        <label>Distncia Alcançada (cm) - Banco de Wells</label>
                         <input type="number" step="0.1" class="form-control" id="tfValue1" placeholder="Ex: 32.5" required>
                     </div>
                 `;
@@ -1652,7 +1652,7 @@
             } else if (tipo === 'salto_horizontal') {
                 html = `
                     <div class="form-group">
-                        <label>Dist�ncia do Salto (cm)</label>
+                        <label>Distncia do Salto (cm)</label>
                         <input type="number" step="0.1" class="form-control" id="tfValue1" placeholder="Ex: 210.5" required>
                     </div>
                 `;
@@ -1672,7 +1672,7 @@
             } else if (tipo === 'vo2max') {
                 html = `
                     <div class="form-group">
-                        <label>VO2 M�x Estimado (ml/kg/min)</label>
+                        <label>VO2 Mx Estimado (ml/kg/min)</label>
                         <input type="number" step="0.1" class="form-control" id="tfValue1" placeholder="Ex: 55.4" required>
                     </div>
                     <div class="form-group" style="margin-top:12px;">
@@ -1760,7 +1760,7 @@
             });
 
             saveDB();
-            showToast("Teste f�sico registrado com sucesso!");
+            showToast("Teste fsico registrado com sucesso!");
 
             setTimeout(() => {
                 btn.innerHTML = originalText;
@@ -1817,8 +1817,8 @@
                 if (athleteId !== 'equipe') logs = logs.filter(l => l.atletaId === parseInt(athleteId));
                 else logs = logs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
 
-                // Se testar a equipe, calcula-se a média das cargas daquele dia? Ou o somat�rio?
-                // Historicamente em esportes coletivos analisa-se a MEDIANA ou M�DIA da carga da equipe. 
+                // Se testar a equipe, calcula-se a média das cargas daquele dia? Ou o somatrio?
+                // Historicamente em esportes coletivos analisa-se a MEDIANA ou MDIA da carga da equipe. 
                 // Usaremos a média simples da equipe.
                 if (athleteId === 'equipe' && logs.length > 0) {
                     return Math.round(logs.reduce((a, b) => a + (b.cargaCalculada || 0), 0) / logs.length);
@@ -1859,7 +1859,7 @@
             const datasetsTipos = tiposUnicos.map((tipo, index) => {
                 const dataTipo = dates.map(d => {
                     let logs = logs7dias.filter(l => l.data === d && (l.tipoTreino === tipo || (tipo === 'Taekwondo' && !l.tipoTreino)));
-                    // Se equipe, faz a média tamb�m.
+                    // Se equipe, faz a média tambm.
                     if (athleteId === 'equipe' && logs.length > 0) {
                         const sumAll = logs.reduce((a, b) => a + (b.cargaCalculada || 0), 0);
                         // divide por *total* de membros que registraram naquele dia daquele tipo? Output bruto
@@ -1894,7 +1894,7 @@
             });
 
             // ==== Gráfico 3: Volume Semanal (5 semanas - centro atual) ====
-            // O targetDate (dataFiltro) ser�nossa refer�ncia. Ela comp�e a semana "Atual"
+            // O targetDate (dataFiltro) sernossa referncia. Ela compe a semana "Atual"
             const targetDateStr = dates[dates.length - 1] || document.getElementById('dataFiltro').value;
             const targetDateObj = new Date(targetDateStr + 'T00:00:00');
             const centerWeekStart = getWeekStartFor(targetDateObj);
@@ -1973,7 +1973,7 @@
         function renderScoutCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Histórico Geral de Combates (Scout)';
             document.getElementById('titleChart1').innerText = 'Curva de Saldo de Pontos (Próprios vs Oponente)';
-            document.getElementById('titleChart2').innerText = 'Win Rate (Taxa de Vit�rias)';
+            document.getElementById('titleChart2').innerText = 'Win Rate (Taxa de Vitrias)';
             document.getElementById('titleChart3').innerText = 'Top 5 Ações Ofensivas (Mais Efetivas)';
             document.getElementById('titleChart4').innerText = 'Vulnerabilidades (Pontos Sofridos no Alvo)';
             document.getElementById('titleChart5').innerText = 'Radar de Desempenho Técnico/Tático';
@@ -2064,7 +2064,7 @@
             dynamicCharts.chart2 = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Vit�rias', 'Derrotas'],
+                    labels: ['Vitrias', 'Derrotas'],
                     datasets: [{
                         data: [wins, losses],
                         backgroundColor: ['#10b981', '#ef4444'],
@@ -2075,7 +2075,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right', labels: { color: '#94a3b8' } } } }
             });
 
-            // Gráfico 3: Top 5 Ações Ofensivas (Pr�prias)
+            // Gráfico 3: Top 5 Ações Ofensivas (Prprias)
             const techAtleta = {};
             scouts.forEach(s => {
                 (s.acoes || []).forEach(a => {
@@ -2129,26 +2129,26 @@
             const evaluableScouts = scouts.filter(s => s.avaliacaoTreinador);
             let technicalAverages = [0, 0, 0, 0, 0, 0, 0];
             if (evaluableScouts.length > 0) {
-                const sumês = { v: 0, f: 0, t: 0, d: 0, vr: 0, p: 0, o: 0 };
+                const sums = { v: 0, f: 0, t: 0, d: 0, vr: 0, p: 0, o: 0 };
                 evaluableScouts.forEach(s => {
-                    sumês.v += (s.avaliacaoTreinador.velocidade || 0);
-                    sumês.f += (s.avaliacaoTreinador.forca || 0);
-                    sumês.t += (s.avaliacaoTreinador.tatica || 0);
-                    sumês.d += (s.avaliacaoTreinador.defesa || 0);
-                    sumês.vr += (s.avaliacaoTreinador.variacao || 0);
-                    sumês.p += (s.avaliacaoTreinador.precisao || 0);
-                    sumês.o += (s.avaliacaoTreinador.obediencia || 0);
+                    sums.v += (s.avaliacaoTreinador.velocidade || 0);
+                    sums.f += (s.avaliacaoTreinador.forca || 0);
+                    sums.t += (s.avaliacaoTreinador.tatica || 0);
+                    sums.d += (s.avaliacaoTreinador.defesa || 0);
+                    sums.vr += (s.avaliacaoTreinador.variacao || 0);
+                    sums.p += (s.avaliacaoTreinador.precisao || 0);
+                    sums.o += (s.avaliacaoTreinador.obediencia || 0);
                 });
                 const count = evaluableScouts.length;
-                technicalAverages = [(sumês.v / count), (sumês.f / count), (sumês.t / count), (sumês.d / count), (sumês.vr / count), (sumês.p / count), (sumês.o / count)];
+                technicalAverages = [(sums.v / count), (sums.f / count), (sums.t / count), (sums.d / count), (sums.vr / count), (sums.p / count), (sums.o / count)];
             }
 
             dynamicCharts.chart5 = new Chart(ctx5, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'Força', 'T�tica', 'Defesa', 'Varia��o', 'Precis�o', 'Obedi�ncia'],
+                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variao', 'Precisão', 'Obediência'],
                     datasets: [{
-                        label: 'Desempenho M�dio',
+                        label: 'Desempenho Mdio',
                         data: technicalAverages,
                         backgroundColor: 'rgba(245, 158, 11, 0.2)',
                         borderColor: '#f59e0b',
@@ -2176,9 +2176,9 @@
         function renderPeriodizacaoCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Relatório de Periodização (Mesociclo Ativo)';
             document.getElementById('titleChart1').innerText = 'Volume Projetado vs Intensidade Diária (PSE)';
-            document.getElementById('titleChart2').innerText = 'Progress�o Acumulada da Carga (Planejado)';
+            document.getElementById('titleChart2').innerText = 'Progresso Acumulada da Carga (Planejado)';
             document.getElementById('titleChart3').innerText = 'Distribuição de Foco Tático/Técnico (Semanal)';
-            document.getElementById('titleChart4').innerText = 'Ac�mulo de Carga Geral (Ano Atual)';
+            document.getElementById('titleChart4').innerText = 'Acmulo de Carga Geral (Ano Atual)';
             document.getElementById('titleChart5').innerText = 'Comparativo de Cumprimento (Real vs Plan)';
 
             const mesoAtivo = (db.mesociclos || []).find(m => m.turmaId === db.activeTurmaId) || {};
@@ -2189,7 +2189,7 @@
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;">
                 <thead>
                     <tr>
-                        <th style="padding: 10px;">Semana (In�cio)</th>
+                        <th style="padding: 10px;">Semana (Incio)</th>
                         <th style="padding: 10px;">Foco Tático/Técnico</th>
                         <th style="padding: 10px;">Foco Físico</th>
                         <th style="padding: 10px;">Vol. Semanal (min)</th>
@@ -2267,7 +2267,7 @@
                 }
             });
 
-            // Gráfico 2: Progress�o Acumulada da Carga (Planejado ao longo das semanas)
+            // Gráfico 2: Progresso Acumulada da Carga (Planejado ao longo das semanas)
             let cargaAcumSem = [];
             let lblSem = [];
             let acumulado = 0;
@@ -2286,7 +2286,7 @@
                 data: {
                     labels: lblSem.length > 0 ? lblSem : ['-'],
                     datasets: [{
-                        label: 'Ac�mulo Planejado',
+                        label: 'Acmulo Planejado',
                         data: cargaAcumSem.length > 0 ? cargaAcumSem : [0],
                         borderColor: '#8b5cf6',
                         backgroundColor: 'rgba(139, 92, 246, 0.2)',
@@ -2320,7 +2320,7 @@
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#94a3b8' } } } }
             });
 
-            // Gráfico 4: Ac�mulo Real Macrociclo (Ano Atual)
+            // Gráfico 4: Acmulo Real Macrociclo (Ano Atual)
             const macroLabels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
             const macroData = Array(12).fill(0);
             const currentYear = new Date().getFullYear();
@@ -2370,7 +2370,7 @@
         function renderQuestionnaireCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId, qId) {
             const q = (db.questionarios || []).find(x => x.id === qId);
             if (!q) {
-                document.getElementById('titleTable').innerText = 'Selecione um question�rio...';
+                document.getElementById('titleTable').innerText = 'Selecione um questionrio...';
                 return;
             }
 
@@ -2457,7 +2457,7 @@
                 options: getCommonOptions()
             });
 
-            // Gráfico 2: Média por Pergunta Num�rica
+            // Gráfico 2: Média por Pergunta Numrica
             const perguntasNum = q.perguntas.filter(p => p.tipo === 'escala_10' || p.tipo === 'escala_5');
             const labelsQ = perguntasNum.map(p => p.texto.substring(0, 15) + '...');
             const valuesQ = perguntasNum.map(p => {
@@ -2493,7 +2493,7 @@
                 data: {
                     labels: labelsQ,
                     datasets: [{
-                        label: 'Média no Per�odo',
+                        label: 'Média no Perodo',
                         data: valuesQ,
                         backgroundColor: 'rgba(16, 185, 129, 0.2)',
                         borderColor: '#10b981',
@@ -2531,7 +2531,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Score M�dio Geral',
+                        label: 'Score Mdio Geral',
                         data: scoreDiarioData,
                         borderColor: '#f59e0b',
                         backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -2543,7 +2543,7 @@
             });
 
             // Gráfico 5: Classificação de Status
-            let statusCount = { 'Alto (>70%)': 0, 'M�dio (40-70%)': 0, 'Baixo (<40%)': 0 };
+            let statusCount = { 'Alto (>70%)': 0, 'Mdio (40-70%)': 0, 'Baixo (<40%)': 0 };
             const maxPossivel = perguntasNum.reduce((acc, p) => acc + (p.tipo === 'escala_10' ? 10 : 5), 0) || 10;
 
             resps.forEach(r => {
@@ -2557,7 +2557,7 @@
                 // only consider completed ones relative to numeric fields?
                 const pct = (s / maxPossivel) * 100;
                 if (pct > 70) statusCount['Alto (>70%)']++;
-                else if (pct >= 40) statusCount['M�dio (40-70%)']++;
+                else if (pct >= 40) statusCount['Mdio (40-70%)']++;
                 else statusCount['Baixo (<40%)']++;
             });
 
@@ -2596,7 +2596,7 @@
             document.getElementById('titleChart1').innerText = 'Teia de Valências (Perfil Global)';
             document.getElementById('titleChart2').innerText = 'Evolução FSKT (Potência e Fadiga)';
             document.getElementById('titleChart3').innerText = 'Evolução de Força Explosiva (Saltos)';
-            document.getElementById('titleChart4').innerText = 'Evolução de Resistência A�robia (VO2)';
+            document.getElementById('titleChart4').innerText = 'Evolução de Resistência Arobia (VO2)';
             document.getElementById('titleChart5').innerText = 'Flexibilidade e Agilidade';
 
             let testes = (db.testesFisicos || []);
@@ -2779,7 +2779,7 @@
             document.getElementById('titleTable').innerText = 'Histórico de Força Explosiva (Saltos)';
             document.getElementById('titleChart1').innerText = 'Evolução: Salto Vertical (cm)';
             document.getElementById('titleChart2').innerText = 'Evolução: Salto Horizontal Bilat. (cm)';
-            document.getElementById('titleChart3').innerText = 'Salto Unilateral Média Hist�rica (cm)';
+            document.getElementById('titleChart3').innerText = 'Salto Unilateral Média Histrica (cm)';
             document.getElementById('titleChart4').innerText = 'Comparativo: Seu Vertical vs Média Equipe';
             document.getElementById('titleChart5').innerText = 'Teto de Desempenho (Melhores Marcas)';
 
@@ -2795,11 +2795,11 @@
             // Tabela
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">Tipo</th><th style="padding:10px;">Resultado</th></tr></thead><tbody>`;
-            let sortedTrs = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
-            if (sortedTrs.length === 0) {
+            let sortedTrás = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="4" style="text-align:center; padding:20px;">Nenhum salto registrado.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     const dataBR = t.data ? t.data.split('-').reverse().join('/') : '-';
@@ -2893,11 +2893,11 @@
 
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">Tipo</th><th style="padding:10px;">Resumo</th></tr></thead><tbody>`;
-            let sortedTrs = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
-            if (sortedTrs.length === 0) {
+            let sortedTrás = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="4" style="text-align:center; padding:20px;">Nenhum FSKT registrado.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     const dataBR = t.data ? t.data.split('-').reverse().join('/') : '-';
@@ -3013,11 +3013,11 @@
 
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">VO2 Max</th></tr></thead><tbody>`;
-            let sortedTrs = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
-            if (sortedTrs.length === 0) {
+            let sortedTrás = [...testes].sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="3" style="text-align:center; padding:20px;">Nenhum teste de VO2 registrado.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${t.resultados.valor || 0}</td></tr>`;
@@ -3038,7 +3038,7 @@
                 type: 'line', data: { labels: labelsData.map(formatD), datasets: [{ label: 'VO2 Estimado', data: vo2Data, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.3 }] }, options: getCommonOptions()
             });
 
-            // Fake chart for Nível/Est�gio (se tivessemos). We will just show a scatter of VO2 for variation
+            // Fake chart for Nível/Estgio (se tivessemos). We will just show a scatter of VO2 for variation
             dynamicCharts.chart2 = new Chart(ctx2, {
                 type: 'bar', data: { labels: labelsData.map(formatD), datasets: [{ label: 'VO2 Alcançado', data: vo2Data, backgroundColor: '#8b5cf6', borderRadius: 4 }] }, options: getCommonOptions()
             });
@@ -3102,12 +3102,12 @@
                 if (t.tipo === 'agilidade') aggMap[k].ag = t.resultados.valor;
                 if (t.tipo === 'flexibilidade') aggMap[k].fl = t.resultados.valor;
             });
-            let sortedTrs = Object.values(aggMap).sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
+            let sortedTrás = Object.values(aggMap).sort((a, b) => new Date(b.data) - new Date(a.data)).slice(0, 30);
 
-            if (sortedTrs.length === 0) {
+            if (sortedTrás.length === 0) {
                 tableHTML += `<tr><td colspan="4" style="text-align:center; padding:20px;">Sem registros.</td></tr>`;
             } else {
-                sortedTrs.forEach(t => {
+                sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px;">${t.ag}</td><td style="padding:10px;">${t.fl}</td></tr>`;
@@ -3187,7 +3187,7 @@
 
         // --- ANTROPOMETRIA CHARTS ---
         function renderAntropometriaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Histórico de Composi��es Corporais';
+            document.getElementById('titleTable').innerText = 'Histórico de Composies Corporais';
             document.getElementById('titleChart1').innerText = 'Evolução: Peso (kg) vs % Gordura';
             document.getElementById('titleChart2').innerText = 'Composição Corporal Absoluta (Massa Magra vs Gorda)';
             document.getElementById('titleChart3').innerText = 'Mapeamento de Circunferências (cm)';
@@ -3311,7 +3311,7 @@
             dynamicCharts.chart3 = new Chart(ctx3, {
                 type: 'radar',
                 data: {
-                    labels: ['Cintura', 'Quadril', 'Abdômen', 'Bra�o', 'Coxa', 'Panturrilha'],
+                    labels: ['Cintura', 'Quadril', 'Abdômen', 'Brao', 'Coxa', 'Panturrilha'],
                     datasets: [{
                         label: 'Circunferências (cm)',
                         data: avgCircs,
@@ -3389,7 +3389,7 @@
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;">
                 <thead>
                     <tr>
-                        <th style="padding: 10px;">In�cio</th>
+                        <th style="padding: 10px;">Incio</th>
                         <th style="padding: 10px;">Atleta</th>
                         <th style="padding: 10px;">Local / Tipo</th>
                         <th style="padding: 10px;">Status Atual</th>
@@ -3399,7 +3399,7 @@
 
             let sortedLesãoes = [...lesoes].sort((a, b) => new Date(b.dataInicio || 0) - new Date(a.dataInicio || 0));
             if (sortedLesãoes.length === 0) {
-                tableHTML += `<tr><td colspan="4" style="text-align:center; padding: 20px;">Nenhuma les�o registrada.</td></tr>`;
+                tableHTML += `<tr><td colspan="4" style="text-align:center; padding: 20px;">Nenhuma leso registrada.</td></tr>`;
             } else {
                 sortedLesãoes.slice(0, 30).forEach(l => {
                     const al = db.alunos.find(x => x.id === l.atletaId);
@@ -3543,7 +3543,7 @@
         }
 
 
-        // Chamar renderProximoAlvo ap�s carregamento do db (app.js j�chama loadDB no DOMContentLoaded)
+        // Chamar renderProximoAlvo aps carregamento do db (app.js jchama loadDB no DOMContentLoaded)
         document.addEventListener('DOMContentLoaded', function () {
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
             if (turma) {
@@ -3560,7 +3560,7 @@
                 updateDynamicCharts();
             }, 100);
         });
-        // Fallback: caso o DOMContentLoaded j�tenha disparado (script no fim do body)
+        // Fallback: caso o DOMContentLoaded jtenha disparado (script no fim do body)
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             setTimeout(function () {
                 replaceRangesWithButtons();

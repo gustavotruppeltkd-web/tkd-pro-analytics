@@ -7,9 +7,9 @@ async function test() {
     console.log('Conectando ao Supabase como Admin...');
     const { data: tables, error } = await supabase.from('authorized_emails').select('*').limit(1);
     if (error) {
-        console.error('Falha na conexão:', error.message);
+        console.error('Falha na conexo:', error.message);
     } else {
-        console.log('Conexão ADMIN estabelecida com sucesso!');
+        console.log('Conexo ADMIN estabelecida com sucesso!');
         console.log('Tabela authorized_emails acessada.');
     }
 }

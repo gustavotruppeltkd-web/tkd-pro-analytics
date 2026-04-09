@@ -137,7 +137,7 @@
             text-decoration: underline;
         }
 
-        .error-mêsg {
+        .error-msg {
             color: var(--red);
             font-size: 13px;
             margin-bottom: 16px;
@@ -147,7 +147,7 @@
             border-radius: var(--radius-sm);
         }
 
-        .success-mêsg {
+        .success-msg {
             color: var(--green);
             font-size: 13px;
             margin-bottom: 16px;
@@ -182,8 +182,8 @@
         <h1 id="formTitle">Bem-vindo(a)</h1>
         <p id="formSubtitle">Acesso Seguro Supabase</p>
 
-        <div class="error-mêsg" id="errorMêsg"></div>
-        <div class="success-mêsg" id="successMêsg"></div>
+        <div class="error-msg" id="errorMsg"></div>
+        <div class="success-msg" id="successMêsg"></div>
 
         <form id="authForm">
             <div class="input-group">
@@ -228,7 +228,7 @@
             const forgotDiv = document.getElementById('forgotPasswordDiv');
             const pwGroup = document.getElementById('passwordGroup');
 
-            document.getElementById('errorMêsg').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
             document.getElementById('successMêsg').style.display = 'none';
 
             if (isRecovery) {
@@ -258,11 +258,11 @@
             const subtitle = document.getElementById('formSubtitle');
             const btn = document.getElementById('submitBtn');
             const toggleBtn = document.getElementById('toggleModeBtn');
-            const errorMêsg = document.getElementById('errorMêsg');
+            const errorMsg = document.getElementById('errorMsg');
             const successMêsg = document.getElementById('successMêsg');
             const forgotDiv = document.getElementById('forgotPasswordDiv');
 
-            errorMêsg.style.display = 'none';
+            errorMsg.style.display = 'none';
             successMêsg.style.display = 'none';
 
             if (isSignup) {
@@ -284,11 +284,11 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const errorMêsg = document.getElementById('errorMêsg');
+            const errorMsg = document.getElementById('errorMsg');
             const successMêsg = document.getElementById('successMêsg');
             const btn = document.getElementById('submitBtn');
 
-            errorMêsg.style.display = 'none';
+            errorMsg.style.display = 'none';
             successMêsg.style.display = 'none';
             btn.disabled = true;
             btn.style.opacity = '0.7';
@@ -299,8 +299,8 @@
                 });
 
                 if (error) {
-                    errorMêsg.innerText = error.message;
-                    errorMêsg.style.display = 'block';
+                    errorMsg.innerText = error.message;
+                    errorMsg.style.display = 'block';
                 } else {
                     successMêsg.innerText = "E-mail de recuperação enviado! Verifique sua caixa de entrada.";
                     successMêsg.style.display = 'block';
@@ -313,8 +313,8 @@
                 });
 
                 if (error) {
-                    errorMêsg.innerText = error.message;
-                    errorMêsg.style.display = 'block';
+                    errorMsg.innerText = error.message;
+                    errorMsg.style.display = 'block';
                 } else {
                     successMêsg.innerText = "Conta criada com sucesso! Faça login.";
                     successMêsg.style.display = 'block';
@@ -327,8 +327,8 @@
                 });
 
                 if (error) {
-                    errorMêsg.innerText = "E-mail ou senha inválidos.";
-                    errorMêsg.style.display = 'block';
+                    errorMsg.innerText = "E-mail ou senha inválidos.";
+                    errorMsg.style.display = 'block';
                 }
                 // If success, auth.js onAuthStateChange will automatically redirect to turmas.html
             }

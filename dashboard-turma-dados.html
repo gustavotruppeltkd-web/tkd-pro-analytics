@@ -1474,10 +1474,10 @@
             let html = '<div style="display: flex; gap: 16px; width: 100%;">';
 
             // Render limit 2
-            const itemêsToRender = treinosHoje.slice(0, 2);
-            itemêsToRender.forEach((t, index) => {
+            const itemsToRender = treinosHoje.slice(0, 2);
+            itemsToRender.forEach((t, index) => {
                 html += renderTreinoCarga(t);
-                if (index < itemêsToRender.length - 1) {
+                if (index < itemsToRender.length - 1) {
                     html += `<div style="width: 1px; background: rgba(255,255,255,0.05); align-self: stretch;"></div>`;
                 }
             });
@@ -1667,14 +1667,14 @@
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(`DATA: ${dataFmt}  |  HORÁRIO: ${t.horario || '--:--'}  |  TIPO: ${(t.tipo || '').toUpperCase()}  |  PROTEÃ‡ÃƒO: ${protecao}`, 15, 30);
+            doc.text(`DATA: ${dataFmt}  |  HORÁRIO: ${t.horario || '--:--'}  |  TIPO: ${(t.tipo || '').toUpperCase()}  |  PROTEÇÃƒO: ${protecao}`, 15, 30);
 
             // Stats
             let yPos = 55;
             doc.setTextColor(30, 41, 59);
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
-            doc.text(`DURAÃ‡ÃƒO: ${t.duracaoMins || 0} min`, 15, yPos);
+            doc.text(`DURAÇÃƒO: ${t.duracaoMins || 0} min`, 15, yPos);
             doc.text(`PSE PLANEJADA: ${t.psePlanejada || 0}/10`, 80, yPos);
             yPos += 15;
 
@@ -1723,7 +1723,7 @@
             if (t.obs) {
                 if (yPos > 260) { doc.addPage(); yPos = 20; }
                 doc.setFont('helvetica', 'bold');
-                doc.text('OBSERVAÃ‡Ã•ES GERAIS:', 15, yPos);
+                doc.text('OBSERVAÇÕES GERAIS:', 15, yPos);
                 yPos += 6;
                 doc.setFont('helvetica', 'normal');
                 const finalObs = doc.splitTextToSize(t.obs, 180);
