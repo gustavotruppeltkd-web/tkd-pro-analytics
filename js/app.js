@@ -529,7 +529,7 @@ function replaceRangesWithButtons(container = document) {
             if (display) display.style.display = 'none';
         }
 
-        input.replaceWith(...wrapper.childNãodes);
+        input.replaceWith(...wrapper.childNodes);
     });
 }
 
@@ -1540,5 +1540,6 @@ async function downloadScoutPDF(scoutId) {
 
     doc.save(`Analise_Scout_${nomeAtleta.replace(/\s+/g, '_')}_ID${scout.id}.pdf`);
 }
+
 
 
