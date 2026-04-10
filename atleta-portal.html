@@ -1618,7 +1618,12 @@
     <script>
         // -- INIT --
         const params = new URLSearchParams(location.search);
-        const atletaId = parseInt(params.get('atleta') || localStorage.getItem('tkd_atleta_id') || '0');
+        const atletaId = parseInt(
+            params.get('atleta') ||
+            sessionStorage.getItem('tkd_atleta_id') ||
+            localStorage.getItem('tkd_atleta_id') ||
+            '0'
+        );
         const nowLocal = new Date();
         const today = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
 
@@ -2510,8 +2515,8 @@
         // Wait for app.js to initialize the db
         // Detect if athlete came via a shared link (coach ID stored in localStorage)
         document.addEventListener('DOMContentLoaded', () => {
-            const storedCoachId = localStorage.getItem('tkd_coach_id');
-            const storedAtletaId = localStorage.getItem('tkd_atleta_id');
+            const storedCoachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
+            const storedAtletaId = sessionStorage.getItem('tkd_atleta_id') || localStorage.getItem('tkd_atleta_id');
 
             if (storedCoachId && window.supabaseClient) {
                 window.supabaseClient
@@ -2540,4 +2545,3 @@
 </body>
 
 </html>
-
