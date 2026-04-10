@@ -9,17 +9,17 @@ const MOCK_DATA = {
         '-54kg', '-58kg', '-63kg', '-68kg', '-74kg', '-80kg', '-87kg', '+87kg'
     ],
     faixas: [
-        '10º GUB (Branca)',
-        '9º GUB (Ponta Amarela)',
-        '8º GUB (Amarela)',
-        '7º GUB (Ponta Verde)',
-        '6º GUB (Verde)',
-        '5º GUB (Ponta Azul)',
-        '4º GUB (Azul)',
-        '3º GUB (Ponta Vermelha)',
-        '2º GUB (Vermelha)',
-        '1º GUB (Ponta Preta)',
-        '1º DAN (Preta)'
+        '10u GUB (Branca)',
+        '9u GUB (Ponta Amarela)',
+        '8u GUB (Amarela)',
+        '7u GUB (Ponta Verde)',
+        '6u GUB (Verde)',
+        '5u GUB (Ponta Azul)',
+        '4u GUB (Azul)',
+        '3u GUB (Ponta Vermelha)',
+        '2u GUB (Vermelha)',
+        '1u GUB (Ponta Preta)',
+        '1u DAN (Preta)'
     ],
     treinadores: [],
     wellnessLogs: [],
@@ -49,7 +49,7 @@ var lastSyncTime = 0;
 
 // Load Database from LocalStorage or initialize with MOCK_DATA
 function loadDB() {
-    // ── Device mode ──────────────────────────────────────────
+    // -- Device mode ------------------------------------------
     const deviceMode = localStorage.getItem('tkd_device_mode') || 'desktop';
     document.body.classList.remove('mode-tablet', 'mode-mobile');
     if (deviceMode === 'tablet') document.body.classList.add('mode-tablet');
@@ -93,27 +93,33 @@ function loadDB() {
             document.body.appendChild(backdrop);
         }
     }
-    // ─────────────────────────────────────────────────────────
+    // ---------------------------------------------------------
 
     const stored = localStorage.getItem('tkd_scout_db');
+    let modified = false;
     if (stored) {
         db = JSON.parse(stored);
-        if (!db.categoriasPeso) { db.categoriasPeso = [...(MOCK_DATA.categoriasPeso || [])]; saveDB(); }
-        if (!db.faixas) { db.faixas = [...MOCK_DATA.faixas]; saveDB(); }
-        if (!db.treinadores) { db.treinadores = [...MOCK_DATA.treinadores]; saveDB(); }
-        if (!db.wellnessLogs) { db.wellnessLogs = [...MOCK_DATA.wellnessLogs]; saveDB(); }
-        if (!db.questionarios) { db.questionarios = [...MOCK_DATA.questionarios]; saveDB(); }
-        if (!db.respostas) { db.respostas = []; saveDB(); }
-        if (!db.cargaTreino) { db.cargaTreino = [...MOCK_DATA.cargaTreino]; saveDB(); }
-        if (!db.competicoes) { db.competicoes = [...MOCK_DATA.competicoes]; saveDB(); }
-        if (!db.scoutEstatisticas) { db.scoutEstatisticas = [...MOCK_DATA.scoutEstatisticas]; saveDB(); }
-        if (!db.antropometria) { db.antropometria = []; saveDB(); }
-        if (!db.treinos) { db.treinos = []; saveDB(); }
-        if (!db.eventos) { db.eventos = [...(MOCK_DATA.eventos || [])]; saveDB(); }
-        if (!db.lutasScout) { db.lutasScout = []; saveDB(); }
-        if (!db.chamadas) { db.chamadas = []; saveDB(); }
-        if (!db.lesoes) { db.lesoes = [...(MOCK_DATA.lesoes || [])]; saveDB(); }
-        if (!db.periodizacao) { db.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao)); saveDB(); }
+        if (!db.categoriasPeso) { db.categoriasPeso = [...(MOCK_DATA.categoriasPeso || [])]; modified = true; }
+        if (!db.faixas) { db.faixas = [...MOCK_DATA.faixas]; modified = true; }
+        if (!db.treinadores) { db.treinadores = [...MOCK_DATA.treinadores]; modified = true; }
+        if (!db.wellnessLogs) { db.wellnessLogs = [...MOCK_DATA.wellnessLogs]; modified = true; }
+        if (!db.questionarios) { db.questionarios = [...MOCK_DATA.questionarios]; modified = true; }
+        if (!db.respostas) { db.respostas = []; modified = true; }
+        if (!db.cargaTreino) { db.cargaTreino = [...MOCK_DATA.cargaTreino]; modified = true; }
+        if (!db.competicoes) { db.competicoes = [...MOCK_DATA.competicoes]; modified = true; }
+        if (!db.scoutEstatisticas) { db.scoutEstatisticas = [...MOCK_DATA.scoutEstatisticas]; modified = true; }
+        if (!db.antropometria) { db.antropometria = []; modified = true; }
+        if (!db.treinos) { db.treinos = []; modified = true; }
+        if (!db.eventos) { db.eventos = [...(MOCK_DATA.eventos || [])]; modified = true; }
+        if (!db.lutasScout) { db.lutasScout = []; modified = true; }
+        if (!db.chamadas) { db.chamadas = []; modified = true; }
+        if (!db.lesoes) { db.lesoes = [...(MOCK_DATA.lesoes || [])]; modified = true; }
+        if (!db.periodizacao) { db.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao)); modified = true; }
+
+        if (modified) {
+            // Save local changes, but we will sync with Supabase in a moment anyway
+            localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+        }
     } else {
         db = JSON.parse(JSON.stringify(MOCK_DATA)); // Deep copy
         // Do NOT call saveDB() here — that would push empty data to Supabase
@@ -133,8 +139,13 @@ function loadDB() {
     checkTrainerOnboarding();
 }
 
+let isFetchingSupabase = false;
+
 function fetchFromSupabase() {
     if (!window.supabaseClient) return;
+    if (isFetchingSupabase) return;
+
+    isFetchingSupabase = true;
 
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
         if (!authData || !authData.user) {
@@ -201,6 +212,8 @@ function fetchFromSupabase() {
                 if (typeof window.onDataLoaded === 'function') {
                     window.onDataLoaded();
                 }
+            }).finally(() => {
+                isFetchingSupabase = false;
             });
     });
 }
@@ -234,8 +247,9 @@ function renderUserProfile() {
 // ========================
 function checkTrainerOnboarding() {
     // Skip on login page, atleta pages, and trainer selection page
-    const page = window.location.pathname;
-    if (page.includes('index.html') || page === '/' || page.includes('atleta-') || page.includes('selecionar-treinador')) return;
+    const page = window.location.pathname.toLowerCase();
+    const skipList = ['index.html', 'atleta-', 'selecionar-treinador', 'turmas'];
+    if (page === '/' || skipList.some(s => page.includes(s))) return;
 
     const hasTrainer = db.treinadores && db.treinadores.length > 0 &&
         db.treinadores[0].nome && db.treinadores[0].nome.trim() !== '';
@@ -266,7 +280,7 @@ function checkTrainerOnboarding() {
             <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
             <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relatórios e dashboards.</p>
             <div style="text-align:left;margin-bottom:20px;">
-                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nãome Completo *</label>
+                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nome Completo *</label>
                 <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva"
                     style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;"
                     onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
@@ -334,6 +348,9 @@ function checkTrainerOnboarding() {
         // Set active coach id
         localStorage.setItem('tkd_active_coach_id', '1');
 
+        // Notify any page-level render hooks (e.g. treinador-perfil.html)
+        if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+
         // Show toast
         if (typeof showToast === 'function') showToast('Perfil configurado com sucesso!', 'success');
     };
@@ -364,35 +381,109 @@ function setupRealtimeSubscription() {
     });
 }
 
-// Salva estado do banco no Local Storage e Sincroniza
-function saveDB() {
+// Helper para mesclar o estado local com o remoto (evita perda de dados de atletas)
+function mergeAppState(local, remote) {
+    if (!remote) return local;
+    const merged = { ...remote, ...local }; // Local prevalece em chaves simples
+
+    // Chaves que são arrays e precisam de merge inteligente por ID
+    const arrayKeys = [
+        'turmas', 'alunos', 'planos', 'horarios', 'wellnessLogs', 'questionarios',
+        'respostas', 'cargaTreino', 'competicoes', 'scoutEstatisticas', 'treinos',
+        'eventos', 'lutasScout', 'presencas', 'chamadas', 'lesoes', 'antropometria',
+        'testesFisicos'
+    ];
+
+    arrayKeys.forEach(key => {
+        const localArr = local[key] || [];
+        const remoteArr = remote[key] || [];
+
+        // Criar um mapa do remoto para facilitar busca
+        const remoteMap = new Map(remoteArr.map(item => [item.id, item]));
+
+        // Adicionar itens locais que não estão no remoto ou são mais recentes
+        localArr.forEach(localItem => {
+            const remoteItem = remoteMap.get(localItem.id);
+            if (!remoteItem || (localItem._updatedAt && localItem._updatedAt > (remoteItem._updatedAt || 0))) {
+                remoteMap.set(localItem.id, localItem);
+            }
+        });
+
+        merged[key] = Array.from(remoteMap.values());
+    });
+
+    return merged;
+}
+
+// Salva estado do banco no Local Storage e Sincroniza de forma segura (Fetch -> Merge -> Upsert)
+async function saveDB() {
     db._last_updated = Date.now();
     lastSyncTime = db._last_updated;
     localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
 
-    // Background push
-    syncToSupabase();
+    // Sincronização segura em background
+    return await syncToSupabase();
 }
 
-// Helper para fazer o UPSERT silencioso
-function syncToSupabase() {
+// Faz o UPSERT garantindo que não vai sobrescrever dados novos de outros dispositivos/atletas
+async function syncToSupabase() {
     if (!window.supabaseClient) return;
-    const currentData = window.db || db;
 
-    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-        if (!authData || !authData.user) return;
-        const userId = authData.user.id;
+    try {
+        let userId = null;
+        const { data: authData } = await window.supabaseClient.auth.getUser();
 
-        window.supabaseClient
+        if (authData && authData.user) {
+            userId = authData.user.id;
+        } else {
+            // Se não houver usuário logado via Auth, tenta pegar o coach_id (caso do portal do atleta)
+            userId = localStorage.getItem('tkd_coach_id');
+        }
+
+        if (!userId) {
+            console.warn("Sincronização abortada: ID do treinador não encontrado.");
+            return;
+        }
+        const currentLocalData = window.db || db;
+
+        // 1. Busca estado atual na nuvem
+        const { data: cloudRow, error: fetchError } = await window.supabaseClient
+            .from('app_state')
+            .select('data')
+            .eq('project_id', userId)
+            .single();
+
+        let dataToSave = currentLocalData;
+
+        if (!fetchError && cloudRow && cloudRow.data) {
+            // 2. Mescla local com remoto
+            dataToSave = mergeAppState(currentLocalData, cloudRow.data);
+            dataToSave._last_updated = Date.now();
+        }
+
+        // 3. Atualiza memória e localStorage com o resultado do merge
+        window.db = dataToSave;
+        db = dataToSave;
+        localStorage.setItem('tkd_scout_db', JSON.stringify(dataToSave));
+
+        // 4. Upsert para a nuvem
+        const { error: upsertError } = await window.supabaseClient
             .from('app_state')
             .upsert({
                 project_id: userId,
-                data: currentData
-            })
-            .then(({ error }) => {
-                if (error) console.error("Erro no Upsert Supabase:", error);
+                data: dataToSave
             });
-    });
+
+        if (upsertError) {
+            console.error("Erro no Upsert Supabase:", upsertError);
+        } else {
+            console.log("Sincronização concluída com sucesso (merge applied).");
+        }
+
+        return dataToSave;
+    } catch (err) {
+        console.error("Erro crítico na sincronização:", err);
+    }
 }
 
 // --- GLOBAL TOAST SYSTEM ---
@@ -419,12 +510,12 @@ function showToast(message, type = 'success') {
         toast.classList.add('show');
     }, 10);
 
-    // Removeráá aps 3 segundos
+    // Removeráá ap?s 3 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
             toast.remove();
-        }, 400); // tempo da transio css
+        }, 400); // tempo da transi??o css
     }, 3000);
 }
 
@@ -444,7 +535,7 @@ function calcularIdade(dataNasc) {
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
     let idade = anoAtual - parseInt(ns[0]);
-    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda não passou
+    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda n?o passou
     return idade;
 }
 
@@ -493,7 +584,7 @@ function selScale(el, hiddenId, val) {
     parent.querySelectorAll('.btn-scale').forEach(btn => btn.classList.remove('active'));
     el.classList.add('active');
 
-    // Suporte para IDs tradicionais ou arrays name (usados nos formulrios dinmicos de Qs)
+    // Suporte para IDs tradicionais ou arrays name (usados nos formul?rios din?micos de Qs)
     let hiddenInput = document.getElementById(hiddenId);
     if (!hiddenInput) {
         hiddenInput = document.querySelector(`input[name="${hiddenId}"]`);
@@ -507,7 +598,7 @@ function selScale(el, hiddenId, val) {
     }
 }
 
-// Converter ranges estticos em botes
+// Converter ranges est?ticos em bot?es
 function replaceRangesWithButtons(container = document) {
     container.querySelectorAll('input[type="range"]:not(.no-btn-convert)').forEach(input => {
         const min = parseInt(input.min || '0');
@@ -621,7 +712,7 @@ function addFaixa() {
 }
 
 function removeFaixa(index) {
-    if (confirm('Tem certeza que deseja remover esta faixa? Alunos ainda podem t-la listada se jatribuda no passado.')) {
+    if (confirm('Tem certeza que deseja remover esta faixa? Alunos ainda podem t?-la listada se j?atribu?da no passado.')) {
         db.faixas.splice(index, 1);
         saveDB();
         renderListaFaixas();
@@ -808,7 +899,7 @@ function renderSidebar() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Carrega o Banco de Dados no carregamento da pgina
+    // Carrega o Banco de Dados no carregamento da p?gina
     loadDB();
     populateFaixaSelects();
     populatePesoSelects();
@@ -870,14 +961,14 @@ function openGlobalCropper(file, callback) {
     const modal = document.getElementById('modalGlobalCropper');
     const imagePreview = document.getElementById('imageToCrop');
 
-    // Lo arquivo como URL
+    // L?o arquivo como URL
     const reader = new FileReader();
     reader.onload = function (e) {
         imagePreview.src = e.target.result;
 
         modal.classList.add('active');
 
-        // Destruir instncia anterior se existir
+        // Destruir inst?ncia anterior se existir
         if (globalCropperInstance) {
             globalCropperInstance.destroy();
         }
@@ -943,13 +1034,13 @@ function confirmGlobalCrop() {
 function openScoutDetail(scoutId) {
     const scout = db.lutasScout.find(s => s.id === parseInt(scoutId));
     if (!scout) {
-        showToast("Scout não encontrado!", "error");
+        showToast("Scout n?o encontrado!", "error");
         return;
     }
 
-    const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => a.id === scout.atletaId);
+    const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers?rio', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => a.id === scout.atletaId);
 
-    // Fallback para atleta não encontrado
+    // Fallback para atleta n?o encontrado
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const avatarAtleta = atleta ? (atleta.avatar || 'https://i.pravatar.cc/150') : 'https://i.pravatar.cc/150';
 
@@ -964,7 +1055,7 @@ function openScoutDetail(scoutId) {
     const dataObj = new Date(scout.dataRegistro);
     const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-    // Sumário de Rounds
+    // Sum?rio de Rounds
     let roundsHtml = '';
     if (scout.rounds && scout.rounds.length > 0) {
         roundsHtml = `
@@ -983,7 +1074,7 @@ function openScoutDetail(scoutId) {
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
-        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma ao registrada nesta luta.</p>';
+        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma a??o registrada nesta luta.</p>';
     } else {
         timelineHtml = acoes.map(ev => {
             if (ev.isDivider) {
@@ -1007,8 +1098,8 @@ function openScoutDetail(scoutId) {
                 <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'Ação'} ${resStr}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' ')}</div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A??o'} ${resStr}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' ?')}</div>
                     </div>
                     <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">R${ev.round}</div>
                 </div>
@@ -1052,7 +1143,7 @@ function openScoutDetail(scoutId) {
     const totalAtaques = Object.values(tecnicaCount).reduce((a, b) => a + b, 0);
     let tecnicasHtml = topTecnicas.length > 0 ? topTecnicas.map(t => {
         const pct = Math.round((t[1] / totalAtaques) * 100);
-        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">${t[0]}: ${pct}%</div>`;
+        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">?${t[0]}: ${pct}%</div>`;
     }).join('') : '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
 
     let topFaltaHtml = '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
@@ -1073,7 +1164,7 @@ function openScoutDetail(scoutId) {
                 <div style="font-weight: 700; font-size: 14px;">${basePredominanteHtml}</div>
             </div>
             <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top Técnicas</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top T?cnicas</div>
                 <div>${tecnicasHtml}</div>
             </div>
             <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
@@ -1096,7 +1187,7 @@ function openScoutDetail(scoutId) {
             <div style="overflow-y: auto; padding: 24px; flex: 1;">
                 <!-- Header Atleta/Evento -->
                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
-                    ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Adversário')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
+                    ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Advers?rio')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
                     <div>
                         <div style="font-size: 18px; font-weight: 700;">${nomeAtleta}</div>
                         <div style="color: var(--text-muted); font-size: 14px;">${scout.evento}</div>
@@ -1125,12 +1216,12 @@ function openScoutDetail(scoutId) {
                     
                     <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content;">
                         <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; justify-content: center;">
-                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação Técnica
+                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação T?cnica
                         </h3>
                         <div style="height: 250px; width: 100%; position: relative;">
                             <canvas id="scoutRadarChart"></canvas>
                         </div>
-                        <div id="noAssessmentMêsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;">
+                        <div id="noAssessmentmsg" style="display: none; text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px 0;">
                             Nenhuma avaliação registrada para este scout.
                         </div>
                     </div>
@@ -1168,7 +1259,7 @@ function openScoutDetail(scoutId) {
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variação', 'Precisão', 'Obediência'],
+                    labels: ['Velocidade', 'Força', 'T?tica', 'Defesa', 'Varia??o', 'Precis?o', 'Obedi?ncia'],
                     datasets: [{
                         label: 'Desempenho nesta Luta',
                         data: dataArr,
@@ -1205,7 +1296,7 @@ function openScoutDetail(scoutId) {
             });
         } else {
             radarCtx.style.display = 'none';
-            document.getElementById('noAssessmentMêsg').style.display = 'block';
+            document.getElementById('noAssessmentmsg').style.display = 'block';
         }
     }
 }
@@ -1213,42 +1304,42 @@ function openScoutDetail(scoutId) {
 /**
  * Exclui um scout permanentemente.
  * @param {number} scoutId 
- * @param {function} callback - Função para Atualiza\u00e7\u00e3or a UI aps excluso
+ * @param {function} callback - Fun??o para Atualiza\u00e7\u00e3or a UI ap?s exclus?o
  */
 function deleteScout(scoutId, callback) {
-    if (!confirm("Tem certeza que deseja excluir esta anlise de scout permanentemente?")) return;
+    if (!confirm("Tem certeza que deseja excluir esta an?lise de scout permanentemente?")) return;
 
     const index = db.lutasScout.findIndex(s => s.id === scoutId);
     if (index !== -1) {
         db.lutasScout.splice(index, 1);
         saveDB();
-        showToast("Scout excluído com sucesso!", "success");
+        showToast("Scout exclu?do com sucesso!", "success");
         if (callback) callback();
     }
 }
 
 /**
- * Redireciona para a tela de scout carregando os dados para edição.
+ * Redireciona para a tela de scout carregando os dados para edi??o.
  * @param {number} scoutId 
  */
 function editScout(scoutId) {
-    // Redireciona para a pgina de scout com o ID na URL
+    // Redireciona para a p?gina de scout com o ID na URL
     window.location.href = `scout-video.html?edit=${scoutId}`;
 }
 
 /**
- * Gera e baixa um PDF de alto nível com anlise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
+ * Gera e baixa um PDF de alto n?vel com an?lise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
  * @param {number} scoutId 
  */
 /**
- * Gera e baixa um PDF de alto nível com anlise granular e matriz analtica (Técnica + Perna + Base).
+ * Gera e baixa um PDF de alto n?vel com an?lise granular e matriz anal?tica (T?cnica + Perna + Base).
  * @param {number} scoutId 
  */
 async function downloadScoutPDF(scoutId) {
     const scout = db.lutasScout.find(s => s.id === scoutId);
     if (!scout) return;
 
-    const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário' } : db.alunos.find(a => a.id === scout.atletaId);
+    const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers?rio' } : db.alunos.find(a => a.id === scout.atletaId);
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -1265,7 +1356,7 @@ async function downloadScoutPDF(scoutId) {
         locais: { 'Meio': 0, 'Não Canto': 0 },
         subLocais: { 'Pressionando': 0, 'Pressionado': 0 },
         pernas: { 'Direita': 0, 'Esquerda': 0 },
-        subPernas: { 'Direita': { 'Frente': 0, 'Trás': 0 }, 'Esquerda': { 'Frente': 0, 'Trás': 0 } },
+        subPernas: { 'Direita': { 'Frente': 0, 'Tr?s': 0 }, 'Esquerda': { 'Frente': 0, 'Tr?s': 0 } },
         bases: { 'Aberta': 0, 'Fechada': 0 }
     });
 
@@ -1291,7 +1382,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.resultado === 'Com ponto') tgt.pontos++;
 
         if (ev.tecnica) {
-            // Matriz analtica para ofensiva usa Perna e Base. Para defensiva, apenas tcnica/resultado.
+            // Matriz anal?tica para ofensiva usa Perna e Base. Para defensiva, apenas t?cnica/resultado.
             const key = isOfp
                 ? `${ev.tecnica} | ${ev.perna || '?'} | ${ev.base || '?'}`
                 : ev.tecnica;
@@ -1323,7 +1414,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.base) tgt.bases[ev.base]++;
     });
 
-    // --- PDF Helper: Seo Título (Compacta) ---
+    // --- PDF Helper: Se??o Título (Compacta) ---
     const drawSectionHeader = (title, y) => {
         doc.setFillColor(241, 245, 249);
         doc.rect(15, y, 180, 6, 'F');
@@ -1366,28 +1457,28 @@ async function downloadScoutPDF(scoutId) {
 
     doc.text(`Ataques Efetuados: ${ofensiva.total}`, 15, yPos);
     doc.text(`Pontos Marcados: ${ofensiva.pontos}`, 15, yPos + 4.5);
-    doc.text(`Eficiência: ${ofpEfic}%`, 15, yPos + 9);
+    doc.text(`Efici?ncia: ${ofpEfic}%`, 15, yPos + 9);
     doc.text(`Faltas Cometidas: ${faltasFeitas}`, 15, yPos + 13.5);
 
     doc.text(`Ataques Recebidos: ${defensiva.total}`, 110, yPos);
     doc.text(`Pontos Sofridos: ${defensiva.pontos}`, 110, yPos + 4.5);
-    doc.text(`Eficiência da Defesa: ${defEfic}%`, 110, yPos + 9);
+    doc.text(`Efici?ncia da Defesa: ${defEfic}%`, 110, yPos + 9);
     doc.text(`Faltas Sofridas: ${faltasSofridas}`, 110, yPos + 13.5);
 
     yPos += 20;
 
-    // --- TCNICAS (Top 6) ---
+    // --- T?CNICAS (Top 6) ---
     doc.setFillColor(239, 246, 255);
     doc.rect(15, yPos, 85, 5, 'F');
     doc.rect(110, yPos, 85, 5, 'F');
     doc.setFontSize(8); doc.setFont('helvetica', 'bold');
-    doc.text("TOP TCNICAS APLICADAS", 20, yPos + 3.5);
-    doc.text("TOP TCNICAS RECEBIDAS", 115, yPos + 3.5);
+    doc.text("TOP T?CNICAS APLICADAS", 20, yPos + 3.5);
+    doc.text("TOP T?CNICAS RECEBIDAS", 115, yPos + 3.5);
     yPos += 7;
 
     doc.setFontSize(7); doc.setTextColor(71, 85, 105);
-    doc.text("TCNICA", 15, yPos); doc.text("USO", 75, yPos); doc.text("PT(%)", 90, yPos);
-    doc.text("TCNICA", 110, yPos); doc.text("USO", 170, yPos); doc.text("PT(%)", 185, yPos);
+    doc.text("T?CNICA", 15, yPos); doc.text("USO", 75, yPos); doc.text("PT(%)", 90, yPos);
+    doc.text("T?CNICA", 110, yPos); doc.text("USO", 170, yPos); doc.text("PT(%)", 185, yPos);
     yPos += 4;
 
     doc.setTextColor(30, 41, 59); doc.setFont('helvetica', 'normal');
@@ -1454,11 +1545,11 @@ async function downloadScoutPDF(scoutId) {
             let subOfpStr = '', subDefStr = '';
             if (subKey && objOfp[subKey] && objOfp[subKey][k]) {
                 const parts = Object.entries(objOfp[subKey][k]).filter(([_, v]) => v > 0).map(([sk, sv]) => `${sk}: ${sv}${calcPct(sv, vOfp)}`);
-                if (parts.length) subOfpStr = `\n    └ ${parts.join(' | ')}`;
+                if (parts.length) subOfpStr = `\n    + ${parts.join(' | ')}`;
             }
             if (subKey && objDef[subKey] && objDef[subKey][k]) {
                 const parts = Object.entries(objDef[subKey][k]).filter(([_, v]) => v > 0).map(([sk, sv]) => `${sk}: ${sv}${calcPct(sv, vDef)}`);
-                if (parts.length) subDefStr = `\n    └ ${parts.join(' | ')}`;
+                if (parts.length) subDefStr = `\n    + ${parts.join(' | ')}`;
             }
 
             const splitOfp = doc.splitTextToSize(`${k}: ${vOfp}${calcPct(vOfp, totalOfp)}${subOfpStr}`, 85);
@@ -1473,7 +1564,7 @@ async function downloadScoutPDF(scoutId) {
     };
 
     printIndicatorGroup("Alvos Alcançados / Sofridos (Apenas Ações c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
-    printIndicatorGroup("Localização da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
+    printIndicatorGroup("Localiza??o da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
     printIndicatorGroup("Uso de Pernas (Tentativas)", 'pernas', ofensiva, defensiva, 'subPernas');
     printIndicatorGroup("Posicionamento de Base (Tentativas)", 'bases', ofensiva, defensiva);
 
@@ -1517,7 +1608,7 @@ async function downloadScoutPDF(scoutId) {
             if (ev.local) sub.push(ev.local + (ev.subLocal ? ` (${ev.subLocal})` : ''));
 
             doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(100);
-            doc.text(sub.join(' '), 30, yPos + 3.5);
+            doc.text(sub.join(' ?'), 30, yPos + 3.5);
 
             yPos += 8;
             doc.setTextColor(30);
@@ -1525,10 +1616,10 @@ async function downloadScoutPDF(scoutId) {
         yPos += 4;
     });
 
-    // --- RADAR Chart (Agora aps a Timeline) ---
+    // --- RADAR Chart (Agora ap?s a Timeline) ---
     if (scout.avaliacaoTreinador) {
         if (yPos > 200) { doc.addPage(); yPos = 20; } else { yPos += 10; }
-        yPos = drawSectionHeader("Avaliação Técnica (Radar)", yPos);
+        yPos = drawSectionHeader("Avaliação T?cnica (Radar)", yPos);
         const canvas = document.getElementById('scoutRadarChart');
         if (canvas) {
             const chartImg = canvas.toDataURL('image/png');

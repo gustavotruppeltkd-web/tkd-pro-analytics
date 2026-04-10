@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<!-- ANTIGRAVITY_SYNC_VERIFY_123456 -->
 <html lang="pt-BR">
 
 <head>
@@ -46,7 +47,7 @@
             min-height: 100vh;
         }
 
-        /* ── HERO HEADER ── */
+        /* â”€â”€ HERO HEADER â”€â”€ */
         .portal-hero {
             background: linear-gradient(135deg, #0f1117 0%, #1a1d27 60%, #1e1840 100%);
             border-bottom: 1px solid var(--border);
@@ -118,14 +119,20 @@
             flex-shrink: 0;
         }
 
-        /* ── MAIN GRID ── */
+        /* â”€â”€ MAIN GRID â”€â”€ */
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 16px;
             padding: 20px;
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
+        }
+
+        @media (max-width: 1400px) {
+            .dashboard {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         @media (max-width: 1024px) {
@@ -154,7 +161,7 @@
             grid-column: 1 / -1;
         }
 
-        /* ── CARDS ── */
+        /* â”€â”€ CARDS â”€â”€ */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -166,7 +173,7 @@
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
-            aspect-ratio: 1 / 1;
+            min-height: 480px;
         }
 
         /* Ocultar barra de rolagem mas manter funcionalidade */
@@ -272,7 +279,7 @@
             color: #ec4899;
         }
 
-        /* ── RADAR ── */
+        /* â”€â”€ RADAR â”€â”€ */
         .radar-wrap {
             position: relative;
             height: 260px;
@@ -292,7 +299,7 @@
             opacity: 0.4;
         }
 
-        /* ── COMPETITIONS ── */
+        /* â”€â”€ COMPETITIONS â”€â”€ */
         .comp-item {
             display: flex;
             align-items: center;
@@ -366,7 +373,7 @@
             margin-top: 0;
         }
 
-        /* ── MEDALS ── */
+        /* â”€â”€ MEDALS â”€â”€ */
         .medals-grid {
             display: flex;
             flex-wrap: wrap;
@@ -412,7 +419,7 @@
             border-color: rgba(180, 120, 60, 0.4);
         }
 
-        /* ── TRAINING ── */
+        /* â”€â”€ TRAINING â”€â”€ */
         .treino-block {
             background: var(--bg-card2);
             border-radius: var(--radius-sm);
@@ -445,7 +452,7 @@
             margin-top: 6px;
         }
 
-        /* ── SCHEDULE ── */
+        /* â”€â”€ SCHEDULE â”€â”€ */
         .timeline {
             display: flex;
             flex-direction: column;
@@ -507,7 +514,7 @@
             margin-top: 2px;
         }
 
-        /* ── QUESTIONNAIRES ── */
+        /* â”€â”€ QUESTIONNAIRES â”€â”€ */
         .q-selector {
             width: 100%;
             background: var(--bg-card2);
@@ -599,7 +606,7 @@
             margin-top: 4px;
         }
 
-        /* ── CALENDAR ── */
+        /* â”€â”€ CALENDAR â”€â”€ */
         .cal-wrapper {
             flex: 1;
             display: flex;
@@ -653,7 +660,7 @@
             box-shadow: 0 0 12px rgba(216, 180, 254, 0.4);
         }
 
-        /* ── WELLNESS / PSE (collapsible) ── */
+        /* â”€â”€ WELLNESS / PSE (collapsible) â”€â”€ */
         .accordion {
             background: var(--bg-card2);
             border: 1px solid var(--border);
@@ -1117,7 +1124,7 @@
             border-color: var(--primary);
         }
 
-        /* ── BUTTONS ── */
+        /* â”€â”€ BUTTONS â”€â”€ */
         .btn-submit {
             width: 100%;
             padding: 14px;
@@ -1143,7 +1150,7 @@
             transform: translateY(-1px);
         }
 
-        /* ── TOAST ── */
+        /* â”€â”€ TOAST â”€â”€ */
         #toast {
             position: fixed;
             bottom: 24px;
@@ -1169,7 +1176,7 @@
             background: var(--red);
         }
 
-        /* ── MISC ── */
+        /* â”€â”€ MISC â”€â”€ */
         .empty-state {
             text-align: center;
             padding: 30px 16px;
@@ -1205,7 +1212,7 @@
             cursor: pointer;
         }
 
-        /* ── SCALE BUTTONS ── */
+        /* â”€â”€ SCALE BUTTONS â”€â”€ */
         .btn-scale-group {
             display: flex;
             gap: 4px;
@@ -1213,54 +1220,38 @@
             flex-wrap: wrap;
         }
 
-        .btn-scale {
-            flex: 1;
-            min-width: 28px;
-            height: 38px;
+        .choice-group {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .choice-btn {
+            background: var(--c);
+            border: 1px solid var(--c);
+            border-radius: 8px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 6px;
-            font-size: 14px;
             font-weight: 700;
             color: #fff;
             cursor: pointer;
-            border: 2px solid transparent;
             transition: 0.2s;
-            background: rgba(255, 255, 255, 0.1);
-            opacity: 0.5;
+            font-size: 14px;
         }
 
-        .btn-scale:hover {
-            opacity: 0.8;
-            transform: translateY(-2px);
+        .choice-btn:hover {
+            filter: brightness(1.1);
         }
 
-        .btn-scale.active {
-            opacity: 1;
-            transform: scale(1.05);
-            border-color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-scale.c-red {
-            background: #ef4444;
-        }
-
-        .btn-scale.c-orange {
-            background: #f97316;
-        }
-
-        .btn-scale.c-yellow {
-            background: #eab308;
-        }
-
-        .btn-scale.c-lime {
-            background: #84cc16;
-        }
-
-        .btn-scale.c-green {
-            background: #22c55e;
+        .choice-btn.selected {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: var(--muted) !important;
+            border: 1px solid var(--border) !important;
+            transform: scale(1.1);
+            box-shadow: none !important;
         }
     </style>
 </head>
@@ -1281,39 +1272,168 @@
     <!-- MAIN DASHBOARD GRID -->
     <main class="dashboard">
 
-        <!-- ROW 1: 4 Cards (Radar, Competições, Treino de Hoje, Carga) -->
-        <div class="card card-accent-blue">
+        <!-- 1. WELLNESS CARD -->
+        <div class="card card-accent-green" id="wellnessCard">
             <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
-                <div class="card-icon icon-blue"><i class="ti ti-radar"></i></div>
+                <div class="card-icon icon-green" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i
+                        class="ti ti-heart-rate-monitor"></i></div>
                 <div>
-                    <div class="card-title c-blue">Radar Tático</div>
-                    <div class="card-subtitle">Avaliação média das lutas</div>
+                    <div class="card-title c-green">Relato de Bem-Estar</div>
+                    <div class="card-subtitle">Avalie como você acordou hoje</div>
                 </div>
             </div>
-            <div class="radar-wrap">
-                <canvas id="radarChart"></canvas>
-            </div>
-            <div id="radarEmpty" class="no-data-placeholder" style="display:none;">
-                <i class="ti ti-chart-radar"></i>
-                Nenhuma avaliação...
+            <div>
+                <div id="wellnessDoneMsg" class="already-done"
+                    style="display:none; justify-content: space-between; align-items: center;">
+                    <span><i class="ti ti-check"></i> Wellness já registrado hoje!</span>
+                </div>
+                <div id="wellnessForm">
+                    <!-- GRUPO 1: RUIM -> BOM (Red -> Blue) -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Sono (1: Ruim | 5:
+                            Bom)</label>
+                        <div class="choice-group" id="group-sono">
+                            <div class="choice-btn" data-val="1" style="--c:#ef4444"
+                                onclick="selWellness(this,'sono',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#f97316"
+                                onclick="selWellness(this,'sono',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
+                                onclick="selWellness(this,'sono',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#10b981"
+                                onclick="selWellness(this,'sono',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#4169e1"
+                                onclick="selWellness(this,'sono',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slSono" value="3">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Alimentação (1: Ruim | 5:
+                            Boa)</label>
+                        <div class="choice-group" id="group-alim">
+                            <div class="choice-btn" data-val="1" style="--c:#ef4444"
+                                onclick="selWellness(this,'alim',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#f97316"
+                                onclick="selWellness(this,'alim',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
+                                onclick="selWellness(this,'alim',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#10b981"
+                                onclick="selWellness(this,'alim',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#4169e1"
+                                onclick="selWellness(this,'alim',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slAlim" value="3">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Humor (1: Ruim | 5:
+                            Bom)</label>
+                        <div class="choice-group" id="group-humor">
+                            <div class="choice-btn" data-val="1" style="--c:#ef4444"
+                                onclick="selWellness(this,'humor',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#f97316"
+                                onclick="selWellness(this,'humor',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
+                                onclick="selWellness(this,'humor',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#10b981"
+                                onclick="selWellness(this,'humor',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#4169e1"
+                                onclick="selWellness(this,'humor',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slHumor" value="3">
+                    </div>
+
+                    <!-- GRUPO 2: BOM -> RUIM (Blue -> Red) -->
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Estresse (1: Baixo | 5:
+                            Alto)</label>
+                        <div class="choice-group" id="group-estresse">
+                            <div class="choice-btn" data-val="1" style="--c:#4169e1"
+                                onclick="selWellness(this,'estresse',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#10b981"
+                                onclick="selWellness(this,'estresse',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
+                                onclick="selWellness(this,'estresse',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#f97316"
+                                onclick="selWellness(this,'estresse',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#ef4444"
+                                onclick="selWellness(this,'estresse',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slEstresse" value="3">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Dor (1: Sem Dor | 5:
+                            Forte)</label>
+                        <div class="choice-group" id="group-dor">
+                            <div class="choice-btn" data-val="1" style="--c:#4169e1"
+                                onclick="selWellness(this,'dor',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#10b981"
+                                onclick="selWellness(this,'dor',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
+                                onclick="selWellness(this,'dor',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#f97316"
+                                onclick="selWellness(this,'dor',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#ef4444"
+                                onclick="selWellness(this,'dor',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slDor" value="3">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Fadiga (1: Disposto | 5:
+                            Fadigado)</label>
+                        <div class="choice-group" id="group-fadiga">
+                            <div class="choice-btn" data-val="1" style="--c:#4169e1"
+                                onclick="selWellness(this,'fadiga',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#10b981"
+                                onclick="selWellness(this,'fadiga',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
+                                onclick="selWellness(this,'fadiga',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#f97316"
+                                onclick="selWellness(this,'fadiga',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#ef4444"
+                                onclick="selWellness(this,'fadiga',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slFadiga" value="3">
+                    </div>
+
+                    <div
+                        style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; font-size: 10px; flex-wrap: wrap; opacity: 0.8;">
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></div>
+                            P&eacute;ssimo
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #f97316;"></div> Ruim
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></div>
+                            Mediano
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></div> Bom
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: #4169e1;"></div>
+                            Excelente
+                        </span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; margin-bottom: 4px;">Peso Atual (kg)</label>
+                        <input type="text" inputmode="decimal" class="form-control" id="inpPeso" placeholder="Opcional"
+                            style="padding: 6px 10px; font-size: 13px;">
+                    </div>
+                    <button class="btn-submit" onclick="saveWellness()" style="padding: 10px; font-size: 13px;">
+                        <i class="ti ti-device-floppy"></i> Salvar
+                    </button>
+                </div>
             </div>
         </div>
 
-
-
-        <div class="card card-accent-blue">
-            <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
-                <div class="card-icon icon-blue" style="background: rgba(65, 105, 225, 0.15); color: #4169e1;"><i
-                        class="ti ti-barbell"></i></div>
-                <div>
-                    <div class="card-title c-blue">Treino de Hoje</div>
-                    <div class="card-subtitle" id="treinoDateLabel"></div>
-                </div>
-            </div>
-            <div id="treinoContent"></div>
-        </div>
-
-        <div class="card card-accent-orange">
+        <!-- 2. PSE CARD -->
+        <div class="card card-accent-orange" id="pseCard">
             <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
                 <div class="card-icon icon-orange" style="background: rgba(249, 115, 22, 0.15); color: #f97316;"><i
                         class="ti ti-shield-up"></i></div>
@@ -1332,17 +1452,74 @@
                         <option value="Físico">Físico</option>
                     </select>
                 </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label style="font-size: 11px; margin-bottom: 4px;">PSE (1 a 10)</label>
-                    <div class="q-range-label" style="font-size: 10px;"><span>1: Leve</span><span>10: Máximo</span>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="font-size: 11px; margin-bottom: 6px; display: block;">PSE (1 a 10)</label>
+                    <div class="choice-group" style="grid-template-columns: repeat(5, 1fr);" id="group-pse">
+                        <div class="choice-btn" data-val="1" style="--c:#3b82f6" onclick="selPSEBtn(this,1)">1</div>
+                        <div class="choice-btn" data-val="2" style="--c:#06b6d4" onclick="selPSEBtn(this,2)">2</div>
+                        <div class="choice-btn" data-val="3" style="--c:#10b981" onclick="selPSEBtn(this,3)">3</div>
+                        <div class="choice-btn" data-val="4" style="--c:#84cc16" onclick="selPSEBtn(this,4)">4</div>
+                        <div class="choice-btn" data-val="5" style="--c:#eab308" onclick="selPSEBtn(this,5)">5</div>
+                        <div class="choice-btn" data-val="6" style="--c:#f59e0b" onclick="selPSEBtn(this,6)">6</div>
+                        <div class="choice-btn" data-val="7" style="--c:#f97316" onclick="selPSEBtn(this,7)">7</div>
+                        <div class="choice-btn" data-val="8" style="--c:#ef4444" onclick="selPSEBtn(this,8)">8</div>
+                        <div class="choice-btn" data-val="9" style="--c:#b91c1c" onclick="selPSEBtn(this,9)">9</div>
+                        <div class="choice-btn" data-val="10" style="--c:#7f1d1d" onclick="selPSEBtn(this,10)">10</div>
                     </div>
-                    <input type="range" id="slPSE" min="1" max="10" value="5">
-                    <div class="q-range-val" id="vPSE" style="color:var(--orange); font-size: 14px;">5</div>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-bottom: 20px; font-size: 10px; opacity: 0.8;">
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></div> 1
+                                - Repouso
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #06b6d4;"></div> 2
+                                - Muito Leve
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></div> 3
+                                - Leve
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #84cc16;"></div> 4
+                                - Leve/M&eacute;dio
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #eab308;"></div> 5
+                                - M&eacute;dio
+                            </span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></div> 6
+                                - M&eacute;dio/Forte
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #f97316;"></div> 7
+                                - Forte
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #ef4444;"></div> 8
+                                - Muito Forte
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #b91c1c;"></div> 9
+                                - Muito Forte
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #7f1d1d;"></div> 10
+                                - Extremo
+                            </span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="slPSE" value="5">
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label style="font-size: 11px; margin-bottom: 4px;">Duração (Min)</label>
                     <input type="number" class="form-control" id="inpDuracao" placeholder="Ex: 90" min="1" max="480"
-                        style="padding: 6px 10px; font-size: 13px;">
+                        oninput="updateCargaDisplay()" style="padding: 6px 10px; font-size: 13px;">
                 </div>
                 <div id="cargaDisplay" style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:8px;">
                 </div>
@@ -1352,32 +1529,21 @@
             </div>
         </div>
 
-        <!-- ROW 2: Chrono, Medals, Questionnaires... -->
-        <div class="card card-accent-purple">
+        <!-- 3. TREINO CARD -->
+        <div class="card card-accent-blue" id="treinoCard">
             <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
-                <div class="card-icon icon-purple" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;"><i
-                        class="ti ti-calendar-event"></i></div>
+                <div class="card-icon icon-blue" style="background: rgba(65, 105, 225, 0.15); color: #4169e1;"><i
+                        class="ti ti-barbell"></i></div>
                 <div>
-                    <div class="card-title c-purple">Cronograma Anual</div>
-                    <div class="card-subtitle">Próximos eventos</div>
+                    <div class="card-title c-blue">Treino de Hoje</div>
+                    <div class="card-subtitle" id="treinoDateLabel"></div>
                 </div>
             </div>
-            <div id="scheduleContent"></div>
+            <div id="treinoContent"></div>
         </div>
 
-        <div class="card card-accent-orange">
-            <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
-                <div class="card-icon icon-orange" style="background: rgba(249, 115, 22, 0.15); color: #f97316;"><i
-                        class="ti ti-medal"></i></div>
-                <div>
-                    <div class="card-title c-orange">Medalhas Conquistadas</div>
-                    <div class="card-subtitle" id="medalSubtitle">â€”</div>
-                </div>
-            </div>
-            <div id="medalsContent"></div>
-        </div>
-        <!-- Questionários -->
-        <div class="card card-accent-purple">
+        <!-- 4. QUESTIONÁRIOS CARD -->
+        <div class="card card-accent-purple" id="questionnairesCard">
             <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
                 <div class="card-icon icon-pink" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;"><i
                         class="ti ti-clipboard-list"></i></div>
@@ -1393,87 +1559,35 @@
             <div class="q-form-area" id="qFormContent"></div>
         </div>
 
-        <!-- Wellness Card -->
-        <div class="card card-accent-green">
+        <!-- 5. RADAR CARD -->
+        <div class="card card-accent-blue" id="radarCard">
             <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
-                <div class="card-icon icon-green" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i
-                        class="ti ti-heart-rate-monitor"></i></div>
+                <div class="card-icon icon-blue"><i class="ti ti-radar"></i></div>
                 <div>
-                    <div class="card-title c-green">Relato de Bem-Estar</div>
-                    <div class="card-subtitle">Avalie como você acordou hoje</div>
+                    <div class="card-title c-blue">Radar Tático</div>
+                    <div class="card-subtitle">Avaliação média das lutas</div>
                 </div>
             </div>
-            <div>
-                <div id="wellnessDoneMêsg" class="already-done"
-                    style="display:none; justify-content: space-between; align-items: center;">
-                    <span><i class="ti ti-check"></i> Wellness já registrado hoje!</span>
-                    <button class="btn-icon tooltip"
-                        style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 6px; background: rgba(255,255,255,0.1);"
-                        onclick="deleteWellness()"><i class="ti ti-trash"></i></button>
-                </div>
-                <div id="wellnessForm">
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Sono (1-5)</label>
-                        <div class="q-range-label" style="font-size: 10px;"><span>1: Péssimo</span><span>5:
-                                Excelente</span></div>
-                        <input type="range" id="slSono" min="1" max="5" value="3">
-                        <div class="q-range-val" id="vSono" style="font-size: 14px;">3</div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Estresse (1-5)</label>
-                        <div class="q-range-label" style="font-size: 10px;"><span>1: Alto</span><span>5:
-                                Baixo</span>
-                        </div>
-                        <input type="range" id="slEstresse" min="1" max="5" value="3">
-                        <div class="q-range-val" id="vEstresse" style="font-size: 14px;">3</div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Dor (1-5)</label>
-                        <div class="q-range-label" style="font-size: 10px;"><span>1: Forte</span><span>5: Sem
-                                Dor</span></div>
-                        <input type="range" id="slDor" min="1" max="5" value="3">
-                        <div class="q-range-val" id="vDor" style="font-size: 14px;">3</div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Humor (1-5)</label>
-                        <div class="q-range-label" style="font-size: 10px;"><span>1: Irritado</span><span>5:
-                                Contente</span>
-                        </div>
-                        <input type="range" id="slHumor" min="1" max="5" value="3">
-                        <div class="q-range-val" id="vHumor" style="font-size: 14px;">3</div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Fadiga (1-5)</label>
-                        <div class="q-range-label" style="font-size: 10px;"><span>1: Fadigado</span><span>5:
-                                Disposto</span>
-                        </div>
-                        <input type="range" id="slFadiga" min="1" max="5" value="3">
-                        <div class="q-range-val" id="vFadiga" style="font-size: 14px;">3</div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Alimentação (0-5)</label>
-                        <div class="q-range-label" style="font-size: 10px;"><span>0: Ruim</span><span>5: Boa</span>
-                        </div>
-                        <input type="range" id="slAlim" min="0" max="5" value="3">
-                        <div class="q-range-val" id="vAlim" style="font-size: 14px;">3</div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label style="font-size: 11px; margin-bottom: 4px;">Peso Atual (kg)</label>
-                        <input type="text" inputmode="decimal" class="form-control" id="inpPeso" placeholder="Opcional"
-                            style="padding: 6px 10px; font-size: 13px;">
-                    </div>
-                    <button class="btn-submit" onclick="saveWellness()" style="padding: 10px; font-size: 13px;">
-                        <i class="ti ti-device-floppy"></i> Salvar
-                    </button>
-                </div>
+            <div class="radar-wrap">
+                <canvas id="radarChart"></canvas>
+            </div>
+            <div id="radarEmpty" class="no-data-placeholder" style="display:none;">
+                <i class="ti ti-chart-radar"></i>
+                Nenhuma avaliação...
             </div>
         </div>
 
-        <!-- NEW CALENDAR CARD -->
-        <div class="card" id="calendarCard" style="padding: 16px; border-left: none;">
-            <div id="calendarContent" class="cal-wrapper">
-                <!-- Javascript will inject calendar here -->
+        <!-- 6. CRONOGRAMA CARD -->
+        <div class="card card-accent-purple" id="scheduleCard">
+            <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
+                <div class="card-icon icon-purple" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;"><i
+                        class="ti ti-calendar-event"></i></div>
+                <div>
+                    <div class="card-title c-purple">Cronograma Anual</div>
+                    <div class="card-subtitle">Próximos eventos</div>
+                </div>
             </div>
+            <div id="scheduleContent"></div>
         </div>
 
     </main>
@@ -1502,9 +1616,9 @@
     <div id="toast"></div>
 
     <script>
-        // ── INIT ──
+        // -- INIT --
         const params = new URLSearchParams(location.search);
-        const atletaId = parseInt(params.get('atleta') || sessionStorage.getItem('tkd_atleta_id') || '0');
+        const atletaId = parseInt(params.get('atleta') || localStorage.getItem('tkd_atleta_id') || '0');
         const nowLocal = new Date();
         const today = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
 
@@ -1529,7 +1643,9 @@
         let radarChartObj = null;
         let activeQId = null;
 
+        let portalLoaded = false;
         function loadPortal() {
+            if (portalLoaded) return;
             // Wait for app.js to populate the global db
             if (!window.db || Object.keys(window.db).length === 0) {
                 // If window.db is not set by app.js yet, try to load it from localStorage
@@ -1543,7 +1659,7 @@
             }
 
             // Use the global db
-            atleta = (window.db.alunos || []).find(a => a.id === atletaId);
+            atleta = (window.db.alunos || []).find(a => String(a.id) === String(atletaId));
 
             if (!atleta) {
                 document.getElementById('heroName').textContent = 'Portal do Atleta';
@@ -1577,15 +1693,19 @@
             renderQSelector();
             renderCalendarSummary(); // Added here
 
-            // Converter inputs estáticos de Range -> Botões
-            replaceRangesWithButtons();
-
-            initWellnessSliders();
+            initWellnessButtons();
             checkWellnessDone();
             checkPseDone();
+            portalLoaded = true;
         }
 
-        // ── RADAR ──
+        window.onDataLoaded = () => {
+            console.log("Data loaded hook triggered, re-rendering portal...");
+            portalLoaded = false;
+            loadPortal();
+        };
+
+        // -- RADAR --
         function renderRadar() {
             const scouts = (window.db.lutasScout || []).filter(s => s.atletaId === atletaId && s.avaliacaoTreinador);
             const ctx = document.getElementById('radarChart').getContext('2d');
@@ -1595,7 +1715,7 @@
                 const keys = ['velocidade', 'forca', 'tatica', 'defesa', 'variacao', 'precisao', 'obediencia'];
                 const sums = keys.reduce((acc, k) => ({ ...acc, [k]: 0 }), {});
                 scouts.forEach(s => keys.forEach(k => sums[k] += (s.avaliacaoTreinador[k] || 0)));
-                dataArr = keys.map(k => (sums[k] / scouts.length) * 10); // 0-10 → 0-100
+                dataArr = keys.map(k => (sums[k] / scouts.length) * 10); // 0-10 -> 0-100
                 document.getElementById('radarEmpty').style.display = 'none';
                 document.getElementById('radarChart').style.display = '';
             } else {
@@ -1641,12 +1761,12 @@
             });
         }
 
-        // ── COMPETITIONS ──
+        // â”€â”€ COMPETITIONS â”€â”€
         function renderCompetitions() {
             // Removido a pedido do usuário: O painel de competições foi removido do HTML.
         }
 
-        // ── MEDALS ──
+        // â”€â”€ MEDALS â”€â”€
         function renderMedals() {
             // Busca nas duas fontes: db.competicoes (legado) e db.eventos[].participantes (atual)
             const medalColocacoes = ['Ouro', 'Prata', 'Bronze'];
@@ -1709,22 +1829,40 @@
                 `<div class="medals-grid">${html}</div>`;
         }
 
-        // ── TREINO ──
+        // â”€â”€ TREINO â”€â”€
         function renderTreino() {
             const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
             document.getElementById('treinoDateLabel').textContent =
                 `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
 
             const el = document.getElementById('treinoContent');
-            if (!atleta || !atleta.turmaId) {
+            if (!atleta) {
                 el.innerHTML = `<div class="empty-state"><i class="ti ti-user-exclamation"></i>Atleta não identificado.</div>`;
                 return;
             }
 
-            const treinos = (window.db.treinos || []).filter(t => t.data === today && t.turmaId === atleta.turmaId);
+            // Debug info (hidden or small)
+            console.log("Rendering Treino for Today:", todayStr, "Athlete Turma:", atleta.turmaId);
+            const rawTreinos = window.db.treinos || [];
+
+            const treinos = rawTreinos.filter(t => {
+                const dateMatch = (t.data === todayStr);
+                const turmaMatch = (String(t.turmaId) == String(atleta.turmaId) || t.turmaId === 'todas');
+                return dateMatch && turmaMatch;
+            });
 
             if (treinos.length === 0) {
-                el.innerHTML = `<div class="empty-state"><i class="ti ti-moon"></i>Nenhum treino registrado para hoje.</div>`;
+                // Se não houver treino, vamos tentar ver se existe algum treino geral ou erro de data
+                const anyToday = rawTreinos.filter(t => t.data === todayStr);
+                const debugSufix = anyToday.length > 0 ? `<br><small style="opacity:0.5; font-size:9px;">(Existem ${anyToday.length} treinos hoje, mas em outras turmas)</small>` : "";
+
+                el.innerHTML = `<div class="empty-state">
+                    <i class="ti ti-moon"></i>
+                    Sem treinos registrados para hoje.
+                    ${debugSufix}
+                </div>`;
                 return;
             }
 
@@ -1735,7 +1873,7 @@
                 const horario = t.horario || '--:--';
 
                 return `
-                <div class="treino-block" style="cursor: pointer; transition: 0.2s;" onclick="openTreinoModal(${t.id})">
+                <div class="treino-block" style="cursor: pointer; transition: 0.2s;" onclick="openTreinoModal('${t.id}')">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
                         <div class="treino-tipo" style="font-size: 13px;">${t.titulo || t.tipo || 'Treino'}</div>
                         <i class="ti ti-external-link" style="color: var(--text-muted); font-size: 14px;"></i>
@@ -1748,7 +1886,7 @@
             }).join('');
         }
 
-        // ── SCHEDULE ──
+        // â”€â”€ SCHEDULE â”€â”€
         function renderSchedule() {
             const eventos = (window.db.eventos || [])
                 .filter(e => e.data >= today)
@@ -1780,7 +1918,7 @@
             el.innerHTML = `<div class="timeline">${items}</div>`;
         }
 
-        // ── CALENDAR SUMMARY ──
+        // â”€â”€ CALENDAR SUMMARY â”€â”€
         function renderCalendarSummary() {
             if (!atleta) return;
 
@@ -1839,7 +1977,7 @@
             document.getElementById('calendarContent').innerHTML = html;
         }
 
-        // ── QUESTIONNAIRES ──
+        // â”€â”€ QUESTIONNAIRES â”€â”€
         function renderQSelector() {
             const ativos = (window.db.questionarios || []).filter(q => q.ativo !== false);
             const sel = document.getElementById('qSelector');
@@ -1866,11 +2004,21 @@
             const q = (window.db.questionarios || []).find(x => x.id === qId);
             const content = document.getElementById('qFormContent');
 
-            const alreadyAnswered = (window.db.respostas || []).some(r =>
+            const resp = (window.db.respostas || []).find(r =>
                 r.questionarioId === qId && r.atletaId === atletaId && r.data === today);
 
-            if (alreadyAnswered) {
-                content.innerHTML = `<div class="already-done"><i class="ti ti-circle-check"></i> Vocêê já respondeu este questionário hoje!</div>`;
+            if (resp) {
+                content.innerHTML = `
+                    <div class="already-done" style="flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px;">
+                        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                            <span style="color: var(--green); font-weight: 700;"><i class="ti ti-circle-check"></i> Respondido hoje!</span>
+                            <button class="btn-icon" style="color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 8px; border-radius: 6px;" onclick="editQ(${resp.id})"><i class="ti ti-edit"></i> Editar</button>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                            Seu treinador já recebeu suas respostas. Caso tenha enviado algo errado, você pode clicar em <b>Editar</b> para corrigir agora.
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
@@ -1952,7 +2100,34 @@
             loadSelectedQ();
         }
 
-        // ── WELLNESS ──
+        function editQ(respId) {
+            const resp = (window.db.respostas || []).find(r => r.id === respId);
+            if (!resp) return;
+
+            window.db.respostas = (window.db.respostas || []).filter(r => r.id !== respId);
+            loadSelectedQ();
+
+            setTimeout(() => {
+                const area = document.getElementById('qFormContent');
+                for (const [pId, val] of Object.entries(resp.respostas)) {
+                    // 1. Check scale buttons
+                    const scaleBtn = area.querySelector(`.choice-btn[onclick*="q_${pId}'"][onclick*=", ${val})"]`);
+                    if (scaleBtn) scaleBtn.click();
+
+                    // 2. Check status buttons
+                    const statusBtn = area.querySelector(`.status-btn[onclick*="'qi_${pId}'"][onclick*="'${val}'"]`);
+                    if (statusBtn) statusBtn.click();
+
+                    // 3. Check textareas
+                    const ta = area.querySelector(`textarea[name="q_${pId}"]`);
+                    if (ta) ta.value = val;
+                }
+            }, 50);
+
+            showToast("Editando respostas...");
+        }
+
+        // â”€â”€ WELLNESS â”€â”€
         function getWellnessColor(val, max) {
             const pct = (parseInt(val) - 1) / (max - 1 || 1);
             if (pct <= 0.25) return 'var(--red)';
@@ -1961,65 +2136,129 @@
             return 'var(--green)';
         }
 
-        function initWellnessSliders() {
-            [
-                { id: 'slSono', valId: 'vSono', max: 5 },
-                { id: 'slEstresse', valId: 'vEstresse', max: 5 },
-                { id: 'slDor', valId: 'vDor', max: 5 },
-                { id: 'slHumor', valId: 'vHumor', max: 5 },
-                { id: 'slFadiga', valId: 'vFadiga', max: 5 },
-                { id: 'slAlim', valId: 'vAlim', max: 5 }
-            ].forEach(({ id, valId, max }) => {
-                const inp = document.getElementById(id);
-                const vel = document.getElementById(valId);
-                if (!inp || !vel) return;
-                const apply = () => {
-                    const c = getWellnessColor(inp.value, max);
-                    vel.style.color = c;
-                    inp.style.accentColor = c;
-                    vel.innerText = inp.value;
-                };
-                apply();
-                inp.addEventListener('input', apply);
+        function selWellness(el, key, val) {
+            const parent = el.parentElement;
+            parent.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.background = '';
+                btn.style.boxShadow = '';
+                btn.style.borderColor = '';
             });
+            el.classList.add('selected');
+            const color = el.style.getPropertyValue('--c');
+            el.style.background = color;
+            el.style.borderColor = color;
+            el.style.boxShadow = `0 4px 12px ${color}66`;
 
-            const slPSE = document.getElementById('slPSE');
-            if (slPSE) {
-                slPSE.style.accentColor = 'var(--purple)';
-                slPSE.addEventListener('input', () => {
-                    document.getElementById('vPSE').innerText = slPSE.value;
-                    updateCargaDisplay();
-                });
-            }
+            const inputId = 'sl' + key.charAt(0).toUpperCase() + key.slice(1);
+            const input = document.getElementById(inputId);
+            if (input) input.value = val;
+        }
+
+        function selPSEBtn(el, val) {
+            const parent = el.parentElement;
+            parent.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.background = '';
+                btn.style.boxShadow = '';
+                btn.style.borderColor = '';
+            });
+            el.classList.add('selected');
+            const color = el.style.getPropertyValue('--c');
+            el.style.background = color;
+            el.style.borderColor = color;
+            el.style.boxShadow = `0 4px 12px ${color}66`;
+
+            document.getElementById('slPSE').value = val;
+            updateCargaDisplay();
+        }
+
+        function initWellnessButtons() {
+            ['sono', 'alim', 'humor', 'estresse', 'dor', 'fadiga'].forEach(key => {
+                const inp = document.getElementById('sl' + key.charAt(0).toUpperCase() + key.slice(1));
+                if (!inp) return;
+                const val = inp.value;
+                const btn = document.querySelector(`#group-${key} .choice-btn[data-val="${val}"]`);
+                if (btn) selWellness(btn, key, val);
+            });
+            const pseVal = document.getElementById('slPSE').value;
+            const pseBtn = document.querySelector(`#group-pse .choice-btn[data-val="${pseVal}"]`);
+            if (pseBtn) selPSEBtn(pseBtn, pseVal);
         }
 
         function checkWellnessDone() {
-            const done = (window.db.wellnessLogs || []).some(w => w.atletaId === atletaId && w.data === today);
-            document.getElementById('wellnessDoneMêsg').style.display = done ? 'flex' : 'none';
-            document.getElementById('wellnessForm').style.display = done ? 'none' : 'block';
+            const log = (window.db.wellnessLogs || []).find(w => w.atletaId === atletaId && w.data === today);
+
+            const msgEl = document.getElementById('wellnessDoneMsg');
+            const formEl = document.getElementById('wellnessForm');
+
+            if (log) {
+                msgEl.style.display = 'block';
+                formEl.style.display = 'none';
+
+                // Show summary of values
+                msgEl.innerHTML = `
+                    <div style="width: 100%;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-weight: 700; color: var(--green);"><i class="ti ti-check"></i> Wellness registrado!</span>
+                            <button class="btn-icon" style="color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 8px; border-radius: 6px;" onclick="editWellness()"><i class="ti ti-edit"></i> Editar</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px; color: var(--text-muted); text-align: center;">
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">Sono: <b style="color:#fff">${log.sono}</b></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">Estresse: <b style="color:#fff">${log.estresse}</b></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">Dor: <b style="color:#fff">${log.dor}</b></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">Humor: <b style="color:#fff">${log.humor}</b></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">Fadiga: <b style="color:#fff">${log.fadiga}</b></div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 6px; border-radius: 4px;">Alim.: <b style="color:#fff">${log.alimentacao || 3}</b></div>
+                        </div>
+                        ${log.pesoAtual ? `<div style="margin-top: 8px; font-size: 11px; text-align:right;">Peso: <b>${log.pesoAtual} kg</b></div>` : ''}
+                    </div>
+                `;
+            } else {
+                msgEl.style.display = 'none';
+                formEl.style.display = 'block';
+            }
+        }
+
+        function editWellness() {
+            const log = (window.db.wellnessLogs || []).find(w => w.atletaId === atletaId && w.data === today);
+            if (!log) return;
+
+            // Populate form
+            document.getElementById('slSono').value = log.sono;
+            document.getElementById('slEstresse').value = log.estresse;
+            document.getElementById('slDor').value = log.dor;
+            document.getElementById('slHumor').value = log.humor;
+            document.getElementById('slFadiga').value = log.fadiga;
+            document.getElementById('slAlim').value = log.alimentacao || 3;
+            document.getElementById('inpPeso').value = log.pesoAtual || '';
+
+            // Remove from DB (will be re-pushed on save)
+            window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(w.atletaId === atletaId && w.data === today));
+
+            initWellnessButtons();
+            checkWellnessDone();
+            showToast("Modo de edição ativado.");
         }
 
         function deleteWellness() {
-            if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? Vocêê poderá preencher novamente.")) {
+            if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? Você poderá preencher novamente.")) {
                 window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(w.atletaId === atletaId && w.data === today));
                 saveDB();
 
-                // Reset form visual state if needed, but reloading is handled by checkWellnessDone
-                document.getElementById('slSono').value = 3; document.getElementById('vSono').innerText = 3;
-                document.getElementById('slEstresse').value = 3; document.getElementById('vEstresse').innerText = 3;
-                document.getElementById('slDor').value = 3; document.getElementById('vDor').innerText = 3;
-                document.getElementById('slHumor').value = 3; document.getElementById('vHumor').innerText = 3;
-                document.getElementById('slFadiga').value = 3; document.getElementById('vFadiga').innerText = 3;
-                document.getElementById('slAlim').value = 3; document.getElementById('vAlim').innerText = 3;
+                ['slSono', 'slEstresse', 'slDor', 'slHumor', 'slFadiga', 'slAlim'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = 3;
+                });
                 document.getElementById('inpPeso').value = '';
-                initWellnessSliders();
+                initWellnessButtons();
 
                 checkWellnessDone();
                 showToast("Registro excluído.");
             }
         }
 
-        // ── TREINO MODAL ──
+        // â”€â”€ TREINO MODAL â”€â”€
         function toggleTreinoModal() {
             const m = document.getElementById('treinoModal');
             if (m.classList.contains('show')) {
@@ -2101,7 +2340,7 @@
                 <div class="view-stats-row" style="background: rgba(0,0,0,0.15); padding: 8px 12px; margin-bottom: 8px; border-radius: 8px; border: 1px solid var(--border);">
                     ${t.duracaoMins || t.duracao ? `<div class="view-stat"><i class="ti ti-clock-hour-4"></i> ${t.duracaoMins || t.duracao} min<br><span style="font-size:11px;color:var(--text-muted);font-weight:400">Duração</span></div>` : ''}
                 </div>
-                ${t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Conteúdo da Sessão</div>${blocosHtml}` : blocosHtml}
+                ${t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Conteédo da Sessão</div>${blocosHtml}` : blocosHtml}
                 ${t.obs && t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
             `;
 
@@ -2117,36 +2356,75 @@
         function checkPseDone() {
             const list = document.getElementById('pseList');
             const form = document.getElementById('pseForm');
+            const select = document.getElementById('slTipoTreino');
             const todayLogs = (window.db.cargaTreino || []).filter(c => c.atletaId === atletaId && c.data === today);
 
             list.innerHTML = '';
+            const types = ['Taekwondo', 'Físico'];
+            const respondedTypes = todayLogs.map(l => l.tipoTreino);
+            const remainingTypes = types.filter(t => !respondedTypes.includes(t));
 
             if (todayLogs.length > 0) {
-                let html = '<div style="font-size:13px; font-weight:600; margin-bottom: 8px; color: var(--text-main);">Treinos Registrados Hoje:</div>';
+                let html = '<div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">';
                 todayLogs.forEach(c => {
                     let pseColor = 'var(--green)';
                     if (c.pse >= 8) pseColor = 'var(--red)';
                     else if (c.pse >= 5) pseColor = 'var(--yellow)';
 
                     html += `
-                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-weight: 600; font-size: 14px;">${c.tipoTreino || 'Geral'}</div>
-                                <div style="font-size: 12px; color: var(--text-muted);">PSE: <strong style="color:${pseColor}">${c.pse}</strong> â€¢ ${c.duracaoMins} min â€¢ Carga: ${c.cargaCalculada} U.A.</div>
+                        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); padding: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 12px;">
+                                <span style="font-weight:700; color:var(--green);"><i class="ti ti-check"></i> ${c.tipoTreino}</span>: 
+                                <span style="color:${pseColor}; font-weight:700;">${c.pse}</span> &#8226; ${c.duracaoMins}min
                             </div>
-                            <button class="btn-icon tooltip" style="color: var(--red); border-color: rgba(239, 68, 68, 0.3); border-radius: 6px; padding: 6px;" onclick="deletePSE(${c.id})"><i class="ti ti-trash"></i></button>
+                            <div style="display: flex; gap: 4px;">
+                                <button class="btn-icon" style="color: var(--blue); padding: 2px;" onclick="editPSE(${c.id})" title="Editar"><i class="ti ti-edit"></i></button>
+                                <button class="btn-icon" style="color: var(--red); padding: 2px;" onclick="deletePSE(${c.id})" title="Excluir"><i class="ti ti-trash"></i></button>
+                            </div>
                         </div>
                     `;
                 });
+                html += '</div>';
                 list.innerHTML = html;
             }
 
-            // Exibe formulário se tiver menos que 2 treinos registrados no dia
-            form.style.display = todayLogs.length >= 2 ? 'none' : 'block';
+            // Atualiza select
+            select.innerHTML = '';
+            remainingTypes.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                select.appendChild(opt);
+            });
+
+            form.style.display = remainingTypes.length === 0 ? 'none' : 'block';
+        }
+
+        function showPseForm() {
+            document.getElementById('pseForm').style.display = 'block';
+        }
+
+        function editPSE(id) {
+            const c = (window.db.cargaTreino || []).find(x => x.id === id);
+            if (!c) return;
+
+            // Populate form
+            document.getElementById('slTipoTreino').value = c.tipoTreino;
+            document.getElementById('slPSE').value = c.pse;
+            document.getElementById('inpDuracao').value = c.duracaoMins;
+            document.getElementById('vPSE').innerText = c.pse; // Fallback for any label
+            initWellnessButtons();
+            updateCargaDisplay();
+
+            // Remove from DB
+            window.db.cargaTreino = (window.db.cargaTreino || []).filter(x => x.id !== id);
+
+            checkPseDone();
+            showToast("Editando registro de carga...");
         }
 
         function deletePSE(id) {
-            if (confirm("Deseja realmente excluir este registro de carga? Vocêê poderá preencher novamente.")) {
+            if (confirm("Deseja realmente excluir este registro de carga? Você poderá preencher novamente.")) {
                 window.db.cargaTreino = (window.db.cargaTreino || []).filter(c => c.id !== id);
                 saveDB();
                 checkPseDone();
@@ -2212,15 +2490,29 @@
             checkPseDone();
         }
 
-        function saveDB() {
-            localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+        function renderScaleButtons(min, max, current, name) {
+            let html = `<div class="choice-group" style="grid-template-columns: repeat(${max > 5 ? 5 : max}, 1fr); margin-bottom: 12px;">`;
+            for (let i = min; i <= max; i++) {
+                const isSelected = i == current;
+                html += `<div class="choice-btn ${isSelected ? 'selected' : ''}" data-val="${i}" onclick="selScaleQ(this, '${name}', ${i})">${i}</div>`;
+            }
+            html += `</div><input type="hidden" name="${name}" id="qi_${name}" value="${current}">`;
+            return html;
         }
 
-        // ── START ──
+        function selScaleQ(el, name, val) {
+            el.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('qi_' + name).value = val;
+        }
+
+        // START
         // Wait for app.js to initialize the db
-        // Detect if athlete came via a shared link (coach ID stored in sessionStorage)
+        // Detect if athlete came via a shared link (coach ID stored in localStorage)
         document.addEventListener('DOMContentLoaded', () => {
-            const storedCoachId = sessionStorage.getItem('tkd_coach_id');
+            const storedCoachId = localStorage.getItem('tkd_coach_id');
+            const storedAtletaId = localStorage.getItem('tkd_atleta_id');
+
             if (storedCoachId && window.supabaseClient) {
                 window.supabaseClient
                     .from('app_state')
@@ -2231,8 +2523,14 @@
                         if (!error && data && data.data) {
                             window.db = data.data;
                             db = window.db;
+                            portalLoaded = false; // Reset guard to allow re-rendering with Supabase data
                         }
                         loadPortal();
+
+                        // Subscribe to changes (Realtime support for athletes too)
+                        if (typeof setupRealtimeSubscription === 'function') {
+                            setupRealtimeSubscription();
+                        }
                     });
             } else {
                 setTimeout(loadPortal, 100);
@@ -2242,3 +2540,4 @@
 </body>
 
 </html>
+
