@@ -2535,31 +2535,43 @@
         }
 
         // START
-        // Wait for app.js to initialize the db
-        // Detect if athlete came via a shared link (coach ID stored in localStorage)
+        // Fetch coach data from Supabase and load portal
+        function fetchCoachDataAndLoad(coachId) {
+            window.supabaseClient
+                .from('app_state')
+                .select('data')
+                .eq('project_id', coachId)
+                .single()
+                .then(({ data, error }) => {
+                    if (!error && data && data.data) {
+                        window.db = data.data;
+                        db = window.db;
+                        portalLoaded = false;
+                    }
+                    loadPortal();
+                    if (typeof setupRealtimeSubscription === 'function') {
+                        setupRealtimeSubscription();
+                    }
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const storedCoachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
-            const storedAtletaId = sessionStorage.getItem('tkd_atleta_id') || localStorage.getItem('tkd_atleta_id');
 
             if (storedCoachId && window.supabaseClient) {
-                window.supabaseClient
-                    .from('app_state')
-                    .select('data')
-                    .eq('project_id', storedCoachId)
-                    .single()
-                    .then(({ data, error }) => {
-                        if (!error && data && data.data) {
-                            window.db = data.data;
-                            db = window.db;
-                            portalLoaded = false; // Reset guard to allow re-rendering with Supabase data
-                        }
-                        loadPortal();
-
-                        // Subscribe to changes (Realtime support for athletes too)
-                        if (typeof setupRealtimeSubscription === 'function') {
-                            setupRealtimeSubscription();
-                        }
-                    });
+                // Athlete logged in via shared link — fetch coach's data directly
+                fetchCoachDataAndLoad(storedCoachId);
+            } else if (window.supabaseClient) {
+                // No stored coach ID — check if the current Supabase auth session belongs to a coach
+                // (e.g. coach previewing their own portal)
+                window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+                    if (authData && authData.user && authData.user.id) {
+                        fetchCoachDataAndLoad(authData.user.id);
+                    } else {
+                        // No auth at all — rely on app.js / localStorage
+                        setTimeout(loadPortal, 100);
+                    }
+                });
             } else {
                 setTimeout(loadPortal, 100);
             }
