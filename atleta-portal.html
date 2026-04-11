@@ -1870,7 +1870,11 @@
 
             const treinos = rawTreinos.filter(t => {
                 const dateMatch = (t.data === todayStr);
-                const turmaMatch = (String(t.turmaId) == String(atleta.turmaId) || t.turmaId === 'todas');
+                // If athlete has no turmaId assigned, show all trainings for today
+                const turmaMatch = !atleta.turmaId ||
+                    String(t.turmaId) == String(atleta.turmaId) ||
+                    t.turmaId === 'todas' ||
+                    t.turmaId == null;
                 return dateMatch && turmaMatch;
             });
 
@@ -1955,11 +1959,12 @@
             const endOfMonth = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
             // Treinos for the month
-            let treinoDays = new Set();
-            if (atleta.turmaId) {
-                const treinosList = (window.db.treinos || []).filter(t => t.data >= startOfMonth && t.data <= endOfMonth && t.turmaId === atleta.turmaId);
-                treinoDays = new Set(treinosList.map(t => new Date(t.data + 'T12:00:00').getDate()));
-            }
+            const treinosList = (window.db.treinos || []).filter(t => {
+                if (t.data < startOfMonth || t.data > endOfMonth) return false;
+                if (!atleta.turmaId) return true; // no turma assigned: show all
+                return String(t.turmaId) == String(atleta.turmaId) || t.turmaId === 'todas' || t.turmaId == null;
+            });
+            const treinoDays = new Set(treinosList.map(t => new Date(t.data + 'T12:00:00').getDate()));
 
             let html = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
