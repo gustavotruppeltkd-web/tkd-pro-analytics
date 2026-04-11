@@ -2119,7 +2119,9 @@
             if (currentTitle) {
                 triggerText.innerText = currentTitle;
                 hiddenValue.value = currentTitle;
-                onTitleSelectChange(currentTitle);
+                // Quando editando um treino existente, só preenche o título sem auto-fill de blocos
+                const isEditing = !!document.getElementById('treinoEditId').value;
+                if (!isEditing) onTitleSelectChange(currentTitle);
             } else {
                 triggerText.innerText = '— Selecione ou crie um treino...';
                 hiddenValue.value = '';
