@@ -1699,14 +1699,11 @@
             portalLoaded = true;
         }
 
-        window.onDataLoaded = () => {
-            console.log("Data loaded hook triggered, re-rendering portal...");
-            portalLoaded = false;
-            loadPortal();
-        };
+        window.onDataLoaded = null; // disabled — portal manages its own fetch
 
         // -- RADAR --
         function renderRadar() {
+            if (radarChartObj) { radarChartObj.destroy(); radarChartObj = null; }
             const scouts = (window.db.lutasScout || []).filter(s => s.atletaId === atletaId && s.avaliacaoTreinador);
             const ctx = document.getElementById('radarChart').getContext('2d');
 
@@ -1848,8 +1845,11 @@
             const rawTreinos = window.db.treinos || [];
 
             const treinos = rawTreinos.filter(t => {
-                const dateMatch = (t.data === todayStr);
-                const turmaMatch = (String(t.turmaId) == String(atleta.turmaId) || t.turmaId === 'todas');
+                const dateMatch = String(t.data || '').trim().substring(0, 10) === todayStr;
+                const turmaMatch = !t.turmaId ||
+                    !atleta.turmaId ||
+                    String(t.turmaId) === String(atleta.turmaId) ||
+                    t.turmaId === 'todas';
                 return dateMatch && turmaMatch;
             });
 
@@ -1936,7 +1936,11 @@
             // Treinos for the month
             let treinoDays = new Set();
             if (atleta.turmaId) {
-                const treinosList = (window.db.treinos || []).filter(t => t.data >= startOfMonth && t.data <= endOfMonth && t.turmaId === atleta.turmaId);
+                const treinosList = (window.db.treinos || []).filter(t => {
+                    const tData = String(t.data || '').trim().substring(0, 10);
+                    return tData >= startOfMonth && tData <= endOfMonth &&
+                        (!t.turmaId || String(t.turmaId) == String(atleta.turmaId) || t.turmaId === 'todas');
+                });
                 treinoDays = new Set(treinosList.map(t => new Date(t.data + 'T12:00:00').getDate()));
             }
 
@@ -2273,7 +2277,7 @@
         }
 
         function openTreinoModal(id) {
-            const t = (window.db.treinos || []).find(tr => tr.id === id);
+            const t = (window.db.treinos || []).find(tr => String(tr.id) === String(id));
             if (!t) return;
 
             document.getElementById('treinoModalTitle').innerText = t.titulo || t.tipo || 'Treino';
@@ -2507,35 +2511,55 @@
         }
 
         // START
-        // Wait for app.js to initialize the db
-        // Detect if athlete came via a shared link (coach ID stored in localStorage)
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedCoachId = localStorage.getItem('tkd_coach_id');
-            const storedAtletaId = localStorage.getItem('tkd_atleta_id');
+        function iniciarPortal(coachId) {
+            window.supabaseClient
+                .from('app_state')
+                .select('data')
+                .eq('project_id', coachId)
+                .single()
+                .then(function(result) {
+                    if (!result.error && result.data && result.data.data) {
+                        var remoto = result.data.data;
+                        var localRaw = localStorage.getItem('tkd_scout_db');
+                        var localData = localRaw ? JSON.parse(localRaw) : null;
+                        window.db = (localData && typeof mergeAppState === 'function')
+                            ? mergeAppState(localData, remoto)
+                            : remoto;
+                        db = window.db;
+                    }
+                    portalLoaded = false;
+                    loadPortal();
+                    if (typeof setupRealtimeSubscription === 'function') setupRealtimeSubscription();
+                })
+                .catch(function() { loadPortal(); });
+        }
 
-            if (storedCoachId && window.supabaseClient) {
-                window.supabaseClient
-                    .from('app_state')
-                    .select('data')
-                    .eq('project_id', storedCoachId)
-                    .single()
-                    .then(({ data, error }) => {
-                        if (!error && data && data.data) {
-                            window.db = data.data;
-                            db = window.db;
-                            portalLoaded = false; // Reset guard to allow re-rendering with Supabase data
-                        }
-                        loadPortal();
-
-                        // Subscribe to changes (Realtime support for athletes too)
-                        if (typeof setupRealtimeSubscription === 'function') {
-                            setupRealtimeSubscription();
-                        }
-                    });
+        document.addEventListener('DOMContentLoaded', function() {
+            var coachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
+            if (coachId && window.supabaseClient) {
+                iniciarPortal(coachId);
+            } else if (window.supabaseClient) {
+                window.supabaseClient.auth.getUser().then(function(res) {
+                    var uid = res.data && res.data.user && res.data.user.id;
+                    if (uid) {
+                        iniciarPortal(uid);
+                    } else {
+                        setTimeout(loadPortal, 300);
+                    }
+                }).catch(function() { setTimeout(loadPortal, 300); });
             } else {
-                setTimeout(loadPortal, 100);
+                setTimeout(loadPortal, 300);
             }
         });
+
+        // Safety net: if panels still empty after 4s, re-render
+        setTimeout(function() {
+            var el = document.getElementById('treinoContent');
+            if (el && el.children.length === 0) {
+                portalLoaded = false;
+                loadPortal();
+            }
+        }, 4000);
     </script>
 </body>
 
