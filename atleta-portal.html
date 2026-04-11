@@ -1556,6 +1556,7 @@
                 </div>
             </div>
             <div id="treinoContent"></div>
+            <div id="treinoDebugBar" style="display:none; margin-top:8px; padding:8px; background:rgba(255,200,0,0.1); border:1px solid rgba(255,200,0,0.3); border-radius:6px; font-size:10px; color:#facc15; line-height:1.8;"></div>
         </div>
 
         <!-- 4. QUESTIONÁRIOS CARD -->
@@ -1717,6 +1718,21 @@
             initWellnessButtons();
             checkWellnessDone();
             checkPseDone();
+
+            // DEBUG BAR — remove after fixing
+            const debugBar = document.getElementById('treinoDebugBar');
+            if (debugBar) {
+                const now2 = new Date();
+                const todayDbg = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
+                const treinos2 = window.db.treinos || [];
+                const todayTreinos = treinos2.filter(t => t.data === todayDbg);
+                debugBar.style.display = 'block';
+                debugBar.innerHTML = `<b>DEBUG:</b> atletaId=${atletaId} | atleta=${atleta ? atleta.nome + ' turma=' + atleta.turmaId : 'NULL'}<br>
+                    hoje=${todayDbg} | treinos no DB=${treinos2.length} | treinos hoje=${todayTreinos.length}<br>
+                    ${todayTreinos.length > 0 ? 'turmas hoje: ' + todayTreinos.map(t=>t.turmaId).join(', ') : 'nenhum treino com essa data'}<br>
+                    ${treinos2.length > 0 ? 'último treino: data=' + treinos2[treinos2.length-1].data + ' turma=' + treinos2[treinos2.length-1].turmaId : ''}`;
+            }
+
             portalLoaded = true;
         }
 
