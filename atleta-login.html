@@ -649,12 +649,15 @@
             const errorEl = document.getElementById('errorMessage');
 
             if (pinValue === storedPin) {
-                // Store logged-in athlete in sessionStorage
+                // Store logged-in athlete in both sessionStorage (tab) and localStorage (persistent)
                 sessionStorage.setItem('tkd_atleta_id', atleta.id);
                 sessionStorage.setItem('tkd_atleta_nome', atleta.nome);
+                localStorage.setItem('tkd_atleta_id', atleta.id);
+                localStorage.setItem('tkd_atleta_nome', atleta.nome);
                 // Store coachId so atleta-portal.html can fetch the right data from Supabase
                 if (coachIdParam) {
                     sessionStorage.setItem('tkd_coach_id', coachIdParam);
+                    localStorage.setItem('tkd_coach_id', coachIdParam); // persist across browser sessions
                 }
 
                 // Redirect to athlete portal
