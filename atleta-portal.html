@@ -2601,6 +2601,22 @@
                 setTimeout(loadPortal, 100);
             }
         });
+
+        // STANDALONE DEBUG — runs 3s after page load, no dependency on loadPortal
+        setTimeout(function() {
+            const bar = document.getElementById('treinoDebugBar');
+            if (!bar) return;
+            const now2 = new Date();
+            const d = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
+            const tr = (window.db && window.db.treinos) ? window.db.treinos : [];
+            const todayTr = tr.filter(t => t.data === d);
+            bar.style.display = 'block';
+            bar.innerHTML = '<b>⚡ DEBUG (3s):</b><br>' +
+                'atletaId=' + atletaId + ' | db.alunos=' + ((window.db && window.db.alunos) ? window.db.alunos.length : 'N/A') + '<br>' +
+                'hoje=' + d + ' | treinos no DB=' + tr.length + ' | treinos hoje=' + todayTr.length + '<br>' +
+                (todayTr.length > 0 ? 'turmas hoje: ' + todayTr.map(function(t){return t.turmaId;}).join(', ') + '<br>' : 'nenhum treino com data de hoje<br>') +
+                (tr.length > 0 ? 'último: data=' + tr[tr.length-1].data + ' turma=' + tr[tr.length-1].turmaId : 'db.treinos vazio');
+        }, 3000);
     </script>
 </body>
 
