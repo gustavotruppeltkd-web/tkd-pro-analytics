@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la *.html)",
+      "Bash(awk '{print $NF}')",
+      "Bash(grep -rn 'href=\"treino\\\\.html\"' *.html)"
+    ]
+  }
+}
