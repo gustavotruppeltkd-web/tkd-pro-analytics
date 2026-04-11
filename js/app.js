@@ -370,11 +370,15 @@ function setupRealtimeSubscription() {
             .channel('public:app_state:' + userId)
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
                 const remoteData = payload.new.data;
-                if (remoteData && remoteData._last_updated > lastSyncTime) {
+                if (remoteData) {
                     console.log("Realtime: New data received!");
+                    window.db = remoteData;
+                    db = remoteData;
+                    lastSyncTime = remoteData._last_updated || Date.now();
                     localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
-                    showToast("Dados Atualizados remotamente!", "info");
-                    setTimeout(() => location.reload(), 1500);
+                    showToast("Dados atualizados!", "info");
+                    if (typeof renderSemaforo === 'function') renderSemaforo();
+                    if (typeof renderAlunosUI === 'function') renderAlunosUI();
                 }
             })
             .subscribe();

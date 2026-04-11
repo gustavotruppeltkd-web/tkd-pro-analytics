@@ -1986,6 +1986,9 @@
             const ativos = (window.db.questionarios || []).filter(q => q.ativo !== false);
             const sel = document.getElementById('qSelector');
 
+            // Limpa antes de repopular para evitar duplicatas
+            sel.innerHTML = '';
+
             if (ativos.length === 0) {
                 sel.style.display = 'none';
                 document.getElementById('qFormContent').innerHTML =
@@ -1993,6 +1996,7 @@
                 return;
             }
 
+            sel.style.display = '';
             ativos.forEach(q => {
                 const opt = document.createElement('option');
                 opt.value = q.id;
@@ -2191,7 +2195,7 @@
         }
 
         function checkWellnessDone() {
-            const log = (window.db.wellnessLogs || []).find(w => w.atletaId === atletaId && w.data === today);
+            const log = (window.db.wellnessLogs || []).find(w => String(w.atletaId) === String(atletaId) && w.data === today);
 
             const msgEl = document.getElementById('wellnessDoneMsg');
             const formEl = document.getElementById('wellnessForm');
@@ -2225,7 +2229,7 @@
         }
 
         function editWellness() {
-            const log = (window.db.wellnessLogs || []).find(w => w.atletaId === atletaId && w.data === today);
+            const log = (window.db.wellnessLogs || []).find(w => String(w.atletaId) === String(atletaId) && w.data === today);
             if (!log) return;
 
             // Populate form
@@ -2247,7 +2251,7 @@
 
         function deleteWellness() {
             if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? Você poderá preencher novamente.")) {
-                window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(w.atletaId === atletaId && w.data === today));
+                window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(String(w.atletaId) === String(atletaId) && w.data === today));
                 saveDB();
 
                 ['slSono', 'slEstresse', 'slDor', 'slHumor', 'slFadiga', 'slAlim'].forEach(id => {
@@ -2361,7 +2365,7 @@
             const list = document.getElementById('pseList');
             const form = document.getElementById('pseForm');
             const select = document.getElementById('slTipoTreino');
-            const todayLogs = (window.db.cargaTreino || []).filter(c => c.atletaId === atletaId && c.data === today);
+            const todayLogs = (window.db.cargaTreino || []).filter(c => String(c.atletaId) === String(atletaId) && c.data === today);
 
             list.innerHTML = '';
             const types = ['Taekwondo', 'Físico'];
@@ -2452,6 +2456,7 @@
 
             const log = {
                 id: Date.now(), atletaId, data: today,
+                _updatedAt: Date.now(),
                 sono: parseInt(document.getElementById('slSono').value),
                 estresse: parseInt(document.getElementById('slEstresse').value),
                 dor: parseInt(document.getElementById('slDor').value),
@@ -2475,13 +2480,13 @@
             if (!dur || dur < 1) return showToast('Informe a duração do treino', 'error');
 
             // Check if this type was already submitted today
-            const alreadySubmitted = (window.db.cargaTreino || []).some(c => c.atletaId === atletaId && c.data === today && c.tipoTreino === tipo);
+            const alreadySubmitted = (window.db.cargaTreino || []).some(c => String(c.atletaId) === String(atletaId) && c.data === today && c.tipoTreino === tipo);
             if (alreadySubmitted) {
                 return showToast(`Treino ${tipo} já registrado hoje! Se errou, exclua o antigo primeiro.`, 'error');
             }
 
             if (!window.db.cargaTreino) window.db.cargaTreino = [];
-            window.db.cargaTreino.push({ id: Date.now(), atletaId, data: today, tipoTreino: tipo, pse, duracaoMins: dur, cargaCalculada: pse * dur });
+            window.db.cargaTreino.push({ id: Date.now(), atletaId, data: today, _updatedAt: Date.now(), tipoTreino: tipo, pse, duracaoMins: dur, cargaCalculada: pse * dur });
             saveDB();
 
             // Reset fields
