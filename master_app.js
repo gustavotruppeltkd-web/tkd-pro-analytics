@@ -278,7 +278,7 @@ function checkTrainerOnboarding() {
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
             <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
-            <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de comeþar, configure seu perfil de treinador. Isso personaliza todos os seus relat¾rios e dashboards.</p>
+            <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relat¾rios e dashboards.</p>
             <div style="text-align:left;margin-bottom:20px;">
                 <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nome Completo *</label>
                 <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva"
@@ -294,7 +294,7 @@ function checkTrainerOnboarding() {
             <button id="__ob_btn" onclick="window.__saveOnboarding()"
                 style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;"
                 onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
-                Comeþar a Usar &rarr;
+                Começar a Usar &rarr;
             </button>
             <p id="__ob_err" style="color:#f87171;font-size:12px;margin-top:12px;display:none;">Por favor, preencha todos os campos.</p>
         </div>
@@ -436,7 +436,7 @@ async function syncToSupabase() {
         if (authData && authData.user) {
             userId = authData.user.id;
         } else {
-            // Se não houver usußrio logado via Auth, tenta pegar o coach_id (caso do portal do atleta)
+            // Se não houver usuário logado via Auth, tenta pegar o coach_id (caso do portal do atleta)
             userId = localStorage.getItem('tkd_coach_id');
         }
 
@@ -461,7 +461,7 @@ async function syncToSupabase() {
             dataToSave._last_updated = Date.now();
         }
 
-        // 3. Atualiza mem¾ria e localStorage com o resultado do merge
+        // 3. Atualiza memória e localStorage com o resultado do merge
         window.db = dataToSave;
         db = dataToSave;
         localStorage.setItem('tkd_scout_db', JSON.stringify(dataToSave));
@@ -510,12 +510,12 @@ function showToast(message, type = 'success') {
         toast.classList.add('show');
     }, 10);
 
-    // Removerßß ap?s 3 segundos
+    // Removerá após 3 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
             toast.remove();
-        }, 400); // tempo da transi??o css
+        }, 400); // tempo da transição css
     }, 3000);
 }
 
@@ -535,7 +535,7 @@ function calcularIdade(dataNasc) {
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
     let idade = anoAtual - parseInt(ns[0]);
-    // Simplificado para UI. Nnum app real, subtrai 1 se mÛs/dia ainda n?o passou
+    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda não passou
     return idade;
 }
 
@@ -546,7 +546,7 @@ function formatarDataBR(dataSql) {
     return `${ns[2]}/${ns[1]}/${ns[0]}`;
 }
 
-// Formatar mÛs ex: Ago
+// Formatar mês ex: Ago
 function formatarMesCurto(dataSql) {
     if (!dataSql) return '';
     const date = new Date(dataSql + "T00:00:00");
@@ -1028,19 +1028,19 @@ function confirmGlobalCrop() {
 }
 
 /**
- * Abre um modal detalhado com as informaþ§es de um scout salvo.
+ * Abre um modal detalhado com as informações de um scout salvo.
  * @param {number} scoutId - ID do scout no db.lutasScout
  */
 function openScoutDetail(scoutId) {
     const scout = db.lutasScout.find(s => s.id === parseInt(scoutId));
     if (!scout) {
-        showToast("Scout n?o encontrado!", "error");
+        showToast("Scout não encontrado!", "error");
         return;
     }
 
     const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers?rio', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => a.id === scout.atletaId);
 
-    // Fallback para atleta n?o encontrado
+    // Fallback para atleta não encontrado
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const avatarAtleta = atleta ? (atleta.avatar || 'https://i.pravatar.cc/150') : 'https://i.pravatar.cc/150';
 
@@ -1070,11 +1070,11 @@ function openScoutDetail(scoutId) {
         `;
     }
 
-    // Timeline das Aþ§es
+    // Timeline das Ações
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
-        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma a??o registrada nesta luta.</p>';
+        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma ação registrada nesta luta.</p>';
     } else {
         timelineHtml = acoes.map(ev => {
             if (ev.isDivider) {
@@ -1098,7 +1098,7 @@ function openScoutDetail(scoutId) {
                 <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A??o'} ${resStr}</div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'Ação'} ${resStr}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' ?')}</div>
                     </div>
                     <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">R${ev.round}</div>
@@ -1259,7 +1259,7 @@ function openScoutDetail(scoutId) {
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'Força', 'T?tica', 'Defesa', 'Varia??o', 'Precis?o', 'Obedi?ncia'],
+                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variação', 'Precisão', 'Obediência'],
                     datasets: [{
                         label: 'Desempenho nesta Luta',
                         data: dataArr,
@@ -1304,7 +1304,7 @@ function openScoutDetail(scoutId) {
 /**
  * Exclui um scout permanentemente.
  * @param {number} scoutId 
- * @param {function} callback - Fun??o para Atualiza\u00e7\u00e3or a UI ap?s exclus?o
+ * @param {function} callback - Função para Atualiza\u00e7\u00e3or a UI após exclusão
  */
 function deleteScout(scoutId, callback) {
     if (!confirm("Tem certeza que deseja excluir esta an?lise de scout permanentemente?")) return;
@@ -1319,7 +1319,7 @@ function deleteScout(scoutId, callback) {
 }
 
 /**
- * Redireciona para a tela de scout carregando os dados para edi??o.
+ * Redireciona para a tela de scout carregando os dados para edição.
  * @param {number} scoutId 
  */
 function editScout(scoutId) {
@@ -1414,7 +1414,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.base) tgt.bases[ev.base]++;
     });
 
-    // --- PDF Helper: Se??o TÝtulo (Compacta) ---
+    // --- PDF Helper: Seção Título (Compacta) ---
     const drawSectionHeader = (title, y) => {
         doc.setFillColor(241, 245, 249);
         doc.rect(15, y, 180, 6, 'F');
@@ -1563,8 +1563,8 @@ async function downloadScoutPDF(scoutId) {
         yPos += 3;
     };
 
-    printIndicatorGroup("Alvos Alcanþados / Sofridos (Apenas Aþ§es c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
-    printIndicatorGroup("Localiza??o da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
+    printIndicatorGroup("Alvos Alcançados / Sofridos (Apenas Ações c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
+    printIndicatorGroup("Localização da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
     printIndicatorGroup("Uso de Pernas (Tentativas)", 'pernas', ofensiva, defensiva, 'subPernas');
     printIndicatorGroup("Posicionamento de Base (Tentativas)", 'bases', ofensiva, defensiva);
 
@@ -1616,7 +1616,7 @@ async function downloadScoutPDF(scoutId) {
         yPos += 4;
     });
 
-    // --- RADAR Chart (Agora ap?s a Timeline) ---
+    // --- RADAR Chart (Agora após a Timeline) ---
     if (scout.avaliacaoTreinador) {
         if (yPos > 200) { doc.addPage(); yPos = 20; } else { yPos += 10; }
         yPos = drawSectionHeader("Avaliação T?cnica (Radar)", yPos);

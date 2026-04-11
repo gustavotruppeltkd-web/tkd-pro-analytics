@@ -719,7 +719,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Observa??es (Opcional)</label>
+                    <label>Observações (Opcional)</label>
                     <textarea class="form-control" id="tfObs" rows="2"
                         placeholder="Ex: Atleta se queixou de dor leve no joelho antes do teste"></textarea>
                 </div>
@@ -780,7 +780,7 @@
         // --- MOTOR FISIOLÓGICO ---
 
         function calcWellnessScore(sono, estresse, dor, humor, fadiga, alimentacao) {
-            // Cada um vai de 1 a 5, exceto alimenta??o que ?0 a 5. Max total = 30. Min total = 5.
+            // Cada um vai de 1 a 5, exceto alimentação que ?0 a 5. Max total = 30. Min total = 5.
             // Para %, ((Soma - Min) / (Max - Min)) * 100
             const aliScore = alimentacao !== undefined && !isNaN(alimentacao) ? parseInt(alimentacao) : 3;
             const soma = parseInt(sono) + parseInt(estresse) + parseInt(dor) + parseInt(humor) + parseInt(fadiga) + aliScore;
@@ -1278,7 +1278,7 @@
             }, 100);
         });
 
-        // Gráficos de Compara??o (Migrados da Visão de Equipe)
+        // Gráficos de Comparação (Migrados da Visão de Equipe)
         let chartsInstance = {};
 
         function populateComparisonSelect() {
@@ -2125,8 +2125,8 @@
         function renderPseCargaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Diário de Treinos (PSE e Carga)';
             document.getElementById('titleChart1').innerText = 'Flutuação da Carga Diária (Duração × PSE)';
-            document.getElementById('titleChart2').innerText = 'Rela??o: Volume vs Intensidade';
-            document.getElementById('titleChart3').innerText = 'Propor??o por Tipo de Treino';
+            document.getElementById('titleChart2').innerText = 'Relação: Volume vs Intensidade';
+            document.getElementById('titleChart3').innerText = 'Proporção por Tipo de Treino';
             document.getElementById('titleChart4').innerText = 'Distribuição de Intensidade (Zonas de PSE)';
             document.getElementById('titleChart5').innerText = 'Acúmulo de Carga (Últimas Semanas)';
 
@@ -2231,7 +2231,7 @@
                 }
             });
 
-            // Gráfico 3: Propor??o por Tipo de Treino (Pizza)
+            // Gráfico 3: Proporção por Tipo de Treino (Pizza)
             let fis = 0, tkd = 0;
             allLogs.forEach(l => {
                 if (l.tipoTreino === 'Físico') fis++;
@@ -3282,7 +3282,7 @@
                 options: getCommonOptions()
             });
 
-            // Gráfico 5: Classifica??o de Status
+            // Gráfico 5: Classificação de Status
             let statusCount = { 'Alto (>70%)': 0, 'Médio (40-70%)': 0, 'Baixo (<40%)': 0 };
             const maxPossivel = perguntasNum.reduce((acc, p) => acc + (p.tipo === 'escala_10' ? 10 : 5), 0) || 10;
 
@@ -3332,7 +3332,7 @@
         }
 
         function renderTestesFisicosGeral(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId) {
-            document.getElementById('titleTable').innerText = 'Histórico de Avalia??es Físicas';
+            document.getElementById('titleTable').innerText = 'Histórico de Avaliações Físicas';
             document.getElementById('titleChart1').innerText = 'Teia de Valências (Perfil Global)';
             document.getElementById('titleChart2').innerText = 'Evolução FSKT (Potência e Fadiga)';
             document.getElementById('titleChart3').innerText = 'Evolução de Força Explosiva (Saltos)';
@@ -3931,7 +3931,7 @@
             document.getElementById('titleChart1').innerText = 'Evolução: Peso (kg) vs % Gordura';
             document.getElementById('titleChart2').innerText = 'Composição Corporal Absoluta (Massa Magra vs Gorda)';
             document.getElementById('titleChart3').innerText = 'Mapeamento de Circunferências (cm)';
-            document.getElementById('titleChart4').innerText = 'Classifica??o de IMC da Equipe / Atual';
+            document.getElementById('titleChart4').innerText = 'Classificação de IMC da Equipe / Atual';
             document.getElementById('titleChart5').innerText = 'Soma das Dobras Cutâneas Acumuladas';
 
             let antro = (db.antropometria || []).sort((a, b) => new Date(a.data) - new Date(b.data));
@@ -4063,7 +4063,7 @@
                 options: { ...getCommonOptions(), scales: { r: { min: 0, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' }, pointLabels: { font: { size: 10 } } } }, plugins: { legend: { display: false } } }
             });
 
-            // Gráfico 4: Classifica??o de IMC (Doughnut)
+            // Gráfico 4: Classificação de IMC (Doughnut)
             let imcCounts = { 'Abaixo do Peso (<18.5)': 0, 'Nãormal (18.5-24.9)': 0, 'Sobrepeso (25-29.9)': 0, 'Obesidade (>30)': 0 };
             lastAntrosList.forEach(a => {
                 const i = parseFloat(a.imc) || 0;
@@ -4113,7 +4113,7 @@
             document.getElementById('titleChart2').innerText = 'Status Médico Atual';
             document.getElementById('titleChart3').innerText = 'Dias Perdidos por Tipo de Lesão';
             document.getElementById('titleChart4').innerText = 'Incidência de Novas Lesões por Mês';
-            document.getElementById('titleChart5').innerText = 'Classifica??o por Severidade (Dias)';
+            document.getElementById('titleChart5').innerText = 'Classificação por Severidade (Dias)';
 
             let lesoes = (db.lesoes || []).sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
             let alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);

@@ -1279,13 +1279,13 @@
                         class="ti ti-heart-rate-monitor"></i></div>
                 <div>
                     <div class="card-title c-green">Relato de Bem-Estar</div>
-                    <div class="card-subtitle">Avalie como vocÛ acordou hoje</div>
+                    <div class="card-subtitle">Avalie como você acordou hoje</div>
                 </div>
             </div>
             <div>
                 <div id="wellnessDoneMsg" class="already-done"
                     style="display:none; justify-content: space-between; align-items: center;">
-                    <span><i class="ti ti-check"></i> Wellness jß registrado hoje!</span>
+                    <span><i class="ti ti-check"></i> Wellness já registrado hoje!</span>
                 </div>
                 <div id="wellnessForm">
                     <!-- GRUPO 1: RUIM -> BOM (Red -> Blue) -->
@@ -1439,7 +1439,7 @@
                         class="ti ti-shield-up"></i></div>
                 <div>
                     <div class="card-title c-orange">Carga de Treinamento</div>
-                    <div class="card-subtitle">Registro dißrio (Foster)</div>
+                    <div class="card-subtitle">Registro diário (Foster)</div>
                 </div>
             </div>
             <div id="pseList" style="margin-bottom: 16px;"></div>
@@ -1548,13 +1548,13 @@
                 <div class="card-icon icon-pink" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;"><i
                         class="ti ti-clipboard-list"></i></div>
                 <div>
-                    <div class="card-title" style="color: #ec4899;">Questionßrios</div>
+                    <div class="card-title" style="color: #ec4899;">Questionários</div>
                     <div class="card-subtitle">Selecione e responda abaixo</div>
                 </div>
             </div>
             <select class="q-selector" id="qSelector" onchange="loadSelectedQ()"
                 style="padding: 8px; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: #fff; margin-bottom: 12px;">
-                <option value="">Selecione um questionßrio...</option>
+                <option value="">Selecione um questionário...</option>
             </select>
             <div class="q-form-area" id="qFormContent"></div>
         </div>
@@ -1564,7 +1564,7 @@
             <div class="card-header" style="border-bottom:none; margin-bottom:10px; padding-bottom:0;">
                 <div class="card-icon icon-blue"><i class="ti ti-radar"></i></div>
                 <div>
-                    <div class="card-title c-blue">Radar Tßtico</div>
+                    <div class="card-title c-blue">Radar Tático</div>
                     <div class="card-subtitle">Avaliação média das lutas</div>
                 </div>
             </div>
@@ -1584,7 +1584,7 @@
                         class="ti ti-calendar-event"></i></div>
                 <div>
                     <div class="card-title c-purple">Cronograma Anual</div>
-                    <div class="card-subtitle">Pr¾ximos eventos</div>
+                    <div class="card-subtitle">Próximos eventos</div>
                 </div>
             </div>
             <div id="scheduleContent"></div>
@@ -1623,7 +1623,7 @@
         const today = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
 
         const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-        const FULL_MESES = ['janeiro', 'fevereiro', 'marþo', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+        const FULL_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
 
 
@@ -1760,7 +1760,7 @@
 
         // ÔöÇÔöÇ COMPETITIONS ÔöÇÔöÇ
         function renderCompetitions() {
-            // Removido a pedido do usußrio: O painel de competiþ§es foi removido do HTML.
+            // Removido a pedido do usuário: O painel de competições foi removido do HTML.
         }
 
         // ÔöÇÔöÇ MEDALS ÔöÇÔöÇ
@@ -1989,7 +1989,7 @@
             if (ativos.length === 0) {
                 sel.style.display = 'none';
                 document.getElementById('qFormContent').innerHTML =
-                    `<div class="empty-state"><i class="ti ti-clipboard-off"></i>Nenhum questionßrio disponÝvel.</div>`;
+                    `<div class="empty-state"><i class="ti ti-clipboard-off"></i>Nenhum questionário disponível.</div>`;
                 return;
             }
 
@@ -2019,7 +2019,7 @@
                             <button class="btn-icon" style="color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 8px; border-radius: 6px;" onclick="editQ(${resp.id})"><i class="ti ti-edit"></i> Editar</button>
                         </div>
                         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
-                            Seu treinador jß recebeu suas respostas. Caso tenha enviado algo errado, vocÛ pode clicar em <b>Editar</b> para corrigir agora.
+                            Seu treinador já recebeu suas respostas. Caso tenha enviado algo errado, você pode clicar em <b>Editar</b> para corrigir agora.
                         </div>
                     </div>
                 `;
@@ -2037,7 +2037,7 @@
                         break;
                     case 'escala_10':
                         inputHtml = `
-            <div class="q-range-label"><span>1: MÝnimo</span><span>10: Mßximo</span></div>
+            <div class="q-range-label"><span>1: Mínimo</span><span>10: Máximo</span></div>
             ${renderScaleButtons(1, 10, 5, `q_${p.id}`)}`;
                         break;
                     case 'status':
@@ -2246,7 +2246,7 @@
         }
 
         function deleteWellness() {
-            if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? VocÛ poderß preencher novamente.")) {
+            if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? Você poderá preencher novamente.")) {
                 window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(w.atletaId === atletaId && w.data === today));
                 saveDB();
 
@@ -2258,7 +2258,7 @@
                 initWellnessButtons();
 
                 checkWellnessDone();
-                showToast("Registro excluÝdo.");
+                showToast("Registro excluído.");
             }
         }
 
@@ -2284,9 +2284,9 @@
 
             // Constants from Coach Panel
             const TIPO_LABELS = {
-                forca: 'Força', potencia: 'PotÛncia', transferencia: 'TransferÛncia', hiit: 'HIIT', cardio: 'Cardio',
-                glicolitico: 'ResistÛncia Glic.', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
-                tatico: 'Tßtico', tecnico: 'TÚcnico', tecnico_tatico: 'TÚcnico-Tßtico', simulatorio: 'Simulat¾rio', sparring: 'Sparring',
+                forca: 'Força', potencia: 'Potência', transferencia: 'Transferência', hiit: 'HIIT', cardio: 'Cardio',
+                glicolitico: 'Resistência Glic.', regenerativo: 'Regenerativo', mobilidade: 'Mobilidade', flexibilidade: 'Flexibilidade', core: 'Core',
+                tatico: 'Tático', tecnico: 'Técnico', tecnico_tatico: 'Técnico-Tático', simulatorio: 'Simulatório', sparring: 'Sparring',
                 fisico: 'Físico Geral', recuperacao: 'Recuperação', competicao: 'Competição', reuniao: 'Reunião'
             };
 
@@ -2345,7 +2345,7 @@
                     ${t.duracaoMins || t.duracao ? `<div class="view-stat"><i class="ti ti-clock-hour-4"></i> ${t.duracaoMins || t.duracao} min<br><span style="font-size:11px;color:var(--text-muted);font-weight:400">Duração</span></div>` : ''}
                 </div>
                 ${t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Conte·do da SessÒo</div>${blocosHtml}` : blocosHtml}
-                ${t.obs && t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Observaþ§es</div><div class="view-obs-text">${t.obs}</div>` : ''}
+                ${t.obs && t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
             `;
 
             document.getElementById('treinoModalMeta').innerHTML = '';
@@ -2428,11 +2428,11 @@
         }
 
         function deletePSE(id) {
-            if (confirm("Deseja realmente excluir este registro de carga? VocÛ poderß preencher novamente.")) {
+            if (confirm("Deseja realmente excluir este registro de carga? Você poderá preencher novamente.")) {
                 window.db.cargaTreino = (window.db.cargaTreino || []).filter(c => c.id !== id);
                 saveDB();
                 checkPseDone();
-                showToast("Registro excluÝdo.");
+                showToast("Registro excluído.");
             }
         }
 
@@ -2477,7 +2477,7 @@
             // Check if this type was already submitted today
             const alreadySubmitted = (window.db.cargaTreino || []).some(c => c.atletaId === atletaId && c.data === today && c.tipoTreino === tipo);
             if (alreadySubmitted) {
-                return showToast(`Treino ${tipo} jß registrado hoje! Se errou, exclua o antigo primeiro.`, 'error');
+                return showToast(`Treino ${tipo} já registrado hoje! Se errou, exclua o antigo primeiro.`, 'error');
             }
 
             if (!window.db.cargaTreino) window.db.cargaTreino = [];
