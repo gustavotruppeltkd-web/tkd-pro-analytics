@@ -1043,7 +1043,7 @@
                     style="margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
                     Dados Básicos</h4>
                 <div class="form-group">
-                    <label>Nãome Completo</label>
+                    <label>Nome Completo</label>
                     <input type="text" class="form-control" name="nomeAluno" placeholder="Ex: Lucas Silva" required>
                 </div>
 
@@ -1299,11 +1299,11 @@
 
                 // Sidebar is now handled globally by renderSidebar() in app.js
 
-                // Ajuste de Nãomenclatura Atleta x Aluno
+                // Ajuste de Nomenclatura Atleta x Aluno
                 const isRend = (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
                 if (isRend) {
 
-                    // Ajuste de Nãomenclatura Atleta x Aluno
+                    // Ajuste de Nomenclatura Atleta x Aluno
                     const matriculaBtn = document.getElementById('btnSubmitMatricula');
                     if (matriculaBtn) matriculaBtn.innerText = 'Matricular Atleta';
 
@@ -1511,9 +1511,9 @@
             const D = String(agora.getDate()).padStart(2, '0');
             const todayStr = `${Y}-${M}-${D}`;
 
-            const diasNãome = ['Domingo', 'Segunda', 'Ter\u00e7a', 'Quarta', 'Quinta', 'Sexta', 'S\u00e1bado'];
+            const diasNome = ['Domingo', 'Segunda', 'Ter\u00e7a', 'Quarta', 'Quinta', 'Sexta', 'S\u00e1bado'];
             const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            const diaNãome = diasNãome[agora.getDay()];
+            const diaNome = diasNome[agora.getDay()];
             const diaMes = `${agora.getDate()} ${meses[agora.getMonth()]}`;
 
             const treinos = Array.isArray(db.treinos) ? db.treinos : [];
@@ -1533,7 +1533,7 @@
                     <div class="widget-day-header">
                         <div class="widget-day-num">${agora.getDate()}</div>
                         <div>
-                            <div style="font-size:15px;font-weight:700;">${diaNãome}</div>
+                            <div style="font-size:15px;font-weight:700;">${diaNome}</div>
                             <div style="font-size:11px;color:var(--text-muted);">${diaMes}</div>
                         </div>
                     </div>`;
@@ -2158,7 +2158,7 @@
 
             doc.autoTable({
                 startY: 30,
-                head: [['Nãome', 'CPF', 'RG', 'Nascimento', 'Gradua\u00e7\u00e3o', 'Idade']],
+                head: [['Nome', 'CPF', 'RG', 'Nascimento', 'Gradua\u00e7\u00e3o', 'Idade']],
                 body: tableData,
                 theme: 'grid',
                 headStyles: { fillColor: [65, 105, 225] }
@@ -2174,10 +2174,10 @@
             const doc = new jsPDF();
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
-            const mesNãome = document.getElementById('mesRelatorioChamada').options[mes - 1].text;
+            const mesNome = document.getElementById('mesRelatorioChamada').options[mes - 1].text;
 
             doc.setFontSize(18);
-            doc.text(`Frequ\u00eancia Mensal - ${mesNãome}`, 14, 20);
+            doc.text(`Frequ\u00eancia Mensal - ${mesNome}`, 14, 20);
             doc.setFontSize(12);
             doc.text(`Turma: ${turma ? turma.nome : ''}`, 14, 28);
 
@@ -2208,7 +2208,7 @@
                 headStyles: { fillColor: [16, 185, 129] }
             });
 
-            doc.save(`chamada_${mesNãome}_${turma.nome.replace(/\s+/g, '_')}.pdf`);
+            doc.save(`chamada_${mesNome}_${turma.nome.replace(/\s+/g, '_')}.pdf`);
             showToast("PDF gerado com sucesso!");
         }
 
@@ -2218,10 +2218,10 @@
             const doc = new jsPDF();
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
-            const mesNãome = document.getElementById('mesRelatorioFinanceiro').options[mes - 1].text;
+            const mesNome = document.getElementById('mesRelatorioFinanceiro').options[mes - 1].text;
 
             doc.setFontSize(18);
-            doc.text(`Relat\u00f3rio Financeiro - ${mesNãome}`, 14, 20);
+            doc.text(`Relat\u00f3rio Financeiro - ${mesNome}`, 14, 20);
             doc.setFontSize(12);
             doc.text(`Turma: ${turma ? turma.nome : ''}`, 14, 28);
 
@@ -2258,7 +2258,7 @@
             doc.text(`Total Previsto: R$ ${totalPrevisto.toFixed(2)}`, 14, finalY);
             doc.text(`Total Recebido: R$ ${totalRecebido.toFixed(2)}`, 14, finalY + 8);
 
-            doc.save(`financeiro_${mesNãome}_${turma.nome.replace(/\s+/g, '_')}.pdf`);
+            doc.save(`financeiro_${mesNome}_${turma.nome.replace(/\s+/g, '_')}.pdf`);
             showToast("PDF gerado com sucesso!");
         }
 

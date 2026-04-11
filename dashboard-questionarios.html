@@ -446,11 +446,11 @@
             const qId = parseInt(document.getElementById('selectQuestionario').value);
             const container = document.getElementById('perguntasContainer');
             const formObj = document.getElementById('formRespostas');
-            const emptyMêsg = document.getElementById('emptyFormMessage');
+            const emptyMsg = document.getElementById('emptyFormMessage');
 
             if (!qId) {
                 formObj.style.display = 'none';
-                emptyMêsg.style.display = 'block';
+                emptyMsg.style.display = 'block';
                 return;
             }
 
@@ -509,7 +509,7 @@
             });
 
             formObj.style.display = 'block';
-            emptyMêsg.style.display = 'none';
+            emptyMsg.style.display = 'none';
         }
 
         function selectStatus(element, inputId, value) {

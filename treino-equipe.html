@@ -1657,8 +1657,8 @@
             </div>
             <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
                 <div class="form-group">
-                    <label class="form-label">Nãome do Mesociclo</label>
-                    <input id="mesoNãome" class="form-control" placeholder="Ex: Pré-Temporada Março/Abril">
+                    <label class="form-label">Nome do Mesociclo</label>
+                    <input id="mesoNome" class="form-control" placeholder="Ex: Pré-Temporada Março/Abril">
                 </div>
                 <div class="form-group">
                     <label class="form-label"><i class="ti ti-trophy"
@@ -2510,7 +2510,7 @@
             div.innerHTML = `
                 <div class="bloco-header">
                     <i class="ti ti-grip-vertical bloco-drag"></i>
-                    <input type="text" class="form-control bloco-nome" style="flex:2;" placeholder="Nãome do bloco (ex: Aquecimento)" value="${nome}">
+                    <input type="text" class="form-control bloco-nome" style="flex:2;" placeholder="Nome do bloco (ex: Aquecimento)" value="${nome}">
                     <input type="number" class="form-control bloco-dur" style="width:80px;" min="1" max="120" value="${dur}" title="Duração (min)">
                     <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">min</span>
                     <button class="btn btn-icon danger" onclick="document.getElementById('bloco_${id}').remove()" title="Removeráá bloco">
@@ -2521,8 +2521,8 @@
                 <div style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;">Exercícios</div>
                 <div class="exercicios-container" id="exContainer_${id}"></div>
                 <div class="ex-add-row">
-                    <input type="text" list="exLib_${id}" id="exNãome_${id}" class="form-control ex-nome-input"
-                        placeholder="Nãome do exercício..."
+                    <input type="text" list="exLib_${id}" id="exNome_${id}" class="form-control ex-nome-input"
+                        placeholder="Nome do exercício..."
                         onkeydown="if(event.key==='Enter'){event.preventDefault();addExercicio(${id});}">
                     <datalist id="exLib_${id}"></datalist>
                     <select id="exTipo_${id}" class="form-control ex-tipo-sel" onchange="updateExValInput(${id})">
@@ -2571,7 +2571,7 @@
         }
 
         function addExercicio(blocoId) {
-            const nomeInput = document.getElementById(`exNãome_${blocoId}`);
+            const nomeInput = document.getElementById(`exNome_${blocoId}`);
             const nome = nomeInput.value.trim();
             if (!nome) return;
 
@@ -3073,13 +3073,13 @@
             if (mesoId) {
                 const m = (db.mesociclos || []).find(x => x.id === mesoId);
                 if (!m) return;
-                document.getElementById('mesoNãome').value = m.nome || '';
+                document.getElementById('mesoNome').value = m.nome || '';
                 document.getElementById('mesoObjetivo').value = m.objetivo || '';
                 document.getElementById('mesoDataInicio').value = m.dataInicio || '';
                 document.getElementById('mesoDataFim').value = m.dataFim || '';
                 document.getElementById('mesoCargaTotal').value = m.semanas?.reduce((s, w) => s + (w.cargaAlvo || 0), 0) || '';
             } else {
-                document.getElementById('mesoNãome').value = '';
+                document.getElementById('mesoNome').value = '';
                 document.getElementById('mesoObjetivo').value = '';
                 // Pré-preencher datas: início = próxima segunda
                 const hoje = new Date();
@@ -3101,7 +3101,7 @@
         }
 
         function salvarMeso() {
-            const nome = document.getElementById('mesoNãome').value.trim();
+            const nome = document.getElementById('mesoNome').value.trim();
             if (!nome) { alert('Informe um nome para o mesociclo.'); return; }
             const dataInicio = document.getElementById('mesoDataInicio').value;
             const dataFim = document.getElementById('mesoDataFim').value;

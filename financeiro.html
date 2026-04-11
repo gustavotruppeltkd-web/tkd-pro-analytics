@@ -528,8 +528,8 @@
             <form onsubmit="savePlano(event)" id="formPlano">
                 <input type="hidden" id="planoId">
                 <div class="form-group">
-                    <label>Nãome do Plano</label>
-                    <input type="text" class="form-control" id="planoNãome" placeholder="Ex: Mensal Livre" required>
+                    <label>Nome do Plano</label>
+                    <input type="text" class="form-control" id="planoNome" placeholder="Ex: Mensal Livre" required>
                 </div>
                 <div style="display: flex; gap: 16px;">
                     <div class="form-group" style="flex: 1;">
@@ -629,8 +629,8 @@
                     <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--primary);">Dados do Contratante
                         (Pagador)</h3>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>Nãome Completo</label>
-                        <input type="text" class="form-control" id="contratoContratanteNãome" required>
+                        <label>Nome Completo</label>
+                        <input type="text" class="form-control" id="contratoContratanteNome" required>
                     </div>
                     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                         <div class="form-group" style="flex: 1;">
@@ -672,9 +672,9 @@
                     <h3 style="font-size: 14px; margin-bottom: 12px; color: var(--primary);">Dados do Contratado
                         (Academia/Escola)</h3>
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <label>Nãome da Academia/Escola</label>
-                        <input type="text" class="form-control" id="contratoEmpresaNãome"
-                            value="Nãome da Academia/Escola">
+                        <label>Nome da Academia/Escola</label>
+                        <input type="text" class="form-control" id="contratoEmpresaNome"
+                            value="Nome da Academia/Escola">
                     </div>
                     <div class="form-group" style="margin-bottom: 10px;">
                         <label>CNPJ</label>
@@ -709,7 +709,7 @@
 
         <div style="margin-bottom: 20px;">
             <p><strong>Dados do Contratante:</strong></p>
-            <p>Nãome: <span id="pdf-contratante-nome">_______________________________</span></p>
+            <p>Nome: <span id="pdf-contratante-nome">_______________________________</span></p>
             <p>CPF: <span id="pdf-contratante-cpf">_______________________________</span></p>
             <p id="pdf-beneficiario-info"
                 style="display: none; font-style: italic; font-size: 11pt; margin-top: 5px; color: #444;">Este contrato
@@ -722,7 +722,7 @@
 
         <div style="margin-bottom: 20px;">
             <p><strong>Dados do Contratado (Academia/Escola):</strong></p>
-            <p>Nãome: <span id="pdf-empresa-nome">_______________________________</span></p>
+            <p>Nome: <span id="pdf-empresa-nome">_______________________________</span></p>
             <p>CNPJ: <span id="pdf-empresa-cnpj">_______________________________</span></p>
             <p>Endereço: <span id="pdf-empresa-end">_______________________________</span></p>
             <p>Contato: <span id="pdf-empresa-contato">_______________________________</span></p>
@@ -828,7 +828,7 @@
             db.turmas.forEach(t => {
                 const isRend = t.tipo.toLowerCase().includes('rendimento') || t.tipo.toLowerCase().includes('competição');
                 if (!isRend) {
-                    const nomeExibicao = t.nome && t.nome.trim() !== "" ? t.nome : "(Sem Nãome)";
+                    const nomeExibicao = t.nome && t.nome.trim() !== "" ? t.nome : "(Sem Nome)";
                     turmaOptions += `<option value="${t.id}">${nomeExibicao}</option>`;
                 }
             });
@@ -1121,7 +1121,7 @@
                 document.getElementById('modalPlanoTitle').innerText = 'Editar Plano';
                 const plano = db.planos.find(p => p.id === id);
                 document.getElementById('planoId').value = plano.id;
-                document.getElementById('planoNãome').value = plano.nome;
+                document.getElementById('planoNome').value = plano.nome;
                 document.getElementById('planoValor').value = plano.valor;
                 document.getElementById('planoFrequencia').value = plano.frequencia;
                 document.getElementById('planoDuracao').value = plano.duracaoMeses || 1;
@@ -1143,7 +1143,7 @@
         function savePlano(e) {
             e.preventDefault();
             const id = document.getElementById('planoId').value;
-            const nome = document.getElementById('planoNãome').value;
+            const nome = document.getElementById('planoNome').value;
             const valor = parseFloat(document.getElementById('planoValor').value);
             const frequencia = document.getElementById('planoFrequencia').value;
             const duracaoMeses = parseInt(document.getElementById('planoDuracao').value) || 1;
@@ -1239,7 +1239,7 @@
                     if (aluno.vencimento) document.getElementById('contratoVencimento').value = aluno.vencimento;
 
                     // Preencher campos do Contratante automaticamente
-                    document.getElementById('contratoContratanteNãome').value = aluno.nome;
+                    document.getElementById('contratoContratanteNome').value = aluno.nome;
                     document.getElementById('contratoContratanteCPF').value = aluno.cpf || '';
                     document.getElementById('contratoContratanteEnd').value = aluno.endereco || '';
                     document.getElementById('contratoContratanteTel').value = aluno.contato || '';
@@ -1271,14 +1271,14 @@
             const local = document.getElementById('contratoLocal').value;
 
             // Novos campos manuais
-            const cNãome = document.getElementById('contratoContratanteNãome').value;
+            const cNome = document.getElementById('contratoContratanteNome').value;
             const cCPF = document.getElementById('contratoContratanteCPF').value;
             const cNasc = document.getElementById('contratoContratanteNasc').value;
             const cEnd = document.getElementById('contratoContratanteEnd').value;
             const cTel = document.getElementById('contratoContratanteTel').value;
             const cEmail = document.getElementById('contratoContratanteEmail').value;
 
-            const eNãome = document.getElementById('contratoEmpresaNãome').value;
+            const eNome = document.getElementById('contratoEmpresaNome').value;
             const eCNPJ = document.getElementById('contratoEmpresaCNPJ').value;
             const eEnd = document.getElementById('contratoEmpresaEnd').value;
             const eCont = document.getElementById('contratoEmpresaContato').value;
@@ -1295,7 +1295,7 @@
             const idade = calcularIdade(aluno.dataNascimento);
 
             // Preencher Template com os dados do formulário (manuais)
-            document.getElementById('pdf-contratante-nome').innerText = cNãome;
+            document.getElementById('pdf-contratante-nome').innerText = cNome;
             document.getElementById('pdf-contratante-cpf').innerText = cCPF || '________________';
             document.getElementById('pdf-contratante-nasc').innerText = cNasc ? formatarDataBR(cNasc) : '__________________';
             document.getElementById('pdf-contratante-end').innerText = cEnd || '___________________________';
@@ -1303,12 +1303,12 @@
             document.getElementById('pdf-contratante-email').innerText = cEmail || '_____________________________';
 
             // Dados da Empresa (Manuais)
-            document.getElementById('pdf-empresa-nome').innerText = eNãome;
+            document.getElementById('pdf-empresa-nome').innerText = eNome;
             document.getElementById('pdf-empresa-cnpj').innerText = eCNPJ;
             document.getElementById('pdf-empresa-end').innerText = eEnd;
             document.getElementById('pdf-empresa-contato').innerText = eCont;
 
-            if (idade < 18 && cNãome !== aluno.nome) {
+            if (idade < 18 && cNome !== aluno.nome) {
                 // Se for menor e o nome no contratante mudou (provavelmente o pai/mãe), mostre info do aluno
                 beneficiarioInfo.style.display = 'block';
                 document.getElementById('pdf-beneficiario-nome').innerText = aluno.nome;

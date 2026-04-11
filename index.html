@@ -183,7 +183,7 @@
         <p id="formSubtitle">Acesso Seguro Supabase</p>
 
         <div class="error-msg" id="errorMsg"></div>
-        <div class="success-msg" id="successMêsg"></div>
+        <div class="success-msg" id="successMsg"></div>
 
         <form id="authForm">
             <div class="input-group">
@@ -229,7 +229,7 @@
             const pwGroup = document.getElementById('passwordGroup');
 
             document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('successMêsg').style.display = 'none';
+            document.getElementById('successMsg').style.display = 'none';
 
             if (isRecovery) {
                 isSignup = false;
@@ -259,11 +259,11 @@
             const btn = document.getElementById('submitBtn');
             const toggleBtn = document.getElementById('toggleModeBtn');
             const errorMsg = document.getElementById('errorMsg');
-            const successMêsg = document.getElementById('successMêsg');
+            const successMsg = document.getElementById('successMsg');
             const forgotDiv = document.getElementById('forgotPasswordDiv');
 
             errorMsg.style.display = 'none';
-            successMêsg.style.display = 'none';
+            successMsg.style.display = 'none';
 
             if (isSignup) {
                 title.innerText = "Criar Conta";
@@ -285,11 +285,11 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMsg');
-            const successMêsg = document.getElementById('successMêsg');
+            const successMsg = document.getElementById('successMsg');
             const btn = document.getElementById('submitBtn');
 
             errorMsg.style.display = 'none';
-            successMêsg.style.display = 'none';
+            successMsg.style.display = 'none';
             btn.disabled = true;
             btn.style.opacity = '0.7';
 
@@ -302,8 +302,8 @@
                     errorMsg.innerText = error.message;
                     errorMsg.style.display = 'block';
                 } else {
-                    successMêsg.innerText = "E-mail de recuperação enviado! Verifique sua caixa de entrada.";
-                    successMêsg.style.display = 'block';
+                    successMsg.innerText = "E-mail de recuperação enviado! Verifique sua caixa de entrada.";
+                    successMsg.style.display = 'block';
                     setTimeout(() => toggleRecovery(), 3000);
                 }
             } else if (isSignup) {
@@ -316,8 +316,8 @@
                     errorMsg.innerText = error.message;
                     errorMsg.style.display = 'block';
                 } else {
-                    successMêsg.innerText = "Conta criada com sucesso! Faça login.";
-                    successMêsg.style.display = 'block';
+                    successMsg.innerText = "Conta criada com sucesso! Faça login.";
+                    successMsg.style.display = 'block';
                     toggleMode(new Event('click')); // switch back to login
                 }
             } else {

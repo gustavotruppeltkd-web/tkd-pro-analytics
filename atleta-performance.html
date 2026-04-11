@@ -223,7 +223,7 @@
             <div class="profile-header-card">
                 <img src="https://i.pravatar.cc/150" alt="Avatar" class="profile-avatar-large" id="displayPic">
                 <div class="profile-main-info" style="flex: 1;">
-                    <h1 id="displayNãome">Atleta</h1>
+                    <h1 id="displayNome">Atleta</h1>
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
                         <div class="belt-tag" id="displayFaixa" style="margin-bottom: 0;">Faixa</div>
                         <span style="color: var(--text-muted); font-size: 14px;" id="displaySubInfo">Equipe de
@@ -471,7 +471,7 @@
             <form onsubmit="savePerfil(event)" id="formEditPerfil">
                 <h4 style="font-size: 14px; margin-bottom: 16px; color: var(--primary);">1. Dados Pessoais</h4>
                 <div class="form-group">
-                    <label>Nãome Completo</label>
+                    <label>Nome Completo</label>
                     <input type="text" class="form-control" name="nomeAluno" required>
                 </div>
 
@@ -636,10 +636,10 @@
 
             // Populate View Info
             document.getElementById('displayPic').src = alunoData.avatar;
-            document.getElementById('displayNãome').innerText = alunoData.nome;
+            document.getElementById('displayNome').innerText = alunoData.nome;
 
             let faixaDisplay = alunoData.faixa;
-            if (faixaDisplay === '1Âº DAN (Preta)') {
+            if (faixaDisplay === '1º DAN (Preta)') {
                 faixaDisplay = 'Faixa preta 1Â° DAN';
             }
             document.getElementById('displayFaixa').innerText = faixaDisplay;

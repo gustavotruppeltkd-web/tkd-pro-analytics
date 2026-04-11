@@ -573,21 +573,21 @@
                         <div style="display: flex; flex-direction: column; gap: 12px;">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="font-size: 11px;">Oponente</label>
-                                <input type="text" class="form-control" value="${luta.oponente || ''}" onchange="updateFightDetails(${i}, 'oponente', this.value)" placeholder="Nãome do Oponente">
+                                <input type="text" class="form-control" value="${luta.oponente || ''}" onchange="updateFightDetails(${i}, 'oponente', this.value)" placeholder="Nome do Oponente">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="font-size: 11px;">Resultado da Luta (Melhor de 3)</label>
                                 <select class="form-control" onchange="updateFightDetails(${i}, 'resultado', this.value)">
                                     <option value="">Selecione o resultado</option>
                                     <optgroup label="Vitórias">
-                                        <option value="Venceu 2x0 (Ganhou 1Âº e 2Âº)" ${luta.resultado === 'Venceu 2x0 (Ganhou 1Âº e 2Âº)' ? 'selected' : ''}>Venceu 2x0 (Ganhou 1Âº e 2Âº)</option>
-                                        <option value="Venceu 2x1 (De virada - Perdeu o 1Âº)" ${luta.resultado === 'Venceu 2x1 (De virada - Perdeu o 1Âº)' ? 'selected' : ''}>Venceu 2x1 (De virada - Perdeu o 1Âº)</option>
-                                        <option value="Venceu 2x1 (Perdeu o 2Âº)" ${luta.resultado === 'Venceu 2x1 (Perdeu o 2Âº)' ? 'selected' : ''}>Venceu 2x1 (Perdeu o 2Âº)</option>
+                                        <option value="Venceu 2x0 (Ganhou 1º e 2º)" ${luta.resultado === 'Venceu 2x0 (Ganhou 1º e 2º)' ? 'selected' : ''}>Venceu 2x0 (Ganhou 1º e 2º)</option>
+                                        <option value="Venceu 2x1 (De virada - Perdeu o 1º)" ${luta.resultado === 'Venceu 2x1 (De virada - Perdeu o 1º)' ? 'selected' : ''}>Venceu 2x1 (De virada - Perdeu o 1º)</option>
+                                        <option value="Venceu 2x1 (Perdeu o 2º)" ${luta.resultado === 'Venceu 2x1 (Perdeu o 2º)' ? 'selected' : ''}>Venceu 2x1 (Perdeu o 2º)</option>
                                     </optgroup>
                                     <optgroup label="Derrotas">
-                                        <option value="Perdeu 0x2 (Perdeu 1Âº e 2Âº)" ${luta.resultado === 'Perdeu 0x2 (Perdeu 1Âº e 2Âº)' ? 'selected' : ''}>Perdeu 0x2 (Perdeu 1Âº e 2Âº)</option>
-                                        <option value="Perdeu 1x2 (Ganhou apenas o 1Âº)" ${luta.resultado === 'Perdeu 1x2 (Ganhou apenas o 1Âº)' ? 'selected' : ''}>Perdeu 1x2 (Ganhou apenas o 1Âº)</option>
-                                        <option value="Perdeu 1x2 (Ganhou apenas o 2Âº)" ${luta.resultado === 'Perdeu 1x2 (Ganhou apenas o 2Âº)' ? 'selected' : ''}>Perdeu 1x2 (Ganhou apenas o 2Âº)</option>
+                                        <option value="Perdeu 0x2 (Perdeu 1º e 2º)" ${luta.resultado === 'Perdeu 0x2 (Perdeu 1º e 2º)' ? 'selected' : ''}>Perdeu 0x2 (Perdeu 1º e 2º)</option>
+                                        <option value="Perdeu 1x2 (Ganhou apenas o 1º)" ${luta.resultado === 'Perdeu 1x2 (Ganhou apenas o 1º)' ? 'selected' : ''}>Perdeu 1x2 (Ganhou apenas o 1º)</option>
+                                        <option value="Perdeu 1x2 (Ganhou apenas o 2º)" ${luta.resultado === 'Perdeu 1x2 (Ganhou apenas o 2º)' ? 'selected' : ''}>Perdeu 1x2 (Ganhou apenas o 2º)</option>
                                     </optgroup>
                                 </select>
                             </div>
@@ -633,7 +633,7 @@
             <div class="modal-header">
                 <div>
                     <h2 class="modal-title">Detalhes da Participação</h2>
-                    <p id="modalAthleteName" style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Nãome
+                    <p id="modalAthleteName" style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Nome
                         do
                         Atleta</p>
                 </div>
@@ -654,7 +654,7 @@
                     </select>
                 </div>
                 <div class="form-group" style="width: 120px; margin-bottom: 0;">
-                    <label>NÂº Lutas</label>
+                    <label>Nº Lutas</label>
                     <input type="number" id="formAthleteLutasCount" class="form-control" min="0"
                         onchange="handleLutasCountChange()">
                 </div>
