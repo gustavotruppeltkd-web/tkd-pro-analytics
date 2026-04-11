@@ -1886,11 +1886,10 @@
 
             const treinos = rawTreinos.filter(t => {
                 const dateMatch = String(t.data || '').trim().substring(0, 10) === todayStr;
-                // If athlete has no turmaId assigned, show all trainings for today
-                const turmaMatch = !atleta.turmaId ||
-                    String(t.turmaId) == String(atleta.turmaId) ||
-                    t.turmaId === 'todas' ||
-                    t.turmaId == null;
+                const turmaMatch = !t.turmaId ||
+                    !atleta.turmaId ||
+                    String(t.turmaId) === String(atleta.turmaId) ||
+                    t.turmaId === 'todas';
                 return dateMatch && turmaMatch;
             });
 
@@ -2610,13 +2609,14 @@
             const now2 = new Date();
             const d = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
             const tr = (window.db && window.db.treinos) ? window.db.treinos : [];
-            const todayTr = tr.filter(t => t.data === d);
+            const todayTr = tr.filter(function(t){ return String(t.data||'').trim().substring(0,10) === d; });
+            const atletaObj = atleta || ((window.db && window.db.alunos) ? (window.db.alunos.find(function(a){ return String(a.id)===String(atletaId); }) || null) : null);
             bar.style.display = 'block';
             bar.innerHTML = '<b>⚡ DEBUG (3s):</b><br>' +
-                'atletaId=' + atletaId + ' | db.alunos=' + ((window.db && window.db.alunos) ? window.db.alunos.length : 'N/A') + '<br>' +
+                'atletaId=' + atletaId + ' | atletaTurma=' + (atletaObj ? atletaObj.turmaId : 'N/A') + '<br>' +
                 'hoje=' + d + ' | treinos no DB=' + tr.length + ' | treinos hoje=' + todayTr.length + '<br>' +
-                (todayTr.length > 0 ? 'turmas hoje: ' + todayTr.map(function(t){return t.turmaId;}).join(', ') + '<br>' : 'nenhum treino com data de hoje<br>') +
-                (tr.length > 0 ? 'último: data=' + tr[tr.length-1].data + ' turma=' + tr[tr.length-1].turmaId : 'db.treinos vazio');
+                (todayTr.length > 0 ? 'treinosTurma: ' + todayTr.map(function(t){return t.turmaId;}).join(', ') + '<br>' : 'nenhum treino hoje<br>') +
+                'match? ' + (atletaObj && todayTr.length > 0 ? todayTr.some(function(t){ return String(t.turmaId)===String(atletaObj.turmaId); }) : 'N/A');
         }, 3000);
     </script>
 </body>
