@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btnCancel = document.getElementById('btnCancelEdit');
 
                 if (btnSave) {
-                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escalao (Salvar AlteraÃ§Ãµes)';
+                    btnSave.innerHTML = '<i class="ti ti-device-floppy"></i> Atualizar Escalao (Salvar Alterações)';
                     btnSave.style.background = 'var(--primary)';
                     btnSave.style.borderColor = 'var(--primary)';
                 }
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnCancel) {
                     btnCancel.style.display = 'flex';
                     btnCancel.addEventListener('click', () => {
-                        if (confirm("Deseja cancelar a ediÃ§Ã£o? Todas as alteraÃ§Ãµes no salvas sero perdidas.")) {
+                        if (confirm("Deseja cancelar a edição? Todas as alterações no salvas sero perdidas.")) {
                             window.location.href = 'scout-video.html';
                         }
                     });
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpa e recria caso exista para evitar duplicados
         select.innerHTML = `
             <option value="">Selecione o atleta da equipe...</option>
-            <option value="adversario">--- Possvel AdversÃ¡rio ---</option>
+            <option value="adversario">--- Possvel Adversário ---</option>
         `;
 
         // Filtra os atletas da turma atual
@@ -146,9 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!atleta || !evento) {
                     if (typeof showToast === 'function') {
-                        showToast("Preencha Atleta e NÃ£ome do Evento antes de salvar", "warning");
+                        showToast("Preencha Atleta e Nome do Evento antes de salvar", "warning");
                     } else {
-                        alert("Preencha Atleta e NÃ£ome do Evento antes de salvar");
+                        alert("Preencha Atleta e Nome do Evento antes de salvar");
                     }
                     return;
                 }
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 configContent.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="ti ti-chevron-down"></i>';
                 if (typeof showToast === 'function') {
-                    showToast("ConfiguraÃ§Ãµes da luta salvas!", "success");
+                    showToast("Configurações da luta salvas!", "success");
                 }
             });
         }
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const scouts = [...(db.lutasScout || [])].sort((a, b) => new Date(b.dataRegistro) - new Date(a.dataRegistro));
 
         const teamScouts = scouts.filter(s => typeof s.atletaId === 'number' || s.atletaId === undefined);
-        const opponentScouts = scouts.filter(s => typeof s.atletaId === 'string' && (s.atletaId === 'adversario' || s.atletaId.startsWith('AdversÃ¡rio')));
+        const opponentScouts = scouts.filter(s => typeof s.atletaId === 'string' && (s.atletaId === 'adversario' || s.atletaId.startsWith('Adversário')));
 
         function buildOptions(list, defaultText) {
             if (list.length === 0) return `<option value="">${defaultText}</option>`;
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 let nomeAtleta = "Atleta Removido";
                 if (typeof s.atletaId === 'string') {
-                    nomeAtleta = s.atletaId === 'adversario' ? 'AdversÃ¡rio Registrado' : s.atletaId;
+                    nomeAtleta = s.atletaId === 'adversario' ? 'Adversário Registrado' : s.atletaId;
                 } else if (typeof s.atletaId === 'number') {
                     const at = db.alunos.find(a => a.id === s.atletaId);
                     if (at) nomeAtleta = at.nome;
@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = s.resultadoLuta ? `[${s.resultadoLuta.toUpperCase()}]` : '';
                 const acoesCount = (s.acoes || []).filter(a => !a.isDivider).length;
 
-                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} aÃ§Ãµes)</option>`;
+                html += `<option value="${s.id}">${dataF} | ${nomeAtleta} | ${s.evento} ${res} (${acoesCount} ações)</option>`;
             });
             return html;
         }
@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (timelineEvents.length === 0) {
-            alert("NÃ£o hnenhuma ao na timeline. Cadastre movimentos antes de salvar o scout.");
+            alert("Não hnenhuma ao na timeline. Cadastre movimentos antes de salvar o scout.");
             return;
         }
 
@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultadoLuta = document.getElementById('scoutLutaResult').value;
         const opponentName = document.getElementById('opponentNameInput') ? document.getElementById('opponentNameInput').value.trim() : '';
 
-        const atletaFinal = atleta === 'adversario' ? (opponentName ? `AdversÃ¡rio (${opponentName})` : 'adversario') : parseInt(atleta);
+        const atletaFinal = atleta === 'adversario' ? (opponentName ? `Adversário (${opponentName})` : 'adversario') : parseInt(atleta);
 
         const form = document.getElementById('formAvaliacaoTreinador');
         const avaliacao = {
@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast("Scout atualizado com sucesso!", "success");
                 closeModalAvaliacao();
 
-                if (confirm("Deseja voltar para a visÃ£o geral ou continuar editando?")) {
+                if (confirm("Deseja voltar para a visão geral ou continuar editando?")) {
                     window.location.href = 'scout-video.html';
                 }
                 return;
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         optionsDiv.innerHTML = '';
 
-        if (localSelecionado !== 'NÃ£o Canto') {
+        if (localSelecionado !== 'Não Canto') {
             container.style.display = 'none';
             return;
         }
@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         container.style.display = 'block';
 
-        let subOptions = ['Frente', 'TrÃ¡s'];
+        let subOptions = ['Frente', 'Trás'];
 
         subOptions.forEach(opt => {
             const btn = document.createElement('button');
@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function initPlayerListeners() {
-        // Load YouTube NÃ£ote: Uses iframe API
+        // Load YouTube Nãote: Uses iframe API
         document.getElementById('btnLoadYoutube').addEventListener('click', () => {
             if (!window.YT_Ready) {
                 // If the script loaded but the ready event didn't fire, try to force it if YT object exists
@@ -733,9 +733,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             fallbackIframe.setAttribute('allowfullscreen', 'true');
                             fallbackIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
                             // Inserir de volta
-                            const localPlayerNÃ£ode = document.getElementById('localPlayer');
-                            if (wrapper && localPlayerNÃ£ode) {
-                                wrapper.insertBefore(fallbackIframe, localPlayerNÃ£ode);
+                            const localPlayerNãode = document.getElementById('localPlayer');
+                            if (wrapper && localPlayerNãode) {
+                                wrapper.insertBefore(fallbackIframe, localPlayerNãode);
                             }
 
                             // Avisamos o usurio que estamos no fallback
@@ -815,12 +815,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alvoLabel) parts.push(`[${alvoLabel}]`);
 
         let localLabel = currentScoutState.local || "";
-        if (localLabel === 'NÃ£o Canto' && currentScoutState.subLocal) {
+        if (localLabel === 'Não Canto' && currentScoutState.subLocal) {
             localLabel += ` - ${currentScoutState.subLocal}`;
         }
         if (localLabel) parts.push(`@ ${localLabel}`);
 
-        // Check if there is enough to be valid (at least AÃ§Ã£o is required)
+        // Check if there is enough to be valid (at least Ação is required)
         if (currentScoutState.acao) {
             btnReg.disabled = false;
         } else {
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="empty-state">
                     <i class="ti ti-timeline"></i>
                     <p>Nenhum evento registrado ainda.</p>
-                    <p style="font-size: 11px;">Comece a adicionar aÃ§Ãµes no painel central.</p>
+                    <p style="font-size: 11px;">Comece a adicionar ações no painel central.</p>
                 </div>`;
             countBadge.innerText = "0";
             return;
@@ -980,7 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="timeline-content" onclick="jumpToEvent(${ev.time})" style="cursor: pointer; flex: 1;">
                         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
                             <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
-                            <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'AÃ§Ã£o'} ${resStr}</span>
+                            <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'Ação'} ${resStr}</span>
                         </div>
                         <div class="timeline-details" style="font-size: 11px; opacity: 0.8;">${detailsArr.join(' ')}</div>
                     </div>

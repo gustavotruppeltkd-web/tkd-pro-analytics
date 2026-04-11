@@ -866,7 +866,7 @@
                 <button class="tab-btn active">Visão Geral (Horários e Lista)</button>
             </div>
 
-            <!-- TAB 1: VISÃƒO GERAL -->
+            <!-- TAB 1: VISÃO GERAL -->
             <div id="tab-geral" class="tab-content active">
                 <!-- Cronograma / Horários -->
                 <div class="athletes-section" style="margin-bottom: 32px;" id="cronogramaContainer">
@@ -907,8 +907,8 @@
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetUltimasComp">
-                                            â€¢ Campeonato Paulista (Set)<br>
-                                            â€¢ Open Sudeste (Jul)
+                                            • Campeonato Paulista (Set)<br>
+                                            • Open Sudeste (Jul)
                                         </div>
                                     </div>
                                     <div>
@@ -917,7 +917,7 @@
                                         <div class="value"
                                             style="font-size: 14px; font-weight: normal; line-height: 1.6;"
                                             id="widgetProximasComp">
-                                            â€¢ Copa Regional (em 18 dias)<br>
+                                            • Copa Regional (em 18 dias)<br>
                                             <span style="color: var(--yellow); font-size: 12px;"><i
                                                     class="ti ti-flag"></i> Inscrições Abertas</span>
                                         </div>
@@ -1034,7 +1034,7 @@
     <div class="modal-overlay" id="modalAddAluno">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalAddTitle">Adicionar Aluno Ã  Turma</h2>
+                <h2 class="modal-title" id="modalAddTitle">Adicionar Aluno à Turma</h2>
                 <button class="btn-close" onclick="closeModalAluno()"><i class="ti ti-x"></i></button>
             </div>
 
@@ -1308,7 +1308,7 @@
                     if (matriculaBtn) matriculaBtn.innerText = 'Matricular Atleta';
 
                     const modalTitle = document.getElementById('modalAddTitle');
-                    if (modalTitle) modalTitle.innerText = 'Adicionar Atleta Ã  Equipe';
+                    if (modalTitle) modalTitle.innerText = 'Adicionar Atleta à Equipe';
 
                     const labelFoto = document.getElementById('labelFoto');
                     if (labelFoto) labelFoto.innerText = 'Foto do Atleta (Do Computador)';
@@ -1324,7 +1324,7 @@
                     document.getElementById('pageSubtitle').style.display = 'block';
                     document.getElementById('totalAlunosTitle').innerText = 'Alunos Matriculados (0)';
                     document.getElementById('colNameHeader').innerText = 'Aluno e Faixa';
-                    document.getElementById('modalAddTitle').innerText = 'Adicionar Aluno Ã  Turma';
+                    document.getElementById('modalAddTitle').innerText = 'Adicionar Aluno à Turma';
                     document.getElementById('btnSubmitMatricula').innerText = 'Matricular na Turma';
                     const btnAdd = document.querySelector('button[onclick="openModalAluno()"]');
                     if (btnAdd) btnAdd.innerHTML = '<i class="ti ti-user-plus"></i> Adicionar Aluno';
@@ -1371,7 +1371,7 @@
                 ultimasList.innerHTML = passadas.slice(0, 2).map(ev => {
                     const data = new Date(ev.data + "T00:00:00");
                     const mes = data.toLocaleString('pt-BR', { month: 'short' });
-                    return `<div style="cursor: pointer; margin-bottom: 4px;" onclick="window.location.href='evento-detalhes.html?id=${ev.id}'">â€¢ ${ev.titulo} (${mes})</div>`;
+                    return `<div style="cursor: pointer; margin-bottom: 4px;" onclick="window.location.href='evento-detalhes.html?id=${ev.id}'">• ${ev.titulo} (${mes})</div>`;
                 }).join('');
             }
 
@@ -1402,7 +1402,7 @@
 
                 proximasDiv.innerHTML = `
                     <div style="cursor: pointer;" onclick="window.location.href='evento-detalhes.html?id=${prox.id}'">
-                        â€¢ ${prox.titulo} (${countdownText})
+                        • ${prox.titulo} (${countdownText})
                         ${statusExtra}
                     </div>
                 `;
@@ -1654,7 +1654,7 @@
 
             const [y, m, d] = (t.data || '').split('-');
             const dataFmt = t.data ? `${d}/${m}/${y}` : '';
-            const protecao = (t.protecao || 'sim') === 'sim' ? 'SIM' : 'NÃƒO';
+            const protecao = (t.protecao || 'sim') === 'sim' ? 'SIM' : 'NÃO';
 
             // Header
             doc.setFillColor(30, 41, 59);
@@ -1667,14 +1667,14 @@
 
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
-            doc.text(`DATA: ${dataFmt}  |  HORÁRIO: ${t.horario || '--:--'}  |  TIPO: ${(t.tipo || '').toUpperCase()}  |  PROTEÇÃƒO: ${protecao}`, 15, 30);
+            doc.text(`DATA: ${dataFmt}  |  HORÁRIO: ${t.horario || '--:--'}  |  TIPO: ${(t.tipo || '').toUpperCase()}  |  PROTEÇÃO: ${protecao}`, 15, 30);
 
             // Stats
             let yPos = 55;
             doc.setTextColor(30, 41, 59);
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
-            doc.text(`DURAÇÃƒO: ${t.duracaoMins || 0} min`, 15, yPos);
+            doc.text(`DURAÇÃO: ${t.duracaoMins || 0} min`, 15, yPos);
             doc.text(`PSE PLANEJADA: ${t.psePlanejada || 0}/10`, 80, yPos);
             yPos += 15;
 
@@ -1851,7 +1851,7 @@
                                 <img src="${a.avatar}" alt="${a.nome}" class="student-avatar">
                                 <div class="student-details">
                                     <h4>${a.nome}</h4>
-                                    <p><strong>${a.faixa}</strong> â€¢ ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
+                                    <p><strong>${a.faixa}</strong> • ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
                                 </div>
                             </div>
                             <div class="col-age">

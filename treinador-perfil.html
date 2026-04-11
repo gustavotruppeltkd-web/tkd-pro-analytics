@@ -290,7 +290,7 @@
             </div>
 
             <nav class="nav-menu" id="navMenuContainer">
-                <!-- Injetado pelo app.js padrão, mas marcamos para forçar a volta Ã  home se clique num logo -->
+                <!-- Injetado pelo app.js padrão, mas marcamos para forçar a volta à home se clique num logo -->
             </nav>
         </aside>
 
@@ -419,7 +419,7 @@
                                         <div class="list-item-title">Copa do Mundo Regional</div>
                                         <div class="list-item-date">2022</div>
                                     </div>
-                                    <div class="list-item-desc">Atuação como head coach, levando 5 atletas Ã  medalha de
+                                    <div class="list-item-desc">Atuação como head coach, levando 5 atletas à medalha de
                                         ouro.</div>
                                 </div>
                             </div>
@@ -533,7 +533,7 @@
         </main>
     </div>
 
-    <!-- MODAL DE EDIÇÃƒO DO TREINADOR -->
+    <!-- MODAL DE EDIÇÃO DO TREINADOR -->
     <div id="modalEditCoach" class="modal"
         style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000;">
         <div class="modal-content" style="max-width: 800px; width: 90%;">
@@ -611,7 +611,7 @@
 
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 24px 0;">
 
-                <!-- FORMULAÇÃƒO DINÂMICA: CONQUISTAS -->
+                <!-- FORMULAÇÃO DINÂMICA: CONQUISTAS -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h3 style="font-size: 16px; color: #fff;">Conquistas e Títulos Principais</h3>
                     <button class="btn btn-outline" onclick="addEditTitleRow()"><i class="ti ti-plus"></i>
@@ -622,7 +622,7 @@
 
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 24px 0;">
 
-                <!-- FORMULAÇÃƒO DINÂMICA: CURSOS -->
+                <!-- FORMULAÇÃO DINÂMICA: CURSOS -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h3 style="font-size: 16px; color: #fff;">Certificações e Formação Acadêmica</h3>
                     <button class="btn btn-outline" onclick="addEditCourseRow()"><i class="ti ti-plus"></i>
@@ -930,7 +930,7 @@
             // Coluna 1
             doc.setFont("helvetica", "bold"); doc.text("NASCIMENTO:", 55, 35);
             doc.setFont("helvetica", "normal"); doc.text(birthDate, 78, 35);
-            doc.setFont("helvetica", "bold"); doc.text("GRADUAÇÃƒO:", 55, 40);
+            doc.setFont("helvetica", "bold"); doc.text("GRADUAÇÃO:", 55, 40);
             doc.setFont("helvetica", "normal"); doc.text(coach.graduacao || '---', 78, 40);
             doc.setFont("helvetica", "bold"); doc.text("EXPERIÃŠNCIA:", 55, 45);
             doc.setFont("helvetica", "normal"); doc.text(coach.experiencia || '---', 78, 45);
@@ -1000,7 +1000,7 @@
             // Formação
             currentY += 5;
             if (currentY > pageHeight - 30) { doc.addPage(); currentY = 20; }
-            currentY = drawSectionHeader("FORMAÇÃƒO E CERTIFICAÇÕES", currentY);
+            currentY = drawSectionHeader("FORMAÇÃO E CERTIFICAÇÕES", currentY);
             if (coach.formacao && coach.formacao.length > 0) {
                 coach.formacao.forEach(f => {
                     if (currentY > pageHeight - 25) { doc.addPage(); currentY = 20; }
