@@ -2000,7 +2000,8 @@
             }
 
             html += `</div>`;
-            document.getElementById('calendarContent').innerHTML = html;
+            const calEl = document.getElementById('calendarContent');
+            if (calEl) calEl.innerHTML = html;
         }
 
         // â”€â”€ QUESTIONNAIRES â”€â”€
@@ -2468,7 +2469,8 @@
             document.getElementById('slTipoTreino').value = c.tipoTreino;
             document.getElementById('slPSE').value = c.pse;
             document.getElementById('inpDuracao').value = c.duracaoMins;
-            document.getElementById('vPSE').innerText = c.pse; // Fallback for any label
+            const vPseEl = document.getElementById('vPSE');
+            if (vPseEl) vPseEl.innerText = c.pse;
             initWellnessButtons();
             updateCargaDisplay();
 
@@ -2546,7 +2548,8 @@
 
             // Reset fields
             document.getElementById('slPSE').value = 5;
-            document.getElementById('vPSE').innerText = 5;
+            const vPseReset = document.getElementById('vPSE');
+            if (vPseReset) vPseReset.innerText = 5;
             document.getElementById('inpDuracao').value = '';
             document.getElementById('cargaDisplay').innerHTML = '';
 
