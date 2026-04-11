@@ -1556,7 +1556,6 @@
                 </div>
             </div>
             <div id="treinoContent"></div>
-            <div id="treinoDebugBar" style="display:none; margin-top:8px; padding:8px; background:rgba(255,200,0,0.1); border:1px solid rgba(255,200,0,0.3); border-radius:6px; font-size:10px; color:#facc15; line-height:1.8;"></div>
         </div>
 
         <!-- 4. QUESTIONÁRIOS CARD -->
@@ -1719,20 +1718,6 @@
             checkWellnessDone();
             checkPseDone();
 
-            // DEBUG BAR — remove after fixing
-            const debugBar = document.getElementById('treinoDebugBar');
-            if (debugBar) {
-                const now2 = new Date();
-                const todayDbg = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
-                const treinos2 = window.db.treinos || [];
-                const todayTreinos = treinos2.filter(t => t.data === todayDbg);
-                debugBar.style.display = 'block';
-                debugBar.innerHTML = `<b>DEBUG:</b> atletaId=${atletaId} | atleta=${atleta ? atleta.nome + ' turma=' + atleta.turmaId : 'NULL'}<br>
-                    hoje=${todayDbg} | treinos no DB=${treinos2.length} | treinos hoje=${todayTreinos.length}<br>
-                    ${todayTreinos.length > 0 ? 'turmas hoje: ' + todayTreinos.map(t=>t.turmaId).join(', ') : 'nenhum treino com essa data'}<br>
-                    ${treinos2.length > 0 ? 'último treino: data=' + treinos2[treinos2.length-1].data + ' turma=' + treinos2[treinos2.length-1].turmaId : ''}`;
-            }
-
             portalLoaded = true;
         }
 
@@ -1894,24 +1879,7 @@
             });
 
             if (treinos.length === 0) {
-                const anyToday = rawTreinos.filter(t => String(t.data || '').trim().substring(0, 10) === todayStr);
-                const lastTreino = rawTreinos.length > 0 ? rawTreinos[rawTreinos.length - 1] : null;
-                const debugInfo = `
-                    <div style="margin-top:12px; padding:8px; background:rgba(255,255,0,0.05); border:1px solid rgba(255,255,0,0.2); border-radius:6px; font-size:10px; color:#facc15; text-align:left; line-height:1.8;">
-                        <b>DEBUG:</b><br>
-                        Hoje (portal): <b>${todayStr}</b><br>
-                        Turma do atleta: <b>${atleta.turmaId ?? 'null'}</b><br>
-                        Total de treinos no DB: <b>${rawTreinos.length}</b><br>
-                        Treinos com data de hoje: <b>${anyToday.length}</b><br>
-                        ${anyToday.length > 0 ? 'Turmas dos treinos de hoje: <b>' + anyToday.map(t => t.turmaId).join(', ') + '</b><br>' : ''}
-                        ${lastTreino ? 'Último treino no DB: data=<b>' + lastTreino.data + '</b> turmaId=<b>' + lastTreino.turmaId + '</b>' : 'Nenhum treino no DB'}
-                    </div>`;
-
-                el.innerHTML = `<div class="empty-state">
-                    <i class="ti ti-moon"></i>
-                    Sem treinos registrados para hoje.
-                    ${debugInfo}
-                </div>`;
+                el.innerHTML = `<div class="empty-state"><i class="ti ti-moon"></i>Sem treinos registrados para hoje.</div>`;
                 return;
             }
 
@@ -2326,7 +2294,7 @@
         }
 
         function openTreinoModal(id) {
-            const t = (window.db.treinos || []).find(tr => tr.id === id);
+            const t = (window.db.treinos || []).find(tr => String(tr.id) === String(id));
             if (!t) return;
 
             document.getElementById('treinoModalTitle').innerText = t.titulo || t.tipo || 'Treino';
@@ -2603,37 +2571,29 @@
         });
 
         // STANDALONE DEBUG — runs 3s after page load, no dependency on loadPortal
+        // Fallback renderer: ensures trainings are shown even if renderTreino()
+        // was called before Supabase data finished loading.
         setTimeout(function() {
+            const el = document.getElementById('treinoContent');
+            if (!el || el.children.length > 0) return; // already has content
             const now2 = new Date();
             const d = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
             const tr = (window.db && window.db.treinos) ? window.db.treinos : [];
             const todayTr = tr.filter(function(t){ return String(t.data||'').trim().substring(0,10) === d; });
-
-            // Force-render trainings directly into the card
-            const el = document.getElementById('treinoContent');
-            if (el && todayTr.length > 0) {
-                el.innerHTML = todayTr.map(function(t) {
-                    var protecao = t.protecao || 'sim';
-                    var protecaoLabel = protecao === 'sim' ? 'Com Proteção' : 'Sem Proteção';
-                    var badgeClass = protecao === 'sim' ? 'prot-sim' : 'prot-nao';
-                    var horario = t.horario || '--:--';
-                    return '<div class="treino-block" style="cursor:pointer;" onclick="openTreinoModal(\'' + t.id + '\')">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">' +
-                        '<div class="treino-tipo" style="font-size:13px;">' + (t.titulo || t.tipo || 'Treino') + '</div>' +
-                        '<i class="ti ti-external-link" style="color:var(--text-muted);font-size:14px;"></i></div>' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">' +
-                        '<span class="view-tipo-badge ' + badgeClass + '" style="font-size:10px;padding:4px 10px;border:none;">' + protecaoLabel + '</span>' +
-                        '<div class="treino-meta" style="margin-top:0;font-size:12px;"><i class="ti ti-clock"></i> ' + horario + '</div></div></div>';
-                }).join('');
-            }
-
-            // Update debug bar
-            const bar = document.getElementById('treinoDebugBar');
-            if (bar) {
-                const atletaObj = atleta || ((window.db && window.db.alunos) ? (window.db.alunos.find(function(a){ return String(a.id)===String(atletaId); }) || null) : null);
-                bar.style.display = 'block';
-                bar.innerHTML = '⚡ forçado: ' + todayTr.length + ' treino(s) hoje | atletaTurma=' + (atletaObj ? atletaObj.turmaId : 'N/A') + ' | treinoTurma=' + (todayTr[0] ? todayTr[0].turmaId : 'N/A');
-            }
+            if (todayTr.length === 0) return;
+            el.innerHTML = todayTr.map(function(t) {
+                var protecao = t.protecao || 'sim';
+                var protecaoLabel = protecao === 'sim' ? 'Com Proteção' : 'Sem Proteção';
+                var badgeClass = protecao === 'sim' ? 'prot-sim' : 'prot-nao';
+                var horario = t.horario || '--:--';
+                return '<div class="treino-block" style="cursor:pointer;" onclick="openTreinoModal(\'' + t.id + '\')">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">' +
+                    '<div class="treino-tipo" style="font-size:13px;">' + (t.titulo || t.tipo || 'Treino') + '</div>' +
+                    '<i class="ti ti-external-link" style="color:var(--text-muted);font-size:14px;"></i></div>' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">' +
+                    '<span class="view-tipo-badge ' + badgeClass + '" style="font-size:10px;padding:4px 10px;border:none;">' + protecaoLabel + '</span>' +
+                    '<div class="treino-meta" style="margin-top:0;font-size:12px;"><i class="ti ti-clock"></i> ' + horario + '</div></div></div>';
+            }).join('');
         }, 3000);
     </script>
 </body>
