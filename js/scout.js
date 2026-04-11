@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (window.db && window.db.alunos && window.db.alunos.length > 0) {
             const alunos = window.db.activeTurmaId
-                ? window.db.alunos.filter(a => a.turmaId === window.db.activeTurmaId)
+                ? window.db.alunos.filter(a => String(a.turmaId) === String(window.db.activeTurmaId))
                 : window.db.alunos;
 
             alunos.forEach(a => {
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() {
         if (timerRunning) return;
         timerRunning = true;
-        document.getElementById('btn-play-pause').innerHTML = '<i class="ti ti-player-pause"></i>';
+        const _bpp = document.getElementById('btn-play-pause'); if (_bpp) _bpp.innerHTML = '<i class="ti ti-player-pause"></i>';
         timerInterval = setInterval(() => {
             if (timerSeconds > 0) {
                 timerSeconds--;
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 clearInterval(timerInterval);
                 timerRunning = false;
-                document.getElementById('btn-play-pause').innerHTML = '<i class="ti ti-player-play"></i>';
+                const _bpp = document.getElementById('btn-play-pause'); if (_bpp) _bpp.innerHTML = '<i class="ti ti-player-play"></i>';
                 statusHint.textContent = `Round ${currentRound} encerrado!`;
                 statusHint.style.color = 'var(--text-muted)';
             }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timerRunning = false;
         clearInterval(timerInterval);
         timerInterval = null;
-        document.getElementById('btn-play-pause').innerHTML = '<i class="ti ti-player-play"></i>';
+        const _bpp = document.getElementById('btn-play-pause'); if (_bpp) _bpp.innerHTML = '<i class="ti ti-player-play"></i>';
     }
 
     document.getElementById('btn-play-pause').addEventListener('click', () => {
@@ -300,11 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Pre-select based on score
         if (totalBlue > totalRed) {
-            document.getElementById('result-vitoria').checked = true;
+            const _rv = document.getElementById('result-vitoria'); if (_rv) _rv.checked = true;
         } else if (totalRed > totalBlue) {
-            document.getElementById('result-derrota').checked = true;
+            const _rd = document.getElementById('result-derrota'); if (_rd) _rd.checked = true;
         } else {
-            document.getElementById('result-empate').checked = true;
+            const _re = document.getElementById('result-empate'); if (_re) _re.checked = true;
         }
 
         resultModal.style.display = 'flex';

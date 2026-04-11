@@ -56,10 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 roundsData = JSON.parse(JSON.stringify(scout.rounds || []));
 
                 // Populate Form
-                document.getElementById('scoutAtleta').value = scout.atletaId;
-                document.getElementById('scoutEvento').value = scout.evento;
-                document.getElementById('scoutLutaResult').value = scout.resultadoLuta || "";
-                document.getElementById('currentRoundDisplay').innerText = currentRound;
+                const _sAtleta = document.getElementById('scoutAtleta'); if (_sAtleta) _sAtleta.value = scout.atletaId;
+                const _sEvento = document.getElementById('scoutEvento'); if (_sEvento) _sEvento.value = scout.evento;
+                const _sResult = document.getElementById('scoutLutaResult'); if (_sResult) _sResult.value = scout.resultadoLuta || "";
+                const _sRound = document.getElementById('currentRoundDisplay'); if (_sRound) _sRound.innerText = currentRound;
 
                 renderTimeline();
                 showToast("Editando Scout: " + scout.evento, "info");
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnCancel) {
                     btnCancel.style.display = 'flex';
                     btnCancel.addEventListener('click', () => {
-                        if (confirm("Deseja cancelar a edição? Todas as alterações no salvas sero perdidas.")) {
+                        if (confirm("Deseja cancelar a edição? Todas as alterações no salvas serão perdidas.")) {
                             window.location.href = 'scout-video.html';
                         }
                     });
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpa e recria caso exista para evitar duplicados
         select.innerHTML = `
             <option value="">Selecione o atleta da equipe...</option>
-            <option value="adversario">--- Possvel Adversário ---</option>
+            <option value="adversario">--- Possível Adversário ---</option>
         `;
 
         // Filtra os atletas da turma atual
@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof s.atletaId === 'string') {
                     nomeAtleta = s.atletaId === 'adversario' ? 'Adversário Registrado' : s.atletaId;
                 } else if (typeof s.atletaId === 'number') {
-                    const at = db.alunos.find(a => a.id === s.atletaId);
+                    const at = db.alunos.find(a => String(a.id) === String(s.atletaId));
                     if (at) nomeAtleta = at.nome;
                 }
 
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         teamSelect.innerHTML = buildOptions(teamScouts, "Nenhum scout de equipe salvo.");
-        opponentSelect.innerHTML = buildOptions(opponentScouts, "Nenhum scout de adversrio salvo.");
+        opponentSelect.innerHTML = buildOptions(opponentScouts, "Nenhum scout de adversário salvo.");
     }
 
     window.actionSelectedScout = function (type, action) {
@@ -377,23 +377,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultadoLuta = document.getElementById('scoutLutaResult').value;
 
         if (!atleta) {
-            alert("Por favor, selecione para qual atleta (ou adversrio) vocestfazendo este scout.");
+            alert("Por favor, selecione para qual atleta (ou adversário) você está fazendo este scout.");
             return;
         }
 
         if (!evento) {
-            alert("Por favor, informe o nome do evento/competio.");
+            alert("Por favor, informe o nome do evento/competição.");
             return;
         }
 
         if (timelineEvents.length === 0) {
-            alert("Não hnenhuma ao na timeline. Cadastre movimentos antes de salvar o scout.");
+            alert("Não nenhuma ação na timeline. Cadastre movimentos antes de salvar o scout.");
             return;
         }
 
         if (editModeScoutId) {
             // Se estiver editando, podemos carregar os valores atuais se existirem
-            const scout = db.lutasScout.find(s => s.id === editModeScoutId);
+            const scout = db.lutasScout.find(s => String(s.id) === String(editModeScoutId));
             if (scout && scout.avaliacaoTreinador) {
                 const form = document.getElementById('formAvaliacaoTreinador');
                 for (let key in scout.avaliacaoTreinador) {
@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (editModeScoutId) {
             // Edit Mode: Update existing
-            const index = db.lutasScout.findIndex(s => s.id === editModeScoutId);
+            const index = db.lutasScout.findIndex(s => String(s.id) === String(editModeScoutId));
             if (index !== -1) {
                 db.lutasScout[index].atletaId = atletaFinal;
                 db.lutasScout[index].evento = evento;
@@ -483,15 +483,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (endBtnText) endBtnText.innerHTML = `<i class="ti ti-flag-3"></i> Concluir Round ${currentRound}`;
 
             renderTimeline();
-            document.getElementById('scoutEvento').value = '';
-            document.getElementById('scoutLutaResult').value = '';
-            document.getElementById('formAvaliacaoTreinador').reset();
+            const _evEl = document.getElementById('scoutEvento'); if (_evEl) _evEl.value = '';
+            const _rlEl = document.getElementById('scoutLutaResult'); if (_rlEl) _rlEl.value = '';
+            const _formAv = document.getElementById('formAvaliacaoTreinador'); if (_formAv) _formAv.reset();
         }
     }
 
     // ==== TECHNIQUES MANAGEMENT ====
     function renderTechniquesList() {
         const container = document.getElementById('techniquesList');
+        if (!container) return;
         container.innerHTML = '';
         customTechniques.forEach(t => {
             const span = document.createElement('span');
@@ -659,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function initPlayerListeners() {
-        // Load YouTube Nãote: Uses iframe API
+        // Load YouTube Note: Uses iframe API
         document.getElementById('btnLoadYoutube').addEventListener('click', () => {
             if (!window.YT_Ready) {
                 // If the script loaded but the ready event didn't fire, try to force it if YT object exists
@@ -674,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let url = document.getElementById('youtubeLink').value.trim();
             let videoId = extractYouTubeId(url);
             if (!videoId) {
-                alert("URL do YouTube invlida.");
+                alert("URL do YouTube inválida.");
                 return;
             }
 
@@ -733,9 +734,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             fallbackIframe.setAttribute('allowfullscreen', 'true');
                             fallbackIframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
                             // Inserir de volta
-                            const localPlayerNãode = document.getElementById('localPlayer');
-                            if (wrapper && localPlayerNãode) {
-                                wrapper.insertBefore(fallbackIframe, localPlayerNãode);
+                            const localPlayerNode = document.getElementById('localPlayer');
+                            if (wrapper && localPlayerNode) {
+                                wrapper.insertBefore(fallbackIframe, localPlayerNode);
                             }
 
                             // Avisamos o usurio que estamos no fallback
@@ -998,7 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.deleteEvent = function (id) {
-        if (!confirm('Deseja realmente excluir esta ao?')) return;
+        if (!confirm('Deseja realmente excluir esta ação?')) return;
         timelineEvents = timelineEvents.filter(e => e.id !== id);
         renderTimeline();
     }

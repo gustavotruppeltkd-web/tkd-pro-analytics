@@ -496,12 +496,12 @@ function showToast(message, type = 'success') {
         toast.classList.add('show');
     }, 10);
 
-    // Removeráá ap?s 3 segundos
+    // Removera após 3 segundos
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => {
             toast.remove();
-        }, 400); // tempo da transi??o css
+        }, 400); // tempo da transição css
     }, 3000);
 }
 
@@ -521,7 +521,7 @@ function calcularIdade(dataNasc) {
     const hoje = new Date();
     const anoAtual = hoje.getFullYear();
     let idade = anoAtual - parseInt(ns[0]);
-    // Simplificado para UI. Nnum app real, subtrai 1 se mês/dia ainda n?o passou
+    // Simplificado para UI. Num app real, subtrai 1 se mês/dia ainda não passou
     return idade;
 }
 
@@ -698,7 +698,7 @@ function addFaixa() {
 }
 
 function removeFaixa(index) {
-    if (confirm('Tem certeza que deseja remover esta faixa? Alunos ainda podem t?-la listada se j?atribu?da no passado.')) {
+    if (confirm('Tem certeza que deseja remover esta faixa? Alunos ainda podem tê-la listada se já atribuída no passado.')) {
         db.faixas.splice(index, 1);
         saveDB();
         renderListaFaixas();
@@ -844,7 +844,7 @@ function renderActiveCoach() {
 function renderSidebar() {
     const nav = document.getElementById('navMenuContainer');
     if (!nav) return;
-    const turma = db.turmas ? db.turmas.find(t => t.id === db.activeTurmaId) : null;
+    const turma = db.turmas ? db.turmas.find(t => String(t.id) === String(db.activeTurmaId)) : null;
     const tipo = (turma && turma.tipo || '').toLowerCase();
     const isRendimento = tipo.includes('rendimento') || tipo.includes('competi\u00e7\u00e3o');
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -1024,7 +1024,7 @@ function openScoutDetail(scoutId) {
         return;
     }
 
-    const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers?rio', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => a.id === scout.atletaId);
+    const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário', avatar: 'https://cdn-icons-png.flaticon.com/512/1177/1177568.png' } : db.alunos.find(a => String(a.id) === String(scout.atletaId));
 
     // Fallback para atleta n?o encontrado
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
@@ -1173,7 +1173,7 @@ function openScoutDetail(scoutId) {
             <div style="overflow-y: auto; padding: 24px; flex: 1;">
                 <!-- Header Atleta/Evento -->
                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
-                    ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Advers?rio')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
+                    ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Adversário')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
                     <div>
                         <div style="font-size: 18px; font-weight: 700;">${nomeAtleta}</div>
                         <div style="color: var(--text-muted); font-size: 14px;">${scout.evento}</div>
@@ -1282,7 +1282,7 @@ function openScoutDetail(scoutId) {
             });
         } else {
             radarCtx.style.display = 'none';
-            document.getElementById('noAssessmentmsg').style.display = 'block';
+            const _nassEl = document.getElementById('noAssessmentmsg'); if (_nassEl) _nassEl.style.display = 'block';
         }
     }
 }
@@ -1293,13 +1293,13 @@ function openScoutDetail(scoutId) {
  * @param {function} callback - Fun??o para Atualiza\u00e7\u00e3or a UI ap?s exclus?o
  */
 function deleteScout(scoutId, callback) {
-    if (!confirm("Tem certeza que deseja excluir esta an?lise de scout permanentemente?")) return;
+    if (!confirm("Tem certeza que deseja excluir esta anáálise de scout permanentemente?")) return;
 
-    const index = db.lutasScout.findIndex(s => s.id === scoutId);
+    const index = db.lutasScout.findIndex(s => String(s.id) === String(scoutId));
     if (index !== -1) {
         db.lutasScout.splice(index, 1);
         saveDB();
-        showToast("Scout exclu?do com sucesso!", "success");
+        showToast("Scout excluído com sucesso!", "success");
         if (callback) callback();
     }
 }
@@ -1314,18 +1314,18 @@ function editScout(scoutId) {
 }
 
 /**
- * Gera e baixa um PDF de alto n?vel com an?lise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
+ * Gera e baixa um PDF de alto n?vel com análise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
  * @param {number} scoutId 
  */
 /**
- * Gera e baixa um PDF de alto n?vel com an?lise granular e matriz anal?tica (T?cnica + Perna + Base).
+ * Gera e baixa um PDF de alto n?vel com análise granular e matriz anal?tica (T?cnica + Perna + Base).
  * @param {number} scoutId 
  */
 async function downloadScoutPDF(scoutId) {
-    const scout = db.lutasScout.find(s => s.id === scoutId);
+    const scout = db.lutasScout.find(s => String(s.id) === String(scoutId));
     if (!scout) return;
 
-    const atleta = scout.atletaId === 'adversario' ? { nome: 'Advers?rio' } : db.alunos.find(a => a.id === scout.atletaId);
+    const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário' } : db.alunos.find(a => String(a.id) === String(scout.atletaId));
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
