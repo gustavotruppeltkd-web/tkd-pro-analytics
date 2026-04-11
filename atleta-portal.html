@@ -1818,38 +1818,42 @@
             const bronzes = allMedals.filter(c => c.colocacao === 'Bronze').length;
 
             const medalEl = document.getElementById('medalSubtitle');
-            if (total === 0) {
-                medalEl.textContent = 'Nenhuma ainda';
-            } else {
-                medalEl.innerHTML = `
-                    <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;color:#FFD700;font-size:15px;font-weight:700;"><i class="ti ti-medal"></i>${ouros}</span>
-                    <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;color:#C0C0C0;font-size:15px;font-weight:700;"><i class="ti ti-medal"></i>${pratas}</span>
-                    <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;color:#CD7F32;font-size:15px;font-weight:700;"><i class="ti ti-medal"></i>${bronzes}</span>
-                    <span style="font-size:11px;color:var(--text-muted);">Total: ${total}</span>
-                `;
+            if (medalEl) {
+                if (total === 0) {
+                    medalEl.textContent = 'Nenhuma ainda';
+                } else {
+                    medalEl.innerHTML = `
+                        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;color:#FFD700;font-size:15px;font-weight:700;"><i class="ti ti-medal"></i>${ouros}</span>
+                        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;color:#C0C0C0;font-size:15px;font-weight:700;"><i class="ti ti-medal"></i>${pratas}</span>
+                        <span style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;color:#CD7F32;font-size:15px;font-weight:700;"><i class="ti ti-medal"></i>${bronzes}</span>
+                        <span style="font-size:11px;color:var(--text-muted);">Total: ${total}</span>
+                    `;
+                }
             }
 
+            const medalsEl = document.getElementById('medalsContent');
+            if (!medalsEl) return;
+
             if (total === 0) {
-                document.getElementById('medalsContent').innerHTML =
+                medalsEl.innerHTML =
                     `<div class="empty-state"><i class="ti ti-medal-off"></i>Nenhuma medalha registrada ainda. Continue treinando!</div>`;
                 return;
             }
 
             const html = allMedals.map(c => {
                 const cls = c.colocacao === 'Ouro' ? 'ouro' : c.colocacao === 'Prata' ? 'prata' : 'bronze';
-                const icon = c.colocacao === 'Ouro' ? 'ðŸ¥‡' : c.colocacao === 'Prata' ? 'ðŸ¥ˆ' : 'ðŸ¥‰';
+                const icon = c.colocacao === 'Ouro' ? '🥇' : c.colocacao === 'Prata' ? '🥈' : '🥉';
                 return `
       <div class="medal-chip ${cls}">
         <span class="icon">${icon}</span>
         <div class="info">
           <div class="event">${c.nomeEvento}</div>
-          <div class="cat">${c.categoria ? c.categoria + ' Â· ' : ''}${c.data ? formatarDataBR(c.data) : ''}</div>
+          <div class="cat">${c.categoria ? c.categoria + ' · ' : ''}${c.data ? formatarDataBR(c.data) : ''}</div>
         </div>
       </div>`;
             }).join('');
 
-            document.getElementById('medalsContent').innerHTML =
-                `<div class="medals-grid">${html}</div>`;
+            medalsEl.innerHTML = `<div class="medals-grid">${html}</div>`;
         }
 
         // â”€â”€ TREINO â”€â”€
