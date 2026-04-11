@@ -341,7 +341,7 @@
                                     <option value="wellness">Bem-Estar (Wellness)</option>
                                     <option value="pse_carga">Carga de Treino e PSE</option>
                                     <option value="scouts">Scouts de Lutas</option>
-                                    <option value="periodizacao">Periodiza??o</option>
+                                    <option value="periodizacao">Periodização</option>
                                     <option value="questionarios">Questionários</option>
                                     <option value="testes_fisicos">Testes Físicos</option>
                                     <option value="antropometria">Avaliação Antropométrica</option>
@@ -592,7 +592,7 @@
                 </div>
 
                 <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Alimenta??o (0 a 5)</label>
+                    <label>Alimentação (0 a 5)</label>
                     <div
                         style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
                         <span>0: Ruim</span>
@@ -837,7 +837,7 @@
             averageChartObj = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimenta??o'],
+                    labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'],
                     datasets: [{
                         label: chartLabel,
                         data: [avgSono.toFixed(1), avgEstresse.toFixed(1), avgDor.toFixed(1), avgHumor.toFixed(1), avgFadiga.toFixed(1), avgAlimentacao.toFixed(1)],
@@ -847,7 +847,7 @@
                             'rgba(239, 68, 68, 0.8)',    // Vermelho (Dor)
                             'rgba(139, 92, 246, 0.8)',   // Roxo (Humor)
                             'rgba(16, 185, 129, 0.8)',   // Esmeralda (Fadiga)
-                            'rgba(236, 72, 153, 0.8)'    // Rosa (Alimenta??o)
+                            'rgba(236, 72, 153, 0.8)'    // Rosa (Alimentação)
                         ],
                         borderRadius: 6,
                         barPercentage: 0.6
@@ -2914,7 +2914,7 @@
 
         // --- PERIODIZACAO CHARTS ---
         function renderPeriodizacaoCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
-            document.getElementById('titleTable').innerText = 'Relatório de Periodiza??o (Mesociclo Ativo)';
+            document.getElementById('titleTable').innerText = 'Relatório de Periodização (Mesociclo Ativo)';
             document.getElementById('titleChart1').innerText = 'Volume Projetado vs Intensidade Diária (PSE)';
             document.getElementById('titleChart2').innerText = 'Progressão Acumulada da Carga (Planejado)';
             document.getElementById('titleChart3').innerText = 'Distribuição de Foco Tático/Técnico (Semanal)';
