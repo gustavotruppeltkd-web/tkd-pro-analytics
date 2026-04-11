@@ -1879,14 +1879,23 @@
             });
 
             if (treinos.length === 0) {
-                // Se não houver treino, vamos tentar ver se existe algum treino geral ou erro de data
                 const anyToday = rawTreinos.filter(t => t.data === todayStr);
-                const debugSufix = anyToday.length > 0 ? `<br><small style="opacity:0.5; font-size:9px;">(Existem ${anyToday.length} treinos hoje, mas em outras turmas)</small>` : "";
+                const lastTreino = rawTreinos.length > 0 ? rawTreinos[rawTreinos.length - 1] : null;
+                const debugInfo = `
+                    <div style="margin-top:12px; padding:8px; background:rgba(255,255,0,0.05); border:1px solid rgba(255,255,0,0.2); border-radius:6px; font-size:10px; color:#facc15; text-align:left; line-height:1.8;">
+                        <b>DEBUG:</b><br>
+                        Hoje (portal): <b>${todayStr}</b><br>
+                        Turma do atleta: <b>${atleta.turmaId ?? 'null'}</b><br>
+                        Total de treinos no DB: <b>${rawTreinos.length}</b><br>
+                        Treinos com data de hoje: <b>${anyToday.length}</b><br>
+                        ${anyToday.length > 0 ? 'Turmas dos treinos de hoje: <b>' + anyToday.map(t => t.turmaId).join(', ') + '</b><br>' : ''}
+                        ${lastTreino ? 'Último treino no DB: data=<b>' + lastTreino.data + '</b> turmaId=<b>' + lastTreino.turmaId + '</b>' : 'Nenhum treino no DB'}
+                    </div>`;
 
                 el.innerHTML = `<div class="empty-state">
                     <i class="ti ti-moon"></i>
                     Sem treinos registrados para hoje.
-                    ${debugSufix}
+                    ${debugInfo}
                 </div>`;
                 return;
             }
