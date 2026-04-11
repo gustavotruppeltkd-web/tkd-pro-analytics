@@ -1729,6 +1729,7 @@
 
         // -- RADAR --
         function renderRadar() {
+            if (radarChartObj) { radarChartObj.destroy(); radarChartObj = null; }
             const scouts = (window.db.lutasScout || []).filter(s => s.atletaId === atletaId && s.avaliacaoTreinador);
             const ctx = document.getElementById('radarChart').getContext('2d');
 
@@ -2571,29 +2572,13 @@
         });
 
         // STANDALONE DEBUG — runs 3s after page load, no dependency on loadPortal
-        // Fallback renderer: ensures trainings are shown even if renderTreino()
-        // was called before Supabase data finished loading.
+        // Fallback: re-render all panels 3s after load in case Supabase data
+        // arrived after the initial loadPortal() call.
         setTimeout(function() {
-            const el = document.getElementById('treinoContent');
-            if (!el || el.children.length > 0) return; // already has content
-            const now2 = new Date();
-            const d = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
-            const tr = (window.db && window.db.treinos) ? window.db.treinos : [];
-            const todayTr = tr.filter(function(t){ return String(t.data||'').trim().substring(0,10) === d; });
-            if (todayTr.length === 0) return;
-            el.innerHTML = todayTr.map(function(t) {
-                var protecao = t.protecao || 'sim';
-                var protecaoLabel = protecao === 'sim' ? 'Com Proteção' : 'Sem Proteção';
-                var badgeClass = protecao === 'sim' ? 'prot-sim' : 'prot-nao';
-                var horario = t.horario || '--:--';
-                return '<div class="treino-block" style="cursor:pointer;" onclick="openTreinoModal(\'' + t.id + '\')">' +
-                    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">' +
-                    '<div class="treino-tipo" style="font-size:13px;">' + (t.titulo || t.tipo || 'Treino') + '</div>' +
-                    '<i class="ti ti-external-link" style="color:var(--text-muted);font-size:14px;"></i></div>' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">' +
-                    '<span class="view-tipo-badge ' + badgeClass + '" style="font-size:10px;padding:4px 10px;border:none;">' + protecaoLabel + '</span>' +
-                    '<div class="treino-meta" style="margin-top:0;font-size:12px;"><i class="ti ti-clock"></i> ' + horario + '</div></div></div>';
-            }).join('');
+            if (window.db && window.db.alunos && window.db.alunos.length > 0) {
+                portalLoaded = false;
+                loadPortal();
+            }
         }, 3000);
     </script>
 </body>
