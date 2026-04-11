@@ -2048,6 +2048,7 @@
             if (treino.data === novaData) return; // Mesmo dia, nada a fazer
 
             treino.data = novaData;
+            treino._updatedAt = Date.now();
             saveDB();
             renderCalendar();
             showToast(`Treino movido para ${novaData.split('-').reverse().join('/')}`);
@@ -2733,7 +2734,8 @@
                 cargaTreino,
                 blocos: getBlocosData(),
                 obs: document.getElementById('treinoObs').value.trim(),
-                turmaId: db.activeTurmaId
+                turmaId: db.activeTurmaId,
+                _updatedAt: Date.now()
             };
 
             if (editId) {
