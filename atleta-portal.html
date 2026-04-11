@@ -2528,58 +2528,40 @@
             document.getElementById('qi_' + name).value = val;
         }
 
-        // START
-        // Fetch coach data from Supabase and load portal
-        function fetchCoachDataAndLoad(coachId) {
-            window.supabaseClient
-                .from('app_state')
-                .select('data')
-                .eq('project_id', coachId)
-                .single()
-                .then(({ data, error }) => {
-                    if (!error && data && data.data) {
-                        window.db = data.data;
-                        db = window.db;
-                        portalLoaded = false;
-                    }
-                    loadPortal();
-                    if (typeof setupRealtimeSubscription === 'function') {
-                        setupRealtimeSubscription();
-                    }
-                });
-        }
+        // START — single sequential initialization, no races
+        window.onDataLoaded = null; // disable app.js hook; portal manages its own loading
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedCoachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!window.supabaseClient) { loadPortal(); return; }
 
-            if (storedCoachId && window.supabaseClient) {
-                // Athlete logged in via shared link — fetch coach's data directly
-                fetchCoachDataAndLoad(storedCoachId);
-            } else if (window.supabaseClient) {
-                // No stored coach ID — check if the current Supabase auth session belongs to a coach
-                // (e.g. coach previewing their own portal)
-                window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-                    if (authData && authData.user && authData.user.id) {
-                        fetchCoachDataAndLoad(authData.user.id);
-                    } else {
-                        // No auth at all — rely on app.js / localStorage
-                        setTimeout(loadPortal, 100);
-                    }
-                });
-            } else {
-                setTimeout(loadPortal, 100);
+            // Step 1: resolve coach ID (athlete via shared link OR authenticated coach)
+            let coachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
+            if (!coachId) {
+                const { data: authData } = await window.supabaseClient.auth.getUser();
+                coachId = authData?.user?.id || null;
             }
+
+            if (!coachId) { loadPortal(); return; }
+
+            // Step 2: fetch fresh data from Supabase
+            const { data: row, error } = await window.supabaseClient
+                .from('app_state').select('data').eq('project_id', coachId).single();
+
+            if (!error && row?.data) {
+                // Step 3: merge with any local data so unsynced items (like new trainings) also show
+                const localRaw = localStorage.getItem('tkd_scout_db');
+                const localData = localRaw ? JSON.parse(localRaw) : null;
+                window.db = (localData && typeof mergeAppState === 'function')
+                    ? mergeAppState(localData, row.data)
+                    : row.data;
+                db = window.db;
+            }
+
+            // Step 4: render once, with complete data
+            loadPortal();
+
+            if (typeof setupRealtimeSubscription === 'function') setupRealtimeSubscription();
         });
-
-        // STANDALONE DEBUG — runs 3s after page load, no dependency on loadPortal
-        // Fallback: re-render all panels 3s after load in case Supabase data
-        // arrived after the initial loadPortal() call.
-        setTimeout(function() {
-            if (window.db && window.db.alunos && window.db.alunos.length > 0) {
-                portalLoaded = false;
-                loadPortal();
-            }
-        }, 3000);
     </script>
 </body>
 
