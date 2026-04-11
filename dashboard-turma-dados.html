@@ -1776,21 +1776,16 @@
             }
 
             // Helper para níveis de Bem-Estar
+            const DOT_COLORS_POS = ['#ef4444','#ef4444','#f59e0b','#10b981','#10b981']; // positivo: 1-2 vermelho, 3 amarelo, 4-5 verde
+            const DOT_COLORS_NEG = ['#10b981','#10b981','#f59e0b','#ef4444','#ef4444']; // negativo: 1-2 verde, 3 amarelo, 4-5 vermelho
             const renderWellnessDots = (label, icon, value, reverseBad = false) => {
-                if (value === undefined) return '';
+                if (value === undefined || value === null) return '';
+                const palette = reverseBad ? DOT_COLORS_NEG : DOT_COLORS_POS;
                 let dots = '';
-                let color = 'var(--primary)';
-                if (reverseBad) {
-                    color = value >= 4 ? 'var(--red)' : (value >= 3 ? 'var(--yellow)' : 'var(--green)');
-                } else {
-                    color = value <= 2 ? 'var(--red)' : (value <= 3 ? 'var(--yellow)' : 'var(--green)');
-                }
-
                 for (let i = 1; i <= 5; i++) {
-                    const bg = i <= value ? color : 'rgba(255,255,255,0.1)';
+                    const bg = i <= value ? palette[i - 1] : 'rgba(255,255,255,0.1)';
                     dots += `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${bg}; transition: 0.3s;"></div>`;
                 }
-
                 return `
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                         <span style="color: var(--text-muted); display:flex; align-items:center; gap:4px; font-size:11px;">
@@ -1813,11 +1808,11 @@
                         wellnessHTML = `
                             <div style="margin: 12px 0 16px 0; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 8px;">
                                 ${renderWellnessDots('Sono', 'ti ti-bed', wLog.sono)}
-                                ${renderWellnessDots('Estresse', 'ti ti-brain', wLog.estresse, true)}
-                                ${renderWellnessDots('Dor Muscular', 'ti ti-shield-up', wLog.dor, true)}
-                                ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLog.humor)}
-                                ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLog.fadiga, true)}
                                 ${renderWellnessDots('Alimentação', 'ti ti-apple', wLog.alimentacao)}
+                                ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLog.humor)}
+                                ${renderWellnessDots('Estresse', 'ti ti-brain', wLog.estresse, true)}
+                                ${renderWellnessDots('Dor', 'ti ti-shield-up', wLog.dor, true)}
+                                ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLog.fadiga, true)}
                             </div>
                         `;
                     } else {
