@@ -425,7 +425,8 @@ async function saveDB() {
     return await syncToSupabase();
 }
 
-// Faz o UPSERT garantindo que não vai sobrescrever dados novos de outros dispositivos/atletas
+// Faz o UPSERT direto do estado local atual — sem merge no save
+// (merge só acontece no carregamento da página, não no save)
 async function syncToSupabase() {
     if (!window.supabaseClient) return;
 
@@ -436,37 +437,18 @@ async function syncToSupabase() {
         if (authData && authData.user) {
             userId = authData.user.id;
         } else {
-            // Se não houver usuário logado via Auth, tenta pegar o coach_id (caso do portal do atleta)
-            userId = localStorage.getItem('tkd_coach_id');
+            userId = localStorage.getItem('tkd_coach_id') || sessionStorage.getItem('tkd_coach_id');
         }
 
         if (!userId) {
             console.warn("Sincronização abortada: ID do treinador não encontrado.");
             return;
         }
-        const currentLocalData = window.db || db;
 
-        // 1. Busca estado atual na nuvem
-        const { data: cloudRow, error: fetchError } = await window.supabaseClient
-            .from('app_state')
-            .select('data')
-            .eq('project_id', userId)
-            .single();
+        const dataToSave = window.db || db;
+        dataToSave._last_updated = Date.now();
 
-        let dataToSave = currentLocalData;
-
-        if (!fetchError && cloudRow && cloudRow.data) {
-            // 2. Mescla local com remoto
-            dataToSave = mergeAppState(currentLocalData, cloudRow.data);
-            dataToSave._last_updated = Date.now();
-        }
-
-        // 3. Atualiza memória e localStorage com o resultado do merge
-        window.db = dataToSave;
-        db = dataToSave;
-        localStorage.setItem('tkd_scout_db', JSON.stringify(dataToSave));
-
-        // 4. Upsert para a nuvem
+        // Upsert direto — o estado local é a fonte da verdade
         const { error: upsertError } = await window.supabaseClient
             .from('app_state')
             .upsert({
@@ -477,7 +459,7 @@ async function syncToSupabase() {
         if (upsertError) {
             console.error("Erro no Upsert Supabase:", upsertError);
         } else {
-            console.log("Sincronização concluída com sucesso (merge applied).");
+            console.log("Sincronização concluída.");
         }
 
         return dataToSave;

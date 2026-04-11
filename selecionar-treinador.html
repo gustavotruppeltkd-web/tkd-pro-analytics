@@ -554,6 +554,7 @@
 
             db.treinadores = db.treinadores || [];
             db.treinadores.push(newTrainer);
+            saveDB();
 
             if (window.supabaseClient) {
                 const userObj = await window.supabaseClient.auth.getUser();
