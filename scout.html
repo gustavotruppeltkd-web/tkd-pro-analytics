@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
@@ -29,7 +29,7 @@
                     <i class="ti ti-users"></i>
                     <span>Atletas</span>
                 </a>
-                <a href="treino.html" class="nav-item">
+                <a href="treino-equipe.html" class="nav-item">
                     <i class="ti ti-barbell"></i>
                     <span>Treinamento</span>
                 </a>
@@ -51,9 +51,9 @@
                     <h1 style="font-size: 24px;">Modo Beira de Quadra</h1>
                     <p class="subtitle" id="status-hint">Clique simples: Tentativa | Segure: Ponto Confirmado</p>
                 </div>
-                <div class="user-profile">
-                    <button class="btn btn-primary" id="btn-finish-scout"><i class="ti ti-check"></i> Encerrar
-                        Scout</button>
+                <div class="user-profile" style="gap: 8px; display: flex;">
+                    <button class="btn btn-secondary" id="btn-next-round"><i class="ti ti-arrow-right"></i> Próximo Round</button>
+                    <button class="btn btn-primary" id="btn-finish-scout"><i class="ti ti-check"></i> Encerrar Scout</button>
                 </div>
             </header>
 
@@ -61,19 +61,19 @@
                 <!-- Scoreboard -->
                 <div class="scoreboard">
                     <div class="score-box score-blue">
-                        <h2>Carlos (Chung)</h2>
+                        <h2 id="athlete-name-display">Atleta (Chung)</h2>
                         <span class="score-value" id="score-blue-val">0</span>
                     </div>
 
                     <div class="timer">
-                        <span>Round 1</span>
+                        <span id="round-label">Round 1</span>
                         <span style="font-size: 48px; color: var(--text-main);" id="timer-val">02:00</span>
                         <button class="btn btn-icon" id="btn-play-pause" style="margin-top: 8px;"><i
-                                class="ti ti-player-pause"></i></button>
+                                class="ti ti-player-play"></i></button>
                     </div>
 
                     <div class="score-box score-red">
-                        <h2>Oponente (Hong)</h2>
+                        <h2 id="opponent-name-display">Oponente (Hong)</h2>
                         <span class="score-value" id="score-red-val">0</span>
                     </div>
                 </div>
@@ -96,6 +96,7 @@
                             Soco (Tronco) <span class="points">+1</span>
                         </button>
                         <button class="btn-scout" data-target="blue" data-points="1" data-tech="Gam-jeom"
+                            id="fault-blue-btn"
                             style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: var(--red);">
                             Falta do Oponente <span class="points">+1</span>
                         </button>
@@ -125,8 +126,9 @@
                             Soco (Tronco) <span class="points">+1</span>
                         </button>
                         <button class="btn-scout" data-target="red" data-points="1" data-tech="Gam-jeom"
+                            id="fault-red-btn"
                             style="background: rgba(65, 105, 225, 0.1); border-color: rgba(65, 105, 225, 0.3); color: var(--primary);">
-                            Falta do Carlos <span class="points">+1</span>
+                            Falta do Atleta <span class="points">+1</span>
                         </button>
                     </div>
                 </div>
@@ -135,8 +137,71 @@
         </main>
     </div>
 
+    <!-- Modal: Configuração da Luta -->
+    <div id="modal-setup" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:32px; width:100%; max-width:420px;">
+            <h2 style="margin-bottom:20px; font-size:20px;">Configurar Scout</h2>
+
+            <div class="form-group" style="margin-bottom:16px;">
+                <label style="display:block; margin-bottom:6px; color:var(--text-muted); font-size:13px;">Atleta (Chung)</label>
+                <select id="setup-atleta-select" style="width:100%; padding:10px; background:var(--input-bg,var(--bg-secondary)); border:1px solid var(--border); border-radius:8px; color:var(--text-main);">
+                    <option value="">-- Selecione o Atleta --</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom:16px;">
+                <label style="display:block; margin-bottom:6px; color:var(--text-muted); font-size:13px;">Oponente (Hong)</label>
+                <input type="text" id="setup-oponente" placeholder="Nome do oponente"
+                    style="width:100%; padding:10px; background:var(--input-bg,var(--bg-secondary)); border:1px solid var(--border); border-radius:8px; color:var(--text-main); box-sizing:border-box;" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:24px;">
+                <label style="display:block; margin-bottom:6px; color:var(--text-muted); font-size:13px;">Número de Rounds</label>
+                <select id="setup-rounds" style="width:100%; padding:10px; background:var(--input-bg,var(--bg-secondary)); border:1px solid var(--border); border-radius:8px; color:var(--text-main);">
+                    <option value="2">2 Rounds</option>
+                    <option value="3" selected>3 Rounds</option>
+                </select>
+            </div>
+
+            <button id="btn-start-scout" class="btn btn-primary" style="width:100%;">
+                <i class="ti ti-player-play"></i> Iniciar Scout
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Resultado Final -->
+    <div id="modal-result" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:32px; width:100%; max-width:380px;">
+            <h2 style="margin-bottom:8px; font-size:20px;">Resultado da Luta</h2>
+            <p id="result-summary" style="color:var(--text-muted); margin-bottom:20px; font-size:14px;"></p>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding:12px; border:1px solid var(--border); border-radius:8px;">
+                    <input type="radio" name="resultado" id="result-vitoria" value="vitoria">
+                    <span style="color: var(--success, #22c55e);">Vitória do Atleta</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding:12px; border:1px solid var(--border); border-radius:8px;">
+                    <input type="radio" name="resultado" id="result-derrota" value="derrota">
+                    <span style="color: var(--red);">Derrota do Atleta</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding:12px; border:1px solid var(--border); border-radius:8px;">
+                    <input type="radio" name="resultado" id="result-empate" value="empate">
+                    <span style="color: var(--text-muted);">Empate</span>
+                </label>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button id="btn-cancel-result" class="btn btn-secondary" style="flex:1;">Continuar</button>
+                <button id="btn-confirm-result" class="btn btn-primary" style="flex:1;"><i class="ti ti-device-floppy"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
     <script src="js/scout.js"></script>
 </body>
 
 </html>
-
