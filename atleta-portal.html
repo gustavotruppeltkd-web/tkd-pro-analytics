@@ -1885,7 +1885,7 @@
             const rawTreinos = window.db.treinos || [];
 
             const treinos = rawTreinos.filter(t => {
-                const dateMatch = (t.data === todayStr);
+                const dateMatch = String(t.data || '').trim().substring(0, 10) === todayStr;
                 // If athlete has no turmaId assigned, show all trainings for today
                 const turmaMatch = !atleta.turmaId ||
                     String(t.turmaId) == String(atleta.turmaId) ||
@@ -1895,7 +1895,7 @@
             });
 
             if (treinos.length === 0) {
-                const anyToday = rawTreinos.filter(t => t.data === todayStr);
+                const anyToday = rawTreinos.filter(t => String(t.data || '').trim().substring(0, 10) === todayStr);
                 const lastTreino = rawTreinos.length > 0 ? rawTreinos[rawTreinos.length - 1] : null;
                 const debugInfo = `
                     <div style="margin-top:12px; padding:8px; background:rgba(255,255,0,0.05); border:1px solid rgba(255,255,0,0.2); border-radius:6px; font-size:10px; color:#facc15; text-align:left; line-height:1.8;">
@@ -1985,7 +1985,8 @@
 
             // Treinos for the month
             const treinosList = (window.db.treinos || []).filter(t => {
-                if (t.data < startOfMonth || t.data > endOfMonth) return false;
+                const tData = String(t.data || '').trim().substring(0, 10);
+                if (tData < startOfMonth || tData > endOfMonth) return false;
                 if (!atleta.turmaId) return true; // no turma assigned: show all
                 return String(t.turmaId) == String(atleta.turmaId) || t.turmaId === 'todas' || t.turmaId == null;
             });
