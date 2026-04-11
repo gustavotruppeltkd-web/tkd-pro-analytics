@@ -660,7 +660,23 @@
             box-shadow: 0 0 12px rgba(216, 180, 254, 0.4);
         }
 
-        /* â”€â”€ WELLNESS / PSE (collapsible) â”€â”€ */
+        .cal-day.has-treino::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #a78bfa;
+        }
+
+        .cal-day.today.has-treino::after {
+            background: #000;
+        }
+
+        /* — WELLNESS / PSE (collapsible) — */
         .accordion {
             background: var(--bg-card2);
             border: 1px solid var(--border);
@@ -1909,7 +1925,7 @@
                 const d = new Date(e.data + 'T12:00:00');
                 const isNext = i === 0;
                 const type = (e.tipo || '').toLowerCase();
-                const icon = type.includes('comp') ? 'ðŸ†' : type.includes('feria') || type.includes('recesso') ? 'ðŸŒ´' : type.includes('teste') ? 'ðŸ“Š' : 'ðŸ“…';
+                const icon = type.includes('comp') ? '<i class="ti ti-trophy"></i>' : type.includes('feria') || type.includes('recesso') ? '<i class="ti ti-beach"></i>' : type.includes('teste') ? '<i class="ti ti-chart-bar"></i>' : '<i class="ti ti-calendar-event"></i>';
                 return `
       <div class="tl-item">
         <div class="tl-dot ${isNext ? 'next' : ''}">${icon}</div>
@@ -1972,8 +1988,10 @@
 
             for (let i = 1; i <= daysInMonth; i++) {
                 const isToday = isCurrentMonth && i === todayDate;
+                const hasTreino = treinoDays.has(i);
                 let classes = 'cal-day';
                 if (isToday) classes += ' today';
+                if (hasTreino) classes += ' has-treino';
 
                 html += `<div class="${classes}">${i}</div>`;
             }

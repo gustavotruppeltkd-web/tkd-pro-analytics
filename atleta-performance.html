@@ -608,7 +608,10 @@
         let radarChartObj = null;
         let dynamicCharts = { chart1: null, chart2: null, chart3: null };
 
-        let currentAlunoId = localStorage.getItem('tkd_view_aluno_id');
+        // Check both keys: tkd_view_aluno_id (set by coach) and tkd_atleta_id (set by athlete login)
+        let currentAlunoId = localStorage.getItem('tkd_view_aluno_id') ||
+                             sessionStorage.getItem('tkd_atleta_id') ||
+                             localStorage.getItem('tkd_atleta_id');
         let alunoData = null;
 
         function getTurmaName(id) {
@@ -617,9 +620,16 @@
         }
 
         function loadProfile() {
+            // Re-check ID in case it was set after initial load
             if (!currentAlunoId) {
+                currentAlunoId = localStorage.getItem('tkd_view_aluno_id') ||
+                                 sessionStorage.getItem('tkd_atleta_id') ||
+                                 localStorage.getItem('tkd_atleta_id');
+            }
+            if (!currentAlunoId) {
+                const fromPortal = sessionStorage.getItem('tkd_atleta_id') || localStorage.getItem('tkd_atleta_id');
                 alert("Nenhum atleta selecionado.");
-                window.location.href = 'dashboard-turma-dados.html';
+                window.location.href = fromPortal ? 'atleta-portal.html' : 'dashboard-turma-dados.html';
                 return;
             }
 
@@ -1509,10 +1519,17 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(loadProfile, 100); // Wait for app.js loadDB
-            if (window.location.hash === '#edit') {
-                setTimeout(openModalEdit, 300);
-            }
+            // Called by app.js after Supabase sync — ensures fresh data is used
+            window.onDataLoaded = function() {
+                loadProfile();
+                if (window.location.hash === '#edit') {
+                    setTimeout(openModalEdit, 100);
+                }
+            };
+            // Also render immediately from localStorage (don't wait for Supabase)
+            setTimeout(() => {
+                if (window.db && window.db.alunos) loadProfile();
+            }, 100);
         });
     </script>
 </body>
