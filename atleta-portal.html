@@ -2008,6 +2008,9 @@
             const ativos = (window.db.questionarios || []).filter(q => q.ativo !== false);
             const sel = document.getElementById('qSelector');
 
+            // Limpa antes de repopular para evitar duplicatas
+            sel.innerHTML = '';
+
             if (ativos.length === 0) {
                 sel.style.display = 'none';
                 document.getElementById('qFormContent').innerHTML =
@@ -2015,6 +2018,7 @@
                 return;
             }
 
+            sel.style.display = '';
             ativos.forEach(q => {
                 const opt = document.createElement('option');
                 opt.value = q.id;
@@ -2213,7 +2217,19 @@
         }
 
         function checkWellnessDone() {
-            const log = (window.db.wellnessLogs || []).find(w => w.atletaId === atletaId && w.data === today);
+            let log = (window.db.wellnessLogs || []).find(w => String(w.atletaId) === String(atletaId) && w.data === today);
+            // Fallback: backup dedicado no localStorage
+            if (!log) {
+                const backup = localStorage.getItem('tkd_wellness_' + atletaId + '_' + today);
+                if (backup) {
+                    try {
+                        log = JSON.parse(backup);
+                        // Reinsere no db para corrigir a inconsistência
+                        if (!window.db.wellnessLogs) window.db.wellnessLogs = [];
+                        window.db.wellnessLogs.push(log);
+                    } catch(e) {}
+                }
+            }
 
             const msgEl = document.getElementById('wellnessDoneMsg');
             const formEl = document.getElementById('wellnessForm');
@@ -2247,7 +2263,7 @@
         }
 
         function editWellness() {
-            const log = (window.db.wellnessLogs || []).find(w => w.atletaId === atletaId && w.data === today);
+            const log = (window.db.wellnessLogs || []).find(w => String(w.atletaId) === String(atletaId) && w.data === today);
             if (!log) return;
 
             // Populate form
@@ -2260,7 +2276,7 @@
             document.getElementById('inpPeso').value = log.pesoAtual || '';
 
             // Remove from DB (will be re-pushed on save)
-            window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(w.atletaId === atletaId && w.data === today));
+            window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(String(w.atletaId) === String(atletaId) && w.data === today));
 
             initWellnessButtons();
             checkWellnessDone();
@@ -2269,7 +2285,7 @@
 
         function deleteWellness() {
             if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? Você poderá preencher novamente.")) {
-                window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(w.atletaId === atletaId && w.data === today));
+                window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(String(w.atletaId) === String(atletaId) && w.data === today));
                 saveDB();
 
                 ['slSono', 'slEstresse', 'slDor', 'slHumor', 'slFadiga', 'slAlim'].forEach(id => {
@@ -2383,7 +2399,21 @@
             const list = document.getElementById('pseList');
             const form = document.getElementById('pseForm');
             const select = document.getElementById('slTipoTreino');
-            const todayLogs = (window.db.cargaTreino || []).filter(c => c.atletaId === atletaId && c.data === today);
+            let todayLogs = (window.db.cargaTreino || []).filter(c => String(c.atletaId) === String(atletaId) && c.data === today);
+            // Fallback: backup dedicado no localStorage
+            const backupRaw = localStorage.getItem('tkd_pse_' + atletaId + '_' + today);
+            if (backupRaw) {
+                try {
+                    const backupLogs = JSON.parse(backupRaw);
+                    backupLogs.forEach(bl => {
+                        if (!todayLogs.find(l => l.id === bl.id)) {
+                            if (!window.db.cargaTreino) window.db.cargaTreino = [];
+                            window.db.cargaTreino.push(bl);
+                            todayLogs.push(bl);
+                        }
+                    });
+                } catch(e) {}
+            }
 
             list.innerHTML = '';
             const types = ['Taekwondo', 'Físico'];
@@ -2473,7 +2503,7 @@
             let pesoParsed = parseFloat(strPeso) || null;
 
             const log = {
-                id: Date.now(), atletaId, data: today,
+                id: Date.now(), atletaId, data: today, _updatedAt: Date.now(),
                 sono: parseInt(document.getElementById('slSono').value),
                 estresse: parseInt(document.getElementById('slEstresse').value),
                 dor: parseInt(document.getElementById('slDor').value),
@@ -2484,6 +2514,8 @@
             };
             if (!window.db.wellnessLogs) window.db.wellnessLogs = [];
             window.db.wellnessLogs.push(log);
+            // Backup dedicado — garante persistência mesmo se o merge do Supabase falhar
+            localStorage.setItem('tkd_wellness_' + atletaId + '_' + today, JSON.stringify(log));
             saveDB();
             showToast('Wellness salvo!');
             checkWellnessDone();
@@ -2497,13 +2529,19 @@
             if (!dur || dur < 1) return showToast('Informe a duração do treino', 'error');
 
             // Check if this type was already submitted today
-            const alreadySubmitted = (window.db.cargaTreino || []).some(c => c.atletaId === atletaId && c.data === today && c.tipoTreino === tipo);
+            const alreadySubmitted = (window.db.cargaTreino || []).some(c => String(c.atletaId) === String(atletaId) && c.data === today && c.tipoTreino === tipo);
             if (alreadySubmitted) {
                 return showToast(`Treino ${tipo} já registrado hoje! Se errou, exclua o antigo primeiro.`, 'error');
             }
 
             if (!window.db.cargaTreino) window.db.cargaTreino = [];
-            window.db.cargaTreino.push({ id: Date.now(), atletaId, data: today, tipoTreino: tipo, pse, duracaoMins: dur, cargaCalculada: pse * dur });
+            const novaEntrada = { id: Date.now(), atletaId, data: today, _updatedAt: Date.now(), tipoTreino: tipo, pse, duracaoMins: dur, cargaCalculada: pse * dur };
+            window.db.cargaTreino.push(novaEntrada);
+            // Backup dedicado no localStorage
+            const pseBkpRaw = localStorage.getItem('tkd_pse_' + atletaId + '_' + today);
+            const pseBkp = pseBkpRaw ? JSON.parse(pseBkpRaw) : [];
+            pseBkp.push(novaEntrada);
+            localStorage.setItem('tkd_pse_' + atletaId + '_' + today, JSON.stringify(pseBkp));
             saveDB();
 
             // Reset fields
