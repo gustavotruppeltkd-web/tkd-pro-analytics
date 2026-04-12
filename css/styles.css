@@ -410,6 +410,151 @@ Let's fix that layout using CSS grid */
 }
 
 
+/* ============================================================
+   SHARED COMPONENTS — centralized, used across multiple pages
+   ============================================================ */
+
+/* Tab navigation (financeiro, dashboard-turma-dados, dashboard-questionarios) */
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 12px 0;
+    cursor: pointer;
+    position: relative;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+}
+.tab-btn:hover { color: var(--text-main); }
+.tab-btn.active { color: var(--primary); font-weight: 600; }
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+.tab-content { display: none; animation: fadeIn 0.3s ease-out; }
+.tab-content.active { display: block; }
+
+/* Export button (dashboard-rendimento, dashboard-questionarios) */
+.btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+    color: white;
+    border: none;
+    padding: 0 16px;
+    height: 38px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-export:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+    filter: brightness(1.1);
+}
+.btn-export i { font-size: 16px; }
+
+/* Logout button — fixed-position, used on standalone pages (selecionar-treinador, turmas) */
+.btn-logout {
+    position: fixed;
+    top: 24px;
+    right: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+    z-index: 100;
+}
+.btn-logout:hover {
+    color: var(--red);
+    border-color: var(--red);
+    background: var(--red-bg);
+}
+
+/* Dashed add-row button (treino-equipe, dashboard-turma-dados) */
+.btn-add-row {
+    width: 100%;
+    padding: 8px;
+    border: 1px dashed var(--border-color);
+    background: transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-family: 'Inter', sans-serif;
+}
+.btn-add-row:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+/* Status filter pills (dashboard-questionarios, atleta-portal) */
+.status-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: transparent;
+    color: var(--text-muted);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+}
+.status-btn:hover { color: var(--text-main); border-color: var(--text-muted); }
+.status-btn.selected {
+    border-color: var(--primary);
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Back link for standalone pages */
+.btn-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-back-link:hover { color: var(--text-main); }
+
 
 /* Athletes Section */
 .section-header {

@@ -18,44 +18,8 @@
             position: relative;
         }
 
-        .btn-back {
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            color: var(--text-muted);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        .logout-btn-global {
-            position: fixed;
-            top: 20px;
-            right: 32px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background: var(--bg-card);
-            cursor: pointer;
-            transition: var(--transition);
-            z-index: 100;
-        }
-
-        .logout-btn-global:hover {
-            color: var(--red);
-            border-color: var(--red);
-        }
+        /* btn-back-link and btn-logout are in styles.css */
+        /* btn-logout → btn-logout, btn-back → btn-back-link */
 
         .topbar {
             position: fixed;
@@ -198,7 +162,7 @@
         </div>
 
         <!-- Right: Logout -->
-        <button class="logout-btn-global" onclick="window.logoutUser()">
+        <button class="btn-logout" onclick="window.logoutUser()">
             <i class="ti ti-logout"></i> Sair
         </button>
     </div>

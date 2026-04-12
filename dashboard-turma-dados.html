@@ -194,30 +194,8 @@
             color: #d1d5db;
         }
 
-        .widget-add-btn {
-            margin-top: 4px;
-            width: 100%;
-            padding: 7px;
-            border: 1px dashed var(--border-color);
-            background: transparent;
-            border-radius: 8px;
-            color: var(--text-muted);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            font-family: inherit;
-            text-decoration: none;
-        }
-
-        .widget-add-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(59, 130, 246, 0.06);
-        }
+        /* btn-add-row → use .btn-add-row from styles.css */
+        .btn-add-row { margin-top: 4px; }
 
         .widget-empty {
             display: flex;
@@ -466,44 +444,7 @@
             margin-bottom: 24px;
         }
 
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 15px;
-            font-weight: 500;
-            padding: 12px 0;
-            cursor: pointer;
-            position: relative;
-            transition: var(--transition);
-        }
-
-        .tab-btn:hover {
-            color: var(--text-main);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
+        /* tab-btn and tab-content are in styles.css */
 
         /* Histórico Grid */
         .history-grid {
@@ -1560,7 +1501,7 @@
                 });
             }
 
-            html += `<a href="treino-equipe.html" class="widget-add-btn">
+            html += `<a href="treino-equipe.html" class="btn-add-row">
                         <i class="ti ti-plus"></i> Adicionar treino
                     </a>
                 </div>`;

@@ -121,29 +121,8 @@
             gap: 6px;
         }
 
-        .add-treino-btn {
-            margin-top: auto;
-            width: 100%;
-            padding: 8px;
-            border: 1px dashed var(--border-color);
-            background: transparent;
-            border-radius: var(--radius-sm);
-            color: var(--text-muted);
-            font-size: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            font-family: inherit;
-        }
-
-        .add-treino-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            background: rgba(59, 130, 246, 0.05);
-        }
+        /* add-treino-btn → btn-add-row from styles.css; keep margin-top override */
+        .add-treino-btn { margin-top: auto; }
 
         /* ===== TRAINING CHIP ===== */
         .treino-chip {
@@ -1886,7 +1865,7 @@
 
                 treinos.forEach(t => { html += buildChip(t); });
 
-                html += `<button class="add-treino-btn" onclick="openModalTreino('${dateStr}')">
+                html += `<button class="btn-add-row add-treino-btn" onclick="openModalTreino('${dateStr}')">
                             <i class="ti ti-plus"></i> Treino
                         </button>
                     </div>

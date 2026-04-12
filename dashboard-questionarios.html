@@ -17,45 +17,7 @@
             margin-bottom: 32px;
         }
 
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 500;
-            padding: 12px 0;
-            cursor: pointer;
-            position: relative;
-            transition: var(--transition);
-        }
-
-        .tab-btn:hover {
-            color: var(--text-main);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--primary);
-            border-radius: 2px 2px 0 0;
-        }
-
-        .tab-pane {
-            display: none;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
+        /* tab-btn and tab-pane are in styles.css */
 
         /* Form Render Styles */
         .q-header {
@@ -91,23 +53,7 @@
             gap: 12px;
         }
 
-        .status-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .status-btn.selected {
-            border-color: var(--primary);
-            background: rgba(65, 105, 225, 0.2);
-            font-weight: 600;
-        }
+        /* status-btn is in styles.css */
 
         /* Builder Styles */
         .builder-row {
@@ -141,33 +87,7 @@
             margin-bottom: 16px;
         }
 
-        .btn-export {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-            color: white !important;
-            border: none;
-            padding: 0 16px;
-            height: 38px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-            text-decoration: none;
-        }
-
-        .btn-export:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
-            filter: brightness(1.1);
-        }
-
-        .btn-export i {
-            font-size: 16px;
-        }
+        /* btn-export is in styles.css */
 
         .text-answers-list {
             display: flex;
