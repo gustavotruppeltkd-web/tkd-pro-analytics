@@ -2126,7 +2126,7 @@
             });
             if (!window.db.respostas) window.db.respostas = [];
             window.db.respostas.push({ id: Date.now(), atletaId, questionarioId: activeQId, data: today, respostas: respostasVal });
-            saveDB();
+            savePortalDB();
             showToast('Respostas enviadas!');
             loadSelectedQ();
         }
@@ -2287,7 +2287,7 @@
         function deleteWellness() {
             if (confirm("Deseja realmente excluir seu registro de Bem-Estar de hoje? Você poderá preencher novamente.")) {
                 window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(String(w.atletaId) === String(atletaId) && w.data === today));
-                saveDB();
+                savePortalDB();
 
                 ['slSono', 'slEstresse', 'slDor', 'slHumor', 'slFadiga', 'slAlim'].forEach(id => {
                     const el = document.getElementById(id);
@@ -2484,7 +2484,7 @@
         function deletePSE(id) {
             if (confirm("Deseja realmente excluir este registro de carga? Você poderá preencher novamente.")) {
                 window.db.cargaTreino = (window.db.cargaTreino || []).filter(c => c.id !== id);
-                saveDB();
+                savePortalDB();
                 checkPseDone();
                 showToast("Registro excluído.");
             }
@@ -2518,7 +2518,7 @@
             window.db.wellnessLogs.push(log);
             // Backup dedicado — garante persistência mesmo se o merge do Supabase falhar
             localStorage.setItem('tkd_wellness_' + atletaId + '_' + today, JSON.stringify(log));
-            saveDB();
+            savePortalDB();
             showToast('Wellness salvo!');
             checkWellnessDone();
         }
@@ -2544,7 +2544,7 @@
             const pseBkp = pseBkpRaw ? JSON.parse(pseBkpRaw) : [];
             pseBkp.push(novaEntrada);
             localStorage.setItem('tkd_pse_' + atletaId + '_' + today, JSON.stringify(pseBkp));
-            saveDB();
+            savePortalDB();
 
             // Reset fields
             document.getElementById('slPSE').value = 5;
@@ -2573,8 +2573,32 @@
             document.getElementById('qi_' + name).value = val;
         }
 
+        // ID do treinador cujos dados o portal está exibindo
+        var portalCoachId = null;
+
+        // Salva sempre na linha do TREINADOR (não do atleta autenticado)
+        async function savePortalDB() {
+            if (!window.supabaseClient || !portalCoachId) {
+                // Fallback: salva só no localStorage
+                localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+                return;
+            }
+            try {
+                window.db._last_updated = Date.now();
+                localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+                const { error } = await window.supabaseClient
+                    .from('app_state')
+                    .upsert({ project_id: portalCoachId, data: window.db });
+                if (error) console.error('savePortalDB erro:', error);
+                else console.log('savePortalDB: dados salvos na linha do treinador', portalCoachId);
+            } catch (e) {
+                console.error('savePortalDB exception:', e);
+            }
+        }
+
         // START
         function iniciarPortal(coachId) {
+            portalCoachId = coachId;
             window.supabaseClient
                 .from('app_state')
                 .select('data')
