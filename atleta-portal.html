@@ -2279,6 +2279,10 @@
             // Remove from DB (will be re-pushed on save)
             window.db.wellnessLogs = (window.db.wellnessLogs || []).filter(w => !(String(w.atletaId) === String(atletaId) && w.data === today));
 
+            // Limpa o backup do localStorage — sem isso, checkWellnessDone re-insere o dado antigo
+            // e o formulário nunca aparece (bug do botão Editar não funcionar)
+            localStorage.removeItem('tkd_wellness_' + atletaId + '_' + today);
+
             initWellnessButtons();
             checkWellnessDone();
             showToast("Modo de edição ativado.");
@@ -2476,6 +2480,10 @@
 
             // Remove from DB
             window.db.cargaTreino = (window.db.cargaTreino || []).filter(x => x.id !== id);
+
+            // Limpa o backup do localStorage — sem isso, checkPseDone re-insere o dado antigo
+            // e o formulário nunca exibe os campos de edição (bug do botão Editar não funcionar)
+            localStorage.removeItem('tkd_pse_' + atletaId + '_' + today);
 
             checkPseDone();
             showToast("Editando registro de carga...");
