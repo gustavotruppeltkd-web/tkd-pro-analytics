@@ -971,9 +971,12 @@
                     if (dotClass === 'semaforo-yellow') { listAmarelo.push(aluno.nome); scoreColor = 'var(--yellow)'; }
                     if (dotClass === 'semaforo-red') { listVermelho.push(aluno.nome); scoreColor = 'var(--red)'; }
 
-                    // Exibir motivos inline se houver alertas
+                    // Ícone de alerta com tooltip mostrando motivo + valores brutos para diagnóstico
+                    const debugTip = `Sono:${log.sono} Humor:${log.humor} Est:${log.estresse} Dor:${log.dor} Fad:${log.fadiga} Alim:${log.alimentacao||'?'} | ACWR:${foster.acwr.toFixed(2)} Strain:${Math.round(foster.strain)}`;
                     if (status.warnings.length > 0) {
-                        scoreText += ` <span style="font-size: 11px; opacity: 0.8;">(${status.warnings.join(' · ')})</span>`;
+                        scoreText += ` <i class="ti ti-alert-triangle" style="color: var(--yellow); margin-left: 6px; font-size: 14px;" title="${status.warnings.join(', ')} | ${debugTip}"></i>`;
+                    } else {
+                        scoreText += ` <i class="ti ti-info-circle" style="color: var(--text-muted); margin-left: 6px; font-size: 13px; opacity:0.4;" title="${debugTip}"></i>`;
                     }
                 }
 
