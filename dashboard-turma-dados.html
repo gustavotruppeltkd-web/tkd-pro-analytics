@@ -793,7 +793,7 @@
                         <span>Relatórios PDF</span>
                     </button>
                     <div class="user-profile">
-                        <img src="https://i.pravatar.cc/150?img=11" alt="Coach Profile" class="avatar">
+                        <img src="" class="avatar" onerror="this.src=DEFAULT_AVATAR" style="background:#1e293b">
                         <div class="user-info">
                             <span class="user-name">Mestre Silva</span>
                             <span class="user-role">Head Coach</span>
@@ -1931,7 +1931,7 @@
             e.preventDefault();
             const form = document.getElementById('formAddAluno');
 
-            let defaultAvatar = 'https://i.pravatar.cc/150?img=' + Math.floor(Math.random() * 70);
+            let defaultAvatar = DEFAULT_AVATAR;
 
             const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 

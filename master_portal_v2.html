@@ -1261,7 +1261,7 @@
     <!-- HERO HEADER -->
     <header class="portal-hero">
         <button class="hero-back" onclick="history.back()" title="Voltar"><i class="ti ti-arrow-left"></i></button>
-        <img class="hero-avatar" id="heroAvatar" src="https://i.pravatar.cc/150" alt="">
+        <img class="hero-avatar" id="heroAvatar" src="" alt="" onerror="this.src=DEFAULT_AVATAR" style="background:#1e293b">
         <div class="hero-info">
             <div class="hero-name" id="heroName">Carregando...</div>
             <div class="hero-sub" id="heroFaixa"></div>
@@ -1664,7 +1664,7 @@
             if (!atleta) {
                 document.getElementById('heroName').textContent = 'Portal do Atleta';
                 document.getElementById('heroFaixa').textContent = 'Selecione um atleta no login';
-                document.getElementById('heroAvatar').src = 'https://i.pravatar.cc/150';
+                document.getElementById('heroAvatar').src = DEFAULT_AVATAR;
                 // Show placeholders for sections that require athlete data
                 renderRadar();
                 renderCompetitions();
@@ -1679,7 +1679,7 @@
             // Update Hero
             document.getElementById('heroName').textContent = atleta.nome;
             document.getElementById('heroFaixa').textContent = atleta.faixa || 'Sem graduação';
-            document.getElementById('heroAvatar').src = atleta.avatar || atleta.foto || 'https://i.pravatar.cc/150';
+            document.getElementById('heroAvatar').src = atleta.avatar || atleta.foto || DEFAULT_AVATAR;
             const now = new Date();
             document.getElementById('heroDate').innerHTML =
                 `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}<br>

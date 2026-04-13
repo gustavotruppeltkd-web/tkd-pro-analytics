@@ -575,8 +575,8 @@
                 const faixaCurta = a.faixa ? a.faixa.replace(/\(.*?\)/g, '').trim() : '';
                 return `
                     <button class="athlete-btn" onclick="selectAthlete(${a.id})" id="athleteBtn_${a.id}">
-                        <img src="${a.avatar || 'https://i.pravatar.cc/150'}" alt="${a.nome}"
-                             onerror="this.src='https://i.pravatar.cc/150'">
+                        <img src="${a.avatar || DEFAULT_AVATAR}" alt="${a.nome}"
+                             onerror="this.src=DEFAULT_AVATAR">
                         <span>${primeiroNome}</span>
                         ${faixaCurta ? `<span class="faixa-badge">${faixaCurta}</span>` : ''}
                     </button>
@@ -591,7 +591,7 @@
             if (!atleta) return;
 
             // Update PIN screen
-            document.getElementById('pinAthleteAvatar').src = atleta.avatar || 'https://i.pravatar.cc/150';
+            document.getElementById('pinAthleteAvatar').src = atleta.avatar || DEFAULT_AVATAR;
             document.getElementById('pinAthleteName').innerText = atleta.nome.split(' ')[0];
 
             // Switch to step 2

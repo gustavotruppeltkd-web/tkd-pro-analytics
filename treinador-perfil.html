@@ -324,7 +324,7 @@
                 </div>
 
                 <div class="user-profile" id="userProfileHeaderBtn">
-                    <img src="https://i.pravatar.cc/150" alt="Avatar" class="avatar">
+                    <img src="" class="avatar" onerror="this.src=DEFAULT_AVATAR" style="background:#1e293b">
                     <div class="user-info">
                         <span class="user-name">Carregando...</span>
                         <span class="user-role">Treinador</span>
@@ -596,7 +596,7 @@
                 <div class="form-group">
                     <label class="form-label">Foto de Perfil</label>
                     <div style="display: flex; align-items: center; gap: 16px;">
-                        <img id="editCoachAvatarPreview" src="https://i.pravatar.cc/150" alt="Preview"
+                        <img id="editCoachAvatarPreview" src="" alt="Preview" onerror="this.src=DEFAULT_AVATAR" style="background:#1e293b"
                             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color);">
                         <input type="file" id="editCoachAvatarInput" class="form-control" accept="image/*"
                             onchange="handleCoachAvatarUpload(event)">
@@ -680,7 +680,7 @@
             // Textos padrão caso vazio
             const defaultBio = "Profissional dedicado ao Taekwondo, com experiência formando atletas de rendimento e focado no desenvolvimento contínuo através das artes marciais e análise de dados.";
 
-            document.getElementById('coachHeroAvatar').src = coach.avatar || 'https://i.pravatar.cc/150';
+            document.getElementById('coachHeroAvatar').src = coach.avatar || DEFAULT_AVATAR;
             document.getElementById('coachHeroName').innerText = coach.nome;
             document.getElementById('coachHeroRole').innerText = coach.role || coach.papel || 'Treinador';
             document.getElementById('coachExperience').innerText = coach.experiencia || 'Tempo Indefinido';
@@ -770,7 +770,7 @@
             document.getElementById('editCoachPhone').value = coach.telefone || '';
             document.getElementById('editCoachEmail').value = coach.email || '';
 
-            document.getElementById('editCoachAvatarPreview').src = coach.avatar || 'https://i.pravatar.cc/150';
+            document.getElementById('editCoachAvatarPreview').src = coach.avatar || DEFAULT_AVATAR;
             document.getElementById('editCoachAvatarInput').value = '';
 
             const titlesContainer = document.getElementById('editTitlesContainer');
@@ -905,7 +905,7 @@
             doc.rect(0, 0, pageWidth, 55, 'F');
 
             // FOTO (Borda branca e leve arredondamento simulado por moldura)
-            if (coach.avatar && coach.avatar !== 'https://i.pravatar.cc/150') {
+            if (coach.avatar && coach.avatar && coach.avatar !== DEFAULT_AVATAR) {
                 try {
                     doc.setDrawColor(255, 255, 255);
                     doc.setLineWidth(1);

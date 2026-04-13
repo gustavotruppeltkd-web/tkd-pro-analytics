@@ -1,5 +1,8 @@
 ﻿/* STATE MANAGEMENT GLOBALS (LocalStorage) */
 
+// Avatar padrão — silhueta neutra, sem foto aleatória de terceiros
+const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231e293b'/%3E%3Ccircle cx='50' cy='36' r='17' fill='%2364748b'/%3E%3Cellipse cx='50' cy='84' rx='28' ry='20' fill='%2364748b'/%3E%3C/svg%3E";
+
 const MOCK_DATA = {
     turmas: [],
     alunos: [],
@@ -1046,7 +1049,7 @@ function openScoutDetail(scoutId) {
 
     // Fallback para atleta n?o encontrado
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
-    const avatarAtleta = atleta ? (atleta.avatar || 'https://i.pravatar.cc/150') : 'https://i.pravatar.cc/150';
+    const avatarAtleta = atleta ? (atleta.avatar || DEFAULT_AVATAR) : DEFAULT_AVATAR;
 
     let modal = document.getElementById('modalScoutDetail');
     if (!modal) {
