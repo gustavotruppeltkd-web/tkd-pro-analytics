@@ -763,10 +763,12 @@
         // --- MOTOR FISIOLÓGICO ---
 
         function calcWellnessScore(sono, estresse, dor, humor, fadiga, alimentacao) {
-            // Cada um vai de 1 a 5, exceto alimentação que ?0 a 5. Max total = 30. Min total = 5.
-            // Para %, ((Soma - Min) / (Max - Min)) * 100
+            // Campos positivos (1=ruim, 5=bom): sono, humor, alimentacao — soma direta
+            // Campos negativos (1=bom, 5=ruim): estresse, dor, fadiga — invertidos com (6 - valor)
+            // Min total = 1+1+0+1+1+1 = 5 | Max total = 5+5+5+5+5+5 = 30
             const aliScore = alimentacao !== undefined && !isNaN(alimentacao) ? parseInt(alimentacao) : 3;
-            const soma = parseInt(sono) + parseInt(estresse) + parseInt(dor) + parseInt(humor) + parseInt(fadiga) + aliScore;
+            const soma = parseInt(sono) + parseInt(humor) + aliScore
+                        + (6 - parseInt(estresse)) + (6 - parseInt(dor)) + (6 - parseInt(fadiga));
             const score = Math.round(((soma - 5) / 25) * 100);
             return score;
         }
@@ -923,8 +925,8 @@
             // Strain (Foster): > 6000
             if (strain > 6000) { isRed = true; motivo.push('Strain Crítico (>6000)'); }
 
-            // Dor Muscular (1 = Dor Forte)
-            if (parseInt(formDor) <= 2) { isYellow = true; motivo.push('Dor Muscular Relevante'); }
+            // Dor Muscular (5 = Forte, 1 = Sem Dor)
+            if (parseInt(formDor) >= 4) { isYellow = true; motivo.push('Dor Muscular Relevante'); }
 
             if (formMenstrual) { isYellow = true; motivo.push('Fase Menstrual'); } // Prevenção preventiva padrão
 
