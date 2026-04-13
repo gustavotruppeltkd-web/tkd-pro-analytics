@@ -910,17 +910,26 @@
         }
 
         function getSemaforoStatus(score, acwr, strain, formDor, formMenstrual) {
-            // Regras Avançadas de Risco Clínico (Vermelho overriding)
+            // Risco = cruzamento de carga objetiva (ACWR) com recuperação subjetiva (Wellness)
             let isRed = false;
             let isYellow = false;
             let motivo = [];
 
-            if (score < 40) { isRed = true; motivo.push('Wellness Baixo'); }
-            else if (score < 70) { isYellow = true; }
+            // ACWR + Wellness combinados (Gabbett 2016 + Foster)
+            if (acwr > 1.5 && score < 60) {
+                isRed = true;
+                motivo.push('Carga Alta + Recuperação Ruim');
+            } else if (acwr > 1.5) {
+                isYellow = true;
+                motivo.push('Carga Alta (ACWR > 1.5)');
+            } else if (acwr > 1.3) {
+                isYellow = true;
+                motivo.push('ACWR em Atenção');
+            }
 
-            // ACWR: Gabbett (2016) aponta "Danger Zone" > 1.5
-            if (acwr > 1.5) { isRed = true; motivo.push('ACWR Alto (Risco Lesão)'); }
-            else if (acwr > 1.3) { isYellow = true; motivo.push('ACWR Atenção'); }
+            // Wellness isolado (sem carga registrada ou carga normal)
+            if (score < 40) { isRed = true; motivo.push('Wellness Crítico'); }
+            else if (score < 70 && !isRed) { isYellow = true; }
 
             // Strain (Foster): > 6000
             if (strain > 6000) { isRed = true; motivo.push('Strain Crítico (>6000)'); }
@@ -928,7 +937,7 @@
             // Dor Muscular (5 = Forte, 1 = Sem Dor)
             if (parseInt(formDor) >= 4) { isYellow = true; motivo.push('Dor Muscular Relevante'); }
 
-            if (formMenstrual) { isYellow = true; motivo.push('Fase Menstrual'); } // Prevenção preventiva padrão
+            if (formMenstrual) { isYellow = true; motivo.push('Fase Menstrual'); }
 
             if (isRed) return { color: 'semaforo-red', warnings: motivo };
             if (isYellow) return { color: 'semaforo-yellow', warnings: motivo };
@@ -960,7 +969,7 @@
                 let scoreColor = 'var(--text-muted)';
 
                 if (log) {
-                    const score = calcWellnessScore(log.sono, log.estresse, log.dor, log.humor, log.fadiga);
+                    const score = calcWellnessScore(log.sono, log.estresse, log.dor, log.humor, log.fadiga, log.alimentacao);
                     const foster = calculateFosterMetrics(aluno.id, dataFiltro);
                     const status = getSemaforoStatus(score, foster.acwr, foster.strain, log.dor, log.periodoMenstrual);
 
