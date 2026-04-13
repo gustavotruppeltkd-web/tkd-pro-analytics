@@ -232,14 +232,13 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
-            padding: 24px 16px;
+            padding: 28px 20px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
             text-align: center;
-            min-height: 280px;
-            /* Allows height to grow, giving enough space for wellness module */
+            min-height: 320px;
             transition: var(--transition);
         }
 
@@ -250,11 +249,11 @@
         }
 
         .student-square-avatar {
-            width: 72px;
-            height: 72px;
+            width: 84px;
+            height: 84px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             border: 2px solid var(--primary);
         }
 
@@ -1743,35 +1742,56 @@
 
                 let card = '';
                 if (isRendHere) {
-                    const wLog = (db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0];
-                    let wellnessHTML = '';
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    const allWLogs = (db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id);
+                    const wLog = allWLogs[0]; // mais recente (qualquer dia)
+                    const wLogToday = allWLogs.find(w => w.data === todayStr); // só hoje
+
+                    // Formata o timestamp do último wellness
+                    let ultimoWellnessLabel = '';
                     if (wLog) {
+                        const ts = wLog._updatedAt || wLog.id;
+                        const d = new Date(ts);
+                        const hh = String(d.getHours()).padStart(2, '0');
+                        const mm = String(d.getMinutes()).padStart(2, '0');
+                        const dd = String(d.getDate()).padStart(2, '0');
+                        const mo = String(d.getMonth() + 1).padStart(2, '0');
+                        const isToday = wLog.data === todayStr;
+                        const isYesterday = wLog.data === new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                        const diaLabel = isToday ? 'Hoje' : isYesterday ? 'Ontem' : `${dd}/${mo}`;
+                        ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px;"></i> ${diaLabel} às ${hh}:${mm}`;
+                    } else {
+                        ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px;"></i> Nunca respondido`;
+                    }
+
+                    let wellnessHTML = '';
+                    if (wLogToday) {
                         wellnessHTML = `
-                            <div style="margin: 12px 0 16px 0; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 8px;">
-                                ${renderWellnessDots('Sono', 'ti ti-bed', wLog.sono)}
-                                ${renderWellnessDots('Alimentação', 'ti ti-apple', wLog.alimentacao)}
-                                ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLog.humor)}
-                                ${renderWellnessDots('Estresse', 'ti ti-brain', wLog.estresse, true)}
-                                ${renderWellnessDots('Dor', 'ti ti-shield-up', wLog.dor, true)}
-                                ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLog.fadiga, true)}
+                            <div style="margin: 10px 0 14px 0; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 8px; width: 100%;">
+                                ${renderWellnessDots('Sono', 'ti ti-bed', wLogToday.sono)}
+                                ${renderWellnessDots('Alimentação', 'ti ti-apple', wLogToday.alimentacao)}
+                                ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLogToday.humor)}
+                                ${renderWellnessDots('Estresse', 'ti ti-brain', wLogToday.estresse, true)}
+                                ${renderWellnessDots('Dor', 'ti ti-shield-up', wLogToday.dor, true)}
+                                ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLogToday.fadiga, true)}
                             </div>
                         `;
                     } else {
-                        const lastWLogForWeight = (db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0];
-                        const lastWeightStr = (lastWLogForWeight && lastWLogForWeight.pesoAtual) ? `Último peso: ${lastWLogForWeight.pesoAtual}kg` : `Sem dados de peso`;
-                        wellnessHTML = `<div style="margin: 12px 0 16px 0; font-size:11px; color:var(--text-muted); text-align:center; padding: 12px 0;">Sem bem-estar hoje<br><span style="opacity: 0.7;">(${lastWeightStr})</span></div>`;
+                        const lastWeightStr = (wLog && wLog.pesoAtual) ? `Último peso: ${wLog.pesoAtual}kg` : `Sem dados de peso`;
+                        wellnessHTML = `<div style="margin: 10px 0 14px 0; font-size:11px; color:var(--text-muted); text-align:center; padding: 10px 0; width:100%;">Sem bem-estar hoje<br><span style="opacity: 0.7;">(${lastWeightStr})</span></div>`;
                     }
 
                     card = `
                         <div class="student-square-card" style="animation: fadeIn 0.4s ease-out; height: 100%; display: flex; flex-direction: column;">
-                            <img src="${a.avatar}" alt="${a.nome}" class="student-square-avatar" style="align-self: center;">
+                            <img src="${a.avatar}" alt="${a.nome}" class="student-square-avatar" style="align-self: center;" onerror="this.src=DEFAULT_AVATAR">
                             <h4 style="text-align: center;">${a.nome}</h4>
-                            <p style="text-align: center;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLog && wLog.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLog.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
-                            
+                            <p style="text-align: center; margin-bottom: 4px;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLogToday && wLogToday.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLogToday.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px; opacity: 0.75;">${ultimoWellnessLabel}</div>
+
                             <div style="flex-grow: 1;"></div>
-                            
+
                             ${wellnessHTML}
-                            
+
                             <div class="student-square-actions" style="display: flex; gap: 8px; margin-top: auto;">
                                 <button class="btn btn-primary" style="flex: 1; justify-content: center; border-radius: 8px;" onclick="goToPerfil(${a.id})">Perfil</button>
                                 <button class="btn-icon tooltip" style="color: var(--primary); border-color: rgba(59, 130, 246, 0.3); border-radius: 8px;" data-tooltip="Editar Dados" onclick="openModalEditAluno(${a.id})"><i class="ti ti-edit"></i></button>
