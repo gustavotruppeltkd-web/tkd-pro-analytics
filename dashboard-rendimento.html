@@ -534,8 +534,8 @@
                     <label>Nível de Estresse (1 a 5)</label>
                     <div
                         style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Muito Estressado</span>
-                        <span>5: Muito Relaxado</span>
+                        <span>1: Baixo</span>
+                        <span>5: Alto</span>
                     </div>
                     <input type="range" id="wellnessEstresse" min="1" max="5" value="3" style="width: 100%;">
                     <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valEstresse">3</div>
@@ -545,8 +545,8 @@
                     <label>Dor Muscular (1 a 5)</label>
                     <div
                         style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Dor Forte</span>
-                        <span>5: Sem Dor Nãormal</span>
+                        <span>1: Sem Dor</span>
+                        <span>5: Forte</span>
                     </div>
                     <input type="range" id="wellnessDor" min="1" max="5" value="3" style="width: 100%;">
                     <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valDor">3</div>
@@ -567,8 +567,8 @@
                     <label>Fadiga / Cansaço (1 a 5)</label>
                     <div
                         style="display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--text-muted); font-size: 12px;">
-                        <span>1: Muito Fadigado</span>
-                        <span>5: Muito Disposto</span>
+                        <span>1: Disposto</span>
+                        <span>5: Fadigado</span>
                     </div>
                     <input type="range" id="wellnessFadiga" min="1" max="5" value="3" style="width: 100%;">
                     <div style="text-align: center; font-weight: bold; margin-top: 8px;" id="valFadiga">3</div>
@@ -967,17 +967,14 @@
                     dotClass = status.color;
                     scoreText = `W: ${score}%`;
 
-                    // Exibir ?cone se houver alerta
-                    let extraIcons = '';
-                    if (status.warnings.length > 0) {
-                        extraIcons = `<i class="ti ti-alert-triangle" style="color: var(--yellow); margin-left: 6px; font-size: 14px;" title="${status.warnings.join(', ')}"></i>`;
-                    }
-
                     if (dotClass === 'semaforo-green') { listVerde.push(aluno.nome); scoreColor = 'var(--green)'; }
                     if (dotClass === 'semaforo-yellow') { listAmarelo.push(aluno.nome); scoreColor = 'var(--yellow)'; }
                     if (dotClass === 'semaforo-red') { listVermelho.push(aluno.nome); scoreColor = 'var(--red)'; }
 
-                    scoreText += extraIcons;
+                    // Exibir motivos inline se houver alertas
+                    if (status.warnings.length > 0) {
+                        scoreText += ` <span style="font-size: 11px; opacity: 0.8;">(${status.warnings.join(' · ')})</span>`;
+                    }
                 }
 
                 const card = `
