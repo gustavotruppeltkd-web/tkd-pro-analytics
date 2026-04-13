@@ -1306,112 +1306,76 @@
                 <div id="wellnessForm">
                     <!-- GRUPO 1: RUIM -> BOM (Red -> Blue) -->
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Sono (1: Ruim | 5:
-                            Bom)</label>
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Sono (1: Ruim | 5: Bom)</label>
                         <div class="choice-group" id="group-sono">
-                            <div class="choice-btn" data-val="1" style="--c:#ef4444"
-                                onclick="selWellness(this,'sono',1)">1</div>
-                            <div class="choice-btn" data-val="2" style="--c:#f97316"
-                                onclick="selWellness(this,'sono',2)">2</div>
-                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
-                                onclick="selWellness(this,'sono',3)">3</div>
-                            <div class="choice-btn" data-val="4" style="--c:#10b981"
-                                onclick="selWellness(this,'sono',4)">4</div>
-                            <div class="choice-btn" data-val="5" style="--c:#4169e1"
-                                onclick="selWellness(this,'sono',5)">5</div>
+                            <div class="choice-btn" data-val="1" style="--c:#ef4444" onclick="selWellness(this,'sono',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#f97316" onclick="selWellness(this,'sono',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b" onclick="selWellness(this,'sono',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#10b981" onclick="selWellness(this,'sono',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#4169e1" onclick="selWellness(this,'sono',5)">5</div>
                         </div>
                         <input type="hidden" id="slSono" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Alimentação (1: Ruim | 5:
-                            Boa)</label>
-                        <div class="choice-group" id="group-alim">
-                            <div class="choice-btn" data-val="1" style="--c:#ef4444"
-                                onclick="selWellness(this,'alim',1)">1</div>
-                            <div class="choice-btn" data-val="2" style="--c:#f97316"
-                                onclick="selWellness(this,'alim',2)">2</div>
-                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
-                                onclick="selWellness(this,'alim',3)">3</div>
-                            <div class="choice-btn" data-val="4" style="--c:#10b981"
-                                onclick="selWellness(this,'alim',4)">4</div>
-                            <div class="choice-btn" data-val="5" style="--c:#4169e1"
-                                onclick="selWellness(this,'alim',5)">5</div>
-                        </div>
-                        <input type="hidden" id="slAlim" value="">
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Humor (1: Ruim | 5:
-                            Bom)</label>
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Humor (1: Ruim | 5: Bom)</label>
                         <div class="choice-group" id="group-humor">
-                            <div class="choice-btn" data-val="1" style="--c:#ef4444"
-                                onclick="selWellness(this,'humor',1)">1</div>
-                            <div class="choice-btn" data-val="2" style="--c:#f97316"
-                                onclick="selWellness(this,'humor',2)">2</div>
-                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
-                                onclick="selWellness(this,'humor',3)">3</div>
-                            <div class="choice-btn" data-val="4" style="--c:#10b981"
-                                onclick="selWellness(this,'humor',4)">4</div>
-                            <div class="choice-btn" data-val="5" style="--c:#4169e1"
-                                onclick="selWellness(this,'humor',5)">5</div>
+                            <div class="choice-btn" data-val="1" style="--c:#ef4444" onclick="selWellness(this,'humor',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#f97316" onclick="selWellness(this,'humor',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b" onclick="selWellness(this,'humor',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#10b981" onclick="selWellness(this,'humor',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#4169e1" onclick="selWellness(this,'humor',5)">5</div>
                         </div>
                         <input type="hidden" id="slHumor" value="">
                     </div>
 
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Alimentação (1: Ruim | 5: Boa)</label>
+                        <div class="choice-group" id="group-alim">
+                            <div class="choice-btn" data-val="1" style="--c:#ef4444" onclick="selWellness(this,'alim',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#f97316" onclick="selWellness(this,'alim',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b" onclick="selWellness(this,'alim',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#10b981" onclick="selWellness(this,'alim',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#4169e1" onclick="selWellness(this,'alim',5)">5</div>
+                        </div>
+                        <input type="hidden" id="slAlim" value="">
+                    </div>
+
                     <!-- GRUPO 2: BOM -> RUIM (Blue -> Red) -->
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Estresse (1: Baixo | 5:
-                            Alto)</label>
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Estresse (1: Baixo | 5: Alto)</label>
                         <div class="choice-group" id="group-estresse">
-                            <div class="choice-btn" data-val="1" style="--c:#4169e1"
-                                onclick="selWellness(this,'estresse',1)">1</div>
-                            <div class="choice-btn" data-val="2" style="--c:#10b981"
-                                onclick="selWellness(this,'estresse',2)">2</div>
-                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
-                                onclick="selWellness(this,'estresse',3)">3</div>
-                            <div class="choice-btn" data-val="4" style="--c:#f97316"
-                                onclick="selWellness(this,'estresse',4)">4</div>
-                            <div class="choice-btn" data-val="5" style="--c:#ef4444"
-                                onclick="selWellness(this,'estresse',5)">5</div>
+                            <div class="choice-btn" data-val="1" style="--c:#4169e1" onclick="selWellness(this,'estresse',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#10b981" onclick="selWellness(this,'estresse',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b" onclick="selWellness(this,'estresse',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#f97316" onclick="selWellness(this,'estresse',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#ef4444" onclick="selWellness(this,'estresse',5)">5</div>
                         </div>
                         <input type="hidden" id="slEstresse" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Dor (1: Sem Dor | 5:
-                            Forte)</label>
-                        <div class="choice-group" id="group-dor">
-                            <div class="choice-btn" data-val="1" style="--c:#4169e1"
-                                onclick="selWellness(this,'dor',1)">1</div>
-                            <div class="choice-btn" data-val="2" style="--c:#10b981"
-                                onclick="selWellness(this,'dor',2)">2</div>
-                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
-                                onclick="selWellness(this,'dor',3)">3</div>
-                            <div class="choice-btn" data-val="4" style="--c:#f97316"
-                                onclick="selWellness(this,'dor',4)">4</div>
-                            <div class="choice-btn" data-val="5" style="--c:#ef4444"
-                                onclick="selWellness(this,'dor',5)">5</div>
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Fadiga (1: Disposto | 5: Fadigado)</label>
+                        <div class="choice-group" id="group-fadiga">
+                            <div class="choice-btn" data-val="1" style="--c:#4169e1" onclick="selWellness(this,'fadiga',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#10b981" onclick="selWellness(this,'fadiga',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b" onclick="selWellness(this,'fadiga',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#f97316" onclick="selWellness(this,'fadiga',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#ef4444" onclick="selWellness(this,'fadiga',5)">5</div>
                         </div>
-                        <input type="hidden" id="slDor" value="">
+                        <input type="hidden" id="slFadiga" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
-                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Fadiga (1: Disposto | 5:
-                            Fadigado)</label>
-                        <div class="choice-group" id="group-fadiga">
-                            <div class="choice-btn" data-val="1" style="--c:#4169e1"
-                                onclick="selWellness(this,'fadiga',1)">1</div>
-                            <div class="choice-btn" data-val="2" style="--c:#10b981"
-                                onclick="selWellness(this,'fadiga',2)">2</div>
-                            <div class="choice-btn" data-val="3" style="--c:#f59e0b"
-                                onclick="selWellness(this,'fadiga',3)">3</div>
-                            <div class="choice-btn" data-val="4" style="--c:#f97316"
-                                onclick="selWellness(this,'fadiga',4)">4</div>
-                            <div class="choice-btn" data-val="5" style="--c:#ef4444"
-                                onclick="selWellness(this,'fadiga',5)">5</div>
+                        <label style="font-size: 11px; margin-bottom: 6px; display: block;">Dor (1: Sem Dor | 5: Forte)</label>
+                        <div class="choice-group" id="group-dor">
+                            <div class="choice-btn" data-val="1" style="--c:#4169e1" onclick="selWellness(this,'dor',1)">1</div>
+                            <div class="choice-btn" data-val="2" style="--c:#10b981" onclick="selWellness(this,'dor',2)">2</div>
+                            <div class="choice-btn" data-val="3" style="--c:#f59e0b" onclick="selWellness(this,'dor',3)">3</div>
+                            <div class="choice-btn" data-val="4" style="--c:#f97316" onclick="selWellness(this,'dor',4)">4</div>
+                            <div class="choice-btn" data-val="5" style="--c:#ef4444" onclick="selWellness(this,'dor',5)">5</div>
                         </div>
-                        <input type="hidden" id="slFadiga" value="">
+                        <input type="hidden" id="slDor" value="">
                     </div>
 
                     <div

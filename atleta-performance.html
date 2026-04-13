@@ -1008,9 +1008,11 @@
             });
         }
 
-        function calcWellnessScore(sono, estresse, dor, humor, fadiga) {
-            const soma = parseInt(sono) + parseInt(estresse) + parseInt(dor) + parseInt(humor) + parseInt(fadiga);
-            return Math.round(((soma - 5) / 20) * 100);
+        function calcWellnessScore(sono, estresse, dor, humor, fadiga, alimentacao) {
+            const aliScore = alimentacao !== undefined && !isNaN(alimentacao) ? parseInt(alimentacao) : 3;
+            const soma = parseInt(sono) + parseInt(humor) + aliScore
+                        + (6 - parseInt(estresse)) + (6 - parseInt(dor)) + (6 - parseInt(fadiga));
+            return Math.round(((soma - 5) / 25) * 100);
         }
 
         function handleDataSourceChange() {
@@ -1092,19 +1094,28 @@
                     options: commonOptions
                 });
 
-                let components = { sono: 0, estresse: 0, dor: 0, humor: 0, fadiga: 0, alimentacao: 0 };
+                let components = { sono: 0, humor: 0, alimentacao: 0, estresse: 0, fadiga: 0, dor: 0 };
                 let totalLogs = 0;
                 dates7.forEach(d => {
                     let logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId);
-                    logs.forEach(l => { components.sono += parseInt(l.sono || 3); components.estresse += parseInt(l.estresse || 3); components.dor += parseInt(l.dor || 3); components.humor += parseInt(l.humor || 3); components.fadiga += parseInt(l.fadiga || 3); components.alimentacao += parseInt(l.alimentacao !== undefined && !isNaN(l.alimentacao) ? l.alimentacao : 3); totalLogs++; });
+                    logs.forEach(l => {
+                        components.sono += parseInt(l.sono || 3);
+                        components.humor += parseInt(l.humor || 3);
+                        components.alimentacao += parseInt(l.alimentacao !== undefined && !isNaN(l.alimentacao) ? l.alimentacao : 3);
+                        components.estresse += parseInt(l.estresse || 3);
+                        components.fadiga += parseInt(l.fadiga || 3);
+                        components.dor += parseInt(l.dor || 3);
+                        totalLogs++;
+                    });
                 });
+                // Radar: positivos diretos, negativos invertidos (6-val) para que maior = melhor em todos
                 const avgComp = [
-                    totalLogs > 0 ? (components.sono / totalLogs).toFixed(1) : 0,
-                    totalLogs > 0 ? (components.estresse / totalLogs).toFixed(1) : 0,
-                    totalLogs > 0 ? (components.dor / totalLogs).toFixed(1) : 0,
-                    totalLogs > 0 ? (components.humor / totalLogs).toFixed(1) : 0,
-                    totalLogs > 0 ? (components.fadiga / totalLogs).toFixed(1) : 0,
-                    totalLogs > 0 ? (components.alimentacao / totalLogs).toFixed(1) : 0
+                    totalLogs > 0 ? parseFloat((components.sono / totalLogs).toFixed(1)) : 0,
+                    totalLogs > 0 ? parseFloat((components.humor / totalLogs).toFixed(1)) : 0,
+                    totalLogs > 0 ? parseFloat((components.alimentacao / totalLogs).toFixed(1)) : 0,
+                    totalLogs > 0 ? parseFloat((6 - components.estresse / totalLogs).toFixed(1)) : 0,
+                    totalLogs > 0 ? parseFloat((6 - components.fadiga / totalLogs).toFixed(1)) : 0,
+                    totalLogs > 0 ? parseFloat((6 - components.dor / totalLogs).toFixed(1)) : 0
                 ];
 
                 const dataSono = dates7.map(d => { let logs = (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId); return logs.length > 0 ? parseInt(logs[0].sono) : null; });
@@ -1118,7 +1129,7 @@
 
                 dynamicCharts.chart3 = new Chart(ctx3, {
                     type: 'radar',
-                    data: { labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'], datasets: [{ data: avgComp, backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgb(139, 92, 246)' }] },
+                    data: { labels: ['Sono', 'Humor', 'Alimentação', 'Estresse ↓', 'Fadiga ↓', 'Dor ↓'], datasets: [{ data: avgComp, backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgb(139, 92, 246)' }] },
                     options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
                 });
             } else if (source === 'pse' || source === 'carga') {
@@ -1218,26 +1229,34 @@
                     options: { ...commonOptions, scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: true, labels: { font: { size: 10 }, boxWidth: 14 } } } }
                 });
 
-                let compWell = { sono: 0, estresse: 0, dor: 0, humor: 0, fadiga: 0, alimentacao: 0 };
+                let compWell = { sono: 0, humor: 0, alimentacao: 0, estresse: 0, fadiga: 0, dor: 0 };
                 let nWell = 0;
                 dates7.forEach(d => {
                     (db.wellnessLogs || []).filter(l => l.data === d && l.atletaId == currentAlunoId).forEach(l => {
                         compWell.sono += (l.sono || 3);
-                        compWell.estresse += (l.estresse || 3);
-                        compWell.dor += (l.dor || 3);
                         compWell.humor += (l.humor || 3);
-                        compWell.fadiga += (l.fadiga || 3);
                         compWell.alimentacao += (l.alimentacao || 3);
+                        compWell.estresse += (l.estresse || 3);
+                        compWell.fadiga += (l.fadiga || 3);
+                        compWell.dor += (l.dor || 3);
                         nWell++;
                     });
                 });
-                const avgComp2 = Object.values(compWell).map(v => nWell > 0 ? parseFloat((v / nWell).toFixed(1)) : 0);
+                // Negativos invertidos (6-val) para que a barra/radar mostre maior = melhor
+                const avgComp2 = nWell > 0 ? [
+                    parseFloat((compWell.sono / nWell).toFixed(1)),
+                    parseFloat((compWell.humor / nWell).toFixed(1)),
+                    parseFloat((compWell.alimentacao / nWell).toFixed(1)),
+                    parseFloat((6 - compWell.estresse / nWell).toFixed(1)),
+                    parseFloat((6 - compWell.fadiga / nWell).toFixed(1)),
+                    parseFloat((6 - compWell.dor / nWell).toFixed(1))
+                ] : [0, 0, 0, 0, 0, 0];
 
                 dynamicCharts.chart2 = new Chart(ctx2, {
                     type: 'bar',
                     data: {
-                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'],
-                        datasets: [{ data: avgComp2, backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#06b6d4'], borderRadius: 5 }]
+                        labels: ['Sono', 'Humor', 'Alimentação', 'Estresse ↓', 'Fadiga ↓', 'Dor ↓'],
+                        datasets: [{ data: avgComp2, backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981', '#10b981', '#10b981'], borderRadius: 5 }]
                     },
                     options: { ...commonOptions, scales: { y: { max: 5 } }, plugins: { legend: { display: false } } }
                 });
@@ -1245,7 +1264,7 @@
                 dynamicCharts.chart3 = new Chart(ctx3, {
                     type: 'radar',
                     data: {
-                        labels: ['Sono', 'Estresse', 'Dor', 'Humor', 'Fadiga', 'Alimentação'],
+                        labels: ['Sono', 'Humor', 'Alimentação', 'Estresse ↓', 'Fadiga ↓', 'Dor ↓'],
                         datasets: [{ data: avgComp2, backgroundColor: 'rgba(139,92,246,0.2)', borderColor: 'rgb(139,92,246)', pointBackgroundColor: 'rgb(139,92,246)' }]
                     },
                     options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 5, angleLines: { color: 'rgba(255,255,255,0.05)' }, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: false } } }
@@ -1308,11 +1327,11 @@
             `;
 
             html += renderWellnessDots('Sono', 'ti ti-bed', todayLog.sono);
-            html += renderWellnessDots('Estresse', 'ti ti-brain', todayLog.estresse, true);
-            html += renderWellnessDots('Dor Muscular', 'ti ti-shield-up', todayLog.dor, true);
             html += renderWellnessDots('Humor', 'ti ti-mood-smile', todayLog.humor);
-            html += renderWellnessDots('Fadiga', 'ti ti-battery-2', todayLog.fadiga, true);
             html += renderWellnessDots('Alimentação', 'ti ti-apple', todayLog.alimentacao);
+            html += renderWellnessDots('Estresse', 'ti ti-brain', todayLog.estresse, true);
+            html += renderWellnessDots('Fadiga', 'ti ti-battery-2', todayLog.fadiga, true);
+            html += renderWellnessDots('Dor Muscular', 'ti ti-shield-up', todayLog.dor, true);
 
             area.innerHTML = html;
         }
