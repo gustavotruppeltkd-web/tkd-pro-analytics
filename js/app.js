@@ -149,6 +149,8 @@ function fetchFromSupabase() {
 
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
         if (!authData || !authData.user) {
+            // Mesmo sem Supabase Auth, ativa o realtime se tiver tkd_coach_id
+            setupRealtimeSubscription();
             checkTrainerOnboarding();
             return;
         }
@@ -361,27 +363,43 @@ function setupRealtimeSubscription() {
     if (!window.supabaseClient) return;
 
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-        if (!authData || !authData.user) return;
-        const userId = authData.user.id;
+        // Funciona com Supabase Auth OU com o fluxo de localStorage (tkd_coach_id)
+        let userId = authData?.user?.id
+            || localStorage.getItem('tkd_coach_id')
+            || sessionStorage.getItem('tkd_coach_id');
+
+        if (!userId) {
+            console.warn('setupRealtimeSubscription: ID do treinador não encontrado, realtime desativado.');
+            return;
+        }
 
         window._supabaseSubscribed = true;
+        console.log('Realtime subscription ativa para project_id:', userId);
 
         window.supabaseClient
             .channel('public:app_state:' + userId)
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
                 const remoteData = payload.new.data;
-                if (remoteData) {
-                    console.log("Realtime: New data received!");
-                    window.db = remoteData;
-                    db = remoteData;
-                    lastSyncTime = remoteData._last_updated || Date.now();
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
-                    showToast("Dados atualizados!", "info");
-                    if (typeof renderSemaforo === 'function') renderSemaforo();
-                    if (typeof renderAlunosUI === 'function') renderAlunosUI();
-                }
+                if (!remoteData) return;
+
+                console.log('Realtime: dados recebidos do atleta!');
+                window.db = remoteData;
+                db = remoteData;
+                lastSyncTime = remoteData._last_updated || Date.now();
+                localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
+
+                showToast('Atleta atualizou dados!', 'info');
+
+                // Re-renderiza qualquer função disponível na página atual
+                if (typeof renderSemaforo === 'function') renderSemaforo();
+                if (typeof renderAlunosUI === 'function') renderAlunosUI();
+                if (typeof renderDashboard === 'function') renderDashboard();
+                if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
+                if (typeof onDataLoaded === 'function') onDataLoaded();
             })
-            .subscribe();
+            .subscribe((status) => {
+                console.log('Realtime status:', status);
+            });
     });
 }
 

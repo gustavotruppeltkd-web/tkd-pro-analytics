@@ -2576,21 +2576,55 @@
         // ID do treinador cujos dados o portal está exibindo
         var portalCoachId = null;
 
-        // Salva sempre na linha do TREINADOR (não do atleta autenticado)
+        // Salva na linha do TREINADOR — merge cirúrgico: só toca arrays do atleta atual
         async function savePortalDB() {
-            if (!window.supabaseClient || !portalCoachId) {
-                // Fallback: salva só no localStorage
-                localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
-                return;
-            }
+            // Backup local sempre, independente do Supabase
+            localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+
+            if (!window.supabaseClient || !portalCoachId) return;
+
             try {
-                window.db._last_updated = Date.now();
-                localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
-                const { error } = await window.supabaseClient
+                // 1. Busca os dados atuais do treinador para não sobrescrever outros atletas
+                const { data: result, error: fetchErr } = await window.supabaseClient
                     .from('app_state')
-                    .upsert({ project_id: portalCoachId, data: window.db });
-                if (error) console.error('savePortalDB erro:', error);
-                else console.log('savePortalDB: dados salvos na linha do treinador', portalCoachId);
+                    .select('data')
+                    .eq('project_id', portalCoachId)
+                    .single();
+
+                if (fetchErr || !result || !result.data) {
+                    console.error('savePortalDB: não encontrou linha do treinador', fetchErr);
+                    return;
+                }
+
+                const coachData = result.data;
+
+                // 2. Merge cirúrgico — só substitui as entradas DESTE atleta nos arrays relevantes
+                //    Entradas de outros atletas ficam intactas
+                const atletaArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
+                atletaArrays.forEach(function(key) {
+                    const minhasEntradas = (window.db[key] || []).filter(function(e) {
+                        return String(e.atletaId) === String(atletaId);
+                    });
+                    const entradaOutros = (coachData[key] || []).filter(function(e) {
+                        return String(e.atletaId) !== String(atletaId);
+                    });
+                    coachData[key] = entradaOutros.concat(minhasEntradas);
+                });
+
+                coachData._last_updated = Date.now();
+
+                // 3. Salva de volta na linha do treinador
+                const { error: saveErr } = await window.supabaseClient
+                    .from('app_state')
+                    .upsert({ project_id: portalCoachId, data: coachData });
+
+                if (saveErr) {
+                    console.error('savePortalDB upsert erro:', saveErr);
+                } else {
+                    console.log('savePortalDB OK — atleta', atletaId, 'sincronizado com treinador', portalCoachId);
+                    window.db = coachData;
+                    localStorage.setItem('tkd_scout_db', JSON.stringify(coachData));
+                }
             } catch (e) {
                 console.error('savePortalDB exception:', e);
             }
