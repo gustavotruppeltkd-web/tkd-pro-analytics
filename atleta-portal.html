@@ -1320,7 +1320,7 @@
                             <div class="choice-btn" data-val="5" style="--c:#4169e1"
                                 onclick="selWellness(this,'sono',5)">5</div>
                         </div>
-                        <input type="hidden" id="slSono" value="3">
+                        <input type="hidden" id="slSono" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
@@ -1338,7 +1338,7 @@
                             <div class="choice-btn" data-val="5" style="--c:#4169e1"
                                 onclick="selWellness(this,'alim',5)">5</div>
                         </div>
-                        <input type="hidden" id="slAlim" value="3">
+                        <input type="hidden" id="slAlim" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
@@ -1356,7 +1356,7 @@
                             <div class="choice-btn" data-val="5" style="--c:#4169e1"
                                 onclick="selWellness(this,'humor',5)">5</div>
                         </div>
-                        <input type="hidden" id="slHumor" value="3">
+                        <input type="hidden" id="slHumor" value="">
                     </div>
 
                     <!-- GRUPO 2: BOM -> RUIM (Blue -> Red) -->
@@ -1375,7 +1375,7 @@
                             <div class="choice-btn" data-val="5" style="--c:#ef4444"
                                 onclick="selWellness(this,'estresse',5)">5</div>
                         </div>
-                        <input type="hidden" id="slEstresse" value="3">
+                        <input type="hidden" id="slEstresse" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
@@ -1393,7 +1393,7 @@
                             <div class="choice-btn" data-val="5" style="--c:#ef4444"
                                 onclick="selWellness(this,'dor',5)">5</div>
                         </div>
-                        <input type="hidden" id="slDor" value="3">
+                        <input type="hidden" id="slDor" value="">
                     </div>
 
                     <div class="form-group" style="margin-bottom: 20px;">
@@ -1411,7 +1411,7 @@
                             <div class="choice-btn" data-val="5" style="--c:#ef4444"
                                 onclick="selWellness(this,'fadiga',5)">5</div>
                         </div>
-                        <input type="hidden" id="slFadiga" value="3">
+                        <input type="hidden" id="slFadiga" value="">
                     </div>
 
                     <div
@@ -1530,7 +1530,7 @@
                         </div>
                     </div>
 
-                    <input type="hidden" id="slPSE" value="5">
+                    <input type="hidden" id="slPSE" value="">
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label style="font-size: 11px; margin-bottom: 4px;">Duração (Min)</label>
@@ -2207,14 +2207,16 @@
         function initWellnessButtons() {
             ['sono', 'alim', 'humor', 'estresse', 'dor', 'fadiga'].forEach(key => {
                 const inp = document.getElementById('sl' + key.charAt(0).toUpperCase() + key.slice(1));
-                if (!inp) return;
+                if (!inp || inp.value === '') return; // sem default — só seleciona se já tiver valor salvo
                 const val = inp.value;
                 const btn = document.querySelector(`#group-${key} .choice-btn[data-val="${val}"]`);
                 if (btn) selWellness(btn, key, val);
             });
             const pseVal = document.getElementById('slPSE').value;
-            const pseBtn = document.querySelector(`#group-pse .choice-btn[data-val="${pseVal}"]`);
-            if (pseBtn) selPSEBtn(pseBtn, pseVal);
+            if (pseVal !== '') {
+                const pseBtn = document.querySelector(`#group-pse .choice-btn[data-val="${pseVal}"]`);
+                if (pseBtn) selPSEBtn(pseBtn, pseVal);
+            }
         }
 
         function checkWellnessDone() {
@@ -2510,6 +2512,15 @@
         }
 
         function saveWellness() {
+            // Valida que todos os campos foram preenchidos (nenhum pode estar vazio)
+            const camposWellness = ['slSono', 'slAlim', 'slHumor', 'slEstresse', 'slDor', 'slFadiga'];
+            const nomesCampos = { slSono: 'Sono', slAlim: 'Alimentação', slHumor: 'Humor', slEstresse: 'Estresse', slDor: 'Dor', slFadiga: 'Fadiga' };
+            for (const id of camposWellness) {
+                if (!document.getElementById(id).value) {
+                    return showToast(`Selecione um valor para ${nomesCampos[id]}`, 'error');
+                }
+            }
+
             let strPeso = document.getElementById('inpPeso').value || '';
             strPeso = strPeso.replace(',', '.');
             let pesoParsed = parseFloat(strPeso) || null;
@@ -2538,6 +2549,7 @@
             const dur = parseInt(document.getElementById('inpDuracao').value);
             const tipo = document.getElementById('slTipoTreino').value;
 
+            if (!pse) return showToast('Selecione a intensidade (PSE)', 'error');
             if (!dur || dur < 1) return showToast('Informe a duração do treino', 'error');
 
             // Check if this type was already submitted today
@@ -2556,12 +2568,19 @@
             localStorage.setItem('tkd_pse_' + atletaId + '_' + today, JSON.stringify(pseBkp));
             savePortalDB();
 
-            // Reset fields
-            document.getElementById('slPSE').value = 5;
+            // Reset fields — sem pré-seleção
+            document.getElementById('slPSE').value = '';
             const vPseReset = document.getElementById('vPSE');
-            if (vPseReset) vPseReset.innerText = 5;
+            if (vPseReset) vPseReset.innerText = '';
             document.getElementById('inpDuracao').value = '';
             document.getElementById('cargaDisplay').innerHTML = '';
+            // Limpa seleção visual dos botões PSE
+            document.querySelectorAll('#group-pse .choice-btn').forEach(b => {
+                b.classList.remove('selected');
+                b.style.background = '';
+                b.style.borderColor = '';
+                b.style.boxShadow = '';
+            });
 
             showToast('Carga salva!');
             checkPseDone();
