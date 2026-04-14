@@ -1126,11 +1126,13 @@ body.mode-mobile .btn {
     justify-content: center;
 }
 
-/* Modal mobile fixes */
+/* Modal mobile fixes — largura máxima nunca passa da tela */
 body.mode-mobile .modal-content {
     width: 95% !important;
+    max-width: calc(100vw - 20px) !important;
     margin: 10px auto;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 /* Form mobile fixes */
@@ -1429,5 +1431,115 @@ body.mode-mobile [style*="grid-column: span 4"] {
 body.mode-mobile .scout-grid {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    min-width: 600px;
+    min-width: unset;
+}
+
+/* ── CORREÇÕES ABRANGENTES MOBILE — inputs, selects, grids inline, tabelas ── */
+
+/* Inputs e selects com largura fixa em px → ocupam toda a largura no mobile */
+body.mode-mobile input[style*="width"],
+body.mode-mobile select[style*="width"],
+body.mode-mobile textarea[style*="width"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Containers de filtros/controles → viram coluna no mobile */
+body.mode-mobile .comparison-controls,
+body.mode-mobile .filter-section,
+body.mode-mobile .filter-row,
+body.mode-mobile .controls-row,
+body.mode-mobile .topbar-actions,
+body.mode-mobile .header-actions {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+body.mode-mobile .comparison-controls > *,
+body.mode-mobile .filter-section > *,
+body.mode-mobile .filter-row > * {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* filter-select (financeiro.html) */
+body.mode-mobile .filter-select {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Grid repeat(3, 1fr) inline → 1 coluna no mobile */
+body.mode-mobile [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+}
+body.mode-mobile [style*="grid-template-columns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+body.mode-mobile [style*="grid-template-columns: repeat(5"],
+body.mode-mobile [style*="grid-template-columns: repeat(6"],
+body.mode-mobile [style*="grid-template-columns: repeat(7"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+
+/* Grid 2fr 1fr / 280px 1fr → colapsar para 1 coluna */
+body.mode-mobile [style*="grid-template-columns: 2fr 1fr"],
+body.mode-mobile [style*="grid-template-columns: 280px"],
+body.mode-mobile [style*="grid-template-columns: 160px"] {
+    grid-template-columns: 1fr !important;
+}
+
+/* Tabelas — envolver com scroll horizontal */
+body.mode-mobile table,
+body.mode-mobile .tkd-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Colunas de tabela com largura fixa inline */
+body.mode-mobile td[style*="width"],
+body.mode-mobile th[style*="width"] {
+    min-width: 80px;
+}
+
+/* Payment form (financeiro.html) — painel lateral que entra pela direita */
+body.mode-mobile .payment-form-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    right: -100vw !important;
+    padding: 20px !important;
+    box-sizing: border-box;
+}
+body.mode-mobile .payment-form-container.active {
+    right: 0 !important;
+}
+
+/* Evento detalhes — colunas col-result / col-medal */
+body.mode-mobile .col-result,
+body.mode-mobile .col-medal {
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 1;
+}
+
+/* Garantir que nenhum elemento filho ultrapasse o container */
+body.mode-mobile .card,
+body.mode-mobile .modal-content,
+body.mode-mobile .main-content > * {
+    max-width: 100%;
+    box-sizing: border-box;
+    word-break: break-word;
+}
+
+/* Overflow geral — evita scroll horizontal indesejado na página */
+body.mode-mobile .main-content {
+    overflow-x: hidden;
+}
+body.mode-mobile .app-container {
+    overflow-x: hidden;
 }
