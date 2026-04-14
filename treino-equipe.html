@@ -381,6 +381,47 @@
             padding: 7px 10px;
             gap: 8px;
             animation: fadeIn 0.15s ease;
+            cursor: default;
+        }
+        .exercicio-item.drag-over {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.18);
+        }
+        .exercicio-item.dragging {
+            opacity: 0.4;
+        }
+        .ex-drag-handle {
+            color: var(--text-muted);
+            font-size: 14px;
+            cursor: grab;
+            padding: 0 2px;
+            flex-shrink: 0;
+            user-select: none;
+            line-height: 1;
+        }
+        .ex-drag-handle:active { cursor: grabbing; }
+        .ex-item-edit-form {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            padding: 8px 10px;
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+        .ex-item-edit-form.open { display: flex; }
+        .ex-item-edit-form input, .ex-item-edit-form select {
+            font-size: 12px;
+            padding: 5px 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .ex-item-edit-form .edit-row {
+            display: flex; gap: 6px; align-items: center;
+        }
+        .ex-item-edit-form .edit-row label {
+            font-size: 11px; color: var(--text-muted); white-space: nowrap; width: 50px; flex-shrink: 0;
         }
 
         .ex-item-info {
@@ -2527,6 +2568,22 @@
 
             document.getElementById('blocosContainer').appendChild(div);
             populateExLibDatalist(id);
+
+            // Allow dropping onto the container itself (at the end of the list)
+            const exContainer = document.getElementById(`exContainer_${id}`);
+            exContainer.addEventListener('dragover', e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+            exContainer.addEventListener('drop', e => {
+                e.preventDefault();
+                const draggedId = e.dataTransfer.getData('text/plain');
+                const dragged = document.getElementById(draggedId);
+                if (!dragged) return;
+                // Only append if the drop target is the container itself (not a child)
+                if (e.target === exContainer) exContainer.appendChild(dragged);
+            });
+
             exercicios.forEach(ex => {
                 const exObj = typeof ex === 'string' ? { nome: ex, tipo: 'texto', valor: '' } : ex;
                 addExercicioItem(id, exObj);
@@ -2592,6 +2649,7 @@
             item.dataset.tipo = ex.tipo || 'texto';
             item.dataset.valor = ex.valor || '';
             item.dataset.obs = ex.obs || '';
+            item.draggable = true;
 
             const isLink = ex.obs && (ex.obs.startsWith('http://') || ex.obs.startsWith('https://'));
             const obsHtml = ex.obs
@@ -2601,17 +2659,127 @@
                 : '';
 
             item.innerHTML = `
+                <span class="ex-drag-handle" title="Arrastar">⠿</span>
                 <div class="ex-item-body">
                     <div class="ex-item-info">
                         <span class="ex-item-nome">${ex.nome}</span>
                         ${ex.valor ? `<span class="ex-item-val">${ex.valor}</span>` : ''}
                     </div>
                     ${obsHtml}
+                    <div class="ex-item-edit-form" id="editForm_${itemId}">
+                        <div class="edit-row">
+                            <label>Nome</label>
+                            <input type="text" id="editNome_${itemId}" value="${ex.nome.replace(/"/g, '&quot;')}">
+                        </div>
+                        <div class="edit-row">
+                            <label>Carga/Reps</label>
+                            <input type="text" id="editValor_${itemId}" value="${(ex.valor || '').replace(/"/g, '&quot;')}" placeholder="Ex: 3×10, 5kg, 30s">
+                        </div>
+                        <div class="edit-row">
+                            <label>Obs/Link</label>
+                            <input type="text" id="editObs_${itemId}" value="${(ex.obs || '').replace(/"/g, '&quot;')}" placeholder="Observação ou URL">
+                        </div>
+                        <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:2px;">
+                            <button class="btn" style="font-size:11px; padding:4px 10px;" onclick="saveExItemEdit('${itemId}')">
+                                <i class="ti ti-check" style="font-size:11px;"></i> Salvar
+                            </button>
+                            <button class="btn" style="font-size:11px; padding:4px 10px; background:transparent; border-color:rgba(255,255,255,0.1);" onclick="toggleExItemEdit('${itemId}', false)">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <button class="btn btn-icon danger" onclick="document.getElementById('${itemId}').remove()" title="Removeráá">
-                    <i class="ti ti-x" style="font-size:11px;"></i>
-                </button>`;
+                <div style="display:flex; gap:4px; align-items:center; flex-shrink:0;">
+                    <button class="btn btn-icon" onclick="toggleExItemEdit('${itemId}', true)" title="Editar" style="background:rgba(59,130,246,0.15); border-color:rgba(59,130,246,0.3); color:var(--primary);">
+                        <i class="ti ti-pencil" style="font-size:11px;"></i>
+                    </button>
+                    <button class="btn btn-icon danger" onclick="document.getElementById('${itemId}').remove()" title="Remover">
+                        <i class="ti ti-x" style="font-size:11px;"></i>
+                    </button>
+                </div>`;
+
+            setupExItemDrag(item, container);
             container.appendChild(item);
+        }
+
+        function toggleExItemEdit(itemId, open) {
+            const form = document.getElementById(`editForm_${itemId}`);
+            if (!form) return;
+            if (open) {
+                form.classList.add('open');
+                document.getElementById(`editNome_${itemId}`)?.focus();
+            } else {
+                form.classList.remove('open');
+            }
+        }
+
+        function saveExItemEdit(itemId) {
+            const item = document.getElementById(itemId);
+            if (!item) return;
+            const nome = document.getElementById(`editNome_${itemId}`).value.trim();
+            const valor = document.getElementById(`editValor_${itemId}`).value.trim();
+            const obs = document.getElementById(`editObs_${itemId}`).value.trim();
+            if (!nome) return;
+
+            item.dataset.nome = nome;
+            item.dataset.valor = valor;
+            item.dataset.obs = obs;
+
+            // Update visible spans
+            item.querySelector('.ex-item-nome').textContent = nome;
+            const valSpan = item.querySelector('.ex-item-val');
+            if (valor) {
+                if (valSpan) { valSpan.textContent = valor; }
+                else { item.querySelector('.ex-item-info').insertAdjacentHTML('beforeend', `<span class="ex-item-val">${valor}</span>`); }
+            } else if (valSpan) { valSpan.remove(); }
+
+            // Update obs display (sibling of the info div, before the edit form)
+            const infoDiv = item.querySelector('.ex-item-info');
+            // Remove existing obs node (could be span or a)
+            const existingObs = item.querySelector('.ex-item-obs');
+            if (existingObs) existingObs.remove();
+            const isLink = obs.startsWith('http://') || obs.startsWith('https://');
+            if (obs) {
+                const obsEl = isLink
+                    ? `<a href="${obs}" target="_blank" rel="noopener" class="ex-item-obs ex-item-link"><i class="ti ti-link" style="font-size:10px;"></i> Ver link</a>`
+                    : `<span class="ex-item-obs">${obs}</span>`;
+                infoDiv.insertAdjacentHTML('afterend', obsEl);
+            }
+
+            toggleExItemEdit(itemId, false);
+        }
+
+        function setupExItemDrag(item, container) {
+            item.addEventListener('dragstart', e => {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', item.id);
+                setTimeout(() => item.classList.add('dragging'), 0);
+            });
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+                container.querySelectorAll('.exercicio-item').forEach(i => i.classList.remove('drag-over'));
+            });
+            item.addEventListener('dragover', e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                container.querySelectorAll('.exercicio-item').forEach(i => i.classList.remove('drag-over'));
+                if (!item.classList.contains('dragging')) item.classList.add('drag-over');
+            });
+            item.addEventListener('drop', e => {
+                e.preventDefault();
+                const draggedId = e.dataTransfer.getData('text/plain');
+                const dragged = document.getElementById(draggedId);
+                if (!dragged || dragged === item) return;
+                // Insert dragged before or after the target depending on mouse position
+                const rect = item.getBoundingClientRect();
+                const midY = rect.top + rect.height / 2;
+                if (e.clientY < midY) {
+                    container.insertBefore(dragged, item);
+                } else {
+                    item.insertAdjacentElement('afterend', dragged);
+                }
+                item.classList.remove('drag-over');
+            });
         }
 
 
