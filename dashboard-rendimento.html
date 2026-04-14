@@ -2558,60 +2558,136 @@
         }
 
         // --- PSE & CARGA CHARTS ---
+        const TIPOS_FISICO_IDS = ['forca', 'potencia', 'transferencia', 'hiit', 'cardio', 'glicolitico', 'regenerativo', 'mobilidade', 'flexibilidade', 'core', 'fisico', 'recuperacao'];
+        function isTreinoFisico(tipo) { return TIPOS_FISICO_IDS.includes((tipo || '').toLowerCase()); }
+
         function renderPseCargaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Diário de Treinos (PSE e Carga)';
-            document.getElementById('titleChart1').innerText = 'Carga Diária: Planejada vs Realizada';
-            document.getElementById('titleChart2').innerText = 'Volume vs Intensidade (Duração × PSE)';
-            document.getElementById('titleChart3').innerText = 'Proporção por Tipo de Treino';
+            document.getElementById('titleChart1').innerText = 'Carga Diária por Fonte e Tipo (Treino + Interna)';
+            document.getElementById('titleChart2').innerText = 'Mesociclo: Planejado vs Realizado';
+            document.getElementById('titleChart3').innerText = 'Proporção por Tipo de Treino (Treinos Criados)';
             document.getElementById('titleChart4').innerText = 'Distribuição de Intensidade (Zonas de PSE)';
-            document.getElementById('titleChart5').innerText = 'Acúmulo de Carga (Últimas 5 Semanas)';
+            document.getElementById('titleChart5').innerText = 'Acúmulo de Carga Semanal (Últimas 5 Semanas)';
 
-            let allLogs = (db.cargaTreino || []).filter(l => dates.includes(l.data));
+            // --- Data helpers ---
+            // Internal load: athlete-reported PSE (from atleta-portal)
+            let allInternalLogs = (db.cargaTreino || []).filter(l => dates.includes(l.data));
             if (athleteId !== 'equipe') {
-                allLogs = allLogs.filter(l => l.atletaId === parseInt(athleteId));
+                allInternalLogs = allInternalLogs.filter(l => l.atletaId === parseInt(athleteId));
             } else {
-                allLogs = allLogs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                allInternalLogs = allInternalLogs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
             }
 
-            // 0. Tabela Mestre
-            const tableContainer = document.getElementById('dynamicTableContainer');
-            let tableHTML = `<table class="tkd-table" style="font-size: 13px;">
-                <thead>
-                    <tr>
-                        <th style="padding: 10px;">Data</th>
-                        <th style="padding: 10px;">Atleta</th>
-                        <th style="padding: 10px;">Duração</th>
-                        <th style="padding: 10px;">PSE</th>
-                        <th style="padding: 10px;">Tipo</th>
-                        <th style="padding: 10px;">Carga</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+            // External load: treinos created in training creator (most important source)
+            const treinosTurma = (db.treinos || []).filter(t => t.turmaId === db.activeTurmaId && dates.includes(t.data));
 
-            let sortedLogs = [...allLogs].sort((a, b) => new Date(b.data) - new Date(a.data));
-            if (sortedLogs.length === 0) {
+            // ---- 0. Tabela Mestre ----
+            const tableContainer = document.getElementById('dynamicTableContainer');
+            const tipoLabel = t => {
+                const map = { forca:'Força', potencia:'Potência', transferencia:'Transferência', hiit:'HIIT', cardio:'Cardio',
+                    glicolitico:'Glicolítico', regenerativo:'Regenerativo', mobilidade:'Mobilidade', flexibilidade:'Flexibilidade',
+                    core:'Core', tatico:'Tático', tecnico:'Técnico', tecnico_tatico:'Técnico/Tático', simulatorio:'Simulatório',
+                    sparring:'Sparring', fisico:'Físico', recuperacao:'Recuperação', competicao:'Competição' };
+                return map[t] || t || '—';
+            };
+
+            // Merge treinos + internal logs into diary rows
+            let diaryRows = [];
+            treinosTurma.forEach(t => {
+                const interno = allInternalLogs.find(l => l.data === t.data);
+                const cargaInt = interno ? (interno.cargaCalculada || (interno.duracaoMins * interno.pse)) : null;
+                diaryRows.push({ data: t.data, tipo: t.tipo, duracaoMins: t.duracaoMins, psePlan: t.psePlanejada,
+                    cargaExt: t.cargaTreino || Math.round((t.psePlanejada || 0) * (t.duracaoMins || 0)),
+                    cargaInt: cargaInt, fonte: 'Treino' });
+            });
+            // Internal logs with no matching treino
+            allInternalLogs.forEach(l => {
+                const hasMatch = treinosTurma.find(t => t.data === l.data);
+                if (!hasMatch) {
+                    diaryRows.push({ data: l.data, tipo: l.tipoTreino || '—', duracaoMins: l.duracaoMins,
+                        psePlan: null, cargaExt: null, cargaInt: (l.cargaCalculada || (l.duracaoMins * l.pse)), fonte: 'Interno' });
+                }
+            });
+            diaryRows.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+            let tableHTML = `<table class="tkd-table" style="font-size: 13px;">
+                <thead><tr>
+                    <th style="padding: 10px;">Data</th>
+                    <th style="padding: 10px;">Tipo</th>
+                    <th style="padding: 10px;">Duração</th>
+                    <th style="padding: 10px;">PSE Plan.</th>
+                    <th style="padding: 10px; color: #3b82f6;">Carga Ext. (Treino)</th>
+                    <th style="padding: 10px; color: #8b5cf6;">Carga Int. (Atleta)</th>
+                </tr></thead><tbody>`;
+            if (diaryRows.length === 0) {
                 tableHTML += `<tr><td colspan="6" style="text-align:center; padding: 20px;">Nenhum registro no período.</td></tr>`;
             } else {
-                sortedLogs.forEach(l => {
-                    const al = db.alunos.find(a => a.id === l.atletaId);
-                    const nome = al ? al.nome.split(' ')[0] : 'N/A';
-                    const dataBR = l.data.split('-').reverse().join('/');
-                    const carga = l.cargaCalculada || (l.duracaoMins * l.pse);
+                diaryRows.forEach(r => {
+                    const dataBR = r.data.split('-').reverse().join('/');
+                    const macro = isTreinoFisico(r.tipo) ? 'Físico' : 'Taekwondo';
+                    const macroColor = isTreinoFisico(r.tipo) ? '#f59e0b' : '#3b82f6';
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
-                        <td style="padding: 10px;">${l.duracaoMins} min</td>
-                        <td style="padding: 10px;"><span class="badge ${l.pse >= 8 ? 'bg-danger' : l.pse >= 5 ? 'bg-warning' : 'bg-success'}" style="color:#fff;">${l.pse}</span></td>
-                        <td style="padding: 10px;"><span class="badge" style="background: rgba(255,255,255,0.1); color:var(--text-main);">${l.tipoTreino || 'Taekwondo'}</span></td>
-                        <td style="padding: 10px; font-weight: bold; color: #8b5cf6;">${carga}</td>
+                        <td style="padding: 10px;">
+                            <span style="color:${macroColor}; font-size:11px;">${macro}</span>
+                            <span class="badge" style="background:rgba(255,255,255,0.08); color:var(--text-muted); font-size:11px; margin-left:4px;">${tipoLabel(r.tipo)}</span>
+                        </td>
+                        <td style="padding: 10px;">${r.duracaoMins ? r.duracaoMins + ' min' : '—'}</td>
+                        <td style="padding: 10px;">${r.psePlan != null ? r.psePlan : '—'}</td>
+                        <td style="padding: 10px; font-weight: bold; color: #3b82f6;">${r.cargaExt != null ? r.cargaExt : '—'}</td>
+                        <td style="padding: 10px; font-weight: bold; color: #8b5cf6;">${r.cargaInt != null ? Math.round(r.cargaInt) : '—'}</td>
                     </tr>`;
                 });
             }
             tableHTML += `</tbody></table>`;
             tableContainer.innerHTML = tableHTML;
 
-            // Gráfico 1: Carga Planejada (do mesociclo) vs Realizada
-            const planejadaData = dates.map(d => {
+            // ---- Gráfico 1: Carga Diária por Fonte e Tipo ----
+            // 4 series: Ext TKD (treino), Ext Físico (treino), Int TKD, Int Físico — null if no data that day
+            const extTkdData = dates.map(d => {
+                const t = treinosTurma.filter(t => t.data === d && !isTreinoFisico(t.tipo));
+                if (t.length === 0) return null;
+                return t.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
+            });
+            const extFisData = dates.map(d => {
+                const t = treinosTurma.filter(t => t.data === d && isTreinoFisico(t.tipo));
+                if (t.length === 0) return null;
+                return t.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
+            });
+            const intTkdData = dates.map(d => {
+                const ls = allInternalLogs.filter(l => l.data === d && !isTreinoFisico(l.tipoTreino) && l.tipoTreino !== 'Físico');
+                if (ls.length === 0) return null;
+                const sum = ls.reduce((s, l) => s + (l.cargaCalculada || (l.duracaoMins * l.pse)), 0);
+                return athleteId === 'equipe' ? Math.round(sum / ls.length) : Math.round(sum);
+            });
+            const intFisData = dates.map(d => {
+                const ls = allInternalLogs.filter(l => l.data === d && (isTreinoFisico(l.tipoTreino) || l.tipoTreino === 'Físico'));
+                if (ls.length === 0) return null;
+                const sum = ls.reduce((s, l) => s + (l.cargaCalculada || (l.duracaoMins * l.pse)), 0);
+                return athleteId === 'equipe' ? Math.round(sum / ls.length) : Math.round(sum);
+            });
+
+            dynamicCharts.chart1 = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Ext. TKD (Treino)', data: extTkdData, backgroundColor: 'rgba(59,130,246,0.85)', borderRadius: 3, stack: 'ext' },
+                        { label: 'Ext. Físico (Treino)', data: extFisData, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 3, stack: 'ext' },
+                        { label: 'Int. TKD (Atleta)', data: intTkdData, backgroundColor: 'rgba(99,102,241,0.7)', borderRadius: 3, stack: 'int', borderDash: [4,4] },
+                        { label: 'Int. Físico (Atleta)', data: intFisData, backgroundColor: 'rgba(239,68,68,0.6)', borderRadius: 3, stack: 'int' }
+                    ]
+                },
+                options: {
+                    ...getCommonOptions(),
+                    scales: { y: { min: 0, stacked: false, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } },
+                    plugins: { legend: { display: true, labels: { boxWidth: 10, font: { size: 10 } } } }
+                }
+            });
+
+            // ---- Gráfico 2: Mesociclo Planejado vs Realizado (treinos) ----
+            const mesoAtivo = (db.mesociclos || []).find(m => m.turmaId === db.activeTurmaId);
+            const mesoPlanned = dates.map(d => {
                 const weekStartObj = getWeekStartFor(new Date(d + 'T00:00:00'));
                 const wsStr = weekStartObj.toISOString().split('T')[0];
                 const weekDates = Array.from({ length: 7 }, (_, i) => {
@@ -2619,87 +2695,47 @@
                     return x.toISOString().split('T')[0];
                 });
                 const dayIndex = weekDates.indexOf(d);
-                if (dayIndex < 0) return 0;
-                const mesoAtivo = (db.mesociclos || []).find(m => m.turmaId === db.activeTurmaId);
-                if (!mesoAtivo || !mesoAtivo.semanas) return 0;
+                if (dayIndex < 0 || !mesoAtivo || !mesoAtivo.semanas) return null;
                 const sem = mesoAtivo.semanas.find(s => s.weekStart === wsStr);
-                if (!sem || !sem.sessoesDias || !sem.sessoesDias[dayIndex]) return 0;
-                return Math.round(sem.sessoesDias[dayIndex].reduce((sum, sess) => sum + ((sess.min || 0) * (sess.pse || 0)), 0));
+                if (!sem || !sem.sessoesDias || !sem.sessoesDias[dayIndex]) return null;
+                const v = Math.round(sem.sessoesDias[dayIndex].reduce((s, sess) => s + ((sess.min || 0) * (sess.pse || 0)), 0));
+                return v > 0 ? v : null;
             });
-            const realizadaData = dates.map(d => {
-                let dlogs = allLogs.filter(l => l.data === d);
-                if (dlogs.length === 0) return 0;
-                let sum = dlogs.reduce((acc, l) => acc + (l.cargaCalculada || (l.duracaoMins * l.pse)), 0);
-                return athleteId === 'equipe' ? Math.round(sum / dlogs.length) : Math.round(sum);
-            });
-            dynamicCharts.chart1 = new Chart(ctx1, {
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Planejada', type: 'line', data: planejadaData, borderColor: 'rgba(255,255,255,0.4)', borderDash: [5,5], tension: 0.3, fill: false, pointRadius: 3 },
-                        { label: 'Realizada', type: 'bar', data: realizadaData, backgroundColor: '#8b5cf6', borderRadius: 4 }
-                    ]
-                },
-                options: { ...getCommonOptions(), scales: { y: { min: 0, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 11 } } } } }
-            });
-
-            // Gráfico 2: Volume vs Intensidade (Barra Dupla - multi-axis)
-            const avgVolume = dates.map(d => {
-                let dlogs = allLogs.filter(l => l.data === d);
-                if (dlogs.length === 0) return 0;
-                let sum = dlogs.reduce((acc, l) => acc + l.duracaoMins, 0);
-                return parseFloat((sum / dlogs.length).toFixed(1));
-            });
-            const avgPSE = dates.map(d => {
-                let dlogs = allLogs.filter(l => l.data === d);
-                if (dlogs.length === 0) return 0;
-                let sum = dlogs.reduce((acc, l) => acc + l.pse, 0);
-                return parseFloat((sum / dlogs.length).toFixed(1));
+            const treinoRealized = dates.map(d => {
+                const t = treinosTurma.filter(t => t.data === d);
+                if (t.length === 0) return null;
+                return t.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
             });
 
             dynamicCharts.chart2 = new Chart(ctx2, {
-                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Minutos', data: avgVolume, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, yAxisID: 'y1' },
-                        { label: 'PSE', data: avgPSE, backgroundColor: 'rgba(239,68,68,0.8)', borderRadius: 4, yAxisID: 'y' }
+                        { label: 'Mesociclo (Plan.)', type: 'line', data: mesoPlanned, borderColor: 'rgba(255,255,255,0.35)', borderDash: [5,4], tension: 0.3, fill: false, pointRadius: 3, spanGaps: true },
+                        { label: 'Treino (Realiz.)', type: 'bar', data: treinoRealized, backgroundColor: '#3b82f6', borderRadius: 4 }
                     ]
                 },
-                options: {
-                    ...getCommonOptions(),
-                    scales: {
-                        y: { type: 'linear', display: true, position: 'left', min: 0, max: 10, title: { display: true, text: 'PSE', color: 'rgba(255,255,255,0.5)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Mins', color: 'rgba(255,255,255,0.5)', font: { size: 10 } } },
-                        x: { grid: { display: false } }
-                    },
-                    plugins: { legend: { display: true, labels: { boxWidth: 12, font: { size: 11 } } } }
-                }
+                options: { ...getCommonOptions(), scales: { y: { min: 0, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }, plugins: { legend: { display: true, labels: { boxWidth: 10, font: { size: 11 } } } } }
             });
 
-            // Gráfico 3: Proporção por Tipo de Treino (Pizza)
-            let fis = 0, tkd = 0;
-            allLogs.forEach(l => {
-                if (l.tipoTreino === 'Físico') fis++;
-                else tkd++;
+            // ---- Gráfico 3: Proporção TKD vs Físico (doughnut - baseado em treinos criados) ----
+            let tkdCount = 0, fisCount = 0;
+            treinosTurma.forEach(t => {
+                if (isTreinoFisico(t.tipo)) fisCount++;
+                else tkdCount++;
             });
             dynamicCharts.chart3 = new Chart(ctx3, {
                 type: 'doughnut',
                 data: {
                     labels: ['Taekwondo', 'Físico'],
-                    datasets: [{
-                        data: [tkd, fis],
-                        backgroundColor: ['#3b82f6', '#f59e0b'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
+                    datasets: [{ data: [tkdCount, fisCount], backgroundColor: ['#3b82f6', '#f59e0b'], borderWidth: 0, hoverOffset: 4 }]
                 },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#94a3b8' } } } }
             });
 
-            // Gráfico 4: Distribuição de Intensidade (PSE Zones)
+            // ---- Gráfico 4: Distribuição de Intensidade (PSE das sessões internas) ----
             let leve = 0, mod = 0, intenso = 0;
-            allLogs.forEach(l => {
+            allInternalLogs.forEach(l => {
                 if (l.pse <= 4) leve++;
                 else if (l.pse <= 7) mod++;
                 else intenso++;
@@ -2708,60 +2744,40 @@
                 type: 'bar',
                 data: {
                     labels: ['Leve (1-4)', 'Mod. (5-7)', 'Intenso (8-10)'],
-                    datasets: [{
-                        label: 'Qtd Sessões',
-                        data: [leve, mod, intenso],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                        borderRadius: 4
-                    }]
+                    datasets: [{ label: 'Qtd Sessões', data: [leve, mod, intenso], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderRadius: 4 }]
                 },
                 options: { ...getCommonOptions(), plugins: { legend: { display: false } }, scales: { y: { ticks: { stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
             });
 
-            // Gráfico 5: Acúmulo de Carga (Últimas Semanas)
-            let histLogs = (db.cargaTreino || []);
-            if (athleteId !== 'equipe') {
-                histLogs = histLogs.filter(l => l.atletaId === parseInt(athleteId));
-            } else {
-                histLogs = histLogs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
-            }
-
+            // ---- Gráfico 5: Acúmulo de Carga Semanal (External Treino, 5 semanas) ----
+            const allTreinosTurma = (db.treinos || []).filter(t => t.turmaId === db.activeTurmaId);
             const targetDateObj = new Date(dates[dates.length - 1] + 'T00:00:00');
-            const weeksData = [0, 0, 0, 0, 0];
-            const weeksLabels = [];
+            const weeksDataTkd = [], weeksDataFis = [], weeksLabels = [];
 
-            for (let i = 0; i < 5; i++) {
+            for (let i = 4; i >= 0; i--) {
                 const end = new Date(targetDateObj);
                 end.setDate(end.getDate() - (i * 7));
                 const start = new Date(end);
                 start.setDate(start.getDate() - 6);
-
                 const startStr = start.toISOString().split('T')[0];
                 const endStr = end.toISOString().split('T')[0];
-                weeksLabels.unshift(`${start.getDate()}/${start.getMonth() + 1}`);
+                weeksLabels.push(`${start.getDate()}/${start.getMonth() + 1}`);
 
-                let weekLogs = histLogs.filter(l => l.data >= startStr && l.data <= endStr);
-                let wSum = weekLogs.reduce((acc, l) => acc + (l.cargaCalculada || (l.duracaoMins * l.pse)), 0);
-                if (athleteId === 'equipe' && weekLogs.length > 0) {
-                    const uniqueDays = new Set(weekLogs.map(l => l.data)).size || 1;
-                    wSum = Math.round(wSum / uniqueDays);
-                }
-
-                weeksData[4 - i] = wSum;
+                const wt = allTreinosTurma.filter(t => t.data >= startStr && t.data <= endStr);
+                weeksDataTkd.push(wt.filter(t => !isTreinoFisico(t.tipo)).reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0));
+                weeksDataFis.push(wt.filter(t => isTreinoFisico(t.tipo)).reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0));
             }
 
             dynamicCharts.chart5 = new Chart(ctx5, {
                 type: 'bar',
                 data: {
                     labels: weeksLabels,
-                    datasets: [{
-                        label: 'Acúmulo',
-                        data: weeksData,
-                        backgroundColor: 'rgba(59,130,246,0.8)',
-                        borderRadius: 4
-                    }]
+                    datasets: [
+                        { label: 'TKD', data: weeksDataTkd, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 4, stack: 'w' },
+                        { label: 'Físico', data: weeksDataFis, backgroundColor: 'rgba(245,158,11,0.8)', borderRadius: 4, stack: 'w' }
+                    ]
                 },
-                options: { ...getCommonOptions(), indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { display: false } } } }
+                options: { ...getCommonOptions(), plugins: { legend: { display: true, labels: { boxWidth: 10, font: { size: 11 } } } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
             });
         }
 
