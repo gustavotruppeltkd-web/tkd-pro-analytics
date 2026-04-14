@@ -363,7 +363,7 @@
                 card.innerHTML = `
                     <div class="profile-icon"><i class="ti ${isRend ? 'ti-medal' : 'ti-users'}"></i></div>
                     <span class="profile-name">${t.nome}</span>
-                    <span class="profile-meta">${t.alunosCount} ${isRend ? 'Atletas' : 'Alunos'} \u2022 Foco: ${isRend ? 'Scout' : 'Chamada'}</span>
+                    <span class="profile-meta">${(db.alunos || []).filter(a => a.turmaId === t.id).length} ${isRend ? 'Atletas' : 'Alunos'} \u2022 Foco: ${isRend ? 'Scout' : 'Chamada'}</span>
                 `;
 
                 if (isRend) gridRend.appendChild(card);
