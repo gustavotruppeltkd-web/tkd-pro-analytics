@@ -519,10 +519,48 @@ async function syncToSupabase() {
             return;
         }
 
-        const dataToSave = window.db || db;
+        // Bloqueia se o cache local pertence a outro usuário
+        if (db._owner_id && db._owner_id !== userId) {
+            console.warn("syncToSupabase bloqueado: cache pertence a outro usuário.");
+            return;
+        }
+
+        // Faz um deep copy para não mutar o objeto em memória
+        const dataToSave = JSON.parse(JSON.stringify(window.db || db));
+
+        // Busca o estado remoto atual antes de salvar para preservar respostas dos atletas.
+        // Sem isso, dados enviados pelo atleta enquanto o treinador está com a aba aberta
+        // seriam sobrescritos no próximo saveDB() do treinador.
+        const { data: remoteResult } = await window.supabaseClient
+            .from('app_state')
+            .select('data')
+            .eq('project_id', userId)
+            .single();
+
+        if (remoteResult && remoteResult.data) {
+            // Para arrays de resposta do atleta: mantém todas as entradas do remoto que
+            // ainda não existem no cache local (entradas novas enviadas pelo atleta).
+            const athleteArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
+            athleteArrays.forEach(key => {
+                const localEntries = dataToSave[key] || [];
+                const remoteEntries = remoteResult.data[key] || [];
+                const localIds = new Set(localEntries.map(e => e.id));
+                const newFromAthletes = remoteEntries.filter(e => !localIds.has(e.id));
+                if (newFromAthletes.length > 0) {
+                    dataToSave[key] = localEntries.concat(newFromAthletes);
+                    // Atualiza o cache em memória para que a sessão atual veja os dados novos
+                    if (!db[key]) db[key] = [];
+                    newFromAthletes.forEach(e => {
+                        if (!db[key].find(x => x.id === e.id)) db[key].push(e);
+                    });
+                    window.db = db;
+                    localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                }
+            });
+        }
+
         dataToSave._last_updated = Date.now();
 
-        // Upsert direto — o estado local é a fonte da verdade
         const { error: upsertError } = await window.supabaseClient
             .from('app_state')
             .upsert({
