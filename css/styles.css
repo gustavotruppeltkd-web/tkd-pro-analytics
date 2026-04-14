@@ -1024,6 +1024,7 @@ body.mode-tablet .sidebar {
 }
 
 body.mode-tablet .logo-area span,
+body.mode-tablet .logo-area h2,
 body.mode-tablet .nav-item span {
     display: none;
 }
