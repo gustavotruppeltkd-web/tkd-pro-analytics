@@ -74,12 +74,18 @@ function loadDB() {
                 'display:flex', 'align-items:center', 'justify-content:center',
                 'cursor:pointer', 'transition:var(--transition)'
             ].join(';');
-            btn.onclick = () => {
-                sidebar.classList.toggle('open');
-                // Tap backdrop to close
+            const toggleSidebar = (forceClose) => {
+                if (forceClose) {
+                    sidebar.classList.remove('open');
+                } else {
+                    sidebar.classList.toggle('open');
+                }
+                const isOpen = sidebar.classList.contains('open');
+                document.body.classList.toggle('sidebar-open', isOpen);
                 const bd = document.getElementById('__sidebarBackdrop');
-                if (bd) bd.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+                if (bd) bd.style.display = isOpen ? 'block' : 'none';
             };
+            btn.onclick = () => toggleSidebar();
             document.body.appendChild(btn);
 
             // Backdrop
@@ -89,11 +95,22 @@ function loadDB() {
                 'position:fixed', 'inset:0', 'z-index:849',
                 'background:rgba(0,0,0,0.5)', 'display:none'
             ].join(';');
-            backdrop.onclick = () => {
-                sidebar.classList.remove('open');
-                backdrop.style.display = 'none';
-            };
+            backdrop.onclick = () => toggleSidebar(true);
             document.body.appendChild(backdrop);
+
+            // Close sidebar and adjust hamburger on orientation change
+            window.addEventListener('orientationchange', () => {
+                toggleSidebar(true);
+                // Adjust hamburger top position for landscape (smaller top bar)
+                const isLandscape = window.screen.orientation
+                    ? window.screen.orientation.type.startsWith('landscape')
+                    : window.matchMedia('(orientation: landscape)').matches;
+                btn.style.top = isLandscape ? '8px' : '16px';
+            });
+            window.addEventListener('resize', () => {
+                const isLandscape = window.innerWidth > window.innerHeight;
+                btn.style.top = isLandscape ? '8px' : '16px';
+            });
         }
     }
     // ---------------------------------------------------------

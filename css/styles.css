@@ -1194,3 +1194,149 @@ body.mode-mobile .stat-details h3 {
 body.mode-mobile .category {
     margin-bottom: 12px;
 }
+
+/* =============================================================
+   RESPONSIVE FIXES — PORTRAIT & LANDSCAPE (celular e tablet)
+   ============================================================= */
+
+/* Altura dinâmica: evita bug do teclado virtual empurrar conteúdo */
+body.mode-mobile,
+body.mode-tablet {
+    height: 100dvh;
+}
+body.mode-mobile .app-container,
+body.mode-tablet .app-container {
+    height: 100dvh;
+}
+
+/* Scroll lock quando sidebar estiver aberta no celular */
+body.mode-mobile.sidebar-open {
+    overflow: hidden;
+}
+body.mode-mobile.sidebar-open .main-content {
+    overflow: hidden;
+}
+
+/* Safe area para celulares com notch (iPhone X+) */
+body.mode-mobile .main-content {
+    padding-left:  max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    padding-bottom: max(40px, env(safe-area-inset-bottom));
+}
+body.mode-mobile .sidebar {
+    padding-top: max(24px, env(safe-area-inset-top));
+}
+
+/* Touch targets mínimos de 44px */
+body.mode-mobile .btn       { min-height: 44px; }
+body.mode-mobile .nav-item  { min-height: 44px; }
+body.mode-mobile .form-control { min-height: 44px; font-size: 16px; } /* 16px evita zoom automático no iOS */
+body.mode-mobile select,
+body.mode-mobile input,
+body.mode-mobile textarea   { font-size: 16px !important; } /* idem */
+
+/* Modal mobile melhorado */
+body.mode-mobile .modal-overlay {
+    align-items: flex-start;
+    padding: max(60px, env(safe-area-inset-top)) 0 0;
+    overflow-y: auto;
+}
+body.mode-mobile .modal-content {
+    max-height: 85dvh !important;
+    overflow-y: auto;
+    margin: 0 auto 20px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* Font mínima legível no mobile */
+body.mode-mobile .stat-details h3 { font-size: 12px; }
+
+/* ── CELULAR LANDSCAPE ─────────────────────────────────────── */
+@media (orientation: landscape) {
+    body.mode-mobile .sidebar {
+        width: 200px; /* mais estreito em landscape */
+    }
+
+    body.mode-mobile .main-content {
+        padding-top: 56px; /* menor — paisagem tem menos altura */
+    }
+
+    body.mode-mobile .topbar {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    body.mode-mobile .topbar .page-title h1 {
+        font-size: 18px;
+    }
+
+    body.mode-mobile .cards-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 colunas em landscape */
+    }
+
+    body.mode-mobile .chart-container {
+        height: 180px !important; /* mais baixo em landscape */
+    }
+
+    body.mode-mobile .chart-grid,
+    body.mode-mobile .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    body.mode-mobile .modal-overlay {
+        padding-top: max(10px, env(safe-area-inset-top));
+        align-items: center;
+    }
+
+    body.mode-mobile .modal-content {
+        max-height: 90dvh !important;
+        border-radius: var(--radius-lg);
+        margin: auto;
+    }
+}
+
+/* ── TABLET LANDSCAPE ──────────────────────────────────────── */
+@media (orientation: landscape) {
+    body.mode-tablet .main-content {
+        padding: 20px 24px;
+    }
+
+    body.mode-tablet .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+
+    body.mode-tablet .chart-grid,
+    body.mode-tablet .stats-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+
+    body.mode-tablet .topbar {
+        flex-wrap: nowrap;
+    }
+}
+
+/* ── TABLET PORTRAIT ───────────────────────────────────────── */
+@media (orientation: portrait) {
+    body.mode-tablet .chart-grid,
+    body.mode-tablet .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    body.mode-tablet .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+}
+
+/* Tabela de atletas no tablet — manter linha horizontal */
+body.mode-tablet .athlete-row {
+    flex-direction: row;
+    align-items: center;
+}
+
+/* Btn no tablet não vira full width */
+body.mode-tablet .btn {
+    width: auto;
+}
