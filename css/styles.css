@@ -1071,6 +1071,8 @@ body.mode-mobile .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 20px 0 50px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 body.mode-mobile .sidebar.open {
@@ -1257,6 +1259,8 @@ body.mode-mobile .stat-details h3 { font-size: 12px; }
 @media (orientation: landscape) {
     body.mode-mobile .sidebar {
         width: 200px; /* mais estreito em landscape */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     body.mode-mobile .main-content {
