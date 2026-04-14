@@ -1060,6 +1060,94 @@ body.mode-tablet .dashboard-grid {
     gap: 20px;
 }
 
+/* Sidebar tablet: scroll vertical se itens não couberem */
+body.mode-tablet .sidebar {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Inputs/selects com width fixa → limitar no tablet */
+body.mode-tablet input[style*="width"],
+body.mode-tablet select[style*="width"] {
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Containers de filtros/controles → wrap no tablet */
+body.mode-tablet .comparison-controls,
+body.mode-tablet .filter-section,
+body.mode-tablet .filter-row,
+body.mode-tablet .controls-row {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+body.mode-tablet .filter-select {
+    min-width: 120px;
+    flex: 1;
+}
+
+/* Grids de 5+ colunas → 3 colunas no tablet */
+body.mode-tablet [style*="grid-template-columns: repeat(5"],
+body.mode-tablet [style*="grid-template-columns: repeat(6"],
+body.mode-tablet [style*="grid-template-columns: repeat(7"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+}
+
+/* treino-equipe: week/month/meso grids 7 col → scroll horizontal */
+body.mode-tablet .week-grid,
+body.mode-tablet .month-grid,
+body.mode-tablet .meso-dias-grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+body.mode-tablet .meso-dia-col {
+    min-width: 100px !important;
+}
+
+/* financeiro: painel lateral 400px → 300px no tablet */
+body.mode-tablet .payment-form-container {
+    width: 300px !important;
+    right: -300px !important;
+}
+body.mode-tablet .payment-form-container.active {
+    right: 0 !important;
+}
+
+/* evento-detalhes: colunas fixas → menores no tablet */
+body.mode-tablet .col-result {
+    width: 100px !important;
+    margin-right: 8px;
+}
+body.mode-tablet .col-medal {
+    width: 80px !important;
+}
+
+/* col-action no tablet: wrap se necessário */
+body.mode-tablet .col-action {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Modais no tablet: garantir que não ultrapassem a tela */
+body.mode-tablet .modal-content {
+    max-width: calc(100vw - 120px) !important; /* 80px sidebar + 20px margem cada lado */
+    box-sizing: border-box;
+}
+
+/* Tabelas no tablet: scroll horizontal */
+body.mode-tablet table,
+body.mode-tablet .tkd-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+}
+
+/* Overflow geral tablet */
+body.mode-tablet .main-content {
+    overflow-x: hidden;
+}
+
 /* --- MOBILE MODE (< 480px experience) --- */
 body.mode-mobile .sidebar {
     position: fixed;
