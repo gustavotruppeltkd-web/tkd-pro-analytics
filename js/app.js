@@ -176,6 +176,17 @@ function fetchFromSupabase() {
         }
         const userId = authData.user.id;
 
+        // SEGURANÇA: se o cache local pertence a outro usuário, descartá-lo imediatamente
+        // antes de qualquer outra operação para evitar vazamento de dados entre contas.
+        if (db._owner_id && db._owner_id !== userId) {
+            console.warn("Cache local pertence a outro usuário. Descartando para proteger isolamento de dados.");
+            localStorage.removeItem('tkd_scout_db');
+            db = JSON.parse(JSON.stringify(MOCK_DATA));
+            db._owner_id = userId;
+            window.db = db;
+            lastSyncTime = 0;
+        }
+
         window.supabaseClient
             .from('app_state')
             .select('data')
@@ -203,7 +214,8 @@ function fetchFromSupabase() {
                             remoteDB.treinadores[0].nome &&
                             remoteDB.treinadores[0].nome.trim() !== '';
 
-                        if (localHasTrainer && !remoteHasTrainer) {
+                        // Só sobe dados locais se o cache pertence a este mesmo usuário
+                        if (localHasTrainer && !remoteHasTrainer && db._owner_id === userId) {
                             console.log("Local trainer not in Supabase yet. Pushing local data up.");
                             syncToSupabase();
                         } else {
@@ -214,18 +226,29 @@ function fetchFromSupabase() {
                                 'eventos','lutasScout','presencas','chamadas','lesoes','scoutEstatisticas'];
                             arrayKeys.forEach(k => { if (!remoteDB[k]) remoteDB[k] = []; });
                             if (!remoteDB.periodizacao) remoteDB.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao));
+                            remoteDB._owner_id = userId; // Marca o dono no dado remoto ao cachear
                             db = remoteDB;
                             window.db = db;
                             localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
                             lastSyncTime = remoteDate;
                         }
-                    } else if (remoteDate === 0 && localDate > 0) {
+                    } else if (remoteDate === 0 && localDate > 0 && db._owner_id === userId) {
                         syncToSupabase();
                     }
                 } else {
-                    // Supabase sem dados para este usuário ainda
-                    if (lastSyncTime > 0) {
+                    // Supabase sem dados para este usuário ainda (novo cadastro)
+                    // NUNCA subir dados do cache se ele não pertence a este usuário
+                    if (lastSyncTime > 0 && db._owner_id === userId) {
                         syncToSupabase();
+                    } else if (!db._owner_id || db._owner_id !== userId) {
+                        // Novo usuário sem dados: inicializa vazio e marca o dono
+                        console.log("Novo usuário sem dados. Inicializando conta vazia.");
+                        db = JSON.parse(JSON.stringify(MOCK_DATA));
+                        db._owner_id = userId;
+                        db._last_updated = 0;
+                        window.db = db;
+                        lastSyncTime = 0;
+                        localStorage.setItem('tkd_scout_db', JSON.stringify(db));
                     }
                 }
 
@@ -463,6 +486,13 @@ function mergeAppState(local, remote) {
 async function saveDB() {
     db._last_updated = Date.now();
     lastSyncTime = db._last_updated;
+    // Garante que o _owner_id esteja presente antes de salvar localmente
+    if (!db._owner_id) {
+        try {
+            const { data: authData } = await window.supabaseClient.auth.getUser();
+            if (authData && authData.user) db._owner_id = authData.user.id;
+        } catch (_) {}
+    }
     localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
 
     // Sincronização segura em background

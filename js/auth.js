@@ -79,6 +79,10 @@ window.supabaseClient.auth.onAuthStateChange((event, session) => {
 // Global logout function available to all pages
 window.logoutUser = async function () {
     await window.supabaseClient.auth.signOut();
-    localStorage.removeItem('tkd_scout_db'); // Clear cached state for security
+    // Limpar todo o cache local para que o próximo login não herde dados desta sessão
+    localStorage.removeItem('tkd_scout_db');
+    localStorage.removeItem('tkd_coach_id');
+    localStorage.removeItem('tkd_active_coach_id');
+    sessionStorage.removeItem('tkd_coach_id');
     window.location.href = 'index.html';
 };
