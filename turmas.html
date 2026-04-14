@@ -132,19 +132,10 @@
             text-align: center;
             cursor: pointer;
             transition: var(--transition);
-            position: relative;
         }
         .foto-upload-area:hover {
             border-color: var(--primary);
             background: rgba(59,130,246,0.05);
-        }
-        .foto-upload-area input[type="file"] {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
         }
         .foto-preview {
             width: 80px;
@@ -156,21 +147,44 @@
             margin: 0 auto 8px;
         }
         .foto-preview.visible { display: block; }
-        .foto-upload-label {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
+        .foto-upload-label { font-size: 13px; color: var(--text-muted); }
         .foto-remove-btn {
-            font-size: 11px;
-            color: var(--red);
-            cursor: pointer;
-            display: none;
-            margin-top: 4px;
-            background: none;
-            border: none;
-            padding: 0;
+            font-size: 11px; color: var(--red); cursor: pointer;
+            display: none; margin-top: 4px; background: none; border: none; padding: 0;
         }
         .foto-remove-btn.visible { display: inline-block; }
+
+        /* Crop modal */
+        #modalCropFoto { z-index: 3000; }
+        #cropViewport {
+            position: relative;
+            width: 320px; height: 320px;
+            margin: 0 auto;
+            overflow: hidden;
+            background: #111;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+        }
+        #cropImg {
+            position: absolute;
+            transform-origin: 0 0;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        #cropOverlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            border-radius: 8px;
+        }
+        #cropZoomWrap {
+            display: flex; align-items: center; gap: 12px;
+            margin: 14px auto 0; width: 320px;
+        }
+        #cropZoomWrap input { flex: 1; accent-color: var(--primary); }
+        #cropZoomWrap span { font-size: 12px; color: var(--text-muted); min-width: 36px; text-align: right; }
 
         .profile-name {
             font-size: 18px;
@@ -281,12 +295,12 @@
                 </div>
                 <div class="form-group">
                     <label>Foto da Turma <span style="color:var(--text-muted);font-weight:400;">(opcional)</span></label>
-                    <div class="foto-upload-area" onclick="document.getElementById('novaTurmaFotoInput').click()">
-                        <input type="file" id="novaTurmaFotoInput" accept="image/*" onchange="previewFoto(this,'novaTurmaFotoPreview','novaTurmaFotoRemove','novaTurmaFotoLabel')">
+                    <input type="file" id="novaTurmaFotoInput" accept="image/*" style="display:none" onchange="openCrop(this,'nova')">
+                    <label for="novaTurmaFotoInput" class="foto-upload-area" style="display:block; cursor:pointer;">
                         <img id="novaTurmaFotoPreview" class="foto-preview" src="" alt="Preview">
                         <div id="novaTurmaFotoLabel" class="foto-upload-label"><i class="ti ti-camera" style="font-size:20px;display:block;margin-bottom:4px;color:var(--primary);"></i>Clique para adicionar uma foto</div>
-                        <button type="button" id="novaTurmaFotoRemove" class="foto-remove-btn" onclick="removeFoto(event,'novaTurmaFotoInput','novaTurmaFotoPreview','novaTurmaFotoRemove','novaTurmaFotoLabel')">✕ Remover foto</button>
-                    </div>
+                    </label>
+                    <button type="button" id="novaTurmaFotoRemove" class="foto-remove-btn" onclick="removeFoto('nova')">✕ Remover foto</button>
                 </div>
                 <div class="form-group">
                     <label>Perfil (Tipo de Turma)</label>
@@ -329,16 +343,41 @@
                     <label>Nome da Turma</label>
                     <input type="text" id="editNomeTurma" class="form-control" required>
                     <label style="margin-top:16px;display:block;">Foto da Turma <span style="color:var(--text-muted);font-weight:400;">(opcional)</span></label>
-                    <div class="foto-upload-area" onclick="document.getElementById('editTurmaFotoInput').click()">
-                        <input type="file" id="editTurmaFotoInput" accept="image/*" onchange="previewFoto(this,'editTurmaFotoPreview','editTurmaFotoRemove','editTurmaFotoLabel')">
+                    <input type="file" id="editTurmaFotoInput" accept="image/*" style="display:none" onchange="openCrop(this,'edit')">
+                    <label for="editTurmaFotoInput" class="foto-upload-area" style="display:block; cursor:pointer;">
                         <img id="editTurmaFotoPreview" class="foto-preview" src="" alt="Preview">
                         <div id="editTurmaFotoLabel" class="foto-upload-label"><i class="ti ti-camera" style="font-size:20px;display:block;margin-bottom:4px;color:var(--primary);"></i>Clique para trocar a foto</div>
-                        <button type="button" id="editTurmaFotoRemove" class="foto-remove-btn" onclick="removeFoto(event,'editTurmaFotoInput','editTurmaFotoPreview','editTurmaFotoRemove','editTurmaFotoLabel')">✕ Remover foto</button>
-                    </div>
+                    </label>
+                    <button type="button" id="editTurmaFotoRemove" class="foto-remove-btn" onclick="removeFoto('edit')">✕ Remover foto</button>
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px;">Salvar
                         Altera&ccedil;&otilde;es</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal de Corte de Foto -->
+    <div class="modal-overlay" id="modalCropFoto">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Ajustar Foto</h2>
+                <button class="btn-close" type="button" onclick="cancelCrop()"><i class="ti ti-x"></i></button>
+            </div>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px; text-align:center;">Arraste para reposicionar • Use o controle abaixo para dar zoom</p>
+            <div id="cropViewport">
+                <img id="cropImg" src="" alt="">
+                <canvas id="cropOverlay" width="320" height="320"></canvas>
+            </div>
+            <div id="cropZoomWrap">
+                <i class="ti ti-zoom-out" style="color:var(--text-muted);"></i>
+                <input type="range" id="cropZoom" min="50" max="300" value="100" oninput="onCropZoom(this.value)">
+                <i class="ti ti-zoom-in" style="color:var(--text-muted);"></i>
+                <span id="cropZoomLabel">100%</span>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn btn-primary" style="flex:1;" onclick="applyCrop()"><i class="ti ti-check"></i> Aplicar</button>
+                <button class="btn" style="flex:1; background:transparent;" onclick="cancelCrop()">Cancelar</button>
+            </div>
         </div>
     </div>
 
@@ -456,22 +495,19 @@
 
         function saveTurma(event) {
             event.preventDefault();
-            const fotoInput = document.getElementById('novaTurmaFotoInput');
-            const fotoSrc = document.getElementById('novaTurmaFotoPreview').src;
-            const hasFoto = document.getElementById('novaTurmaFotoPreview').classList.contains('visible');
+            const preview = document.getElementById('novaTurmaFotoPreview');
             const nt = {
                 id: Date.now(),
                 nome: document.getElementById('novaTurmaName').value,
                 alunosCount: 0,
                 tipo: document.querySelector('input[name="tipoTurma"]:checked').value === 'rendimento' ? 'Rendimento' : 'Comercial',
-                foto: hasFoto ? fotoSrc : null
+                foto: preview.classList.contains('visible') ? preview.src : null
             };
             db.turmas.push(nt);
             saveDB();
             renderTurmas();
             closeModal();
-            // Reset foto fields
-            removeFoto(null,'novaTurmaFotoInput','novaTurmaFotoPreview','novaTurmaFotoRemove','novaTurmaFotoLabel');
+            removeFoto('nova');
         }
 
         function deleteTurma(event) {
@@ -486,27 +522,13 @@
         function populateEditForm() {
             const id = parseInt(document.getElementById('selectTurmaEdit').value);
             const turma = db.turmas.find(t => t.id === id);
-            if (turma) {
-                document.getElementById('editNomeTurma').value = turma.nome;
-                document.getElementById('editFields').style.display = 'block';
-                // Mostrar foto atual se existir
-                const preview = document.getElementById('editTurmaFotoPreview');
-                const removeBtn = document.getElementById('editTurmaFotoRemove');
-                const label = document.getElementById('editTurmaFotoLabel');
-                if (turma.foto) {
-                    preview.src = turma.foto;
-                    preview.classList.add('visible');
-                    removeBtn.classList.add('visible');
-                    label.style.display = 'none';
-                } else {
-                    preview.src = '';
-                    preview.classList.remove('visible');
-                    removeBtn.classList.remove('visible');
-                    label.style.display = '';
-                }
-                document.getElementById('editTurmaFotoInput').value = '';
+            if (!turma) { document.getElementById('editFields').style.display = 'none'; return; }
+            document.getElementById('editNomeTurma').value = turma.nome;
+            document.getElementById('editFields').style.display = 'block';
+            if (turma.foto) {
+                _setFotoResult('edit', turma.foto);
             } else {
-                document.getElementById('editFields').style.display = 'none';
+                removeFoto('edit');
             }
         }
 
@@ -517,39 +539,212 @@
             if (turma) {
                 turma.nome = document.getElementById('editNomeTurma').value;
                 const preview = document.getElementById('editTurmaFotoPreview');
-                const hasFoto = preview.classList.contains('visible');
-                turma.foto = hasFoto ? preview.src : null;
+                turma.foto = preview.classList.contains('visible') ? preview.src : null;
                 saveDB();
                 renderTurmas();
                 closeModalEditar();
             }
         }
 
-        function previewFoto(input, previewId, removeId, labelId) {
+        // ── CROP ENGINE ──────────────────────────────────────────────
+        const CROP_SIZE = 320;   // viewport px
+        const CROP_RADIUS = 140; // circle radius px
+
+        let _cropCtx = null;     // which form: 'nova' | 'edit'
+        let _cropImgNatW = 0, _cropImgNatH = 0;
+        let _cropScale = 1;      // current zoom (image px → viewport px)
+        let _cropX = 0, _cropY = 0; // image top-left in viewport
+        let _cropDragging = false;
+        let _cropDragStartX = 0, _cropDragStartY = 0;
+        let _cropImgStartX = 0, _cropImgStartY = 0;
+
+        function openCrop(input, ctx) {
             const file = input.files[0];
             if (!file) return;
+            input.value = ''; // reset so re-selecting same file still fires onchange
+            _cropCtx = ctx;
             const reader = new FileReader();
             reader.onload = e => {
-                const preview = document.getElementById(previewId);
-                preview.src = e.target.result;
-                preview.classList.add('visible');
-                document.getElementById(removeId).classList.add('visible');
-                document.getElementById(labelId).style.display = 'none';
+                const img = document.getElementById('cropImg');
+                img.onload = () => {
+                    _cropImgNatW = img.naturalWidth;
+                    _cropImgNatH = img.naturalHeight;
+                    // Fit image inside viewport, then center
+                    const fitScale = Math.max(CROP_SIZE / _cropImgNatW, CROP_SIZE / _cropImgNatH);
+                    _cropScale = fitScale;
+                    document.getElementById('cropZoom').value = Math.round(_cropScale * 100);
+                    document.getElementById('cropZoomLabel').textContent = Math.round(_cropScale * 100) + '%';
+                    _centerImage();
+                    _applyTransform();
+                    _drawOverlay();
+                };
+                img.src = e.target.result;
+                document.getElementById('modalCropFoto').classList.add('active');
             };
             reader.readAsDataURL(file);
         }
 
-        function removeFoto(event, inputId, previewId, removeId, labelId) {
-            if (event) event.stopPropagation();
-            const input = document.getElementById(inputId);
-            const preview = document.getElementById(previewId);
-            const removeBtn = document.getElementById(removeId);
-            const label = document.getElementById(labelId);
-            if (input) input.value = '';
-            if (preview) { preview.src = ''; preview.classList.remove('visible'); }
-            if (removeBtn) removeBtn.classList.remove('visible');
-            if (label) label.style.display = '';
+        function _centerImage() {
+            _cropX = (CROP_SIZE - _cropImgNatW * _cropScale) / 2;
+            _cropY = (CROP_SIZE - _cropImgNatH * _cropScale) / 2;
         }
+
+        function _clampPos() {
+            // Keep the circle (center CROP_SIZE/2, radius CROP_RADIUS) always covered by image
+            const iw = _cropImgNatW * _cropScale;
+            const ih = _cropImgNatH * _cropScale;
+            const cx = CROP_SIZE / 2, cy = CROP_SIZE / 2;
+            const maxX = cx - CROP_RADIUS;
+            const minX = cx + CROP_RADIUS - iw;
+            const maxY = cy - CROP_RADIUS;
+            const minY = cy + CROP_RADIUS - ih;
+            _cropX = Math.min(maxX, Math.max(minX, _cropX));
+            _cropY = Math.min(maxY, Math.max(minY, _cropY));
+        }
+
+        function _applyTransform() {
+            const img = document.getElementById('cropImg');
+            img.style.transform = `translate(${_cropX}px, ${_cropY}px) scale(${_cropScale})`;
+            img.style.transformOrigin = '0 0';
+            img.style.width = _cropImgNatW + 'px';
+            img.style.height = _cropImgNatH + 'px';
+        }
+
+        function _drawOverlay() {
+            const canvas = document.getElementById('cropOverlay');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, CROP_SIZE, CROP_SIZE);
+            // Dark mask outside circle
+            ctx.fillStyle = 'rgba(0,0,0,0.55)';
+            ctx.fillRect(0, 0, CROP_SIZE, CROP_SIZE);
+            // Cut out circle (keep image visible inside)
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(CROP_SIZE / 2, CROP_SIZE / 2, CROP_RADIUS, 0, Math.PI * 2);
+            ctx.fill();
+            // Circle border
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = 'rgba(59,130,246,0.9)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(CROP_SIZE / 2, CROP_SIZE / 2, CROP_RADIUS, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        function onCropZoom(val) {
+            const newScale = val / 100;
+            // Keep circle center stable while zooming
+            const cx = CROP_SIZE / 2, cy = CROP_SIZE / 2;
+            const imgCX = (cx - _cropX) / _cropScale;
+            const imgCY = (cy - _cropY) / _cropScale;
+            _cropScale = newScale;
+            _cropX = cx - imgCX * _cropScale;
+            _cropY = cy - imgCY * _cropScale;
+            _clampPos();
+            _applyTransform();
+            document.getElementById('cropZoomLabel').textContent = Math.round(val) + '%';
+        }
+
+        function applyCrop() {
+            const canvas = document.createElement('canvas');
+            const OUT = 300;
+            canvas.width = OUT;
+            canvas.height = OUT;
+            const ctx = canvas.getContext('2d');
+            // Circular clip
+            ctx.beginPath();
+            ctx.arc(OUT / 2, OUT / 2, OUT / 2, 0, Math.PI * 2);
+            ctx.clip();
+            // Map: circle center in image coords
+            const vpCX = CROP_SIZE / 2, vpCY = CROP_SIZE / 2;
+            const imgCX = (vpCX - _cropX) / _cropScale;
+            const imgCY = (vpCY - _cropY) / _cropScale;
+            const imgR  = CROP_RADIUS / _cropScale;
+            ctx.drawImage(
+                document.getElementById('cropImg'),
+                imgCX - imgR, imgCY - imgR, imgR * 2, imgR * 2,
+                0, 0, OUT, OUT
+            );
+            const base64 = canvas.toDataURL('image/jpeg', 0.88);
+            _setFotoResult(_cropCtx, base64);
+            document.getElementById('modalCropFoto').classList.remove('active');
+        }
+
+        function cancelCrop() {
+            document.getElementById('modalCropFoto').classList.remove('active');
+        }
+
+        function _setFotoResult(ctx, base64) {
+            const prefix = ctx === 'nova' ? 'novaTurma' : 'editTurma';
+            const preview = document.getElementById(prefix + 'FotoPreview');
+            const removeBtn = document.getElementById(prefix + 'FotoRemove');
+            const label = document.getElementById(prefix + 'FotoLabel');
+            preview.src = base64;
+            preview.classList.add('visible');
+            removeBtn.classList.add('visible');
+            label.style.display = 'none';
+        }
+
+        function removeFoto(ctx) {
+            const prefix = ctx === 'nova' ? 'novaTurma' : 'editTurma';
+            const preview = document.getElementById(prefix + 'FotoPreview');
+            const removeBtn = document.getElementById(prefix + 'FotoRemove');
+            const label = document.getElementById(prefix + 'FotoLabel');
+            preview.src = '';
+            preview.classList.remove('visible');
+            removeBtn.classList.remove('visible');
+            label.style.display = '';
+        }
+
+        // ── Drag handlers ─────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const vp = document.getElementById('cropViewport');
+            const start = (e) => {
+                _cropDragging = true;
+                const pt = e.touches ? e.touches[0] : e;
+                _cropDragStartX = pt.clientX;
+                _cropDragStartY = pt.clientY;
+                _cropImgStartX = _cropX;
+                _cropImgStartY = _cropY;
+                e.preventDefault();
+            };
+            const move = (e) => {
+                if (!_cropDragging) return;
+                const pt = e.touches ? e.touches[0] : e;
+                _cropX = _cropImgStartX + (pt.clientX - _cropDragStartX);
+                _cropY = _cropImgStartY + (pt.clientY - _cropDragStartY);
+                _clampPos();
+                _applyTransform();
+                e.preventDefault();
+            };
+            const end = () => { _cropDragging = false; };
+            vp.addEventListener('mousedown', start);
+            vp.addEventListener('touchstart', start, { passive: false });
+            document.addEventListener('mousemove', move);
+            document.addEventListener('touchmove', move, { passive: false });
+            document.addEventListener('mouseup', end);
+            document.addEventListener('touchend', end);
+
+            // Pinch-to-zoom on mobile
+            let _lastPinchDist = null;
+            vp.addEventListener('touchstart', e => {
+                if (e.touches.length === 2) _lastPinchDist = null;
+            }, { passive: true });
+            vp.addEventListener('touchmove', e => {
+                if (e.touches.length !== 2) return;
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (_lastPinchDist) {
+                    const ratio = dist / _lastPinchDist;
+                    const slider = document.getElementById('cropZoom');
+                    const newVal = Math.min(300, Math.max(50, parseFloat(slider.value) * ratio));
+                    slider.value = newVal;
+                    onCropZoom(newVal);
+                }
+                _lastPinchDist = dist;
+            }, { passive: true });
+        });
 
         function selectRadio(el, val) {
             document.querySelectorAll('.radio-card').forEach(rc => rc.classList.remove('selected'));
@@ -572,6 +767,8 @@
             if (typeof renderUserProfile === 'function') renderUserProfile();
         }
 
+        // The crop drag listeners are registered inside the DOMContentLoaded block above.
+        // This second listener handles page init.
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 if (!db.treinadores || db.treinadores.length === 0) {
