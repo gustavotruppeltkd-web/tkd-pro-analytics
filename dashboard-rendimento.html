@@ -303,7 +303,7 @@
                 <!-- ══ SMART ANALYTICS ══════════════════════════════════ -->
                 <div id="smartAnalytics" style="margin-top: 32px;">
 
-                    <!-- Painel Individual (aparece ao clicar no atleta) -->
+                    <!-- Painel Individual (aparece ao clicar no atleta no semáforo) -->
                     <div id="panelIndividual" class="card" style="display:none; margin-bottom:20px; padding:24px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                             <div style="display:flex; align-items:center; gap:12px;">
@@ -313,7 +313,6 @@
                             <button class="btn btn-secondary" onclick="closePanelIndividual()" style="padding:6px 14px;"><i class="ti ti-x"></i></button>
                         </div>
                         <div style="display:grid; grid-template-columns:180px 1fr 1fr; gap:20px;">
-                            <!-- ACWR Gauge -->
                             <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--bg-hover); border-radius:var(--radius-md); padding:20px; text-align:center;">
                                 <div style="font-size:11px; text-transform:uppercase; font-weight:600; color:var(--text-muted); margin-bottom:8px;">ACWR Hoje</div>
                                 <div id="detailACWRVal" style="font-size:48px; font-weight:700; line-height:1;">—</div>
@@ -321,14 +320,12 @@
                                 <div style="margin-top:12px; font-size:11px; color:var(--text-muted);">Zona ideal: 0.8 – 1.3</div>
                                 <div style="margin-top:4px; font-size:11px; color:var(--text-muted);" id="detailStrainVal">Strain: —</div>
                             </div>
-                            <!-- Wellness Hoje -->
                             <div style="background:var(--bg-hover); border-radius:var(--radius-md); padding:20px;">
                                 <div style="font-size:11px; text-transform:uppercase; font-weight:600; color:var(--text-muted); margin-bottom:12px;">Wellness Hoje</div>
                                 <div id="detailWellnessToday" style="display:flex; flex-direction:column; gap:8px;">
                                     <div style="color:var(--text-muted); font-size:13px;">Sem dados para hoje.</div>
                                 </div>
                             </div>
-                            <!-- Alertas -->
                             <div style="background:var(--bg-hover); border-radius:var(--radius-md); padding:20px;">
                                 <div style="font-size:11px; text-transform:uppercase; font-weight:600; color:var(--text-muted); margin-bottom:12px;">Alertas Automáticos</div>
                                 <div id="detailAlerts" style="display:flex; flex-direction:column; gap:8px;">
@@ -336,141 +333,72 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Load History 28d -->
                         <div style="margin-top:20px;">
                             <div style="font-size:12px; text-transform:uppercase; font-weight:600; color:var(--text-muted); margin-bottom:12px;">Carga dos Últimos 28 Dias</div>
                             <div style="height:160px; position:relative;"><canvas id="chartLoadHistory"></canvas></div>
                         </div>
                     </div>
 
-                    <!-- Row 1: Carga/ACWR + Wellness Trend -->
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
-
-                        <!-- Painel Carga & ACWR -->
-                        <div class="card" style="padding:24px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
-                                <h3 style="margin:0; font-size:15px; font-weight:600;"><i class="ti ti-trending-up" style="color:var(--primary);"></i> Carga Semanal & ACWR</h3>
-                                <select id="selCargaAtleta" class="form-control" style="font-size:12px; padding:4px 8px;" onchange="renderCargaACWRPanel()">
-                                    <option value="equipe">Equipe (média)</option>
-                                </select>
-                            </div>
-                            <div style="height:220px; position:relative;"><canvas id="chartCargaACWR"></canvas></div>
-                            <div style="display:flex; gap:16px; margin-top:12px; font-size:11px; color:var(--text-muted); flex-wrap:wrap;">
-                                <span><span style="display:inline-block;width:10px;height:10px;background:rgba(59,130,246,0.7);border-radius:2px;margin-right:4px;"></span>Carga (UA)</span>
-                                <span><span style="display:inline-block;width:16px;height:2px;background:#f59e0b;margin-right:4px;vertical-align:middle;"></span>ACWR</span>
-                                <span style="color:#10b981;">■ Zona ideal 0.8–1.3</span>
+                    <!-- Análise por Categoria -->
+                    <div id="advancedDetails" class="card" style="padding:24px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+                            <div class="comparison-controls">
+                                <div>
+                                    <span class="selector-label">Atleta:</span>
+                                    <select id="selectComparison" class="form-control" style="width:180px;" onchange="updateDynamicCharts()">
+                                        <option value="equipe">Toda a Equipe</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <span class="selector-label">Dado:</span>
+                                    <select id="selectDataSource" class="form-control" style="width:180px;" onchange="handleDataSourceChange()">
+                                        <option value="wellness">Bem-Estar (Wellness)</option>
+                                        <option value="pse_carga">Carga de Treino e PSE</option>
+                                        <option value="scouts">Scouts de Lutas</option>
+                                        <option value="periodizacao">Periodização</option>
+                                        <option value="questionarios">Questionários</option>
+                                        <option value="testes_fisicos">Testes Físicos</option>
+                                        <option value="antropometria">Avaliação Antropométrica</option>
+                                        <option value="saude">Saúde (Lesões)</option>
+                                    </select>
+                                </div>
+                                <div id="subSourceContainer" style="display:none;">
+                                    <span class="selector-label">Qual:</span>
+                                    <select id="selectSubSource" class="form-control" style="width:180px;" onchange="updateDynamicCharts()"></select>
+                                </div>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="btn-export" onclick="exportDynamicCSV()"><i class="ti ti-download"></i> CSV</button>
+                                    <button class="btn-export" style="background:#ef4444;border-color:#ef4444;" onclick="exportDynamicPDF()"><i class="ti ti-file-pdf"></i> PDF</button>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Painel Wellness Trend -->
-                        <div class="card" style="padding:24px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
-                                <h3 style="margin:0; font-size:15px; font-weight:600;"><i class="ti ti-heart-rate-monitor" style="color:#a855f7;"></i> Wellness Score — 14 Dias</h3>
-                                <span style="font-size:11px; color:var(--text-muted);">Clique no atleta ↑ para detalhes</span>
+                        <div class="chart-grid" id="dynamicChartsGrid">
+                            <div class="chart-box card" style="display:flex;flex-direction:column;grid-column:span 3;">
+                                <h4 id="titleTable" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);border-bottom:1px solid var(--border-color);padding-bottom:8px;">Tabela de Dados</h4>
+                                <div style="flex:1;max-height:250px;overflow-y:auto;" id="dynamicTableContainer"><p style="color:var(--text-muted);font-size:13px;">Selecione uma categoria acima.</p></div>
                             </div>
-                            <div style="height:220px; position:relative;"><canvas id="chartWellnessTrend"></canvas></div>
-                            <div style="display:flex; gap:12px; margin-top:12px; font-size:11px; flex-wrap:wrap;">
-                                <span style="color:var(--red);">■ Crítico &lt;40</span>
-                                <span style="color:var(--yellow);">■ Atenção 40–70</span>
-                                <span style="color:var(--green);">■ Ótimo &gt;70</span>
+                            <div class="chart-box card" style="display:flex;flex-direction:column;">
+                                <h4 id="titleChart1" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 1</h4>
+                                <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart1"></canvas></div>
+                            </div>
+                            <div class="chart-box card" style="display:flex;flex-direction:column;">
+                                <h4 id="titleChart2" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 2</h4>
+                                <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart2"></canvas></div>
+                            </div>
+                            <div class="chart-box card" style="display:flex;flex-direction:column;">
+                                <h4 id="titleChart3" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 3</h4>
+                                <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart3"></canvas></div>
+                            </div>
+                            <div class="chart-box card" style="display:flex;flex-direction:column;">
+                                <h4 id="titleChart4" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 4</h4>
+                                <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart4"></canvas></div>
+                            </div>
+                            <div class="chart-box card" style="display:flex;flex-direction:column;grid-column:span 2;">
+                                <h4 id="titleChart5" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 5</h4>
+                                <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart5"></canvas></div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Row 2: PSE vs Planejado + Alertas da Equipe -->
-                    <div style="display:grid; grid-template-columns:2fr 1fr; gap:20px; margin-bottom:20px;">
-
-                        <!-- PSE vs Planejado -->
-                        <div class="card" style="padding:24px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
-                                <h3 style="margin:0; font-size:15px; font-weight:600;"><i class="ti ti-activity" style="color:#10b981;"></i> PSE & Carga — Semana Atual</h3>
-                                <select id="selPSEAtleta" class="form-control" style="font-size:12px; padding:4px 8px;" onchange="renderPSEPanel()">
-                                    <option value="equipe">Equipe (média)</option>
-                                </select>
-                            </div>
-                            <div style="height:200px; position:relative;"><canvas id="chartPSEWeek"></canvas></div>
-                            <div style="display:flex; gap:16px; margin-top:12px; font-size:11px; color:var(--text-muted); flex-wrap:wrap;">
-                                <span><span style="display:inline-block;width:10px;height:10px;background:rgba(16,185,129,0.7);border-radius:2px;margin-right:4px;"></span>Carga Realizada (UA)</span>
-                                <span><span style="display:inline-block;width:10px;height:10px;background:rgba(99,102,241,0.5);border-radius:2px;margin-right:4px;"></span>Carga Planejada (UA)</span>
-                                <span><span style="display:inline-block;width:16px;height:2px;background:#f59e0b;margin-right:4px;vertical-align:middle;"></span>PSE médio</span>
-                            </div>
-                        </div>
-
-                        <!-- Alertas da Equipe -->
-                        <div class="card" style="padding:24px;">
-                            <h3 style="margin:0 0 16px; font-size:15px; font-weight:600;"><i class="ti ti-alert-triangle" style="color:var(--yellow);"></i> Alertas da Equipe</h3>
-                            <div id="panelAlertas" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;">
-                                <div style="color:var(--text-muted); font-size:13px;">Carregando...</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Análise Avançada (collapsible) -->
-                    <details id="advancedDetails" style="margin-bottom:20px;">
-                        <summary style="cursor:pointer; padding:16px 24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); font-size:14px; font-weight:600; color:var(--text-muted); list-style:none; display:flex; align-items:center; gap:8px; user-select:none;">
-                            <i class="ti ti-chart-dots" style="color:var(--primary);"></i> Análise Avançada por Categoria
-                            <i class="ti ti-chevron-down" style="margin-left:auto;"></i>
-                        </summary>
-                        <div class="card" style="border-top:none; border-radius:0 0 var(--radius-md) var(--radius-md); padding:24px; margin-top:-1px;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
-                                <div class="comparison-controls">
-                                    <div>
-                                        <span class="selector-label">Atleta:</span>
-                                        <select id="selectComparison" class="form-control" style="width:180px;" onchange="updateDynamicCharts()">
-                                            <option value="equipe">Toda a Equipe</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <span class="selector-label">Dado:</span>
-                                        <select id="selectDataSource" class="form-control" style="width:180px;" onchange="handleDataSourceChange()">
-                                            <option value="wellness">Bem-Estar (Wellness)</option>
-                                            <option value="pse_carga">Carga de Treino e PSE</option>
-                                            <option value="scouts">Scouts de Lutas</option>
-                                            <option value="periodizacao">Periodização</option>
-                                            <option value="questionarios">Questionários</option>
-                                            <option value="testes_fisicos">Testes Físicos</option>
-                                            <option value="antropometria">Avaliação Antropométrica</option>
-                                            <option value="saude">Saúde (Lesões)</option>
-                                        </select>
-                                    </div>
-                                    <div id="subSourceContainer" style="display:none;">
-                                        <span class="selector-label">Qual:</span>
-                                        <select id="selectSubSource" class="form-control" style="width:180px;" onchange="updateDynamicCharts()"></select>
-                                    </div>
-                                    <div style="display:flex; gap:8px;">
-                                        <button class="btn-export" onclick="exportDynamicCSV()"><i class="ti ti-download"></i> CSV</button>
-                                        <button class="btn-export" style="background:#ef4444;border-color:#ef4444;" onclick="exportDynamicPDF()"><i class="ti ti-file-pdf"></i> PDF</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="chart-grid" id="dynamicChartsGrid">
-                                <div class="chart-box card" style="display:flex;flex-direction:column;grid-column:span 3;">
-                                    <h4 id="titleTable" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);border-bottom:1px solid var(--border-color);padding-bottom:8px;">Tabela de Dados</h4>
-                                    <div style="flex:1;max-height:250px;overflow-y:auto;" id="dynamicTableContainer"><p style="color:var(--text-muted);font-size:13px;">Selecione uma categoria acima.</p></div>
-                                </div>
-                                <div class="chart-box card" style="display:flex;flex-direction:column;">
-                                    <h4 id="titleChart1" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 1</h4>
-                                    <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart1"></canvas></div>
-                                </div>
-                                <div class="chart-box card" style="display:flex;flex-direction:column;">
-                                    <h4 id="titleChart2" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 2</h4>
-                                    <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart2"></canvas></div>
-                                </div>
-                                <div class="chart-box card" style="display:flex;flex-direction:column;">
-                                    <h4 id="titleChart3" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 3</h4>
-                                    <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart3"></canvas></div>
-                                </div>
-                                <div class="chart-box card" style="display:flex;flex-direction:column;">
-                                    <h4 id="titleChart4" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 4</h4>
-                                    <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart4"></canvas></div>
-                                </div>
-                                <div class="chart-box card" style="display:flex;flex-direction:column;grid-column:span 2;">
-                                    <h4 id="titleChart5" style="font-size:14px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 5</h4>
-                                    <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart5"></canvas></div>
-                                </div>
-                            </div>
-                        </div>
-                    </details>
 
                 </div>
                 <!-- ══ FIM SMART ANALYTICS ══════════════════════════════ -->
@@ -4821,16 +4749,10 @@
                 }
             }
 
-            renderSemaforo(); // já chama renderSmartPanels()
+            renderSemaforo();
             setTimeout(() => {
-                populateSmartSelects();
-                // Inicia análise avançada apenas quando aberta
-                document.getElementById('advancedDetails').addEventListener('toggle', function() {
-                    if (this.open) {
-                        populateComparisonSelect();
-                        updateDynamicCharts();
-                    }
-                });
+                populateComparisonSelect();
+                updateDynamicCharts();
             }, 100);
         }
 
