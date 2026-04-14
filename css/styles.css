@@ -1170,7 +1170,7 @@ body.mode-mobile .list-header {
 }
 
 body.mode-mobile .athlete-row,
-.student-row {
+body.mode-mobile .student-row {
     flex-direction: column;
     align-items: flex-start !important;
     gap: 12px;
@@ -1339,4 +1339,95 @@ body.mode-tablet .athlete-row {
 /* Btn no tablet não vira full width */
 body.mode-tablet .btn {
     width: auto;
+}
+
+/* ── GRIDS INLINE DAS PÁGINAS — cobertura mobile/tablet ─────── */
+
+/* financeiro.html: finance-grid */
+body.mode-mobile .finance-grid {
+    grid-template-columns: 1fr !important;
+}
+body.mode-tablet .finance-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+}
+
+/* atletas.html: form-grid (filtros/busca) */
+body.mode-mobile .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+}
+
+/* dashboard-questionarios.html: charts-grid */
+body.mode-mobile .charts-grid {
+    grid-template-columns: 1fr !important;
+}
+body.mode-tablet .charts-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+@media (orientation: landscape) {
+    body.mode-tablet .charts-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* treino-equipe.html: charts-row (layout 2fr 1fr) */
+body.mode-mobile .charts-row {
+    grid-template-columns: 1fr !important;
+}
+body.mode-tablet .charts-row {
+    grid-template-columns: 1fr 1fr !important;
+}
+
+/* calendario.html: calendário semana (7 colunas fixas) */
+body.mode-mobile .calendar-grid {
+    font-size: 11px;
+}
+body.mode-mobile .calendar-grid-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+body.mode-mobile .day-number {
+    font-size: 12px;
+}
+
+/* atletas.html: form-grid 2 colunas → colapsar no tablet portrait */
+@media (orientation: portrait) {
+    body.mode-tablet .form-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* treino-equipe.html: metricas-grid (4 colunas) */
+body.mode-mobile .metricas-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+@media (orientation: portrait) {
+    body.mode-mobile .metricas-grid {
+        grid-template-columns: 1fr 1fr !important;
+    }
+    body.mode-tablet .metricas-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* treino-equipe.html: week-grid / month-grid (7 colunas fixas) */
+body.mode-mobile .week-grid,
+body.mode-mobile .month-grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* atleta-performance.html / perfil-aluno.html: info-grid inline */
+body.mode-mobile [style*="grid-template-columns: 1fr 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+}
+body.mode-mobile [style*="grid-column: span 4"] {
+    grid-column: span 2 !important;
+}
+
+/* scout.html: scout-grid — scroll horizontal em mobile */
+body.mode-mobile .scout-grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    min-width: 600px;
 }
