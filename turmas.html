@@ -303,22 +303,20 @@
                     <button type="button" id="novaTurmaFotoRemove" class="foto-remove-btn" onclick="removeFoto('nova')">✕ Remover foto</button>
                 </div>
                 <div class="form-group">
-                    <label>Perfil (Tipo de Turma)</label>
-                    <div class="radio-group">
-                        <label class="radio-card selected" onclick="selectRadio(this, 'rendimento')">
-                            <input type="radio" name="tipoTurma" value="rendimento" checked>
-                            <i class="ti ti-medal radio-icon" style="font-size: 32px; margin-bottom: 12px;"></i>
-                            <div class="radio-title" style="font-size: 16px;">Rendimento</div>
-                            <div class="radio-desc">Foco em performance e scout.</div>
+                    <label>Tipo de Turma</label>
+                    <div style="display: flex; gap: 10px; margin-top: 6px;">
+                        <input type="radio" name="tipoTurma" id="tipoRendimento" value="rendimento" checked style="display:none;">
+                        <input type="radio" name="tipoTurma" id="tipoComercial" value="comercial" style="display:none;">
+                        <label for="tipoRendimento" class="tipo-pill" id="pill-rendimento" onclick="selectTipoPill('rendimento')" style="flex:1; display:flex; align-items:center; gap:10px; padding: 12px 16px; border-radius: 10px; cursor:pointer; border: 2px solid var(--primary); background: rgba(99,102,241,0.15); color: var(--text-main); font-weight: 600; font-size: 14px; transition: all 0.18s;">
+                            <i class="ti ti-medal" style="font-size: 20px; color: var(--primary);"></i>
+                            <span>Rendimento</span>
                         </label>
-                        <label class="radio-card" onclick="selectRadio(this, 'comercial')">
-                            <input type="radio" name="tipoTurma" value="comercial">
-                            <i class="ti ti-cash radio-icon"
-                                style="color: var(--green); font-size: 32px; margin-bottom: 12px;"></i>
-                            <div class="radio-title" style="font-size: 16px;">Comercial</div>
-                            <div class="radio-desc">Foco em mensalidades e presen&ccedil;a.</div>
+                        <label for="tipoComercial" class="tipo-pill" id="pill-comercial" onclick="selectTipoPill('comercial')" style="flex:1; display:flex; align-items:center; gap:10px; padding: 12px 16px; border-radius: 10px; cursor:pointer; border: 2px solid transparent; background: rgba(255,255,255,0.05); color: var(--text-muted); font-weight: 600; font-size: 14px; transition: all 0.18s;">
+                            <i class="ti ti-cash" style="font-size: 20px;"></i>
+                            <span>Comercial</span>
                         </label>
                     </div>
+                    <div style="margin-top: 6px; font-size: 12px; color: var(--text-muted);" id="tipoPillDesc">Foco em performance e scout.</div>
                 </div>
                 <div class="form-group" style="margin-top: 32px;">
                     <button type="submit" class="btn btn-primary"
@@ -428,12 +426,8 @@
 
         function openModal() {
             document.getElementById('novaTurmaName').value = '';
-            // Reset radio to default
-            const radios = document.querySelectorAll('input[name="tipoTurma"]');
-            radios.forEach(r => r.checked = r.value === 'rendimento');
-            document.querySelectorAll('.radio-card').forEach((c, i) => {
-                c.classList.toggle('selected', i === 0);
-            });
+            // Reset tipo pill to default
+            selectTipoPill('rendimento');
             modal.classList.add('active');
         }
         function closeModal() { modal.classList.remove('active'); }
@@ -745,6 +739,24 @@
                 _lastPinchDist = dist;
             }, { passive: true });
         });
+
+        function selectTipoPill(val) {
+            const isRend = val === 'rendimento';
+            const pillR = document.getElementById('pill-rendimento');
+            const pillC = document.getElementById('pill-comercial');
+            const desc  = document.getElementById('tipoPillDesc');
+            if (!pillR) return;
+            pillR.style.border         = isRend ? '2px solid var(--primary)' : '2px solid transparent';
+            pillR.style.background     = isRend ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.05)';
+            pillR.style.color          = isRend ? 'var(--text-main)' : 'var(--text-muted)';
+            pillR.querySelector('i').style.color = isRend ? 'var(--primary)' : 'var(--text-muted)';
+            pillC.style.border         = !isRend ? '2px solid var(--green)' : '2px solid transparent';
+            pillC.style.background     = !isRend ? 'rgba(16,185,129,0.12)' : 'rgba(255,255,255,0.05)';
+            pillC.style.color          = !isRend ? 'var(--text-main)' : 'var(--text-muted)';
+            pillC.querySelector('i').style.color = !isRend ? 'var(--green)' : 'var(--text-muted)';
+            if (desc) desc.innerText   = isRend ? 'Foco em performance e scout.' : 'Foco em mensalidades e presença.';
+            document.getElementById(isRend ? 'tipoRendimento' : 'tipoComercial').checked = true;
+        }
 
         function selectRadio(el, val) {
             document.querySelectorAll('.radio-card').forEach(rc => rc.classList.remove('selected'));
