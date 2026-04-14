@@ -321,6 +321,8 @@
                     toggleMode(new Event('click')); // switch back to login
                 }
             } else {
+                const ADMIN_EMAIL = 'gustavotruppeltkd@gmail.com';
+
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password,
@@ -329,8 +331,29 @@
                 if (error) {
                     errorMsg.innerText = "E-mail ou senha inválidos.";
                     errorMsg.style.display = 'block';
+                } else if (data && data.user) {
+                    const userEmail = data.user.email.toLowerCase();
+
+                    // Admin entra direto
+                    if (userEmail === ADMIN_EMAIL.toLowerCase()) return;
+
+                    // Outros emails: verificar se estão na lista de autorizados
+                    const { data: authRow } = await supabaseClient
+                        .from('authorized_emails')
+                        .select('email')
+                        .eq('email', userEmail)
+                        .single();
+
+                    if (!authRow) {
+                        await supabaseClient.auth.signOut();
+                        errorMsg.innerText = "Acesso não autorizado. Solicite acesso ao administrador.";
+                        errorMsg.style.display = 'block';
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        return;
+                    }
+                    // Autorizado — auth.js onAuthStateChange redireciona automaticamente
                 }
-                // If success, auth.js onAuthStateChange will automatically redirect to turmas.html
             }
 
             btn.disabled = false;

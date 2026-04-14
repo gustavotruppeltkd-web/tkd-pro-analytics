@@ -166,10 +166,9 @@ function fetchFromSupabase() {
             .single()
             .then(({ data, error }) => {
                 if (error && error.code !== 'PGRST116') {
-                    console.error("Erro ao buscar Supabase:", error);
-                    return;
-                }
-                if (data && data.data) {
+                    // Permissão negada ou outro erro de Supabase — continua com dados locais
+                    console.error("Erro ao buscar Supabase (continuando com dados locais):", error.code, error.message);
+                } else if (data && data.data) {
                     const remoteDate = data.data._last_updated || 1;
                     const localDate = lastSyncTime || 0;
 
@@ -191,7 +190,6 @@ function fetchFromSupabase() {
                             console.log("Local trainer not in Supabase yet. Pushing local data up.");
                             syncToSupabase();
                         } else {
-                            // Remote data is genuinely newer — update in-memory and re-render without page reload
                             console.log("Supabase has newer data. Updating in-memory and re-rendering...");
                             db = remoteDB;
                             window.db = db;
@@ -202,16 +200,14 @@ function fetchFromSupabase() {
                         syncToSupabase();
                     }
                 } else {
-                    // Supabase has no row for this user yet.
+                    // Supabase sem dados para este usuário ainda
                     if (lastSyncTime > 0) {
                         syncToSupabase();
                     }
                 }
 
-                // Subscribe to remote changes
+                // Sempre executa após tentativa de sync — independente de erro
                 setupRealtimeSubscription();
-
-                // Always call the page's render hook after remote data arrives
                 renderUserProfile();
                 checkTrainerOnboarding();
                 if (typeof window.onDataLoaded === 'function') {
@@ -483,6 +479,10 @@ async function syncToSupabase() {
 
         if (upsertError) {
             console.error("Erro no Upsert Supabase:", upsertError);
+            if (upsertError.code === '42501') {
+                console.warn("Permissão negada no Supabase. Verifique as políticas RLS da tabela app_state.");
+                if (typeof showToast === 'function') showToast('Erro de permissão ao salvar na nuvem. Dados salvos apenas localmente.', 'error');
+            }
         } else {
             console.log("Sincronização concluída.");
         }
