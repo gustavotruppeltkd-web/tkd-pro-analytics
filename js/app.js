@@ -191,6 +191,12 @@ function fetchFromSupabase() {
                             syncToSupabase();
                         } else {
                             console.log("Supabase has newer data. Updating in-memory and re-rendering...");
+                            // Garante que todos os arrays existam (dados antigos podem ter null)
+                            const arrayKeys = ['turmas','alunos','planos','horarios','wellnessLogs',
+                                'questionarios','respostas','cargaTreino','competicoes','treinos',
+                                'eventos','lutasScout','presencas','chamadas','lesoes','scoutEstatisticas'];
+                            arrayKeys.forEach(k => { if (!remoteDB[k]) remoteDB[k] = []; });
+                            if (!remoteDB.periodizacao) remoteDB.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao));
                             db = remoteDB;
                             window.db = db;
                             localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
