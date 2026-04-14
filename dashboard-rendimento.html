@@ -2404,9 +2404,9 @@
         function renderWellnessCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Registros Consolidados de Bem-Estar';
             document.getElementById('titleChart1').innerText = 'Evolução do Score Geral (Tendência)';
-            document.getElementById('titleChart2').innerText = 'Mapeamento de Médias (1-5)';
+            document.getElementById('titleChart2').innerText = 'Radar de Bem-Estar (5=ótimo)';
             document.getElementById('titleChart3').innerText = 'Distribuição de Zonas de Prontidão (Risco)';
-            document.getElementById('titleChart4').innerText = 'Fatores Físicos vs Psicológicos';
+            document.getElementById('titleChart4').innerText = 'Prontidão Física vs Psicológica';
             document.getElementById('titleChart5').innerText = 'Média por Dia da Semana (Histórico)';
 
             let allLogs = (db.wellnessLogs || []).filter(l => dates.includes(l.data));
@@ -2477,7 +2477,7 @@
             if (athleteId !== 'equipe') {
                 const athleteData = dates.map(d => {
                     let log = (db.wellnessLogs || []).find(l => l.data === d && l.atletaId === parseInt(athleteId));
-                    return log ? calcWellnessScore(log.sono, log.estresse, log.dor, log.humor, l.fadiga, log.alimentacao) : null;
+                    return log ? calcWellnessScore(log.sono, log.estresse, log.dor, log.humor, log.fadiga, log.alimentacao) : null;
                 });
                 datasets1.push({
                     label: 'Atleta Selecionado',
@@ -2496,22 +2496,24 @@
             });
 
             // Gráfico 2: Radar de Médias
-            let avgSono = 0, avgEstresse = 0, avgDor = 0, avgFadiga = 0, avgHumor = 0;
+            // Para o radar: Sono e Humor são positivos (maior = melhor).
+            // Estresse, Dor e Fadiga são negativos — invertemos com (6 - valor) para que maior = melhor no radar.
+            let avgSono = 0, avgEstresseInv = 0, avgDorInv = 0, avgFadigaInv = 0, avgHumor = 0;
             if (allLogs.length > 0) {
                 avgSono = (allLogs.reduce((acc, l) => acc + (l.sono || 3), 0) / allLogs.length).toFixed(1);
-                avgEstresse = (allLogs.reduce((acc, l) => acc + (l.estresse || 3), 0) / allLogs.length).toFixed(1);
-                avgDor = (allLogs.reduce((acc, l) => acc + (l.dor || 3), 0) / allLogs.length).toFixed(1);
-                avgFadiga = (allLogs.reduce((acc, l) => acc + (l.fadiga || 3), 0) / allLogs.length).toFixed(1);
+                avgEstresseInv = (allLogs.reduce((acc, l) => acc + (6 - (l.estresse || 3)), 0) / allLogs.length).toFixed(1);
+                avgDorInv = (allLogs.reduce((acc, l) => acc + (6 - (l.dor || 3)), 0) / allLogs.length).toFixed(1);
+                avgFadigaInv = (allLogs.reduce((acc, l) => acc + (6 - (l.fadiga || 3)), 0) / allLogs.length).toFixed(1);
                 avgHumor = (allLogs.reduce((acc, l) => acc + (l.humor || 3), 0) / allLogs.length).toFixed(1);
             }
 
             dynamicCharts.chart2 = new Chart(ctx2, {
                 type: 'radar',
                 data: {
-                    labels: ['Sono', 'Estresse', 'Dor', 'Fadiga', 'Humor'],
+                    labels: ['Sono', 'Baixo Estresse', 'Sem Dor', 'Baixa Fadiga', 'Humor'],
                     datasets: [{
-                        label: 'Média do Período',
-                        data: [avgSono, avgEstresse, avgDor, avgFadiga, avgHumor],
+                        label: 'Média do Período (5=ótimo)',
+                        data: [avgSono, avgEstresseInv, avgDorInv, avgFadigaInv, avgHumor],
                         backgroundColor: 'rgba(139, 92, 246, 0.2)', // violet
                         borderColor: '#8b5cf6',
                         pointBackgroundColor: '#8b5cf6',
@@ -2561,17 +2563,20 @@
                 }
             });
 
-            // Gráfico 4: Físico vs Psicológico
+            // Gráfico 4: Prontidão Física vs Psicológica
+            // Físico: média de (6-fadiga) e (6-dor) — invertidos pois são indicadores negativos
+            // Psicológico: média de sono, (6-estresse), humor — estresse invertido
+            // Resultado: 1=pior, 5=melhor para ambos os fatores
             const dataFis = dates.map(d => {
                 let dlogs = allLogs.filter(l => l.data === d);
                 if (dlogs.length === 0) return null;
-                let sumFis = dlogs.reduce((acc, l) => acc + (l.fadiga || 3) + (l.dor || 3), 0);
+                let sumFis = dlogs.reduce((acc, l) => acc + (6 - (l.fadiga || 3)) + (6 - (l.dor || 3)), 0);
                 return (sumFis / (dlogs.length * 2)).toFixed(1);
             });
             const dataPsi = dates.map(d => {
                 let dlogs = allLogs.filter(l => l.data === d);
                 if (dlogs.length === 0) return null;
-                let sumPsi = dlogs.reduce((acc, l) => acc + (l.sono || 3) + (l.estresse || 3) + (l.humor || 3), 0);
+                let sumPsi = dlogs.reduce((acc, l) => acc + (l.sono || 3) + (6 - (l.estresse || 3)) + (l.humor || 3), 0);
                 return (sumPsi / (dlogs.length * 3)).toFixed(1);
             });
 
@@ -2580,8 +2585,8 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        { label: 'Fator Físico', data: dataFis, borderColor: '#ef4444', backgroundColor: 'transparent', tension: 0.3 },
-                        { label: 'Fator Psicológico', data: dataPsi, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.3 }
+                        { label: 'Prontidão Física (5=ótimo)', data: dataFis, borderColor: '#ef4444', backgroundColor: 'transparent', tension: 0.3 },
+                        { label: 'Prontidão Psicológica (5=ótimo)', data: dataPsi, borderColor: '#3b82f6', backgroundColor: 'transparent', tension: 0.3 }
                     ]
                 },
                 options: {
@@ -3910,7 +3915,7 @@
                 if (t.tipo === 'vo2max') valencies.Resistencia.push(parseFloat(t.resultados.valor) / 70 * 10);
                 if (t.tipo === 'flexibilidade') valencies.Flexibilidade.push(parseFloat(t.resultados.valor) / 40 * 10);
                 if (t.tipo === 'agilidade') valencies.Agilidade.push(Math.max(0, 10 - (parseFloat(t.resultados.valor) / 15 * 10)));
-                if (t.tipo.includes('fskt')) valencies.Velocidade.push(((t.resultados.total || t.resultados.chutes) / 90) * 10);
+                if (t.tipo.includes('fskt')) valencies.Velocidade.push(Math.min(10, ((t.resultados.total || t.resultados.chutes) / 40) * 10));
             });
 
             const radarData = Object.keys(valencies).map(k => {
