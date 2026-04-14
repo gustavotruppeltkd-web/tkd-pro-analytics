@@ -1180,6 +1180,20 @@ body.mode-mobile .student-row {
     gap: 12px;
     padding: 16px !important;
 }
+body.mode-mobile .col-action {
+    width: 100%;
+    justify-content: flex-start !important;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+body.mode-mobile .col-action .btn,
+body.mode-mobile .col-action .btn-primary {
+    width: auto !important;
+    flex: none;
+}
+body.mode-mobile .col-age {
+    display: none; /* idade já aparece nos detalhes, economiza espaço */
+}
 
 body.mode-mobile .athlete-info {
     width: 100%;
