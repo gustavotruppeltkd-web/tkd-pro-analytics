@@ -1424,6 +1424,15 @@
             </div>
             <div id="pseList" style="margin-bottom: 16px;"></div>
 
+            <!-- Treinos do dia atribuídos a este atleta -->
+            <div id="treinosHojeContainer" style="margin-bottom:16px; display:none;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:8px;">
+                    <i class="ti ti-calendar-event" style="margin-right:4px;"></i> Treinos de Hoje
+                </div>
+                <div id="treinosHojeList" style="display:flex; flex-direction:column; gap:6px;"></div>
+                <input type="hidden" id="treinoVinculadoId" value="">
+            </div>
+
             <div id="pseForm">
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label style="font-size: 11px; margin-bottom: 4px;">Tipo de Treino</label>
@@ -1681,6 +1690,7 @@
             initWellnessButtons();
             checkWellnessDone();
             checkPseDone();
+            renderTreinosHoje();
 
             portalLoaded = true;
         }
@@ -2457,6 +2467,78 @@
             showToast("Editando registro de carga...");
         }
 
+        // ── TREINOS DO DIA (vinculação ao PSE) ────────────────────
+        const TIPOS_FISICO_IDS = ['forca','potencia','transferencia','hiit','cardio','glicolitico','regenerativo','mobilidade','flexibilidade','core'];
+
+        function renderTreinosHoje() {
+            const turmaId = db.alunos?.find(a => a.id === atletaId)?.turmaId;
+            if (!turmaId) return;
+
+            const treinos = (db.treinos || []).filter(t => {
+                if (t.data !== today || t.turmaId !== turmaId) return false;
+                const dest = t.destinatario || 'equipe';
+                // Inclui treinos da equipe OU específicos para este atleta
+                return dest === 'equipe' || t.atletaId === atletaId;
+            }).sort((a, b) => (a.horario || '').localeCompare(b.horario || ''));
+
+            const container = document.getElementById('treinosHojeContainer');
+            const list = document.getElementById('treinosHojeList');
+
+            if (treinos.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = '';
+            list.innerHTML = treinos.map(t => {
+                const tipoLabel = TIPOS_FISICO_IDS.includes(t.tipo) ? 'Físico' : 'Taekwondo';
+                const hora = t.horario ? `${t.horario} · ` : '';
+                const dur = t.duracaoMins ? `${t.duracaoMins}min` : '';
+                const jaSubmetido = (window.db.cargaTreino || []).some(c =>
+                    String(c.atletaId) === String(atletaId) && c.data === today && c.treinoId === t.id
+                );
+                return `
+                    <div onclick="selecionarTreino(${t.id}, '${tipoLabel}', ${t.duracaoMins || 90})"
+                        style="padding:10px 12px; border-radius:var(--radius-sm); border:1px solid ${jaSubmetido ? 'var(--green)' : 'var(--border-color)'}; background:${jaSubmetido ? 'rgba(16,185,129,0.08)' : 'rgba(255,255,255,0.03)'}; cursor:${jaSubmetido ? 'default' : 'pointer'}; display:flex; align-items:center; justify-content:space-between; gap:8px; transition:border-color 0.15s;" id="treino-card-${t.id}">
+                        <div>
+                            <div style="font-size:13px; font-weight:600; margin-bottom:2px;">${t.titulo}</div>
+                            <div style="font-size:11px; color:var(--text-muted);">${hora}${tipoLabel} · ${dur}</div>
+                        </div>
+                        ${jaSubmetido
+                            ? '<i class="ti ti-check" style="color:var(--green); font-size:16px;"></i>'
+                            : '<span style="font-size:11px; color:var(--primary); font-weight:600;">Selecionar</span>'}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selecionarTreino(treinoId, tipoLabel, duracaoMins) {
+            const jaSubmetido = (window.db.cargaTreino || []).some(c =>
+                String(c.atletaId) === String(atletaId) && c.data === today && c.treinoId === treinoId
+            );
+            if (jaSubmetido) return;
+
+            // Vincula o treino selecionado
+            document.getElementById('treinoVinculadoId').value = treinoId;
+
+            // Pré-preenche tipo e duração
+            const slTipo = document.getElementById('slTipoTreino');
+            if (slTipo) slTipo.value = tipoLabel;
+            const inpDur = document.getElementById('inpDuracao');
+            if (inpDur) { inpDur.value = duracaoMins; updateCargaDisplay(); }
+
+            // Destaca visualmente o card selecionado
+            document.querySelectorAll('[id^="treino-card-"]').forEach(el => {
+                el.style.borderColor = 'var(--border-color)';
+                el.style.background = 'rgba(255,255,255,0.03)';
+            });
+            const sel = document.getElementById(`treino-card-${treinoId}`);
+            if (sel) {
+                sel.style.borderColor = 'var(--primary)';
+                sel.style.background = 'rgba(59,130,246,0.08)';
+            }
+        }
+
         function deletePSE(id) {
             if (confirm("Deseja realmente excluir este registro de carga? Você poderá preencher novamente.")) {
                 window.db.cargaTreino = (window.db.cargaTreino || []).filter(c => c.id !== id);
@@ -2512,18 +2594,31 @@
             const pse = parseInt(document.getElementById('slPSE').value);
             const dur = parseInt(document.getElementById('inpDuracao').value);
             const tipo = document.getElementById('slTipoTreino').value;
+            const treinoVinculadoId = parseInt(document.getElementById('treinoVinculadoId').value) || null;
 
             if (!pse) return showToast('Selecione a intensidade (PSE)', 'error');
             if (!dur || dur < 1) return showToast('Informe a duração do treino', 'error');
 
-            // Check if this type was already submitted today
-            const alreadySubmitted = (window.db.cargaTreino || []).some(c => String(c.atletaId) === String(atletaId) && c.data === today && c.tipoTreino === tipo);
+            // Se vinculado a um treino específico, verifica duplicata por treinoId
+            // Se não vinculado, verifica por tipo (comportamento original)
+            const alreadySubmitted = (window.db.cargaTreino || []).some(c => {
+                if (String(c.atletaId) !== String(atletaId) || c.data !== today) return false;
+                if (treinoVinculadoId) return c.treinoId === treinoVinculadoId;
+                return c.tipoTreino === tipo && !c.treinoId; // apenas entradas sem vínculo
+            });
             if (alreadySubmitted) {
-                return showToast(`Treino ${tipo} já registrado hoje! Se errou, exclua o antigo primeiro.`, 'error');
+                const msg = treinoVinculadoId
+                    ? 'PSE já registrado para este treino!'
+                    : `Treino ${tipo} já registrado hoje! Se errou, exclua o antigo primeiro.`;
+                return showToast(msg, 'error');
             }
 
             if (!window.db.cargaTreino) window.db.cargaTreino = [];
-            const novaEntrada = { id: Date.now(), atletaId, data: today, _updatedAt: Date.now(), tipoTreino: tipo, pse, duracaoMins: dur, cargaCalculada: pse * dur };
+            const novaEntrada = {
+                id: Date.now(), atletaId, data: today, _updatedAt: Date.now(),
+                tipoTreino: tipo, pse, duracaoMins: dur, cargaCalculada: pse * dur,
+                treinoId: treinoVinculadoId
+            };
             window.db.cargaTreino.push(novaEntrada);
             // Backup dedicado no localStorage
             const pseBkpRaw = localStorage.getItem('tkd_pse_' + atletaId + '_' + today);
@@ -2547,7 +2642,9 @@
             });
 
             showToast('Carga salva!');
+            document.getElementById('treinoVinculadoId').value = '';
             checkPseDone();
+            renderTreinosHoje();
         }
 
         function renderScaleButtons(min, max, current, name) {

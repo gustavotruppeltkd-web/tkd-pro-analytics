@@ -1427,6 +1427,53 @@
             font-size: 13px;
             font-weight: 600;
         }
+
+        /* ── DESTINATÁRIO ── */
+        .dest-toggle {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .dest-pill {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            font-family: 'Inter', sans-serif;
+        }
+        .dest-pill.active {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .dest-pill:hover:not(.active) {
+            background: var(--bg-hover);
+            color: var(--text-main);
+        }
+        /* Badge no chip do calendário */
+        .chip-atleta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            padding: 1px 6px;
+            border-radius: 20px;
+            margin-top: 2px;
+        }
     </style>
 </head>
 
@@ -1618,6 +1665,27 @@
                             </label>
                         </div>
                     </div>
+                </div>
+
+                <!-- Destinatário -->
+                <div class="form-group" style="margin-bottom:16px;">
+                    <label>Destinatário do Treino</label>
+                    <div class="dest-toggle">
+                        <button type="button" class="dest-pill active" id="destEquipe"
+                            onclick="setDestinatario('equipe')">
+                            <i class="ti ti-users"></i> Toda a Equipe
+                        </button>
+                        <button type="button" class="dest-pill" id="destAtleta"
+                            onclick="setDestinatario('atleta')">
+                            <i class="ti ti-user"></i> Atleta Específico
+                        </button>
+                    </div>
+                    <div id="atletaDestinatarioRow" style="display:none; margin-top:10px;">
+                        <select id="atletaDestinatarioId" class="form-control">
+                            <option value="">— Selecione o atleta —</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="treinoDestinatario" value="equipe">
                 </div>
 
                 <!-- Duração + PSE -->
@@ -2003,13 +2071,23 @@
                 cargaHtml = `<span style="font-size:10px; background:${cBg}; color:${cColor}; padding:1px 5px; border-radius:4px; font-weight:700;" title="Carga Foster: PSE × Duração">${c} CARGA</span>`;
             }
 
+            // Badge de atleta específico
+            let atletaBadge = '';
+            if (t.destinatario === 'atleta' && t.atletaId) {
+                const aluno = (db.alunos || []).find(a => a.id === t.atletaId);
+                if (aluno) {
+                    const initials = aluno.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+                    atletaBadge = `<span class="chip-atleta-badge" title="${aluno.nome}"><i class="ti ti-user" style="font-size:9px;"></i> ${initials}</span>`;
+                }
+            }
+
             return `<div class="treino-chip tipo-${t.tipo}"
                 draggable="true"
                 data-id="${t.id}"
                 ondragstart="onChipDragStart(event, ${t.id})"
                 ondragend="onChipDragEnd(event)"
                 onclick="editTreino(${t.id})">
-                <div class="chip-title">${t.titulo}</div>
+                <div class="chip-title" style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">${t.titulo} ${atletaBadge}</div>
                 <div class="chip-meta" style="flex-wrap: wrap; gap: 4px;">
                     ${hora ? `<span><i class="ti ti-clock" style="font-size:10px;"></i> ${hora}</span>` : ''}
                     <span>${tipoText}</span>
@@ -2235,6 +2313,21 @@
         // ============================================================
         //  MODAL - OPEN / EDIT / CLOSE
         // ============================================================
+        // ── DESTINATÁRIO ──────────────────────────────────────────
+        function setDestinatario(val) {
+            document.getElementById('treinoDestinatario').value = val;
+            document.getElementById('destEquipe').classList.toggle('active', val === 'equipe');
+            document.getElementById('destAtleta').classList.toggle('active', val === 'atleta');
+            document.getElementById('atletaDestinatarioRow').style.display = val === 'atleta' ? '' : 'none';
+        }
+
+        function populateAtletaDestinatarioSelect(selectedId) {
+            const sel = document.getElementById('atletaDestinatarioId');
+            const alunosTurma = (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
+            sel.innerHTML = '<option value="">— Selecione o atleta —</option>' +
+                alunosTurma.map(a => `<option value="${a.id}" ${a.id === selectedId ? 'selected' : ''}>${a.nome}</option>`).join('');
+        }
+
         function openModalTreino(dateStr) {
             document.getElementById('treinoEditId').value = '';
             document.getElementById('modalTreinoTitle').innerText = 'Nova Sessão de Treino';
@@ -2254,6 +2347,10 @@
             populateTitleSelect(null);
             document.querySelector('input[name="treinoMacro"][value="taekwondo"]').checked = true;
             updateTipoOpcoes();
+
+            // Reset destinatário
+            setDestinatario('equipe');
+            populateAtletaDestinatarioSelect(null);
 
             document.getElementById('treinoViewPanel').style.display = 'none';
             document.getElementById('treinoEditPanel').style.display = '';
@@ -2490,6 +2587,15 @@
                 selectTipo(t.tipo, tipoBtn);
             }, 20);
             (t.blocos || []).forEach(b => addBloco(b));
+
+            // Carregar destinatário
+            const dest = t.destinatario || 'equipe';
+            populateAtletaDestinatarioSelect(t.atletaId || null);
+            setDestinatario(dest);
+            if (dest === 'atleta' && t.atletaId) {
+                document.getElementById('atletaDestinatarioId').value = t.atletaId;
+            }
+
             document.getElementById('treinoViewPanel').style.display = 'none';
             document.getElementById('treinoEditPanel').style.display = '';
         }
@@ -2871,6 +2977,11 @@
             // Cálculo de Foster: Carga Total (CARGA) = PSE (Borg 0-10) × Duração (min)
             const cargaTreino = psePlanejada * duracaoMins;
 
+            const destinatario = document.getElementById('treinoDestinatario').value || 'equipe';
+            const atletaDestId = destinatario === 'atleta'
+                ? (parseInt(document.getElementById('atletaDestinatarioId').value) || null)
+                : null;
+
             const treino = {
                 id: trainingId,
                 data: document.getElementById('treinoData').value,
@@ -2884,6 +2995,8 @@
                 blocos: getBlocosData(),
                 obs: document.getElementById('treinoObs').value.trim(),
                 turmaId: db.activeTurmaId,
+                destinatario,
+                atletaId: atletaDestId,
                 _updatedAt: Date.now()
             };
 
@@ -2947,25 +3060,38 @@
             return d;
         }
 
-        /** Soma todas as cargas (CARGA) de treinos da semana que começa em weekStart */
-        function calcWeekLoad(weekStart) {
+        /**
+         * Soma cargas de treinos da semana.
+         * atletaId opcional: se fornecido, inclui apenas treinos da equipe
+         * ou especificamente para este atleta (exclui treinos de outros atletas).
+         */
+        function calcWeekLoad(weekStart, atletaId) {
             const ws = toDateStr(weekStart);
             const we = new Date(weekStart);
             we.setDate(we.getDate() + 6);
             const weStr = toDateStr(we);
             return (db.treinos || [])
-                .filter(t => t.turmaId === db.activeTurmaId && t.data >= ws && t.data <= weStr)
+                .filter(t => {
+                    if (t.turmaId !== db.activeTurmaId) return false;
+                    if (t.data < ws || t.data > weStr) return false;
+                    // Se há filtro de atleta: inclui treino da equipe OU treino deste atleta
+                    if (atletaId) {
+                        const dest = t.destinatario || 'equipe';
+                        if (dest === 'atleta' && t.atletaId !== atletaId) return false;
+                    }
+                    return true;
+                })
                 .reduce((sum, t) => sum + (t.cargaTreino || 0), 0);
         }
 
         /** Retorna cargas das últimas N semanas (mais recente primeiro) */
-        function calcWeekLoads(n, referenceDate) {
+        function calcWeekLoads(n, referenceDate, atletaId) {
             const ref = getWeekStartFor(referenceDate || new Date());
             const loads = [];
             for (let i = 0; i < n; i++) {
                 const ws = new Date(ref);
                 ws.setDate(ref.getDate() - i * 7);
-                loads.push({ weekStart: ws, load: calcWeekLoad(ws) });
+                loads.push({ weekStart: ws, load: calcWeekLoad(ws, atletaId) });
             }
             return loads; // índice 0 = semana atual
         }
@@ -2979,7 +3105,7 @@
         }
 
         /** Monotonia = média_diaria / DP_diaria (últimos 7 dias) */
-        function calcMonotonia(referenceDate) {
+        function calcMonotonia(referenceDate, atletaId) {
             const ref = new Date(referenceDate || new Date());
             const dailyLoads = [];
             for (let i = 0; i < 7; i++) {
@@ -2987,7 +3113,14 @@
                 d.setDate(ref.getDate() - i);
                 const dStr = toDateStr(d);
                 const dayLoad = (db.treinos || [])
-                    .filter(t => t.turmaId === db.activeTurmaId && t.data === dStr)
+                    .filter(t => {
+                        if (t.turmaId !== db.activeTurmaId || t.data !== dStr) return false;
+                        if (atletaId) {
+                            const dest = t.destinatario || 'equipe';
+                            if (dest === 'atleta' && t.atletaId !== atletaId) return false;
+                        }
+                        return true;
+                    })
                     .reduce((s, t) => s + (t.cargaTreino || 0), 0);
                 dailyLoads.push(dayLoad);
             }
