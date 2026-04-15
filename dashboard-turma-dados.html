@@ -1787,28 +1787,30 @@
                         ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px;"></i> Nunca respondido`;
                     }
 
+                    // Usa o log mais recente disponível (hoje ou qualquer dia anterior)
+                    const wLogDisplay = wLogToday || wLog;
                     let wellnessHTML = '';
-                    if (wLogToday) {
+                    if (wLogDisplay) {
+                        const isStale = !wLogToday; // dado não é de hoje
                         wellnessHTML = `
-                            <div style="margin: 10px 0 14px 0; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 8px; width: 100%;">
-                                ${renderWellnessDots('Sono', 'ti ti-bed', wLogToday.sono)}
-                                ${renderWellnessDots('Alimentação', 'ti ti-apple', wLogToday.alimentacao)}
-                                ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLogToday.humor)}
-                                ${renderWellnessDots('Estresse', 'ti ti-brain', wLogToday.estresse, true)}
-                                ${renderWellnessDots('Dor', 'ti ti-shield-up', wLogToday.dor, true)}
-                                ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLogToday.fadiga, true)}
+                            <div style="margin: 10px 0 14px 0; background: rgba(0,0,0,0.15); padding: 8px 12px; border-radius: 8px; width: 100%; ${isStale ? 'opacity:0.75;' : ''}">
+                                ${renderWellnessDots('Sono', 'ti ti-bed', wLogDisplay.sono)}
+                                ${renderWellnessDots('Alimentação', 'ti ti-apple', wLogDisplay.alimentacao)}
+                                ${renderWellnessDots('Humor', 'ti ti-mood-smile', wLogDisplay.humor)}
+                                ${renderWellnessDots('Estresse', 'ti ti-brain', wLogDisplay.estresse, true)}
+                                ${renderWellnessDots('Dor', 'ti ti-shield-up', wLogDisplay.dor, true)}
+                                ${renderWellnessDots('Fadiga', 'ti ti-battery-2', wLogDisplay.fadiga, true)}
                             </div>
                         `;
                     } else {
-                        const lastWeightStr = (wLog && wLog.pesoAtual) ? `Último peso: ${wLog.pesoAtual}kg` : `Sem dados de peso`;
-                        wellnessHTML = `<div style="margin: 10px 0 14px 0; font-size:11px; color:var(--text-muted); text-align:center; padding: 10px 0; width:100%;">Sem bem-estar hoje<br><span style="opacity: 0.7;">(${lastWeightStr})</span></div>`;
+                        wellnessHTML = `<div style="margin: 10px 0 14px 0; font-size:11px; color:var(--text-muted); text-align:center; padding: 10px 0; width:100%;"><i class="ti ti-clipboard-off" style="display:block; font-size:18px; margin-bottom:4px; opacity:0.4;"></i>Nunca respondido</div>`;
                     }
 
                     card = `
                         <div class="student-square-card" style="animation: fadeIn 0.4s ease-out; height: 100%; display: flex; flex-direction: column;">
                             <img src="${a.avatar}" alt="${a.nome}" class="student-square-avatar" style="align-self: center;" onerror="this.src=DEFAULT_AVATAR">
                             <h4 style="text-align: center;">${a.nome}</h4>
-                            <p style="text-align: center; margin-bottom: 4px;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLogToday && wLogToday.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLogToday.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
+                            <p style="text-align: center; margin-bottom: 4px;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLogDisplay && wLogDisplay.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLogDisplay.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
                             <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px; opacity: 0.75;">${ultimoWellnessLabel}</div>
 
                             <div style="flex-grow: 1;"></div>
