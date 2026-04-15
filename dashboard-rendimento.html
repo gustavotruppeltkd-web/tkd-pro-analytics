@@ -80,34 +80,40 @@
         }
 
         .semaforo-dot {
-            width: 16px;
-            height: 16px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: inline-block;
+            flex-shrink: 0;
         }
 
         .semaforo-green {
             background-color: var(--green);
-            box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
         }
 
         .semaforo-yellow {
             background-color: var(--yellow);
-            box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
         }
 
         .semaforo-red {
             background-color: var(--red);
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
         }
 
         .semaforo-gray {
             background-color: #6B7280;
         }
 
+        /* Borda superior colorida por status */
+        .student-row:has(.semaforo-green)  { border-top: 3px solid var(--green); }
+        .student-row:has(.semaforo-yellow) { border-top: 3px solid var(--yellow); }
+        .student-row:has(.semaforo-red)    { border-top: 3px solid var(--red); }
+
         .wellness-score {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
         }
 
         .list-header {
@@ -129,6 +135,28 @@
             text-align: right;
             padding-right: 8px;
         }
+
+        /* Stat card — painel semáforo do topo */
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            padding: 20px 24px;
+        }
+
+        .stat-card .card-title-group {
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+            margin: 4px 0 8px;
+        }
+
+        body.mode-tablet .stat-card .value { font-size: 40px; }
+        body.mode-mobile .stat-card .value { font-size: 36px; }
 
         .athlete-mini-list {
             margin-top: 12px;

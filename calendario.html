@@ -54,8 +54,53 @@
 
         .event-item:hover {
             transform: translateX(4px);
-            border-color: var(--primary);
         }
+
+        /* Eventos por tipo — borda esquerda colorida */
+        .event-item.ev-competição  { border-left: 3px solid var(--primary); }
+        .event-item.ev-competição:hover  { border-color: var(--primary); }
+        .event-item.ev-curso       { border-left: 3px solid var(--green); }
+        .event-item.ev-curso:hover       { border-color: var(--green); }
+        .event-item.ev-seminário   { border-left: 3px solid var(--yellow); }
+        .event-item.ev-seminário:hover   { border-color: var(--yellow); }
+        .event-item.ev-festival    { border-left: 3px solid #8b5cf6; }
+        .event-item.ev-festival:hover    { border-color: #8b5cf6; }
+
+        /* Evento urgente (≤ 14 dias) */
+        .event-item.ev-urgente {
+            background: rgba(59, 130, 246, 0.04);
+        }
+
+        /* Evento passado */
+        .event-item.ev-passado {
+            opacity: 0.55;
+        }
+
+        /* Dias restantes badge */
+        .event-countdown {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            white-space: nowrap;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        .event-countdown.urgent {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+        }
+        .event-countdown.soon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--yellow);
+        }
+        .event-countdown.past {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+
+        /* Mobile: event-actions só ícones */
+        body.mode-mobile .event-actions span { display: none; }
 
         .event-date-box {
             display: flex;
@@ -502,17 +547,43 @@
                     }
                 }
 
+                const today2 = new Date(); today2.setHours(0,0,0,0);
+                const evStart = new Date(ev.data + 'T00:00:00');
+                const diffDays = Math.round((evStart - today2) / 86400000);
+                const isPast = diffDays < 0;
+
+                let countdownHtml = '';
+                let countdownClass = '';
+                if (isPast) {
+                    countdownHtml = 'Encerrado';
+                    countdownClass = 'past';
+                } else if (diffDays === 0) {
+                    countdownHtml = 'Hoje!';
+                    countdownClass = 'urgent';
+                } else if (diffDays <= 14) {
+                    countdownHtml = `${diffDays}d`;
+                    countdownClass = 'urgent';
+                } else if (diffDays <= 30) {
+                    countdownHtml = `${diffDays}d`;
+                    countdownClass = 'soon';
+                }
+
+                const tipoClass = ev.tipo ? `ev-${ev.tipo.toLowerCase()}` : '';
+                const urgentClass = !isPast && diffDays <= 14 ? 'ev-urgente' : '';
+                const pastClass = isPast ? 'ev-passado' : '';
+
                 const item = document.createElement('div');
-                item.className = 'card event-item';
+                item.className = `card event-item ${tipoClass} ${urgentClass} ${pastClass}`.trim();
                 item.onclick = () => window.location.href = `evento-detalhes.html?id=${ev.id}`;
                 item.innerHTML = `
                     <div class="event-date-box">
                         ${dateDisplay}
                     </div>
                     <div class="event-info">
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span class="event-title">${ev.titulo}</span>
                             <span class="event-type-badge type-${ev.tipo.toLowerCase()}">${ev.tipo}</span>
+                            ${countdownHtml ? `<span class="event-countdown ${countdownClass}">${countdownHtml}</span>` : ''}
                         </div>
                         <div class="event-meta">
                             <span><i class="ti ti-map-pin"></i> ${ev.local || 'Local não definido'}</span>

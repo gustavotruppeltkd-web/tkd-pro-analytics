@@ -661,24 +661,26 @@ Let's fix that layout using CSS grid */
 }
 
 .card-header {
-    padding: 24px;
+    padding: 20px 24px;
     display: flex;
     gap: 16px;
-    align-items: flex-start;
+    align-items: center;
     border-bottom: 1px solid var(--border-color);
 }
 
 .athlete-avatar {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     border-radius: var(--radius-md);
     object-fit: cover;
+    flex-shrink: 0;
 }
 
 .athlete-badges {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    margin-left: auto;
 }
 
 .badge {
@@ -707,19 +709,20 @@ Let's fix that layout using CSS grid */
 }
 
 .card-body {
-    padding: 24px;
+    padding: 20px 24px;
     flex: 1;
 }
 
 .card-body h3 {
-    font-size: var(--text-xl);
-    margin-bottom: 4px;
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    margin-bottom: 2px;
 }
 
 .category {
-    font-size: 13px;
+    font-size: var(--text-base);
     color: var(--text-muted);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .metrics {
@@ -786,18 +789,26 @@ Let's fix that layout using CSS grid */
 }
 
 .card-footer {
-    padding: 16px 24px;
+    padding: 12px 24px;
     background: var(--bg-hover);
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-footer .btn {
+    flex: 1;
+    justify-content: center;
+    font-size: var(--text-base);
+    height: 34px;
 }
 
 .card-footer .btn-icon {
-    font-size: 14px;
+    font-size: var(--text-base);
     padding: 0 12px;
     width: auto;
-    gap: 8px;
+    gap: 6px;
 }
 
 /* Modals Centralized */
