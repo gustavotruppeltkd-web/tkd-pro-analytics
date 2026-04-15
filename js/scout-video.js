@@ -156,6 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Hide container
                 configContent.style.display = 'none';
                 toggleBtn.innerHTML = '<i class="ti ti-chevron-down"></i>';
+                // Hide step guide once fight is configured
+                const guide = document.getElementById('scoutStepGuide');
+                if (guide) guide.style.display = 'none';
                 if (typeof showToast === 'function') {
                     showToast("Configurações da luta salvas!", "success");
                 }

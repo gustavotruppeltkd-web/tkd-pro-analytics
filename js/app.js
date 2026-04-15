@@ -924,8 +924,9 @@ function renderActiveCoach() {
     const userProfiles = document.querySelectorAll('.user-profile');
 
     userProfiles.forEach(profile => {
-        // Redirection
+        // Redirection to profile page — "Meu Perfil" removed from sidebar, click chip instead
         profile.style.cursor = 'pointer';
+        profile.title = 'Meu Perfil';
         profile.addEventListener('click', () => {
             window.location.href = 'treinador-perfil.html';
         });
@@ -966,7 +967,7 @@ function renderSidebar() {
             { href: 'financeiro.html', icon: 'ti-cash', label: 'Financeiro' }
         ];
     }
-    menuItens.push({ href: 'treinador-perfil.html', icon: 'ti-user-circle', label: 'Meu Perfil' });
+    // "Meu Perfil" moved to header profile chip — not in sidebar
     const html = menuItens.map(item => {
         const isActive = currentPage === item.href;
         const isPerformanceActive = currentPage === 'atleta-performance.html' && item.href === 'dashboard-turma-dados.html' && isRendimento;

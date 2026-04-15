@@ -24,8 +24,8 @@
 .scout-right-col {
     display: flex;
     flex-direction: column;
-    overflow-y: hidden;
-    /* Scroll inside the list */
+    overflow-y: auto;
+    min-width: 0;
 }
 
 /* Source Toggle */

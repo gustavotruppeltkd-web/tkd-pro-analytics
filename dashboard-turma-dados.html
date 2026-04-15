@@ -901,6 +901,25 @@
                         </button>
                     </div>
 
+                    <!-- Filter bar (only shown for Rendimento turmas) -->
+                    <div id="atletaFilterBar" style="display:none; flex-wrap:wrap; gap:10px; margin-bottom:16px; align-items:center;">
+                        <div style="position:relative; flex:1; min-width:180px;">
+                            <i class="ti ti-search" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; pointer-events:none;"></i>
+                            <input type="text" id="atletaSearchInput" class="form-control" placeholder="Buscar por nome..." style="padding-left:32px;" oninput="filterAtletas()">
+                        </div>
+                        <select id="atletaFilterCategoria" class="form-control" style="width:auto; min-width:140px;" onchange="filterAtletas()">
+                            <option value="">Todas as categorias</option>
+                        </select>
+                        <select id="atletaFilterStatus" class="form-control" style="width:auto; min-width:140px;" onchange="filterAtletas()">
+                            <option value="">Todos os status</option>
+                            <option value="apto">Apto</option>
+                            <option value="atencao">Atenção</option>
+                            <option value="risco">Risco</option>
+                            <option value="semDados">Sem dados</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="clearAtletaFilters()" title="Limpar filtros" style="white-space:nowrap;"><i class="ti ti-x"></i></button>
+                    </div>
+
                     <div class="list-header" id="commercialListHeader" style="display: none;">
                         <div id="colNameHeader">Aluno e Faixa</div>
                         <div>Idade</div>
@@ -909,6 +928,10 @@
 
                     <div class="student-grid" id="alunosGrid">
                         <!-- Renderizado via JS -->
+                    </div>
+                    <div id="atletaEmptyFilter" style="display:none; text-align:center; padding:32px; color:var(--text-muted);">
+                        <i class="ti ti-search-off" style="font-size:28px; display:block; margin-bottom:8px; opacity:0.4;"></i>
+                        Nenhum atleta encontrado com os filtros aplicados.
                     </div>
                 </div>
 
@@ -1825,7 +1848,73 @@
 
             if (isRendHere) {
                 setTimeout(initComparisonCharts, 150);
+                // Show filter bar for Rendimento turmas and populate category options
+                const filterBar = document.getElementById('atletaFilterBar');
+                if (filterBar) {
+                    filterBar.style.display = 'flex';
+                    const selCat = document.getElementById('atletaFilterCategoria');
+                    const cats = [...new Set(alunosTurma.map(a => a.categoriaIdade).filter(Boolean))].sort();
+                    selCat.innerHTML = '<option value="">Todas as categorias</option>' +
+                        cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+            } else {
+                const filterBar = document.getElementById('atletaFilterBar');
+                if (filterBar) filterBar.style.display = 'none';
             }
+        }
+
+        function filterAtletas() {
+            const query = (document.getElementById('atletaSearchInput')?.value || '').toLowerCase().trim();
+            const catFilter = document.getElementById('atletaFilterCategoria')?.value || '';
+            const statusFilter = document.getElementById('atletaFilterStatus')?.value || '';
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            const cards = document.querySelectorAll('#alunosGrid .student-square-card');
+            let visible = 0;
+
+            cards.forEach(card => {
+                // Extract atleta ID from the "Perfil" button onclick
+                const perfilBtn = card.querySelector('[onclick*="goToPerfil"]');
+                const atletaId = perfilBtn ? parseInt(perfilBtn.getAttribute('onclick').match(/\d+/)?.[0]) : null;
+                const aluno = atletaId ? db.alunos.find(a => a.id === atletaId) : null;
+                if (!aluno) { card.style.display = 'none'; return; }
+
+                const matchName = !query || aluno.nome.toLowerCase().includes(query);
+                const matchCat = !catFilter || aluno.categoriaIdade === catFilter;
+
+                let matchStatus = true;
+                if (statusFilter) {
+                    const wLog = (db.wellnessLogs || []).find(w => w.atletaId == aluno.id && w.data === todayStr);
+                    if (!wLog) {
+                        matchStatus = statusFilter === 'semDados';
+                    } else {
+                        const score = typeof calcWellnessScore === 'function'
+                            ? calcWellnessScore(wLog.sono, wLog.estresse, wLog.dor, wLog.humor, wLog.fadiga, wLog.alimentacao)
+                            : 50;
+                        if (statusFilter === 'apto') matchStatus = score >= 70;
+                        else if (statusFilter === 'atencao') matchStatus = score >= 40 && score < 70;
+                        else if (statusFilter === 'risco') matchStatus = score < 40;
+                        else matchStatus = false;
+                    }
+                }
+
+                const show = matchName && matchCat && matchStatus;
+                card.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+
+            const emptyMsg = document.getElementById('atletaEmptyFilter');
+            if (emptyMsg) emptyMsg.style.display = (visible === 0 && cards.length > 0) ? 'block' : 'none';
+        }
+
+        function clearAtletaFilters() {
+            const inp = document.getElementById('atletaSearchInput');
+            const cat = document.getElementById('atletaFilterCategoria');
+            const stat = document.getElementById('atletaFilterStatus');
+            if (inp) inp.value = '';
+            if (cat) cat.value = '';
+            if (stat) stat.value = '';
+            filterAtletas();
         }
 
         function goToPerfil(alunoId) {

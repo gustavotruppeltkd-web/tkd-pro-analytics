@@ -949,7 +949,7 @@
                         <div style="font-weight: 500;">${formatCurrency(a.mensalidade)}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">${getPlanoName(a.planoId) || 'Sem Plano'}</div>
                     </td>
-                    <td style="color: var(--text-muted); font-size: 13px;">${a.statusFin === 'pago' ? 'Neste Mês' : '--/--'}</td>
+                    <td style="color: var(--text-muted); font-size: 13px;">${a.ultimoPagamento ? a.ultimoPagamento.split('-').reverse().join('/') : (a.statusFin === 'pago' ? 'Neste Mês' : '—')}</td>
                     <td style="text-align: right;">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
                             <button class="btn btn-icon btn-success" title="Enviar WhatsApp" onclick="sendWhatsApp(${a.id})"><i class="ti ti-brand-whatsapp"></i></button>
@@ -1008,6 +1008,10 @@
             if (index !== -1) {
                 const newStatus = document.getElementById('payStatus').value;
                 db.alunos[index].statusFin = newStatus;
+                if (newStatus === 'pago') {
+                    const payDateVal = document.getElementById('payDate').value;
+                    db.alunos[index].ultimoPagamento = payDateVal || new Date().toISOString().split('T')[0];
+                }
                 saveDB();
                 renderFinanceData();
                 closePaymentForm();
@@ -1050,7 +1054,7 @@
             grid.innerHTML = '';
 
             if (!db.planos || db.planos.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted);">Vocêê ainda não possui nenhum plano cadastrado.</p>';
+                grid.innerHTML = '<p style="grid-column: 1/-1; color: var(--text-muted);">Você ainda não possui nenhum plano cadastrado.</p>';
                 return;
             }
 

@@ -63,21 +63,23 @@
         }
 
         .profiles-grid {
-            display: flex;
-            gap: 24px;
-            justify-content: center;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
         }
+
+        @media (max-width: 1100px) { .profiles-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px)  { .profiles-grid { grid-template-columns: repeat(2, 1fr); } }
 
         .profile-card {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+            gap: 14px;
             background: var(--bg-card);
-            padding: 32px 24px;
+            padding: 14px 16px;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            min-width: 220px;
             cursor: pointer;
             text-decoration: none;
             transition: var(--transition);
@@ -87,25 +89,25 @@
         }
 
         .profile-card:hover {
-            transform: translateY(-8px);
             border-color: var(--primary);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
 
         .profile-icon {
-            width: 80px;
-            height: 80px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
             border-radius: 50%;
             background: rgba(59, 130, 246, 0.1);
             color: var(--primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
-            margin-bottom: 24px;
+            font-size: 22px;
             transition: var(--transition);
             pointer-events: none;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .profile-icon img {
@@ -123,6 +125,33 @@
             background: var(--primary);
             color: #fff;
         }
+
+        /* Card action buttons — show on hover */
+        .profile-card-actions {
+            display: flex;
+            gap: 4px;
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity 0.2s;
+            flex-shrink: 0;
+        }
+        .profile-card:hover .profile-card-actions { opacity: 1; }
+        .profile-card-actions button {
+            background: none;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            width: 28px; height: 28px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .profile-card-actions .btn-edit { color: var(--primary); }
+        .profile-card-actions .btn-edit:hover { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.3); }
+        .profile-card-actions .btn-del  { color: var(--red); }
+        .profile-card-actions .btn-del:hover  { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); }
+
+        .profile-card-info { display: flex; flex-direction: column; min-width: 0; flex: 1; pointer-events: none; }
 
         /* Upload de foto */
         .foto-upload-area {
@@ -187,17 +216,23 @@
         #cropZoomWrap span { font-size: 12px; color: var(--text-muted); min-width: 36px; text-align: right; }
 
         .profile-name {
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-main);
-            margin-bottom: 4px;
+            margin: 0 0 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             pointer-events: none;
         }
 
         .profile-meta {
-            font-size: 14px;
+            font-size: 12px;
             color: var(--text-muted);
             pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         @keyframes fadeIn {
@@ -244,17 +279,9 @@
     <div class="page-content">
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
             <h1 class="splash-title" style="margin-bottom: 0;">Selecione a Turma</h1>
-            <div style="display: flex; gap: 8px;">
-                <button class="btn btn-icon btn-outline" onclick="openModalEditar()" title="Editar Turma">
-                    <i class="ti ti-pencil" style="font-size: 20px;"></i>
-                </button>
-                <button class="btn btn-icon btn-danger" onclick="openModalExcluir()" title="Excluir Turma">
-                    <i class="ti ti-trash" style="font-size: 20px;"></i>
-                </button>
-                <button class="btn btn-primary" style="border-radius: 50px; padding: 12px 24px;" onclick="openModal()">
-                    <i class="ti ti-plus"></i> Nova Turma
-                </button>
-            </div>
+            <button class="btn btn-primary" style="border-radius: 50px; padding: 12px 24px;" onclick="openModal()">
+                <i class="ti ti-plus"></i> Nova Turma
+            </button>
         </div>
         <p class="splash-subtitle" style="text-align: left;">Bem-vindo, <span class="user-name">Treinador</span>. Qual
             equipe deseja gerenciar agora?</p>
@@ -445,6 +472,21 @@
             modalEdit.classList.add('active');
         }
 
+        function openModalEditarTurma(id) {
+            renderTurmas();
+            const sel = document.getElementById('selectTurmaEdit');
+            sel.value = id;
+            populateEditForm();
+            modalEdit.classList.add('active');
+        }
+
+        function openModalExcluirTurma(id) {
+            renderTurmas();
+            const sel = document.getElementById('selectTurmaDelete');
+            sel.value = id;
+            modalDel.classList.add('active');
+        }
+
         function renderTurmas() {
             const gridRend = document.getElementById('grid-rendimento');
             const gridCom = document.getElementById('grid-comercial');
@@ -459,14 +501,10 @@
             db.turmas.forEach(t => {
                 const isRend = (t.tipo || '').toLowerCase().includes('rendimento');
                 const target = isRend ? 'dashboard-turma-dados.html' : 'dashboard-aulas.html';
+                const count = (db.alunos || []).filter(a => a.turmaId === t.id).length;
 
                 const card = document.createElement('div');
                 card.className = "profile-card " + (isRend ? 'competicao' : 'iniciante');
-                card.onclick = () => {
-                    db.activeTurmaId = t.id;
-                    saveDB();
-                    window.location.href = target;
-                };
 
                 const iconHtml = t.foto
                     ? `<img src="${t.foto}" alt="${t.nome}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
@@ -474,9 +512,22 @@
 
                 card.innerHTML = `
                     <div class="profile-icon">${iconHtml}</div>
-                    <span class="profile-name">${t.nome}</span>
-                    <span class="profile-meta">${(db.alunos || []).filter(a => a.turmaId === t.id).length} ${isRend ? 'Atletas' : 'Alunos'} \u2022 Foco: ${isRend ? 'Scout' : 'Chamada'}</span>
+                    <div class="profile-card-info">
+                        <span class="profile-name">${t.nome}</span>
+                        <span class="profile-meta">${count} ${isRend ? 'Atletas' : 'Alunos'}</span>
+                    </div>
+                    <div class="profile-card-actions">
+                        <button class="btn-edit" title="Editar turma" onclick="event.stopPropagation(); openModalEditarTurma(${t.id})"><i class="ti ti-pencil"></i></button>
+                        <button class="btn-del" title="Excluir turma" onclick="event.stopPropagation(); openModalExcluirTurma(${t.id})"><i class="ti ti-trash"></i></button>
+                    </div>
                 `;
+
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.profile-card-actions')) return;
+                    db.activeTurmaId = t.id;
+                    saveDB();
+                    window.location.href = target;
+                });
 
                 if (isRend) gridRend.appendChild(card);
                 else gridCom.appendChild(card);
