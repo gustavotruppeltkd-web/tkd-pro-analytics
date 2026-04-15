@@ -1782,9 +1782,10 @@
                         const isToday = wLog.data === todayStr;
                         const isYesterday = wLog.data === new Date(Date.now() - 86400000).toISOString().split('T')[0];
                         const diaLabel = isToday ? 'Hoje' : isYesterday ? 'Ontem' : `${dd}/${mo}`;
-                        ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px;"></i> ${diaLabel} às ${hh}:${mm}`;
+                        const labelColor = isToday ? 'var(--green)' : 'var(--red)';
+                        ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px; color:${labelColor};"></i> <span style="color:${labelColor};">${diaLabel} às ${hh}:${mm}</span>`;
                     } else {
-                        ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px;"></i> Nunca respondido`;
+                        ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px; color:var(--red);"></i> <span style="color:var(--red);">Nunca respondido</span>`;
                     }
 
                     // Usa o log mais recente disponível (hoje ou qualquer dia anterior)
@@ -1811,7 +1812,7 @@
                             <img src="${a.avatar}" alt="${a.nome}" class="student-square-avatar" style="align-self: center;" onerror="this.src=DEFAULT_AVATAR">
                             <h4 style="text-align: center;">${a.nome}</h4>
                             <p style="text-align: center; margin-bottom: 4px;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLogDisplay && wLogDisplay.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLogDisplay.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
-                            <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px; opacity: 0.75;">${ultimoWellnessLabel}</div>
+                            <div style="font-size: 10px; margin-bottom: 8px;">${ultimoWellnessLabel}</div>
 
                             <div style="flex-grow: 1;"></div>
 
