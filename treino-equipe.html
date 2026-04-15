@@ -3061,9 +3061,50 @@
         }
 
         /**
+         * Retorna o foco de um treino: 'fisico' ou 'tkd'.
+         * Usado para detectar conflito de foco entre treino de equipe e treino individual.
+         */
+        function getFocoTreino(tipo) {
+            const FISICO_IDS = new Set(TIPOS_FISICO.map(t => t.id).concat(['fisico']));
+            return FISICO_IDS.has(tipo) ? 'fisico' : 'tkd';
+        }
+
+        /**
+         * Para um atletaId e uma data, retorna o conjunto de focos que têm
+         * treino individual para esse atleta (destinatario === 'atleta').
+         * Usado para excluir treinos de equipe do mesmo foco.
+         */
+        function getFocosIndividuaisNaData(atletaId, data) {
+            return new Set(
+                (db.treinos || [])
+                    .filter(t =>
+                        t.turmaId === db.activeTurmaId &&
+                        t.data === data &&
+                        (t.destinatario || 'equipe') === 'atleta' &&
+                        t.atletaId === atletaId
+                    )
+                    .map(t => getFocoTreino(t.tipo))
+            );
+        }
+
+        /**
+         * Verifica se um treino de equipe deve ser excluído para um atleta específico.
+         * Regra: se no mesmo dia o atleta tem um treino individual com o MESMO foco,
+         * o treino de equipe é substituído e não conta para esse atleta.
+         */
+        function treinoEquipeSubstituidoPorIndividual(treino, atletaId) {
+            if (!atletaId) return false;
+            if ((treino.destinatario || 'equipe') !== 'equipe') return false;
+            const focosIndividuais = getFocosIndividuaisNaData(atletaId, treino.data);
+            return focosIndividuais.has(getFocoTreino(treino.tipo));
+        }
+
+        /**
          * Soma cargas de treinos da semana.
          * atletaId opcional: se fornecido, inclui apenas treinos da equipe
          * ou especificamente para este atleta (exclui treinos de outros atletas).
+         * Regra de substituição: treino de equipe é excluído se o atleta tem
+         * treino individual do mesmo foco no mesmo dia.
          */
         function calcWeekLoad(weekStart, atletaId) {
             const ws = toDateStr(weekStart);
@@ -3074,10 +3115,10 @@
                 .filter(t => {
                     if (t.turmaId !== db.activeTurmaId) return false;
                     if (t.data < ws || t.data > weStr) return false;
-                    // Se há filtro de atleta: inclui treino da equipe OU treino deste atleta
                     if (atletaId) {
                         const dest = t.destinatario || 'equipe';
                         if (dest === 'atleta' && t.atletaId !== atletaId) return false;
+                        if (treinoEquipeSubstituidoPorIndividual(t, atletaId)) return false;
                     }
                     return true;
                 })
@@ -3118,6 +3159,7 @@
                         if (atletaId) {
                             const dest = t.destinatario || 'equipe';
                             if (dest === 'atleta' && t.atletaId !== atletaId) return false;
+                            if (treinoEquipeSubstituidoPorIndividual(t, atletaId)) return false;
                         }
                         return true;
                     })

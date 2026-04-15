@@ -2606,7 +2606,31 @@
             }
 
             // External load: treinos created in training creator (most important source)
-            const treinosTurma = (db.treinos || []).filter(t => t.turmaId === db.activeTurmaId && dates.includes(t.data));
+            // Helper: foco do treino ('fisico' ou 'tkd')
+            const getFocoT = tipo => {
+                const FISICO = new Set(['forca','potencia','transferencia','hiit','cardio','glicolitico','regenerativo','mobilidade','flexibilidade','core','fisico','recuperacao']);
+                return FISICO.has((tipo||'').toLowerCase()) ? 'fisico' : 'tkd';
+            };
+            const atletaFiltroId = athleteId !== 'equipe' ? parseInt(athleteId) : null;
+            const treinosTurma = (db.treinos || []).filter(t => {
+                if (t.turmaId !== db.activeTurmaId || !dates.includes(t.data)) return false;
+                if (atletaFiltroId) {
+                    const dest = t.destinatario || 'equipe';
+                    // Exclui treinos individuais de outros atletas
+                    if (dest === 'atleta' && t.atletaId !== atletaFiltroId) return false;
+                    // Exclui treino de equipe se há treino individual do mesmo foco neste dia
+                    if (dest === 'equipe') {
+                        const focosIndividuais = new Set(
+                            (db.treinos || [])
+                                .filter(x => x.turmaId === db.activeTurmaId && x.data === t.data &&
+                                    (x.destinatario || 'equipe') === 'atleta' && x.atletaId === atletaFiltroId)
+                                .map(x => getFocoT(x.tipo))
+                        );
+                        if (focosIndividuais.has(getFocoT(t.tipo))) return false;
+                    }
+                }
+                return true;
+            });
 
             // ---- 0. Tabela Mestre ----
             const tableContainer = document.getElementById('dynamicTableContainer');
@@ -2826,7 +2850,23 @@
                 const endStr = end.toISOString().split('T')[0];
                 weeksLabels.push(`Sem ${5 - i}\n${start.getDate()}/${start.getMonth()+1}`);
 
-                const wt = allTreinosTurma.filter(t => t.data >= startStr && t.data <= endStr);
+                let wt = allTreinosTurma.filter(t => t.data >= startStr && t.data <= endStr);
+                // Aplica filtro de substituição se visualizando atleta específico
+                if (atletaFiltroId) {
+                    wt = wt.filter(t => {
+                        const dest = t.destinatario || 'equipe';
+                        if (dest === 'atleta' && t.atletaId !== atletaFiltroId) return false;
+                        if (dest === 'equipe') {
+                            const focosInd = new Set(
+                                allTreinosTurma.filter(x => x.data === t.data &&
+                                    (x.destinatario || 'equipe') === 'atleta' && x.atletaId === atletaFiltroId)
+                                    .map(x => getFocoT(x.tipo))
+                            );
+                            if (focosInd.has(getFocoT(t.tipo))) return false;
+                        }
+                        return true;
+                    });
+                }
                 const tkd = wt.filter(t => !isTreinoFisico(t.tipo)).reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
                 const fis = wt.filter(t => isTreinoFisico(t.tipo)).reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
                 weeksDataTkd.push(tkd);
