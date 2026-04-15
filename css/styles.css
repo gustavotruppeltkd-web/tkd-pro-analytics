@@ -22,12 +22,42 @@
     --radius-lg: 16px;
     --radius-md: 12px;
     --radius-sm: 8px;
+    --radius-xs: 4px;
 
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.3);
 
     --transition: all 0.25s ease;
     color-scheme: dark;
+
+    /* Spacing scale */
+    --space-xs:  4px;
+    --space-sm:  8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* Typography scale */
+    --text-xs:   11px;
+    --text-sm:   12px;
+    --text-base: 14px;
+    --text-md:   15px;
+    --text-lg:   16px;
+    --text-xl:   18px;
+    --text-2xl:  20px;
+    --text-3xl:  24px;
+    --text-4xl:  28px;
+    --text-5xl:  32px;
+
+    /* Onboarding overlay — dark card independente do tema */
+    --ob-bg:         #111827;
+    --ob-border:     #1e40af;
+    --ob-input-bg:   #1f2937;
+    --ob-input-bd:   #374151;
+    --ob-label:      #d1d5db;
+    --ob-muted:      #9ca3af;
+    --ob-error:      #f87171;
 }
 
 [data-theme="light"] {
@@ -88,7 +118,7 @@ body {
 }
 
 .logo-icon {
-    font-size: 32px;
+    font-size: var(--text-5xl);
     filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
 }
 
@@ -112,7 +142,7 @@ body {
 }
 
 .nav-item i {
-    font-size: 20px;
+    font-size: var(--text-2xl);
 }
 
 .nav-item:hover {
@@ -156,14 +186,14 @@ body {
 }
 
 .page-title h1 {
-    font-size: 28px;
+    font-size: var(--text-4xl);
     font-weight: 700;
     margin-bottom: 4px;
 }
 
 .subtitle {
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: var(--text-base);
 }
 
 .user-profile {
@@ -196,12 +226,12 @@ body {
 
 .user-name {
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--text-base);
 }
 
 .user-role {
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: var(--text-sm);
 }
 
 /* Dashboard Semáforo Stats */
@@ -243,20 +273,20 @@ Let's fix that layout using CSS grid */
 }
 
 .stat-details h3 {
-    font-size: 14px;
+    font-size: var(--text-base);
     color: var(--text-muted);
     font-weight: 500;
     margin-bottom: 4px;
 }
 
 .stat-value {
-    font-size: 24px;
+    font-size: var(--text-3xl);
     font-weight: 700;
     margin-bottom: 4px;
 }
 
 .stat-meta {
-    font-size: 12px;
+    font-size: var(--text-sm);
     font-weight: 500;
 }
 
@@ -284,7 +314,7 @@ Let's fix that layout using CSS grid */
 .btn {
     padding: 0 18px;
     height: 36px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid transparent;
     font-size: 13px;
     font-weight: 500;
@@ -399,7 +429,7 @@ Let's fix that layout using CSS grid */
     width: 34px;
     height: 34px;
     padding: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: none;
     background: transparent;
     color: var(--text-muted);
@@ -481,32 +511,6 @@ Let's fix that layout using CSS grid */
 .tab-content { display: none; animation: fadeIn 0.25s ease-out; }
 .tab-content.active { display: block; }
 
-/* Export button — mesma altura que .btn, estilo primário */
-.btn-export {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--primary);
-    color: #fff;
-    border: 1px solid var(--primary);
-    padding: 0 16px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'Inter', sans-serif;
-    transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-    text-decoration: none;
-    white-space: nowrap;
-}
-.btn-export:hover {
-    background: var(--primary-hover);
-    border-color: var(--primary-hover);
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-    transform: translateY(-1px);
-}
-.btn-export i { font-size: 15px; }
 
 /* Logout — fixo nas páginas standalone */
 .btn-logout {
@@ -522,7 +526,7 @@ Let's fix that layout using CSS grid */
     text-decoration: none;
     padding: 0 14px;
     height: 34px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: transparent;
     cursor: pointer;
@@ -542,7 +546,7 @@ Let's fix that layout using CSS grid */
     padding: 8px;
     border: 1px dashed rgba(255, 255, 255, 0.12);
     background: transparent;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--text-muted);
     font-size: 12px;
     cursor: pointer;
@@ -563,7 +567,7 @@ Let's fix that layout using CSS grid */
 .status-btn {
     flex: 1;
     padding: 9px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: transparent;
     color: var(--text-muted);
@@ -606,7 +610,7 @@ Let's fix that layout using CSS grid */
 }
 
 .section-header h2 {
-    font-size: 20px;
+    font-size: var(--text-2xl);
     font-weight: 600;
 }
 
@@ -679,7 +683,7 @@ Let's fix that layout using CSS grid */
 
 .badge {
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
@@ -708,7 +712,7 @@ Let's fix that layout using CSS grid */
 }
 
 .card-body h3 {
-    font-size: 18px;
+    font-size: var(--text-xl);
     margin-bottom: 4px;
 }
 
@@ -759,7 +763,7 @@ Let's fix that layout using CSS grid */
 .progress-track {
     height: 6px;
     background: var(--border-color);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     overflow: hidden;
 }
 
@@ -844,14 +848,14 @@ Let's fix that layout using CSS grid */
 }
 
 .modal-title {
-    font-size: 20px;
+    font-size: var(--text-2xl);
     font-weight: 600;
 }
 
 .btn-close {
     width: 30px;
     height: 30px;
-    border-radius: 6px;
+    border-radius: var(--radius-xs);
     border: none;
     background: transparent;
     color: var(--text-muted);
@@ -876,7 +880,7 @@ Let's fix that layout using CSS grid */
 }
 
 .form-group label {
-    font-size: 14px;
+    font-size: var(--text-base);
     font-weight: 500;
     color: var(--text-muted);
 }
@@ -889,7 +893,7 @@ Let's fix that layout using CSS grid */
     background: var(--bg-dark);
     color: var(--text-main);
     font-family: inherit;
-    font-size: 15px;
+    font-size: var(--text-md);
     transition: var(--transition);
 }
 
@@ -970,7 +974,7 @@ select option {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 6px;
+    border-radius: var(--radius-xs);
     font-size: 14px;
     font-weight: 700;
     color: #fff;
@@ -1181,7 +1185,7 @@ body.mode-mobile .topbar {
 }
 
 body.mode-mobile .topbar .page-title h1 {
-    font-size: 22px;
+    font-size: var(--text-3xl);
 }
 
 body.mode-mobile .user-profile {
@@ -1199,7 +1203,7 @@ body.mode-mobile .card {
 }
 
 body.mode-mobile .stat-value {
-    font-size: 20px;
+    font-size: var(--text-2xl);
 }
 
 body.mode-mobile .metrics {
@@ -1295,7 +1299,7 @@ body.mode-mobile .athlete-stats {
 
 /* Adjusting font sizes for mobile */
 body.mode-mobile .stat-details h3 {
-    font-size: 11px;
+    font-size: var(--text-xs);
 }
 
 body.mode-mobile .category {
@@ -1679,4 +1683,116 @@ body.mode-mobile .main-content {
 }
 body.mode-mobile .app-container {
     overflow-x: hidden;
+}
+
+/* ============================================================
+   ONBOARDING OVERLAY — modal de boas-vindas (dark, fixo)
+   ============================================================ */
+
+.ob-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(10, 14, 26, 0.97);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.ob-card {
+    background: var(--ob-bg);
+    border: 1px solid var(--ob-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl) 40px;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 0 60px rgba(59, 130, 246, 0.2);
+    text-align: center;
+}
+
+.ob-icon {
+    width: 72px;
+    height: 72px;
+    background: rgba(59, 130, 246, 0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-lg);
+}
+
+.ob-title {
+    color: #fff;
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin: 0 0 var(--space-sm);
+}
+
+.ob-desc {
+    color: var(--ob-muted);
+    font-size: var(--text-md);
+    line-height: 1.6;
+    margin: 0 0 var(--space-xl);
+}
+
+.ob-field {
+    text-align: left;
+    margin-bottom: var(--space-md);
+}
+
+.ob-field label {
+    display: block;
+    color: var(--ob-label);
+    font-size: var(--text-base);
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.ob-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--ob-input-bg);
+    border: 1px solid var(--ob-input-bd);
+    border-radius: var(--radius-sm);
+    padding: 12px var(--space-md);
+    color: #fff;
+    font-size: var(--text-base);
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+.ob-input:focus { border-color: var(--primary); }
+
+.ob-field-last { margin-bottom: var(--space-xl); }
+
+.ob-btn {
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    transition: background 0.2s ease;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+.ob-btn:hover { background: var(--primary-hover); }
+
+.ob-error {
+    color: var(--ob-error);
+    font-size: var(--text-sm);
+    margin-top: 12px;
+    display: none;
+}
+
+/* Mobile adjustments for onboarding */
+body.mode-mobile .ob-card {
+    padding: var(--space-lg) var(--space-md);
+    width: 95%;
 }

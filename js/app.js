@@ -312,38 +312,27 @@ function checkTrainerOnboarding() {
 
     const overlay = document.createElement('div');
     overlay.id = '__onboardingGate';
-    overlay.style.cssText = [
-        'position:fixed', 'inset:0', 'z-index:99999',
-        'background:rgba(10,14,26,0.97)',
-        'display:flex', 'align-items:center', 'justify-content:center',
-        'font-family:Inter,system-ui,sans-serif'
-    ].join(';');
+    overlay.className = 'ob-overlay';
 
     overlay.innerHTML = `
-        <div style="background:#111827;border:1px solid #1e40af;border-radius:20px;padding:48px 40px;max-width:480px;width:90%;box-shadow:0 0 60px rgba(59,130,246,0.2);text-align:center;">
-            <div style="width:72px;height:72px;background:rgba(59,130,246,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div class="ob-card">
+            <div class="ob-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
-            <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relatórios e dashboards.</p>
-            <div style="text-align:left;margin-bottom:20px;">
-                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nome Completo *</label>
-                <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva"
-                    style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;"
-                    onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
+            <h2 class="ob-title">Bem-vindo ao Pro Coach!</h2>
+            <p class="ob-desc">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relatórios e dashboards.</p>
+            <div class="ob-field">
+                <label>Seu Nome Completo *</label>
+                <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva" class="ob-input">
             </div>
-            <div style="text-align:left;margin-bottom:32px;">
-                <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Cargo / Função *</label>
-                <input id="__ob_role" type="text" placeholder="Ex: Treinador Principal, Head Coach"
-                    style="width:100%;box-sizing:border-box;background:#1f2937;border:1px solid #374151;border-radius:10px;padding:12px 16px;color:#fff;font-size:14px;outline:none;"
-                    onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#374151'">
+            <div class="ob-field ob-field-last">
+                <label>Cargo / Função *</label>
+                <input id="__ob_role" type="text" placeholder="Ex: Treinador Principal, Head Coach" class="ob-input">
             </div>
-            <button id="__ob_btn" onclick="window.__saveOnboarding()"
-                style="width:100%;background:#2563eb;color:#fff;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;"
-                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+            <button id="__ob_btn" class="ob-btn" onclick="window.__saveOnboarding()">
                 Começar a Usar &rarr;
             </button>
-            <p id="__ob_err" style="color:#f87171;font-size:12px;margin-top:12px;display:none;">Por favor, preencha todos os campos.</p>
+            <p id="__ob_err" class="ob-error">Por favor, preencha todos os campos.</p>
         </div>
     `;
 
@@ -1362,8 +1351,8 @@ function openScoutDetail(scoutId) {
                         label: 'Desempenho nesta Luta',
                         data: dataArr,
                         backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                        borderColor: '#3b82f6',
-                        pointBackgroundColor: '#3b82f6',
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#3b82f6',
+                        pointBackgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#3b82f6',
                         borderWidth: 2
                     }]
                 },
@@ -1377,7 +1366,7 @@ function openScoutDetail(scoutId) {
                             ticks: { display: false, stepSize: 20 },
                             angleLines: { color: 'rgba(255,255,255,0.05)' },
                             grid: { color: 'rgba(255,255,255,0.05)' },
-                            pointLabels: { color: '#94a3b8', font: { size: 9 } }
+                            pointLabels: { color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#94a3b8', font: { size: 9 } }
                         }
                     },
                     plugins: {

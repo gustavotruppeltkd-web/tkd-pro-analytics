@@ -156,7 +156,6 @@
             opacity: 0.5;
         }
 
-        /* btn-export is in styles.css */
 
         /* Dynamic Charts Styles */
         .comparison-controls {
@@ -367,8 +366,8 @@
                                     <select id="selectSubSource" class="form-control" style="width:180px;" onchange="updateDynamicCharts()"></select>
                                 </div>
                                 <div style="display:flex; gap:8px;">
-                                    <button class="btn-export" onclick="exportDynamicCSV()"><i class="ti ti-download"></i> CSV</button>
-                                    <button class="btn-export" style="background:#ef4444;border-color:#ef4444;" onclick="exportDynamicPDF()"><i class="ti ti-file-pdf"></i> PDF</button>
+                                    <button class="btn btn-primary" onclick="exportDynamicCSV()"><i class="ti ti-download"></i> CSV</button>
+                                    <button class="btn btn-danger" onclick="exportDynamicPDF()"><i class="ti ti-file-pdf"></i> PDF</button>
                                 </div>
                             </div>
                         </div>
