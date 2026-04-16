@@ -69,15 +69,31 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
+// Copia texto para área de transferência com fallback para execCommand
+function _copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text).catch(() => _execCommandCopy(text));
+    }
+    return Promise.resolve(_execCommandCopy(text));
+}
+function _execCommandCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    document.body.removeChild(ta);
+}
+
 // Gera e copia o link de acesso do atleta (inclui coachId para busca no Supabase)
 function copiarLinkAtleta(id) {
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
         const coachId = authData?.user?.id || '';
         const url = `${window.location.origin}/atleta-login.html?atleta=${encodeURIComponent(id)}&coach=${encodeURIComponent(coachId)}`;
-        navigator.clipboard.writeText(url).then(() => {
+        _copyToClipboard(url).then(() => {
             showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
-        }).catch(() => {
-            prompt('Copie o link abaixo:', url);
         });
     });
 }
