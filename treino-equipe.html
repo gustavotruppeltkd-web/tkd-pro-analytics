@@ -58,23 +58,49 @@
         }
 
         @media (max-width: 1024px) {
+            .app-container { display: block !important; }
+            .sidebar {
+                position: fixed !important;
+                transform: translateX(-100%) !important;
+                z-index: 901 !important;
+            }
+            .sidebar.open { transform: translateX(0) !important; }
+            .main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
             .cal-controls {
                 flex-direction: column !important;
-                align-items: flex-start !important;
+                align-items: stretch !important;
                 gap: 10px !important;
             }
+            .cal-nav {
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+            }
             .cal-nav h2 {
-                min-width: unset;
-                font-size: 16px;
+                min-width: 0 !important;
+                flex: 1 1 auto !important;
+                font-size: 16px !important;
+                text-align: center !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                max-width: calc(100vw - 180px) !important;
             }
             .view-toggle {
                 width: 100%;
+                display: flex;
             }
             .view-toggle button {
                 flex: 1;
-                padding: 8px 10px;
+                padding: 8px 6px;
                 font-size: 12px;
             }
+        }
+        @media (max-width: 768px) {
+            .main-content { padding: 72px 16px 40px !important; }
         }
 
         /* ===== WEEK VIEW ===== */

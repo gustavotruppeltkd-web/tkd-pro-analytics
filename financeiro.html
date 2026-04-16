@@ -323,6 +323,48 @@
             opacity: 1;
             pointer-events: auto;
         }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .app-container { display: block !important; }
+            .sidebar {
+                position: fixed !important;
+                transform: translateX(-100%) !important;
+                z-index: 901 !important;
+            }
+            .sidebar.open { transform: translateX(0) !important; }
+            .main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 72px 16px 40px !important;
+            }
+            .finance-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .filter-section {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            .filter-select, .search-bar { width: 100% !important; min-width: 0 !important; }
+            /* Tabela com scroll horizontal — nunca comprime colunas */
+            .table-container {
+                overflow-x: auto !important;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table-container table {
+                min-width: 600px;
+                width: 100%;
+            }
+            th, td { padding: 12px 16px; white-space: nowrap; }
+            .tabs-header { overflow-x: auto; flex-wrap: nowrap; gap: 16px; }
+            .tab-btn { white-space: nowrap; }
+        }
     </style>
 </head>
 
