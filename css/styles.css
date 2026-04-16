@@ -511,6 +511,21 @@ Let's fix that layout using CSS grid */
 .tab-content { display: none; animation: fadeIn 0.25s ease-out; }
 .tab-content.active { display: block; }
 
+/* Tab header responsivo — scroll horizontal em mobile/tablet */
+body.mode-mobile .tabs-header,
+body.mode-tablet .tabs-header {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    flex-wrap: nowrap;
+    padding-bottom: 2px; /* evita cortar o indicador ativo */
+}
+body.mode-mobile .tab-btn {
+    font-size: 13px;
+    white-space: nowrap;
+    padding: 10px 4px;
+}
+
 
 /* Logout — fixo nas páginas standalone */
 .btn-logout {
