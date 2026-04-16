@@ -69,13 +69,10 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
-// Copia texto para área de transferência com fallback para execCommand
-function _copyToClipboard(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-        return navigator.clipboard.writeText(text).catch(() => _execCommandCopy(text));
-    }
-    return Promise.resolve(_execCommandCopy(text));
-}
+// coachId cacheado assim que o auth responde (evita async dentro do click)
+window._cachedCoachId = db._owner_id || '';
+
+// Copia texto para área de transferência com fallback para execCommand (síncrono)
 function _execCommandCopy(text) {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -87,15 +84,21 @@ function _execCommandCopy(text) {
     document.body.removeChild(ta);
 }
 
-// Gera e copia o link de acesso do atleta (inclui coachId para busca no Supabase)
+// Gera e copia o link de acesso do atleta — SÍNCRONO dentro do click
 function copiarLinkAtleta(id) {
-    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-        const coachId = authData?.user?.id || '';
-        const url = `${window.location.origin}/atleta-login.html?atleta=${encodeURIComponent(id)}&coach=${encodeURIComponent(coachId)}`;
-        _copyToClipboard(url).then(() => {
+    const coachId = window._cachedCoachId || db._owner_id || '';
+    const url = `${window.location.origin}/atleta-login.html?atleta=${encodeURIComponent(id)}&coach=${encodeURIComponent(coachId)}`;
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
+        }).catch(() => {
+            _execCommandCopy(url);
             showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
         });
-    });
+    } else {
+        _execCommandCopy(url);
+        showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
+    }
 }
 
 // Load Database from LocalStorage or initialize with MOCK_DATA
@@ -235,6 +238,7 @@ function fetchFromSupabase() {
             return;
         }
         const userId = authData.user.id;
+        window._cachedCoachId = userId;
 
         // SEGURANÇA: se o cache local pertence a outro usuário, descartá-lo imediatamente
         // antes de qualquer outra operação para evitar vazamento de dados entre contas.
