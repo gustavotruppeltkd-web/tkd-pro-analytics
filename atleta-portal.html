@@ -2703,7 +2703,7 @@
 
                 coachData._last_updated = Date.now();
 
-                // 3. Salva de volta na linha do treinador
+                // 3. Salva de volta na linha do treinador (blob merge)
                 const { error: saveErr } = await window.supabaseClient
                     .from('app_state')
                     .upsert({ project_id: portalCoachId, data: coachData });
@@ -2714,6 +2714,28 @@
                     console.log('savePortalDB OK — atleta', atletaId, 'sincronizado com treinador', portalCoachId);
                     window.db = coachData;
                     localStorage.setItem('tkd_scout_db', JSON.stringify(coachData));
+                }
+
+                // 4. Dual-write: registros individuais em athlete_responses (para futuro RLS granular)
+                const responseRows = [
+                    ...((window.db.wellnessLogs || [])
+                        .filter(e => String(e.atletaId) === String(atletaId))
+                        .map(e => ({ coach_id: portalCoachId, athlete_id: atletaId, type: 'wellness', payload: e }))),
+                    ...((window.db.cargaTreino || [])
+                        .filter(e => String(e.atletaId) === String(atletaId))
+                        .map(e => ({ coach_id: portalCoachId, athlete_id: atletaId, type: 'carga', payload: e }))),
+                    ...((window.db.respostas || [])
+                        .filter(e => String(e.atletaId) === String(atletaId))
+                        .map(e => ({ coach_id: portalCoachId, athlete_id: atletaId, type: 'resposta', payload: e }))),
+                ];
+                if (responseRows.length > 0) {
+                    // Ignora erros — tabela pode não existir ainda (antes da migration)
+                    window.supabaseClient
+                        .from('athlete_responses')
+                        .upsert(responseRows, { ignoreDuplicates: true })
+                        .then(({ error }) => {
+                            if (error) console.warn('athlete_responses dual-write:', error.message);
+                        });
                 }
             } catch (e) {
                 console.error('savePortalDB exception:', e);

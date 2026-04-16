@@ -307,23 +307,19 @@
                     setTimeout(() => toggleRecovery(), 3000);
                 }
             } else if (isSignup) {
-                const ADMIN_EMAIL_SIGNUP = 'gustavotruppeltkd@gmail.com';
-
                 // Verificar autorização antes de criar a conta
-                if (email.toLowerCase() !== ADMIN_EMAIL_SIGNUP.toLowerCase()) {
-                    const { data: authRow } = await supabaseClient
-                        .from('authorized_emails')
-                        .select('email')
-                        .eq('email', email.toLowerCase())
-                        .single();
+                const { data: authRow } = await supabaseClient
+                    .from('authorized_emails')
+                    .select('email')
+                    .eq('email', email.toLowerCase())
+                    .single();
 
-                    if (!authRow) {
-                        errorMsg.innerText = "Este e-mail não está autorizado. Solicite acesso ao administrador.";
-                        errorMsg.style.display = 'block';
-                        btn.disabled = false;
-                        btn.style.opacity = '1';
-                        return;
-                    }
+                if (!authRow) {
+                    errorMsg.innerText = "Este e-mail não está autorizado. Solicite acesso ao administrador.";
+                    errorMsg.style.display = 'block';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    return;
                 }
 
                 const { data, error } = await supabaseClient.auth.signUp({
@@ -340,8 +336,6 @@
                     toggleMode(new Event('click')); // switch back to login
                 }
             } else {
-                const ADMIN_EMAIL = 'gustavotruppeltkd@gmail.com';
-
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password,
@@ -353,10 +347,7 @@
                 } else if (data && data.user) {
                     const userEmail = data.user.email.toLowerCase();
 
-                    // Admin entra direto
-                    if (userEmail === ADMIN_EMAIL.toLowerCase()) return;
-
-                    // Outros emails: verificar se estão na lista de autorizados
+                    // Verificar se está na lista de autorizados
                     const { data: authRow } = await supabaseClient
                         .from('authorized_emails')
                         .select('email')
