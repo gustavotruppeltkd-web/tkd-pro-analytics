@@ -47,10 +47,20 @@ var db = {};
 var lastSyncTime = 0;
 
 
+// Resolve device mode: respeita preferência manual; auto-detecta se não houver
+function resolveDeviceMode() {
+    const manual = localStorage.getItem('tkd_device_mode');
+    if (manual) return manual;
+    const w = window.innerWidth || document.documentElement.clientWidth;
+    if (w <= 768)  return 'mobile';
+    if (w <= 1024) return 'tablet';
+    return 'desktop';
+}
+
 // Load Database from LocalStorage or initialize with MOCK_DATA
 function loadDB() {
     // -- Device mode ------------------------------------------
-    const deviceMode = localStorage.getItem('tkd_device_mode') || 'desktop';
+    const deviceMode = resolveDeviceMode();
     document.body.classList.remove('mode-tablet', 'mode-mobile');
     if (deviceMode === 'tablet') document.body.classList.add('mode-tablet');
     if (deviceMode === 'mobile') document.body.classList.add('mode-mobile');

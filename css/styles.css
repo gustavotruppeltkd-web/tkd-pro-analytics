@@ -1208,6 +1208,7 @@ body.mode-mobile .topbar {
     align-items: flex-start;
     gap: 20px;
     margin-bottom: 24px;
+    padding-left: 56px; /* desviar do botão hamburger (left:16px + width:44px = 60px) */
 }
 
 body.mode-mobile .topbar .page-title h1 {
