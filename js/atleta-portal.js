@@ -241,20 +241,15 @@
             console.log("Rendering Treino for Today:", todayStr, "Athlete Turma:", atleta.turmaId);
             const rawTreinos = window.db.treinos || [];
 
-            const treinos = rawTreinos.filter(t => {
+            const treinosDoDia = rawTreinos.filter(t => {
                 const dateMatch = String(t.data || '').trim().substring(0, 10) === todayStr;
                 const turmaMatch = !t.turmaId ||
                     !atleta.turmaId ||
                     String(t.turmaId) === String(atleta.turmaId) ||
                     t.turmaId === 'todas';
-                if (!dateMatch || !turmaMatch) return false;
-                const dest = t.destinatario || 'equipe';
-                if (dest === 'atletas' || dest === 'atleta') {
-                    const ids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
-                    if (!ids.includes(atleta.id)) return false;
-                }
-                return true;
+                return dateMatch && turmaMatch;
             });
+            const treinos = filtrarTreinosParaAtleta(treinosDoDia, atleta.id);
 
             if (treinos.length === 0) {
                 el.innerHTML = `<div class="empty-state"><i class="ti ti-moon"></i>Sem treinos registrados para hoje.</div>`;
@@ -869,16 +864,40 @@
         // ── TREINOS DO DIA (vinculação ao PSE) ────────────────────
         const TIPOS_FISICO_IDS = ['forca','potencia','transferencia','hiit','cardio','glicolitico','regenerativo','mobilidade','flexibilidade','core'];
 
+        function getFocoTreino(tipo) {
+            return TIPOS_FISICO_IDS.includes(tipo) ? 'fisico' : 'tkd';
+        }
+
+        // Filtra lista de treinos para um atleta: exclui treino de equipe se o atleta
+        // já tem treino individual do mesmo foco no mesmo conjunto de treinos.
+        function filtrarTreinosParaAtleta(todosTreinos, aId) {
+            const focosIndividuais = new Set();
+            todosTreinos.forEach(t => {
+                const dest = t.destinatario || 'equipe';
+                if (dest === 'atleta' || dest === 'atletas') {
+                    const ids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+                    if (ids.includes(aId)) focosIndividuais.add(getFocoTreino(t.tipo));
+                }
+            });
+            return todosTreinos.filter(t => {
+                const dest = t.destinatario || 'equipe';
+                if (dest === 'atleta' || dest === 'atletas') {
+                    const ids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+                    return ids.includes(aId);
+                }
+                return !focosIndividuais.has(getFocoTreino(t.tipo));
+            });
+        }
+
         function renderTreinosHoje() {
             const turmaId = db.alunos?.find(a => a.id === atletaId)?.turmaId;
             if (!turmaId) return;
 
-            const treinos = (db.treinos || []).filter(t => {
-                if (t.data !== today || t.turmaId !== turmaId) return false;
-                const dest = t.destinatario || 'equipe';
-                // Inclui treinos da equipe OU específicos para este atleta
-                return dest === 'equipe' || t.atletaId === atletaId;
-            }).sort((a, b) => (a.horario || '').localeCompare(b.horario || ''));
+            const treinosDoDia = (db.treinos || []).filter(t =>
+                t.data === today && t.turmaId === turmaId
+            );
+            const treinos = filtrarTreinosParaAtleta(treinosDoDia, atletaId)
+                .sort((a, b) => (a.horario || '').localeCompare(b.horario || ''));
 
             const container = document.getElementById('treinosHojeContainer');
             const list = document.getElementById('treinosHojeList');
