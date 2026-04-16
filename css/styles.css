@@ -955,8 +955,8 @@ select option {
 /* Global Toast Notification */
 .toast-container {
     position: fixed;
-    top: 24px;
-    right: 24px;
+    top: max(24px, env(safe-area-inset-top));
+    right: max(24px, env(safe-area-inset-right));
     z-index: 9999;
     display: flex;
     flex-direction: column;

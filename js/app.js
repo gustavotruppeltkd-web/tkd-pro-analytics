@@ -143,14 +143,14 @@ function loadDB() {
         if (!db.lutasScout) { db.lutasScout = []; modified = true; }
         if (!db.chamadas) { db.chamadas = []; modified = true; }
         if (!db.lesoes) { db.lesoes = [...(MOCK_DATA.lesoes || [])]; modified = true; }
-        if (!db.periodizacao) { db.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao)); modified = true; }
+        if (!db.periodizacao) { db.periodizacao = structuredClone(MOCK_DATA.periodizacao); modified = true; }
 
         if (modified) {
             // Save local changes, but we will sync with Supabase in a moment anyway
             localStorage.setItem('tkd_scout_db', JSON.stringify(db));
         }
     } else {
-        db = JSON.parse(JSON.stringify(MOCK_DATA)); // Deep copy
+        db = structuredClone(MOCK_DATA); // Deep copy
         // Do NOT call saveDB() here — that would push empty data to Supabase
         // and destroy any cloud data the user has. Just cache locally.
         localStorage.setItem('tkd_scout_db', JSON.stringify(db));
@@ -481,6 +481,8 @@ function mergeAppState(local, remote) {
 }
 
 // Salva estado do banco no Local Storage e Sincroniza de forma segura (Fetch -> Merge -> Upsert)
+let _saveDBTimer = null;
+let _saveDBResolvers = [];
 async function saveDB() {
     db._last_updated = Date.now();
     lastSyncTime = db._last_updated;
@@ -493,8 +495,16 @@ async function saveDB() {
     }
     localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
 
-    // Sincronização segura em background
-    return await syncToSupabase();
+    // Debounce: agrupa múltiplas chamadas em 500ms numa única sync ao Supabase
+    return new Promise((resolve) => {
+        _saveDBResolvers.push(resolve);
+        clearTimeout(_saveDBTimer);
+        _saveDBTimer = setTimeout(async () => {
+            const resolvers = _saveDBResolvers.splice(0);
+            const result = await syncToSupabase();
+            resolvers.forEach(r => r(result));
+        }, 500);
+    });
 }
 
 // Faz o UPSERT direto do estado local atual — sem merge no save

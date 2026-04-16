@@ -123,15 +123,15 @@ function loadDB() {
         if (!db.lutasScout) { db.lutasScout = []; modified = true; }
         if (!db.chamadas) { db.chamadas = []; modified = true; }
         if (!db.lesoes) { db.lesoes = [...(MOCK_DATA.lesoes || [])]; modified = true; }
-        if (!db.periodizacao) { db.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao)); modified = true; }
+        if (!db.periodizacao) { db.periodizacao = structuredClone(MOCK_DATA.periodizacao); modified = true; }
 
         if (modified) {
             // Save local changes, but we will sync with Supabase in a moment anyway
             localStorage.setItem('tkd_scout_db', JSON.stringify(db));
         }
     } else {
-        db = JSON.parse(JSON.stringify(MOCK_DATA)); // Deep copy
-        // Do NOT call saveDB() here ù that would push empty data to Supabase
+        db = structuredClone(MOCK_DATA); // Deep copy
+        // Do NOT call saveDB() here — that would push empty data to Supabase
         // and destroy any cloud data the user has. Just cache locally.
         localStorage.setItem('tkd_scout_db', JSON.stringify(db));
     }
@@ -425,13 +425,25 @@ function mergeAppState(local, remote) {
 }
 
 // Salva estado do banco no Local Storage e Sincroniza de forma segura (Fetch -> Merge -> Upsert)
+// Debounced: múltiplas chamadas em ≤500ms resultam em apenas 1 upload para o Supabase
+let _saveDBTimer = null;
+let _saveDBResolvers = [];
 async function saveDB() {
+    // Sempre persiste localmente de imediato
     db._last_updated = Date.now();
     lastSyncTime = db._last_updated;
     localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
 
-    // Sincronização segura em background
-    return await syncToSupabase();
+    // Retorna uma Promise que resolve quando o debounce disparar e o sync terminar
+    return new Promise((resolve) => {
+        _saveDBResolvers.push(resolve);
+        clearTimeout(_saveDBTimer);
+        _saveDBTimer = setTimeout(async () => {
+            const resolvers = _saveDBResolvers.splice(0);
+            const result = await syncToSupabase();
+            resolvers.forEach(r => r(result));
+        }, 500);
+    });
 }
 
 // Faz o UPSERT garantindo que não vai sobrescrever dados novos de outros dispositivos/atletas
