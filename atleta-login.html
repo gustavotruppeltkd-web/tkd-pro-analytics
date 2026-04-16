@@ -512,7 +512,6 @@
         });
 
         async function loadCoachDataForAthlete(coachId) {
-            // Show a subtle loading state in the athlete grid
             const grid = document.getElementById('athletesGrid');
             grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
                 <i class="ti ti-loader-2" style="font-size:32px; animation: spin 1s linear infinite; display:block; margin-bottom:12px;"></i>
@@ -520,35 +519,56 @@
             </div>
             <style>@keyframes spin { to { transform: rotate(360deg); } }</style>`;
 
+            // Garante que o supabaseClient está pronto antes de usar
+            if (!window.supabaseClient) {
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--red);">
+                    <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                    Erro de configuração. Tente recarregar a página.
+                </div>`;
+                return;
+            }
+
             try {
-                const { data, error } = await window.supabaseClient
+                const { data: rows, error } = await window.supabaseClient
                     .from('app_state')
                     .select('data')
                     .eq('project_id', coachId)
-                    .single();
+                    .limit(1);
 
-                if (error || !data || !data.data) {
+                const row = rows && rows[0];
+
+                if (error) {
+                    console.error('Supabase error:', error);
                     grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
-                        <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color: var(--red);"></i>
+                        <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color:var(--red);"></i>
+                        Erro ao buscar dados (${error.code || error.message}).
+                    </div>`;
+                    return;
+                }
+
+                if (!row || !row.data) {
+                    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
+                        <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color:var(--red);"></i>
                         Link inválido ou expirado.
                     </div>`;
                     return;
                 }
 
-                // Load this coach's db into memory (read-only, no localStorage override)
-                db = data.data;
+                db = row.data;
                 window.db = db;
 
                 renderAthletes();
 
-                // Auto-select athlete if pre-selected via URL
                 if (preSelectedId) {
                     const atleta = db.alunos?.find(a => a.id === preSelectedId);
                     if (atleta) selectAthlete(preSelectedId);
                 }
             } catch (err) {
                 console.error('Erro ao carregar dados do treinador:', err);
-                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:32px;">Erro ao carregar dados.</div>`;
+                grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:32px;">
+                    <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color:var(--red);"></i>
+                    Erro inesperado: ${err.message || err}
+                </div>`;
             }
         }
 
