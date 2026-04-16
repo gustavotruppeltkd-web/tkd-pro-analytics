@@ -1247,6 +1247,16 @@ body.mode-mobile .btn {
     width: 100%;
     justify-content: center;
 }
+/* Botões dentro de células de tabela, flex-row e ícones NÃO devem ser 100% */
+body.mode-mobile td .btn,
+body.mode-mobile .btn-icon,
+body.mode-mobile .source-toggle .btn,
+body.mode-mobile .add-technique-flex .btn,
+body.mode-mobile .video-loader .btn,
+body.mode-mobile .timeline-actions .btn,
+body.mode-mobile .register-bar .btn-large {
+    width: auto !important;
+}
 
 /* Modal mobile fixes — largura máxima nunca passa da tela */
 body.mode-mobile .modal-content {
@@ -1710,6 +1720,14 @@ body.mode-mobile .main-content {
 }
 body.mode-mobile .app-container {
     overflow-x: hidden;
+    /* CRITICAL: sidebar é position:fixed (fora do flow). Com display:block,
+       main-content preenche 100% da largura sem competir com o sidebar no flex. */
+    display: block !important;
+}
+body.mode-mobile .main-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* ============================================================
@@ -1862,13 +1880,19 @@ body.mode-mobile .ob-card {
 
     /* Geral: sem overflow lateral */
     html, body { overflow-x: hidden; }
-    .app-container { overflow-x: hidden; }
+    .app-container { overflow-x: hidden; display: block !important; }
 }
 
 /* --- Layout mobile (celular portrait ≤ 768px) --- */
 @media (max-width: 768px) {
+    /* App container: block para sidebar não participar do flex layout */
+    .app-container { display: block !important; }
+
     /* Main content: padding para hamburger */
     .main-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
         padding: 72px 16px 40px !important;
         overflow-x: hidden;
     }

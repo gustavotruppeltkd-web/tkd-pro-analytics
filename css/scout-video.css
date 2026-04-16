@@ -23,6 +23,37 @@ body.mode-tablet .scout-right-col {
     max-height: none !important;
 }
 
+/* Mobile: fix overflow on techniques and video sections */
+body.mode-mobile .scout-left-col,
+body.mode-tablet .scout-left-col {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+body.mode-mobile .techniques-section,
+body.mode-tablet .techniques-section,
+body.mode-mobile .video-section,
+body.mode-tablet .video-section {
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+/* Prevent the + button from being forced to 100% width by global .btn rule */
+body.mode-mobile .add-technique-flex .btn,
+body.mode-tablet .add-technique-flex .btn {
+    width: auto !important;
+    flex-shrink: 0;
+}
+body.mode-mobile .add-technique-flex,
+body.mode-tablet .add-technique-flex {
+    min-width: 0;
+}
+body.mode-mobile .add-technique-flex .form-control,
+body.mode-tablet .add-technique-flex .form-control {
+    flex: 1;
+    min-width: 0;
+}
+
 .scout-left-col {
     display: flex;
     flex-direction: column;
