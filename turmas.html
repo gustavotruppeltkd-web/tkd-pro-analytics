@@ -9,6 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
     <style>
+        html {
+            overflow-x: hidden;
+        }
+
         body {
             min-height: 100vh;
             background-color: var(--bg-dark);
@@ -41,6 +45,7 @@
             width: 100%;
             margin: 96px auto 80px;
             padding: 0 32px;
+            box-sizing: border-box;
         }
 
         .splash-container {
@@ -241,6 +246,18 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        /* Responsividade mobile/tablet para a página standalone */
+        body.mode-mobile .page-content,
+        body.mode-tablet .page-content {
+            padding: 0 16px;
+        }
+        body.mode-mobile .splash-title {
+            font-size: 24px;
+        }
+        body.mode-mobile .topbar {
+            padding: 0 16px;
         }
 
         @keyframes fadeIn {
