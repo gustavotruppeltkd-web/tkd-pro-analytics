@@ -47,14 +47,13 @@ var db = {};
 var lastSyncTime = 0;
 
 
-// Resolve device mode: respeita preferência manual; auto-detecta se não houver
+// Resolve device mode: telas pequenas sempre forçam o modo certo;
+// preferência manual só vale em desktop (>1024px)
 function resolveDeviceMode() {
-    const manual = localStorage.getItem('tkd_device_mode');
-    if (manual) return manual;
     const w = window.innerWidth || document.documentElement.clientWidth;
-    if (w <= 768)  return 'mobile';
-    if (w <= 1024) return 'tablet';
-    return 'desktop';
+    if (w <= 768)  return 'mobile';   // celular: sempre mobile
+    if (w <= 1024) return 'tablet';   // tablet: sempre tablet
+    return localStorage.getItem('tkd_device_mode') || 'desktop';
 }
 
 // Load Database from LocalStorage or initialize with MOCK_DATA
