@@ -160,11 +160,23 @@ function loadDB() {
 
 let isFetchingSupabase = false;
 
+function showSyncSpinner(visible) {
+    let el = document.getElementById('syncSpinner');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'syncSpinner';
+        el.textContent = 'Sincronizando...';
+        document.body.appendChild(el);
+    }
+    el.classList.toggle('visible', visible);
+}
+
 function fetchFromSupabase() {
     if (!window.supabaseClient) return;
     if (isFetchingSupabase) return;
 
     isFetchingSupabase = true;
+    showSyncSpinner(true);
 
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
         if (!authData || !authData.user) {
@@ -233,6 +245,7 @@ function fetchFromSupabase() {
                 }
             }).finally(() => {
                 isFetchingSupabase = false;
+                showSyncSpinner(false);
             });
     });
 }
@@ -929,9 +942,24 @@ function renderSidebar() {
     nav.innerHTML = html;
 }
 
+function setupOfflineBanner() {
+    let banner = document.getElementById('offlineBanner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'offlineBanner';
+        banner.innerHTML = '<i class="ti ti-wifi-off"></i> Sem conexão — alterações serão sincronizadas quando reconectar';
+        document.body.appendChild(banner);
+    }
+    const update = () => banner.classList.toggle('visible', !navigator.onLine);
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    update();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Carrega o Banco de Dados no carregamento da p?gina
     loadDB();
+    setupOfflineBanner();
     populateFaixaSelects();
     populatePesoSelects();
     renderActiveCoach();
