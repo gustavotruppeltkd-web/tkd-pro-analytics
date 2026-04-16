@@ -112,6 +112,30 @@
             color: var(--text-muted);
             margin-bottom: 4px;
         }
+
+        @media (max-width: 768px) {
+            .q-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px;
+            }
+            .q-header h2 {
+                font-size: 18px;
+            }
+            .builder-row {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+            .builder-row .form-group {
+                width: 100% !important;
+            }
+            .tabs-header {
+                overflow-x: auto;
+                gap: 16px;
+                flex-wrap: nowrap;
+                padding-bottom: 4px;
+            }
+        }
     </style>
 </head>
 

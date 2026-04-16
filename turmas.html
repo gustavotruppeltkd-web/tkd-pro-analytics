@@ -272,6 +272,9 @@
         body.mode-tablet .top-left-profile {
             max-width: calc(50vw - 16px);
         }
+        body.mode-mobile .logo-text-hide-mobile {
+            display: none !important;
+        }
 
         @media (max-width: 768px) {
             .page-content { padding: 0 16px; box-sizing: border-box; }
@@ -284,6 +287,7 @@
                 white-space: nowrap;
             }
             .top-left-profile { max-width: calc(50vw - 16px); }
+            .logo-text-hide-mobile { display: none !important; }
         }
 
         @keyframes fadeIn {
@@ -317,7 +321,7 @@
         <!-- Center: Logo -->
         <div style="display: flex; align-items: center; gap: 10px;">
             <i class="ti ti-shield-up" style="font-size: 26px; color: var(--primary);"></i>
-            <span style="font-size: 20px; color: var(--text-main); font-weight: 700;">PRO COACH ANALYTICS</span>
+            <span style="font-size: 20px; color: var(--text-main); font-weight: 700;" class="logo-text-hide-mobile">PRO COACH ANALYTICS</span>
         </div>
 
         <!-- Right: Logout -->
