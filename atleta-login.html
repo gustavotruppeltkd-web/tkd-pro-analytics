@@ -484,7 +484,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3" integrity="sha384-clqYxV1hjoC1RwoBT11M16mn2I42U4CCZc2QcnjigG/l1lFSxC/zBRAoMxhlrK1Z" crossorigin="anonymous"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
@@ -575,10 +575,10 @@
                 const faixaCurta = a.faixa ? a.faixa.replace(/\(.*?\)/g, '').trim() : '';
                 return `
                     <button class="athlete-btn" onclick="selectAthlete(${a.id})" id="athleteBtn_${a.id}">
-                        <img src="${a.avatar || DEFAULT_AVATAR}" alt="${a.nome}"
+                        <img src="${a.avatar || DEFAULT_AVATAR}" alt="${escapeHtml(a.nome)}"
                              onerror="this.src=DEFAULT_AVATAR">
-                        <span>${primeiroNome}</span>
-                        ${faixaCurta ? `<span class="faixa-badge">${faixaCurta}</span>` : ''}
+                        <span>${escapeHtml(primeiroNome)}</span>
+                        ${faixaCurta ? `<span class="faixa-badge">${escapeHtml(faixaCurta)}</span>` : ''}
                     </button>
                 `;
             }).join('');

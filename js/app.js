@@ -1033,17 +1033,21 @@ function setupOfflineBanner() {
     if (!banner) {
         banner = document.createElement('div');
         banner.id = 'offlineBanner';
-        banner.innerHTML = '<i class="ti ti-wifi-off"></i> Sem conexão — alterações serão sincronizadas quando reconectar';
+        banner.innerHTML = '<i class="ti ti-wifi-off"></i> Você está offline. Os dados serão sincronizados quando a conexão voltar.';
         document.body.appendChild(banner);
     }
-    const update = () => banner.classList.toggle('visible', !navigator.onLine);
-    window.addEventListener('online', update);
-    window.addEventListener('offline', update);
-    update();
+    window.addEventListener('offline', () => {
+        banner.classList.add('visible');
+    });
+    window.addEventListener('online', () => {
+        banner.classList.remove('visible');
+        if (typeof syncToSupabase === 'function') syncToSupabase();
+    });
+    if (!navigator.onLine) banner.classList.add('visible');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Carrega o Banco de Dados no carregamento da p?gina
+    // Carrega o Banco de Dados no carregamento da página
     loadDB();
     setupOfflineBanner();
     populateFaixaSelects();
@@ -1309,7 +1313,7 @@ function openScoutDetail(scoutId) {
                 <div style="font-weight: 700; font-size: 14px;">${basePredominanteHtml}</div>
             </div>
             <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top T?cnicas</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Top Técnicas</div>
                 <div>${tecnicasHtml}</div>
             </div>
             <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
@@ -1334,8 +1338,8 @@ function openScoutDetail(scoutId) {
                 <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding: 16px; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: var(--radius-lg);">
                     ${scout.atletaId === 'adversario' || (typeof scout.atletaId === 'string' && scout.atletaId.startsWith('Adversário')) ? '' : `<img src="${avatarAtleta}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary);">`}
                     <div>
-                        <div style="font-size: 18px; font-weight: 700;">${nomeAtleta}</div>
-                        <div style="color: var(--text-muted); font-size: 14px;">${scout.evento}</div>
+                        <div style="font-size: 18px; font-weight: 700;">${escapeHtml(nomeAtleta)}</div>
+                        <div style="color: var(--text-muted); font-size: 14px;">${escapeHtml(scout.evento || '')}</div>
                     </div>
                     <div style="margin-left: auto; text-align: right;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Resultado Final</div>
@@ -1361,7 +1365,7 @@ function openScoutDetail(scoutId) {
                     
                     <div style="background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); height: fit-content;">
                         <h3 style="font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; justify-content: center;">
-                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação T?cnica
+                            <i class="ti ti-star" style="color: var(--yellow);"></i> Avaliação Técnica
                         </h3>
                         <div style="height: 250px; width: 100%; position: relative;">
                             <canvas id="scoutRadarChart"></canvas>
@@ -1449,7 +1453,7 @@ function openScoutDetail(scoutId) {
 /**
  * Exclui um scout permanentemente.
  * @param {number} scoutId 
- * @param {function} callback - Fun??o para Atualiza\u00e7\u00e3or a UI ap?s exclus?o
+ * @param {function} callback - Função para atualizar a UI após exclusão
  */
 function deleteScout(scoutId, callback) {
     if (!confirm("Tem certeza que deseja excluir esta anáálise de scout permanentemente?")) return;
@@ -1468,16 +1472,16 @@ function deleteScout(scoutId, callback) {
  * @param {number} scoutId 
  */
 function editScout(scoutId) {
-    // Redireciona para a p?gina de scout com o ID na URL
+    // Redireciona para a página de scout com o ID na URL
     window.location.href = `scout-video.html?edit=${scoutId}`;
 }
 
 /**
- * Gera e baixa um PDF de alto n?vel com análise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
+ * Gera e baixa um PDF de alto nível com análise granular (Ofensiva vs Defensiva) e agrupamento por rounds.
  * @param {number} scoutId 
  */
 /**
- * Gera e baixa um PDF de alto n?vel com análise granular e matriz anal?tica (T?cnica + Perna + Base).
+ * Gera e baixa um PDF de alto nível com análise granular e matriz analítica (Técnica + Perna + Base).
  * @param {number} scoutId 
  */
 async function downloadScoutPDF(scoutId) {
@@ -1527,7 +1531,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.resultado === 'Com ponto') tgt.pontos++;
 
         if (ev.tecnica) {
-            // Matriz anal?tica para ofensiva usa Perna e Base. Para defensiva, apenas t?cnica/resultado.
+            // Matriz analítica para ofensiva usa Perna e Base. Para defensiva, apenas técnica/resultado.
             const key = isOfp
                 ? `${ev.tecnica} | ${ev.perna || '?'} | ${ev.base || '?'}`
                 : ev.tecnica;
@@ -1761,10 +1765,10 @@ async function downloadScoutPDF(scoutId) {
         yPos += 4;
     });
 
-    // --- RADAR Chart (Agora ap?s a Timeline) ---
+    // --- RADAR Chart (Agora após a Timeline) ---
     if (scout.avaliacaoTreinador) {
         if (yPos > 200) { doc.addPage(); yPos = 20; } else { yPos += 10; }
-        yPos = drawSectionHeader("Avaliação T?cnica (Radar)", yPos);
+        yPos = drawSectionHeader("Avaliação Técnica (Radar)", yPos);
         const canvas = document.getElementById('scoutRadarChart');
         if (canvas) {
             const chartImg = canvas.toDataURL('image/png');

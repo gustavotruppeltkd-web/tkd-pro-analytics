@@ -124,7 +124,7 @@
 
                 proximasDiv.innerHTML = `
                     <div style="cursor: pointer;" onclick="window.location.href='evento-detalhes.html?id=${prox.id}'">
-                        • ${prox.titulo} (${countdownText})
+                        • ${escapeHtml(prox.titulo)} (${countdownText})
                         ${statusExtra}
                     </div>
                 `;
@@ -172,7 +172,7 @@
                 return `
                 <div style="flex: 1; min-width: 0;">
                     <div style="margin-bottom: 8px; font-size: 12px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
-                        <i class="ti ${icon}" style="color: var(--primary);"></i> ${t.titulo || 'Geral'}
+                        <i class="ti ${icon}" style="color: var(--primary);"></i> ${escapeHtml(t.titulo || 'Geral')}
                     </div>
                     
                     <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -272,7 +272,7 @@
                     const hora = t.horario || '';
                     html += `
                         <div class="treino-chip tipo-${t.tipo}" onclick="abrirTreino(${t.id})">
-                            <div class="chip-title">${hora ? hora + ' \u2014 ' : ''}${t.titulo}</div>
+                            <div class="chip-title">${hora ? hora + ' \u2014 ' : ''}${escapeHtml(t.titulo)}</div>
                             <div class="chip-meta">
                                 <span>${label}</span>
                                 ${dur ? `<span>${dur}</span>` : ''}
@@ -322,21 +322,21 @@
                     exsHtml += `<div class="view-ex-item">
                         <div class="view-ex-bullet"></div>
                         <div class="view-ex-content">
-                            <span class="view-ex-nome">${exObj.nome}</span>
-                            ${exObj.valor ? `<span class="view-ex-val">${exObj.valor}</span>` : ''}
+                            <span class="view-ex-nome">${escapeHtml(exObj.nome)}</span>
+                            ${exObj.valor ? `<span class="view-ex-val">${escapeHtml(exObj.valor)}</span>` : ''}
                             ${exObj.obs ? (isLink
                             ? `<a href="${exObj.obs}" target="_blank" rel="noopener" class="view-ex-link"><i class="ti ti-link" style="font-size:10px;"></i> Ver link</a>`
-                            : `<span class="view-ex-obs">${exObj.obs}</span>`)
+                            : `<span class="view-ex-obs">${escapeHtml(exObj.obs)}</span>`)
                             : ''}
                         </div>
                     </div>`;
                 });
                 blocosHtml += `<div class="view-bloco">
                     <div class="view-bloco-header">
-                        <span class="view-bloco-nome">${b.nome || 'Bloco sem nome'}</span>
+                        <span class="view-bloco-nome">${escapeHtml(b.nome || 'Bloco sem nome')}</span>
                         ${durStr ? `<span class="view-bloco-dur">${durStr}</span>` : ''}
                     </div>
-                    ${b.descricao ? `<div class="view-bloco-desc">${b.descricao}</div>` : ''}
+                    ${b.descricao ? `<div class="view-bloco-desc">${escapeHtml(b.descricao)}</div>` : ''}
                     ${exsHtml}
                 </div>`;
             });
@@ -356,7 +356,7 @@
                         ${t.psePlanejada ? `<div class="view-stat"><i class="ti ti-gauge"></i><span>PSE ${t.psePlanejada}</span><small>Intensidade</small></div>` : ''}
                     </div>
                     ${blocosHtml ? `<div class="view-section-label">Conteúdo da Sessão</div>${blocosHtml}` : ''}
-                    ${t.obs ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
+                    ${t.obs ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${escapeHtml(t.obs)}</div>` : ''}
                     
                     <div class="view-actions">
                         <button class="btn" onclick="closeModalTreino()">Fechar Visualização</button>
@@ -568,8 +568,8 @@
 
                     card = `
                         <div class="student-square-card" style="animation: fadeIn 0.4s ease-out; height: 100%; display: flex; flex-direction: column;">
-                            <img src="${a.avatar}" alt="${a.nome}" class="student-square-avatar" style="align-self: center;" onerror="this.src=DEFAULT_AVATAR">
-                            <h4 style="text-align: center;">${a.nome}</h4>
+                            <img src="${a.avatar}" alt="${escapeHtml(a.nome)}" class="student-square-avatar" style="align-self: center;" onerror="this.src=DEFAULT_AVATAR">
+                            <h4 style="text-align: center;">${escapeHtml(a.nome)}</h4>
                             <p style="text-align: center; margin-bottom: 4px;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLogDisplay && wLogDisplay.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLogDisplay.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
                             <div style="font-size: 10px; margin-bottom: 8px;">${ultimoWellnessLabel}</div>
 
@@ -589,9 +589,9 @@
                     card = `
                         <div class="student-row" style="animation: fadeIn 0.4s ease-out;">
                             <div class="col-info">
-                                <img src="${a.avatar}" alt="${a.nome}" class="student-avatar">
+                                <img src="${a.avatar}" alt="${escapeHtml(a.nome)}" class="student-avatar">
                                 <div class="student-details">
-                                    <h4>${a.nome}</h4>
+                                    <h4>${escapeHtml(a.nome)}</h4>
                                     <p><strong>${a.faixa}</strong> • ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
                                 </div>
                             </div>
@@ -869,7 +869,7 @@
                     ? `<div class="schedule-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--yellow);"><i class="ti ti-users-group"></i></div>`
                     : `<div class="schedule-icon"><i class="ti ti-calendar"></i></div>`;
 
-                let extra = h.obs ? `<br><span style="font-size:11px; color:var(--yellow);">${h.obs}</span>` : '';
+                let extra = h.obs ? `<br><span style="font-size:11px; color:var(--yellow);">${escapeHtml(h.obs)}</span>` : '';
 
                 mainGrid.insertAdjacentHTML('beforeend', `
                     <div class="schedule-card" style="animation: fadeIn 0.3s ease-out;" id="card-horario-${h.id}">
@@ -887,7 +887,7 @@
                             <div class="schedule-icon" style="width: 32px; height: 32px; font-size: 16px; background: rgba(255,255,255,0.05); color: var(--text-main);"><i class="ti ti-clock"></i></div>
                             <div class="student-details">
                                 <h4 style="font-size: 14px;">${h.dia}</h4>
-                                <p>${h.periodo} ${h.obs || ''}</p>
+                                <p>${h.periodo} ${escapeHtml(h.obs || '')}</p>
                             </div>
                         </div>
                         <div class="col-action">

@@ -266,9 +266,9 @@
                 const card = `
                     <div class="student-row" onclick="openPanelIndividual(${aluno.id})" style="cursor:pointer;">
                         <div class="col-info">
-                            <img src="${aluno.avatar}" alt="${aluno.nome}" class="student-avatar">
+                            <img src="${aluno.avatar}" alt="${escapeHtml(aluno.nome)}" class="student-avatar">
                             <div class="student-details">
-                                <h4>${aluno.nome}</h4>
+                                <h4>${escapeHtml(aluno.nome)}</h4>
                                 <p><strong>${aluno.faixa}</strong></p>
                             </div>
                         </div>
@@ -306,7 +306,7 @@
                 if (list.length === 0) {
                     el.innerHTML = '<div class="athlete-mini-item" style="opacity:0.4;">Nenhum atleta</div>';
                 } else {
-                    el.innerHTML = list.slice(0, 3).map(nome => `<div class="athlete-mini-item">${nome}</div>`).join('');
+                    el.innerHTML = list.slice(0, 3).map(nome => `<div class="athlete-mini-item">${escapeHtml(nome)}</div>`).join('');
                 }
             };
 
@@ -918,7 +918,7 @@
                 const icon = a.color === 'semaforo-red' ? 'ti-alert-triangle' : 'ti-alert-circle';
                 return `<div style="display:flex;align-items:flex-start;gap:8px;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
                     <i class="ti ${icon}" style="color:${iconColor};margin-top:1px;flex-shrink:0;"></i>
-                    <span><strong>${a.nome}</strong> — ${a.msg}</span>
+                    <span><strong>${escapeHtml(a.nome)}</strong> — ${escapeHtml(a.msg)}</span>
                 </div>`;
             }).join('');
         }
@@ -1676,7 +1676,7 @@
                     const bgClass = s >= 70 ? 'bg-success' : s >= 40 ? 'bg-warning' : 'bg-danger';
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
+                        <td style="padding: 10px; font-weight: 500;">${escapeHtml(nome)}</td>
                         <td style="padding: 10px;">${l.sono || '-'}</td>
                         <td style="padding: 10px;">${l.estresse || '-'}</td>
                         <td style="padding: 10px;">${l.dor || '-'}</td>
@@ -2605,7 +2605,7 @@
 
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
+                        <td style="padding: 10px; font-weight: 500;">${escapeHtml(nome)}</td>
                         <td style="padding: 10px;">${s.tituloLuta || 'Luta'}</td>
                         <td style="padding: 10px;">${s.oponenteNome || '-'}</td>
                         <td style="padding: 10px;"><span class="badge ${win ? 'bg-success' : 'bg-danger'}" style="color:#fff;">${win ? 'V' : 'D'}</span></td>
@@ -3039,9 +3039,9 @@
                     const scoreDisp = hasNum ? scoreTotal.toFixed(1) : 'N/A';
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
+                        <td style="padding: 10px; font-weight: 500;">${escapeHtml(nome)}</td>
                         <td style="padding: 10px; font-weight: bold; color: var(--primary);">${scoreDisp}</td>
-                        <td style="padding: 10px; color: var(--text-muted);">${obs}</td>
+                        <td style="padding: 10px; color: var(--text-muted);">${escapeHtml(obs)}</td>
                     </tr>`;
                 });
             }
@@ -3261,7 +3261,7 @@
 
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
+                        <td style="padding: 10px; font-weight: 500;">${escapeHtml(nome)}</td>
                         <td style="padding: 10px;">${tipoFormat}</td>
                         <td style="padding: 10px; font-weight: bold; color: var(--primary);">${resultText}</td>
                     </tr>`;
@@ -3424,7 +3424,7 @@
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
                     const dataBR = t.data ? t.data.split('-').reverse().join('/') : '-';
                     const tp = t.tipo.replace(/_/g, ' ').toUpperCase();
-                    tableHTML += `<tr><td style="padding:10px;">${dataBR}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px;">${tp}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${t.resultados.valor || 0} cm</td></tr>`;
+                    tableHTML += `<tr><td style="padding:10px;">${dataBR}</td><td style="padding:10px; font-weight:500;">${escapeHtml(nome)}</td><td style="padding:10px;">${tp}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${t.resultados.valor || 0} cm</td></tr>`;
                 });
             }
             tableHTML += `</tbody></table>`;
@@ -3523,7 +3523,7 @@
                     const dataBR = t.data ? t.data.split('-').reverse().join('/') : '-';
                     const tp = t.tipo === 'fskt_10s' ? 'FSKT 10s' : 'FSKT 5x10s';
                     const res = t.tipo === 'fskt_10s' ? `${t.resultados.chutes || 0} chutes` : `${t.resultados.total || 0} chutes / IF: ${t.resultados.decrementIndex || 0}%`;
-                    tableHTML += `<tr><td style="padding:10px;">${dataBR}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px;">${tp}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${res}</td></tr>`;
+                    tableHTML += `<tr><td style="padding:10px;">${dataBR}</td><td style="padding:10px; font-weight:500;">${escapeHtml(nome)}</td><td style="padding:10px;">${tp}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${res}</td></tr>`;
                 });
             }
             tableHTML += `</tbody></table>`;
@@ -3640,7 +3640,7 @@
                 sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
-                    tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${t.resultados.valor || 0}</td></tr>`;
+                    tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${escapeHtml(nome)}</td><td style="padding:10px; color:var(--primary); font-weight:bold;">${t.resultados.valor || 0}</td></tr>`;
                 });
             }
             tableHTML += `</tbody></table>`;
@@ -3730,7 +3730,7 @@
                 sortedTrás.forEach(t => {
                     const al = db.alunos.find(a => a.id === t.atletaId);
                     const nome = al ? al.nome.split(' ')[0] : 'N/A';
-                    tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${nome}</td><td style="padding:10px;">${t.ag}</td><td style="padding:10px;">${t.fl}</td></tr>`;
+                    tableHTML += `<tr><td style="padding:10px;">${t.data.split('-').reverse().join('/')}</td><td style="padding:10px; font-weight:500;">${escapeHtml(nome)}</td><td style="padding:10px;">${t.ag}</td><td style="padding:10px;">${t.fl}</td></tr>`;
                 });
             }
             tableHTML += `</tbody></table>`;
@@ -3843,7 +3843,7 @@
 
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
+                        <td style="padding: 10px; font-weight: 500;">${escapeHtml(nome)}</td>
                         <td style="padding: 10px;">${a.peso}kg / ${a.altura}cm</td>
                         <td style="padding: 10px; font-weight: bold; color: var(--primary);">${a.percGordura}%</td>
                         <td style="padding: 10px;">${a.massaMagra}kg / ${a.massaGorda}kg</td>
@@ -4029,7 +4029,7 @@
 
                     tableHTML += `<tr>
                         <td style="padding: 10px;">${dataBR}</td>
-                        <td style="padding: 10px; font-weight: 500;">${nome}</td>
+                        <td style="padding: 10px; font-weight: 500;">${escapeHtml(nome)}</td>
                         <td style="padding: 10px;">${l.local} - ${l.tipo}</td>
                         <td style="padding: 10px; font-weight: bold; color: ${stColor};">${l.status}</td>
                     </tr>`;

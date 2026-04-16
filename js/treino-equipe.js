@@ -255,7 +255,7 @@
                     ondragend="onChipDragEnd(event)"
                     onclick="event.stopPropagation(); editTreino(${t.id})" 
                     style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.horario || ''} ${t.titulo}</span>
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${t.horario || ''} ${escapeHtml(t.titulo)}</span>
                     ${protIcon}
                 </div>`;
             });
@@ -290,7 +290,7 @@
                 const aluno = (db.alunos || []).find(a => a.id === t.atletaId);
                 if (aluno) {
                     const initials = aluno.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
-                    atletaBadge = `<span class="chip-atleta-badge" title="${aluno.nome}"><i class="ti ti-user" style="font-size:9px;"></i> ${initials}</span>`;
+                    atletaBadge = `<span class="chip-atleta-badge" title="${escapeHtml(aluno.nome)}"><i class="ti ti-user" style="font-size:9px;"></i> ${initials}</span>`;
                 }
             }
 

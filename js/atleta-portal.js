@@ -264,7 +264,7 @@
                 return `
                 <div class="treino-block" style="cursor: pointer; transition: 0.2s;" onclick="openTreinoModal('${t.id}')">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                        <div class="treino-tipo" style="font-size: 13px;">${t.titulo || t.tipo || 'Treino'}</div>
+                        <div class="treino-tipo" style="font-size: 13px;">${escapeHtml(t.titulo || t.tipo || 'Treino')}</div>
                         <i class="ti ti-external-link" style="color: var(--text-muted); font-size: 14px;"></i>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
@@ -298,7 +298,7 @@
       <div class="tl-item">
         <div class="tl-dot ${isNext ? 'next' : ''}">${icon}</div>
         <div class="tl-content">
-          <div class="tl-title">${e.titulo || e.nome || 'Evento'}</div>
+          <div class="tl-title">${escapeHtml(e.titulo || e.nome || 'Evento')}</div>
           <div class="tl-date">${String(d.getDate()).padStart(2, '0')} ${MESES[d.getMonth()]} ${d.getFullYear()}</div>
         </div>
       </div>`;
@@ -455,7 +455,7 @@
                         inputHtml = `<textarea name="q_${p.id}" class="form-control" rows="3" placeholder="Digite sua resposta..."></textarea>`;
                 }
                 html += `<div class="question-block">
-        <div class="question-text">${i + 1}. ${p.texto}</div>
+        <div class="question-text">${i + 1}. ${escapeHtml(p.texto)}</div>
         ${inputHtml}
       </div>`;
             });
@@ -717,28 +717,28 @@
                         exsHtml += `<div class="view-ex-item">
                             <div class="view-ex-bullet"></div>
                             <div class="view-ex-content">
-                                <span class="view-ex-nome">${exObj.nome}</span>
-                                ${exObj.valor ? `<span class="view-ex-val">${exObj.valor}</span>` : ''}
+                                <span class="view-ex-nome">${escapeHtml(exObj.nome)}</span>
+                                ${exObj.valor ? `<span class="view-ex-val">${escapeHtml(exObj.valor)}</span>` : ''}
                                 ${exObj.obs ? (isLink
                                 ? `<a href="${exObj.obs}" target="_blank" rel="noopener" class="view-ex-link"><i class="ti ti-link" style="font-size:10px;"></i> Ver link</a>`
-                                : `<span class="view-ex-obs">${exObj.obs}</span>`)
+                                : `<span class="view-ex-obs">${escapeHtml(exObj.obs)}</span>`)
                                 : ''}
                             </div>
                         </div>`;
                     });
                     blocosHtml += `<div class="view-bloco">
                         <div class="view-bloco-header">
-                            <span class="view-bloco-nome">${b.nome || 'Bloco sem nome'}</span>
+                            <span class="view-bloco-nome">${escapeHtml(b.nome || 'Bloco sem nome')}</span>
                             ${durStr ? `<span class="view-bloco-dur">${durStr}</span>` : ''}
                         </div>
-                        ${b.descricao ? `<div class="view-bloco-desc">${b.descricao}</div>` : ''}
+                        ${b.descricao ? `<div class="view-bloco-desc">${escapeHtml(b.descricao)}</div>` : ''}
                         ${exsHtml}
                     </div>`;
                 });
             } else {
                 // Fallback para treinos antigos salvos apenas com descrição textual
                 if (t.descricao || t.obs) {
-                    blocosHtml += `<div class="view-obs-text" style="white-space: pre-wrap;">${t.descricao || t.obs}</div>`;
+                    blocosHtml += `<div class="view-obs-text" style="white-space: pre-wrap;">${escapeHtml(t.descricao || t.obs)}</div>`;
                 } else {
                     blocosHtml += `<div class="empty-state">Nenhum detalhe informado.</div>`;
                 }
@@ -757,7 +757,7 @@
                     ${t.duracaoMins || t.duracao ? `<div class="view-stat"><i class="ti ti-clock-hour-4"></i> ${t.duracaoMins || t.duracao} min<br><span style="font-size:11px;color:var(--text-muted);font-weight:400">Duração</span></div>` : ''}
                 </div>
                 ${t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Conteédo da Sessão</div>${blocosHtml}` : blocosHtml}
-                ${t.obs && t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
+                ${t.obs && t.blocos && t.blocos.length > 0 ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${escapeHtml(t.obs)}</div>` : ''}
             `;
 
             document.getElementById('treinoModalMeta').innerHTML = '';
@@ -894,7 +894,7 @@
                     <div onclick="selecionarTreino(${t.id}, '${tipoLabel}', ${t.duracaoMins || 90})"
                         style="padding:10px 12px; border-radius:var(--radius-sm); border:1px solid ${jaSubmetido ? 'var(--green)' : 'var(--border-color)'}; background:${jaSubmetido ? 'rgba(16,185,129,0.08)' : 'rgba(255,255,255,0.03)'}; cursor:${jaSubmetido ? 'default' : 'pointer'}; display:flex; align-items:center; justify-content:space-between; gap:8px; transition:border-color 0.15s;" id="treino-card-${t.id}">
                         <div>
-                            <div style="font-size:13px; font-weight:600; margin-bottom:2px;">${t.titulo}</div>
+                            <div style="font-size:13px; font-weight:600; margin-bottom:2px;">${escapeHtml(t.titulo)}</div>
                             <div style="font-size:11px; color:var(--text-muted);">${hora}${tipoLabel} · ${dur}</div>
                         </div>
                         ${jaSubmetido
