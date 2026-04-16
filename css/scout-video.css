@@ -7,6 +7,22 @@
     margin-bottom: 20px;
 }
 
+/* Mobile/tablet: empilha colunas */
+body.mode-mobile .scout-video-grid,
+body.mode-tablet .scout-video-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+}
+body.mode-mobile .scout-left-col,
+body.mode-mobile .scout-middle-col,
+body.mode-mobile .scout-right-col,
+body.mode-tablet .scout-left-col,
+body.mode-tablet .scout-middle-col,
+body.mode-tablet .scout-right-col {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
 .scout-left-col {
     display: flex;
     flex-direction: column;

@@ -1826,29 +1826,56 @@ body.mode-mobile .ob-card {
 
 /* ============================================================
    FALLBACK @MEDIA — garante layout correto mesmo sem JS/classe
-   Espelha as regras críticas de body.mode-mobile para telas ≤768px
+   Breakpoint 1024px: cobre celular portrait + landscape + tablets
    ============================================================ */
-@media (max-width: 768px) {
-    /* Sidebar: drawer oculto */
+
+/* --- Sidebar sempre como drawer em qualquer tela ≤ 1024px --- */
+@media (max-width: 1024px) {
     .sidebar {
         position: fixed !important;
-        left: 0; top: 0; bottom: 0;
-        z-index: 901;
+        left: 0 !important; top: 0 !important; bottom: 0 !important;
+        z-index: 901 !important;
         width: 260px !important;
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     .sidebar.open { transform: translateX(0) !important; }
 
-    /* Main content: ocupa a tela toda */
+    /* Main content sempre ocupa largura total */
+    .main-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Tabelas: scroll horizontal */
+    table, .tkd-table, .table-container {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Geral: sem overflow lateral */
+    html, body { overflow-x: hidden; }
+    .app-container { overflow-x: hidden; }
+}
+
+/* --- Layout mobile (celular portrait ≤ 768px) --- */
+@media (max-width: 768px) {
+    /* Main content: padding para hamburger */
     .main-content {
         padding: 72px 16px 40px !important;
         overflow-x: hidden;
     }
 
-    /* Topbar: empurrar direita para não tapar hamburger */
+    /* Topbar: espaço para o hamburger (left:16 + width:44 = 60px) */
     .topbar {
-        padding-left: 56px;
+        padding-left: 56px !important;
         flex-wrap: wrap;
         gap: 12px;
         margin-bottom: 20px;
@@ -1863,29 +1890,36 @@ body.mode-mobile .ob-card {
     .charts-grid  { grid-template-columns: 1fr !important; }
     .metricas-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
+    /* Scout-video: 3 colunas → 1 coluna empilhada */
+    .scout-video-grid {
+        grid-template-columns: 1fr !important;
+        height: auto !important;
+    }
+
+    /* Calendario: section-actions em coluna */
+    .section-actions {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+    .section-actions > div { flex-wrap: wrap; gap: 8px; }
+    .view-switcher { width: 100%; }
+    .view-btn { flex: 1; text-align: center; }
+
     /* Modais: quase tela cheia */
     .modal-content {
         width: 95% !important;
         max-width: calc(100vw - 20px) !important;
         padding: 20px !important;
         box-sizing: border-box;
+        max-height: 85dvh !important;
+        overflow-y: auto;
     }
     .modal-overlay {
-        align-items: flex-start;
+        align-items: flex-start !important;
         padding-top: 60px;
         overflow-y: auto;
     }
-
-    /* Tabelas: scroll horizontal */
-    table, .tkd-table, .table-container {
-        display: block;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-        width: 100%;
-    }
-
-    /* Botões: não forçar full-width em contextos flex */
-    .btn { min-height: 44px; }
 
     /* Inputs: evitar zoom no iOS */
     input, select, textarea { font-size: 16px !important; }
@@ -1899,14 +1933,15 @@ body.mode-mobile .ob-card {
         align-items: stretch !important;
         gap: 10px !important;
     }
-    .filter-select, .filter-section select, .filter-section input {
+    .filter-select, .filter-section select, .filter-section input,
+    .filter-row select, .filter-row input {
         width: 100% !important;
         min-width: 0 !important;
     }
 
     /* Listas de atletas */
     .athlete-row, .student-row {
-        flex-direction: column;
+        flex-direction: column !important;
         align-items: flex-start !important;
         gap: 12px;
         padding: 16px !important;
@@ -1916,7 +1951,7 @@ body.mode-mobile .ob-card {
 
     /* Calendário / grids de semana: scroll */
     .calendar-grid-container, .week-grid, .month-grid {
-        overflow-x: auto;
+        overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
     }
 
@@ -1932,15 +1967,14 @@ body.mode-mobile .ob-card {
 
     /* Abas: scroll horizontal */
     .tabs-header {
-        overflow-x: auto;
+        overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
-        gap: 16px;
-        flex-wrap: nowrap;
+        gap: 16px !important;
+        flex-wrap: nowrap !important;
         padding-bottom: 2px;
     }
-    .tab-btn { white-space: nowrap; font-size: 13px; }
+    .tab-btn { white-space: nowrap !important; font-size: 13px; }
 
-    /* Geral: sem overflow lateral */
-    html, body { overflow-x: hidden; }
-    .app-container { overflow-x: hidden; height: 100dvh; }
+    /* Botões min touch target */
+    .btn { min-height: 44px; }
 }

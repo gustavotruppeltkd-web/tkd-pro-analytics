@@ -256,8 +256,34 @@
         body.mode-mobile .splash-title {
             font-size: 24px;
         }
-        body.mode-mobile .topbar {
+        body.mode-mobile .topbar,
+        body.mode-tablet .topbar {
             padding: 0 16px;
+        }
+        /* Truncar nome do treinador no chip para evitar overflow */
+        body.mode-mobile .top-left-profile .user-name,
+        body.mode-tablet .top-left-profile .user-name {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        body.mode-mobile .top-left-profile,
+        body.mode-tablet .top-left-profile {
+            max-width: calc(50vw - 16px);
+        }
+
+        @media (max-width: 768px) {
+            .page-content { padding: 0 16px; box-sizing: border-box; }
+            .splash-title  { font-size: 24px; }
+            .topbar        { padding: 0 16px; }
+            .top-left-profile .user-name {
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .top-left-profile { max-width: calc(50vw - 16px); }
         }
 
         @keyframes fadeIn {
