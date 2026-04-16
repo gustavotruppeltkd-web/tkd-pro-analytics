@@ -1722,14 +1722,13 @@
                             <i class="ti ti-users"></i> Toda a Equipe
                         </button>
                         <button type="button" class="dest-pill" id="destAtleta"
-                            onclick="setDestinatario('atleta')">
-                            <i class="ti ti-user"></i> Atleta Específico
+                            onclick="setDestinatario('atletas')">
+                            <i class="ti ti-user"></i> Atleta(s) Específico(s)
                         </button>
                     </div>
                     <div id="atletaDestinatarioRow" style="display:none; margin-top:10px;">
-                        <select id="atletaDestinatarioId" class="form-control">
-                            <option value="">— Selecione o atleta —</option>
-                        </select>
+                        <div id="atletasChipsContainer" style="display:flex; flex-wrap:wrap; gap:8px; padding:4px 0;"></div>
+                        <div id="atletasChipsEmpty" style="display:none; font-size:12px; color:var(--text-muted); padding:4px 0;">Nenhum atleta na turma.</div>
                     </div>
                     <input type="hidden" id="treinoDestinatario" value="equipe">
                 </div>

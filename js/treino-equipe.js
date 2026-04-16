@@ -284,14 +284,16 @@
                 cargaHtml = `<span style="font-size:10px; background:${cBg}; color:${cColor}; padding:1px 5px; border-radius:4px; font-weight:700;" title="Carga Foster: PSE × Duração">${c} CARGA</span>`;
             }
 
-            // Badge de atleta específico
+            // Badge(s) de atleta(s) específico(s)
             let atletaBadge = '';
-            if (t.destinatario === 'atleta' && t.atletaId) {
-                const aluno = (db.alunos || []).find(a => a.id === t.atletaId);
-                if (aluno) {
+            const atletasIds = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+            if ((t.destinatario === 'atletas' || t.destinatario === 'atleta') && atletasIds.length > 0) {
+                atletaBadge = atletasIds.map(aid => {
+                    const aluno = (db.alunos || []).find(a => a.id === aid);
+                    if (!aluno) return '';
                     const initials = aluno.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
-                    atletaBadge = `<span class="chip-atleta-badge" title="${escapeHtml(aluno.nome)}"><i class="ti ti-user" style="font-size:9px;"></i> ${initials}</span>`;
-                }
+                    return `<span class="chip-atleta-badge" title="${escapeHtml(aluno.nome)}"><i class="ti ti-user" style="font-size:9px;"></i> ${initials}</span>`;
+                }).join('');
             }
 
             return `<div class="treino-chip tipo-${t.tipo}"
@@ -530,15 +532,39 @@
         function setDestinatario(val) {
             document.getElementById('treinoDestinatario').value = val;
             document.getElementById('destEquipe').classList.toggle('active', val === 'equipe');
-            document.getElementById('destAtleta').classList.toggle('active', val === 'atleta');
-            document.getElementById('atletaDestinatarioRow').style.display = val === 'atleta' ? '' : 'none';
+            document.getElementById('destAtleta').classList.toggle('active', val === 'atletas');
+            document.getElementById('atletaDestinatarioRow').style.display = val === 'atletas' ? '' : 'none';
         }
 
-        function populateAtletaDestinatarioSelect(selectedId) {
-            const sel = document.getElementById('atletaDestinatarioId');
+        function populateAtletasDestinatarioChips(selectedIds) {
+            selectedIds = selectedIds || [];
+            const container = document.getElementById('atletasChipsContainer');
+            const emptyMsg = document.getElementById('atletasChipsEmpty');
             const alunosTurma = (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
-            sel.innerHTML = '<option value="">— Selecione o atleta —</option>' +
-                alunosTurma.map(a => `<option value="${a.id}" ${a.id === selectedId ? 'selected' : ''}>${a.nome}</option>`).join('');
+            if (alunosTurma.length === 0) {
+                container.innerHTML = '';
+                emptyMsg.style.display = '';
+                return;
+            }
+            emptyMsg.style.display = 'none';
+            container.innerHTML = alunosTurma.map(a => {
+                const sel = selectedIds.includes(a.id);
+                return `<label class="atleta-chip ${sel ? 'selected' : ''}" data-id="${a.id}" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;cursor:pointer;user-select:none;border:2px solid ${sel ? 'var(--primary)' : 'var(--border)'};background:${sel ? 'rgba(99,102,241,0.12)' : 'transparent'};color:${sel ? 'var(--primary)' : 'var(--text-muted)'};font-size:13px;font-weight:500;transition:all .15s;" onclick="toggleAtletaChip(this, ${a.id})">
+                    <i class="ti ti-user" style="font-size:12px;"></i> ${escapeHtml(a.nome)}
+                </label>`;
+            }).join('');
+        }
+
+        function toggleAtletaChip(el, id) {
+            const sel = el.classList.toggle('selected');
+            el.style.border = `2px solid ${sel ? 'var(--primary)' : 'var(--border)'}`;
+            el.style.background = sel ? 'rgba(99,102,241,0.12)' : 'transparent';
+            el.style.color = sel ? 'var(--primary)' : 'var(--text-muted)';
+        }
+
+        function getSelectedAtletasIds() {
+            return Array.from(document.querySelectorAll('#atletasChipsContainer .atleta-chip.selected'))
+                .map(el => parseInt(el.dataset.id));
         }
 
         function openModalTreino(dateStr) {
@@ -563,7 +589,7 @@
 
             // Reset destinatário
             setDestinatario('equipe');
-            populateAtletaDestinatarioSelect(null);
+            populateAtletasDestinatarioChips([]);
 
             document.getElementById('treinoViewPanel').style.display = 'none';
             document.getElementById('treinoEditPanel').style.display = '';
@@ -647,6 +673,17 @@
                         </div>`;
                 })() : ''}
                 </div>
+                ${(() => {
+                    const aids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+                    if ((t.destinatario === 'atletas' || t.destinatario === 'atleta') && aids.length > 0) {
+                        const names = aids.map(id => {
+                            const a = (db.alunos || []).find(a => a.id === id);
+                            return a ? escapeHtml(a.nome) : `#${id}`;
+                        }).join(', ');
+                        return `<div class="view-section-label"><i class="ti ti-users" style="font-size:12px;"></i> Destinatário(s)</div><div class="view-obs-text" style="font-size:13px;">${names}</div>`;
+                    }
+                    return '';
+                })()}
                 ${blocosHtml ? `<div class="view-section-label">Blocos de Trabalho</div>${blocosHtml}` : ''}
                 ${t.obs ? `<div class="view-section-label">Observações</div><div class="view-obs-text">${t.obs}</div>` : ''}
                 <div class="view-actions">
@@ -802,12 +839,10 @@
             (t.blocos || []).forEach(b => addBloco(b));
 
             // Carregar destinatário
-            const dest = t.destinatario || 'equipe';
-            populateAtletaDestinatarioSelect(t.atletaId || null);
+            const dest = t.destinatario === 'atleta' ? 'atletas' : (t.destinatario || 'equipe');
+            const preSelectedIds = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+            populateAtletasDestinatarioChips(preSelectedIds);
             setDestinatario(dest);
-            if (dest === 'atleta' && t.atletaId) {
-                document.getElementById('atletaDestinatarioId').value = t.atletaId;
-            }
 
             document.getElementById('treinoViewPanel').style.display = 'none';
             document.getElementById('treinoEditPanel').style.display = '';
@@ -1191,9 +1226,7 @@
             const cargaTreino = psePlanejada * duracaoMins;
 
             const destinatario = document.getElementById('treinoDestinatario').value || 'equipe';
-            const atletaDestId = destinatario === 'atleta'
-                ? (parseInt(document.getElementById('atletaDestinatarioId').value) || null)
-                : null;
+            const atletasIds = destinatario === 'atletas' ? getSelectedAtletasIds() : [];
 
             const treino = {
                 id: trainingId,
@@ -1209,7 +1242,7 @@
                 obs: document.getElementById('treinoObs').value.trim(),
                 turmaId: db.activeTurmaId,
                 destinatario,
-                atletaId: atletaDestId,
+                atletasIds,
                 _updatedAt: Date.now()
             };
 
@@ -1290,12 +1323,13 @@
         function getFocosIndividuaisNaData(atletaId, data) {
             return new Set(
                 (db.treinos || [])
-                    .filter(t =>
-                        t.turmaId === db.activeTurmaId &&
-                        t.data === data &&
-                        (t.destinatario || 'equipe') === 'atleta' &&
-                        t.atletaId === atletaId
-                    )
+                    .filter(t => {
+                        const dest = t.destinatario || 'equipe';
+                        if (t.turmaId !== db.activeTurmaId || t.data !== data) return false;
+                        if (dest !== 'atletas' && dest !== 'atleta') return false;
+                        const ids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+                        return ids.includes(atletaId);
+                    })
                     .map(t => getFocoTreino(t.tipo))
             );
         }
@@ -1307,7 +1341,8 @@
          */
         function treinoEquipeSubstituidoPorIndividual(treino, atletaId) {
             if (!atletaId) return false;
-            if ((treino.destinatario || 'equipe') !== 'equipe') return false;
+            const dest = treino.destinatario || 'equipe';
+            if (dest !== 'equipe') return false;
             const focosIndividuais = getFocosIndividuaisNaData(atletaId, treino.data);
             return focosIndividuais.has(getFocoTreino(treino.tipo));
         }
@@ -1330,7 +1365,10 @@
                     if (t.data < ws || t.data > weStr) return false;
                     if (atletaId) {
                         const dest = t.destinatario || 'equipe';
-                        if (dest === 'atleta' && t.atletaId !== atletaId) return false;
+                        if (dest === 'atletas' || dest === 'atleta') {
+                            const ids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+                            if (!ids.includes(atletaId)) return false;
+                        }
                         if (treinoEquipeSubstituidoPorIndividual(t, atletaId)) return false;
                     }
                     return true;

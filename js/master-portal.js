@@ -232,7 +232,13 @@
                     !atleta.turmaId ||
                     String(t.turmaId) === String(atleta.turmaId) ||
                     t.turmaId === 'todas';
-                return dateMatch && turmaMatch;
+                if (!dateMatch || !turmaMatch) return false;
+                const dest = t.destinatario || 'equipe';
+                if (dest === 'atletas' || dest === 'atleta') {
+                    const ids = t.atletasIds || (t.atletaId ? [t.atletaId] : []);
+                    if (!ids.includes(atleta.id)) return false;
+                }
+                return true;
             });
 
             if (treinos.length === 0) {
