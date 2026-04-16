@@ -195,6 +195,55 @@
             height: 280px;
             position: relative;
         }
+
+        /* ===== MOBILE / TABLET RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .app-container { display: block !important; }
+            .sidebar {
+                position: fixed !important;
+                transform: translateX(-100%) !important;
+                z-index: 901 !important;
+            }
+            .sidebar.open { transform: translateX(0) !important; }
+            .main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            /* 3-column grid → 1 column */
+            .performance-grid-details {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content { padding: 72px 16px 40px !important; }
+            /* Header card: empilha avatar, info e botões */
+            .profile-header-card {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 16px !important;
+                padding: 20px !important;
+                padding-top: 64px !important; /* espaço para o hamburger */
+            }
+            /* Botões absolutos → relativos */
+            .profile-header-card > div[style*="position: absolute"] {
+                position: static !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            .profile-header-card > div[style*="position: absolute"] .btn {
+                flex: 1 !important;
+                justify-content: center !important;
+            }
+            /* Info grid de 4 colunas → 2 colunas */
+            .info-grid[style*="1fr 1fr 1fr 1fr"] {
+                grid-template-columns: 1fr 1fr !important;
+            }
+            /* Select de scout: largura automática */
+            #selectRadarSource { width: 100% !important; }
+        }
     </style>
 </head>
 

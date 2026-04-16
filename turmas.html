@@ -74,8 +74,12 @@
         }
 
         @media (max-width: 1100px) { .profiles-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 600px)  { .profiles-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 700px)  { .profiles-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 480px)  { .profiles-grid { grid-template-columns: 1fr; } }
+        /* Prevenir overflow lateral em todos os tamanhos */
+        html, body { overflow-x: hidden; }
+        .page-content { overflow-x: hidden; }
+        .profiles-grid { min-width: 0; }
 
         .profile-card {
             display: flex;
