@@ -56,6 +56,16 @@ function resolveDeviceMode() {
     return localStorage.getItem('tkd_device_mode') || 'desktop';
 }
 
+// XSS-safe HTML escaping — use on any user-supplied string inside innerHTML
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // Load Database from LocalStorage or initialize with MOCK_DATA
 function loadDB() {
     // -- Device mode ------------------------------------------
@@ -195,7 +205,7 @@ function fetchFromSupabase() {
                             console.log("Local trainer not in Supabase yet. Pushing local data up.");
                             syncToSupabase();
                         } else {
-                            // Remote data is genuinely newer ù update in-memory and re-render without page reload
+                            // Remote data is genuinely newer — update in-memory and re-render without page reload
                             console.log("Supabase has newer data. Updating in-memory and re-rendering...");
                             db = remoteDB;
                             window.db = db;
@@ -287,7 +297,7 @@ function checkTrainerOnboarding() {
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
             <h2 style="color:#fff;font-size:24px;font-weight:700;margin:0 0 8px;">Bem-vindo ao Pro Coach!</h2>
-            <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relat¾rios e dashboards.</p>
+            <p style="color:#9ca3af;font-size:15px;line-height:1.6;margin:0 0 32px;">Antes de começar, configure seu perfil de treinador. Isso personaliza todos os seus relatórios e dashboards.</p>
             <div style="text-align:left;margin-bottom:20px;">
                 <label style="display:block;color:#d1d5db;font-size:13px;font-weight:500;margin-bottom:6px;">Seu Nome Completo *</label>
                 <input id="__ob_name" type="text" placeholder="Ex: Mestre Carlos Silva"
@@ -395,7 +405,7 @@ function mergeAppState(local, remote) {
     if (!remote) return local;
     const merged = { ...remote, ...local }; // Local prevalece em chaves simples
 
-    // Chaves que sÒo arrays e precisam de merge inteligente por ID
+    // Chaves que são arrays e precisam de merge inteligente por ID
     const arrayKeys = [
         'turmas', 'alunos', 'planos', 'horarios', 'wellnessLogs', 'questionarios',
         'respostas', 'cargaTreino', 'competicoes', 'scoutEstatisticas', 'treinos',
@@ -410,7 +420,7 @@ function mergeAppState(local, remote) {
         // Criar um mapa do remoto para facilitar busca
         const remoteMap = new Map(remoteArr.map(item => [item.id, item]));
 
-        // Adicionar itens locais que não estÒo no remoto ou sÒo mais recentes
+        // Adicionar itens locais que não estão no remoto ou são mais recentes
         localArr.forEach(localItem => {
             const remoteItem = remoteMap.get(localItem.id);
             if (!remoteItem || (localItem._updatedAt && localItem._updatedAt > (remoteItem._updatedAt || 0))) {
@@ -523,7 +533,7 @@ function showToast(message, type = 'success') {
     let icon = type === 'success' ? 'ti-check' : 'ti-info-circle';
     if (type === 'error') icon = 'ti-alert-triangle';
 
-    toast.innerHTML = `<i class="ti ${icon}"></i> <span>${message}</span>`;
+    toast.innerHTML = `<i class="ti ${icon}"></i> <span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
 
     // Animar a entrada
@@ -714,7 +724,7 @@ function renderListaFaixas() {
     if (!list) return;
     list.innerHTML = db.faixas.map((f, i) => `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
-            <span style="font-size: 14px; font-weight: 500;">${f}</span>
+            <span style="font-size: 14px; font-weight: 500;">${escapeHtml(f)}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removeFaixa(${i})"><i class="ti ti-trash"></i></button>
         </div>
     `).join('');
@@ -782,7 +792,7 @@ function renderListaPesos() {
     if (!list) return;
     list.innerHTML = (db.categoriasPeso || []).map((p, i) => `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
-            <span style="font-size: 14px; font-weight: 500;">${p}</span>
+            <span style="font-size: 14px; font-weight: 500;">${escapeHtml(p)}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removePeso(${i})"><i class="ti ti-trash"></i></button>
         </div>
     `).join('');
@@ -1374,7 +1384,7 @@ async function downloadScoutPDF(scoutId) {
         matriz: {},
         alvos: { 'Colete': 0, 'Capacete': 0 },
         subAlvos: {}, // { 'Colete': { 'Peito': 0... }, 'Capacete': { 'Face': 0... } }
-        locais: { 'Meio': 0, 'NÒo Canto': 0 },
+        locais: { 'Meio': 0, 'Não Canto': 0 },
         subLocais: { 'Pressionando': 0, 'Pressionado': 0 },
         pernas: { 'Direita': 0, 'Esquerda': 0 },
         subPernas: { 'Direita': { 'Frente': 0, 'Tr?s': 0 }, 'Esquerda': { 'Frente': 0, 'Tr?s': 0 } },
@@ -1422,7 +1432,7 @@ async function downloadScoutPDF(scoutId) {
         }
         if (ev.local) {
             tgt.locais[ev.local]++;
-            if (ev.local === 'NÒo Canto' && ev.subLocal) {
+            if (ev.local === 'Não Canto' && ev.subLocal) {
                 tgt.subLocais[ev.subLocal]++;
             }
         }

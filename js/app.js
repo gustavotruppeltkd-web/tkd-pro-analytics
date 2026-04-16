@@ -59,6 +59,16 @@ function resolveDeviceMode() {
     return localStorage.getItem('tkd_device_mode') || 'desktop';
 }
 
+// XSS-safe HTML escaping — use on any user-supplied string inside innerHTML
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // Load Database from LocalStorage or initialize with MOCK_DATA
 function loadDB() {
     // -- Device mode ------------------------------------------
@@ -608,7 +618,7 @@ function showToast(message, type = 'success') {
     let icon = type === 'success' ? 'ti-check' : 'ti-info-circle';
     if (type === 'error') icon = 'ti-alert-triangle';
 
-    toast.innerHTML = `<i class="ti ${icon}"></i> <span>${message}</span>`;
+    toast.innerHTML = `<i class="ti ${icon}"></i> <span>${escapeHtml(message)}</span>`;
     container.appendChild(toast);
 
     // Animar a entrada
@@ -799,7 +809,7 @@ function renderListaFaixas() {
     if (!list) return;
     list.innerHTML = db.faixas.map((f, i) => `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
-            <span style="font-size: 14px; font-weight: 500;">${f}</span>
+            <span style="font-size: 14px; font-weight: 500;">${escapeHtml(f)}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removeFaixa(${i})"><i class="ti ti-trash"></i></button>
         </div>
     `).join('');
@@ -867,7 +877,7 @@ function renderListaPesos() {
     if (!list) return;
     list.innerHTML = (db.categoriasPeso || []).map((p, i) => `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--bg-hover); border-radius: var(--radius-sm);">
-            <span style="font-size: 14px; font-weight: 500;">${p}</span>
+            <span style="font-size: 14px; font-weight: 500;">${escapeHtml(p)}</span>
             <button type="button" class="btn-icon" style="color: var(--red); border: none; width: 32px; height: 32px;" onclick="removePeso(${i})"><i class="ti ti-trash"></i></button>
         </div>
     `).join('');
