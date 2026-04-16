@@ -1,57 +1,9 @@
-/* Video Scout Container Layout */
+/* Video Scout Container Layout — 2 column grid + bottom timeline strip */
 .scout-video-grid {
     display: grid;
-    grid-template-columns: 1.2fr 1.5fr 1fr;
+    grid-template-columns: 1fr 1.5fr;
     gap: 20px;
-    height: calc(100vh - 120px);
-    margin-bottom: 20px;
-}
-
-/* Mobile/tablet: empilha colunas */
-body.mode-mobile .scout-video-grid,
-body.mode-tablet .scout-video-grid {
-    grid-template-columns: 1fr !important;
-    height: auto !important;
-}
-body.mode-mobile .scout-left-col,
-body.mode-mobile .scout-middle-col,
-body.mode-mobile .scout-right-col,
-body.mode-tablet .scout-left-col,
-body.mode-tablet .scout-middle-col,
-body.mode-tablet .scout-right-col {
-    overflow: visible !important;
-    max-height: none !important;
-}
-
-/* Mobile: fix overflow on techniques and video sections */
-body.mode-mobile .scout-left-col,
-body.mode-tablet .scout-left-col {
-    min-width: 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-body.mode-mobile .techniques-section,
-body.mode-tablet .techniques-section,
-body.mode-mobile .video-section,
-body.mode-tablet .video-section {
-    min-width: 0;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-/* Prevent the + button from being forced to 100% width by global .btn rule */
-body.mode-mobile .add-technique-flex .btn,
-body.mode-tablet .add-technique-flex .btn {
-    width: auto !important;
-    flex-shrink: 0;
-}
-body.mode-mobile .add-technique-flex,
-body.mode-tablet .add-technique-flex {
-    min-width: 0;
-}
-body.mode-mobile .add-technique-flex .form-control,
-body.mode-tablet .add-technique-flex .form-control {
-    flex: 1;
-    min-width: 0;
+    margin-bottom: 0;
 }
 
 .scout-left-col {
@@ -59,20 +11,14 @@ body.mode-tablet .add-technique-flex .form-control {
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
+    max-height: calc(100vh - 280px);
 }
 
 .scout-middle-col {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    /* Fixes double scrollbars and absolute layout issues */
-}
-
-.scout-right-col {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    min-width: 0;
+    max-height: calc(100vh - 280px);
 }
 
 /* Source Toggle */
@@ -271,8 +217,6 @@ body.mode-tablet .add-technique-flex .form-control {
     box-shadow: 0 0 0 1px var(--btn-color);
 }
 
-/* Support specific colors via variables inline if needed, or fallback */
-
 /* Register bar */
 .register-bar {
     padding-top: 16px;
@@ -310,17 +254,38 @@ body.mode-tablet .add-technique-flex .form-control {
     color: var(--text-muted);
 }
 
-/* Timeline */
-.timeline-card {
+/* ============================
+   TIMELINE BOTTOM STRIP
+   ============================ */
+.timeline-bottom-strip {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-top: 16px;
     padding: 0;
+    height: 190px;
+    min-height: 160px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.timeline-strip-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .timeline-header {
-    padding: 16px 20px;
+    padding: 12px 20px;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .badge-count {
@@ -331,17 +296,20 @@ body.mode-tablet .add-technique-flex .form-control {
     font-weight: 600;
 }
 
+/* Timeline list — now horizontal scroll */
 .timeline-list {
     flex: 1;
-    overflow-y: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
     padding: 12px;
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-direction: row;
+    gap: 10px;
+    align-items: stretch;
 }
 
 .timeline-list::-webkit-scrollbar {
-    width: 4px;
+    height: 5px;
 }
 
 .timeline-list::-webkit-scrollbar-track {
@@ -349,73 +317,90 @@ body.mode-tablet .add-technique-flex .form-control {
 }
 
 .timeline-list::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 10px;
 }
 
+/* Timeline items — compact horizontal cards */
 .timeline-item {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.2);
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.25);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all 0.2s;
+    min-width: 180px;
+    max-width: 200px;
+    flex-shrink: 0;
+    position: relative;
 }
 
 .timeline-item:hover {
     background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateX(-2px);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
 }
 
 .timeline-time {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    padding: 4px 8px;
+    padding: 2px 8px;
     border-radius: 4px;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     font-family: monospace;
     color: var(--primary);
     flex-shrink: 0;
+    display: inline-block;
+    width: fit-content;
 }
 
 .timeline-content {
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.4;
+    flex: 1;
+    min-width: 0;
 }
 
 .timeline-primary-action {
     display: block;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     color: var(--text-main);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .timeline-details {
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .timeline-actions {
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-left: auto;
+    justify-content: flex-end;
 }
 
 .timeline-item .btn-action {
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.3);
-    padding: 6px;
+    padding: 4px;
     border-radius: 4px;
     cursor: pointer;
     display: flex;
     transition: all 0.2s;
+    font-size: 14px;
 }
 
 .timeline-item:hover .btn-action {
@@ -428,27 +413,65 @@ body.mode-tablet .add-technique-flex .form-control {
 
 .btn-action.btn-delete:hover {
     color: #ef4444 !important;
-    /* Tailwind red-500 */
 }
 
 .btn-action.btn-edit:hover {
     color: #3b82f6 !important;
-    /* Tailwind blue-500 */
 }
 
-.empty-state {
+/* Round header in horizontal timeline */
+.round-header-timeline {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 14px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    min-width: 70px;
     text-align: center;
-    padding: 40px 20px;
+    gap: 4px;
+}
+
+/* Empty state adjustments for horizontal */
+.timeline-list .empty-state {
+    text-align: center;
+    padding: 20px 40px;
     color: var(--text-muted);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    white-space: nowrap;
+    margin: auto;
 }
 
-.empty-state i {
-    font-size: 32px;
+.timeline-list .empty-state i {
+    font-size: 28px;
     opacity: 0.5;
+}
+
+/* Actions strip on the right */
+.timeline-strip-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+    border-left: 1px solid var(--border-color);
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: fit-content;
+}
+
+.timeline-strip-actions .btn {
+    white-space: nowrap;
+    justify-content: center;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    width: 100%;
 }
 
 /* YouTube Error Overlay */
@@ -461,11 +484,131 @@ body.mode-tablet .add-technique-flex .form-control {
     background: rgba(0, 0, 0, 0.85);
     z-index: 10;
     display: flex;
-    /* We will toggle this using JS (display: flex/none) */
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 24px;
     backdrop-filter: blur(4px);
     border-radius: var(--radius-md);
+}
+
+/* ============================
+   TABLET MODE
+   ============================ */
+body.mode-tablet .scout-video-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+}
+
+body.mode-tablet .scout-left-col,
+body.mode-tablet .scout-middle-col {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+body.mode-tablet .scout-left-col {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body.mode-tablet .techniques-section,
+body.mode-tablet .video-section {
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+body.mode-tablet .add-technique-flex .btn {
+    width: auto !important;
+    flex-shrink: 0;
+}
+
+body.mode-tablet .add-technique-flex {
+    min-width: 0;
+}
+
+body.mode-tablet .add-technique-flex .form-control {
+    flex: 1;
+    min-width: 0;
+}
+
+body.mode-tablet .timeline-bottom-strip {
+    height: 170px;
+    min-height: 140px;
+}
+
+/* ============================
+   MOBILE MODE
+   ============================ */
+body.mode-mobile .scout-video-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+}
+
+body.mode-mobile .scout-left-col,
+body.mode-mobile .scout-middle-col {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+body.mode-mobile .scout-left-col {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body.mode-mobile .techniques-section,
+body.mode-mobile .video-section {
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+body.mode-mobile .add-technique-flex .btn {
+    width: auto !important;
+    flex-shrink: 0;
+}
+
+body.mode-mobile .add-technique-flex {
+    min-width: 0;
+}
+
+body.mode-mobile .add-technique-flex .form-control {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Mobile timeline strip stacks vertically */
+body.mode-mobile .timeline-bottom-strip {
+    flex-direction: column;
+    height: auto;
+    min-height: unset;
+}
+
+body.mode-mobile .timeline-strip-left {
+    max-height: 160px;
+}
+
+body.mode-mobile .timeline-strip-actions {
+    flex-direction: row;
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    padding: 10px 12px;
+}
+
+body.mode-mobile .timeline-strip-actions .btn {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 12px;
+}
+
+body.mode-mobile .timeline-strip-actions .btn-label {
+    display: none;
+}
+
+body.mode-mobile .timeline-item {
+    min-width: 150px;
+    max-width: 170px;
+    padding: 8px 10px;
 }

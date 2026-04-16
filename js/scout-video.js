@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (roundDisp) roundDisp.innerText = currentRound;
 
                 const endBtnText = document.getElementById('btnEndRound');
-                if (endBtnText) endBtnText.innerHTML = `<i class="ti ti-flag-3"></i> Concluir Round ${currentRound}`;
+                if (endBtnText) endBtnText.innerHTML = `<i class="ti ti-flag-3"></i> <span class="btn-label">Concluir R${currentRound}</span>`;
 
                 renderTimeline();
                 showToast(`Round ${currentRound - 1} finalizado como ${cleanResult}!`, "info");
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (roundDisp) roundDisp.innerText = currentRound;
 
             const endBtnText = document.getElementById('btnEndRound');
-            if (endBtnText) endBtnText.innerHTML = `<i class="ti ti-flag-3"></i> Concluir Round ${currentRound}`;
+            if (endBtnText) endBtnText.innerHTML = `<i class="ti ti-flag-3"></i> <span class="btn-label">Concluir R${currentRound}</span>`;
 
             renderTimeline();
             const _evEl = document.getElementById('scoutEvento'); if (_evEl) _evEl.value = '';
@@ -919,30 +919,18 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.keys(rounds).sort((a, b) => a - b).forEach(rKey => {
             const rEvents = rounds[rKey];
 
-            // Round Header
+            // Round Header — compact vertical separator for horizontal layout
             const header = document.createElement('div');
             header.className = 'round-header-timeline';
-            header.style.cssText = `
-                margin: 20px 0 12px 0;
-                padding: 10px;
-                background: rgba(59, 130, 246, 0.05);
-                border-left: 3px solid var(--primary);
-                color: var(--text-main);
-                font-size: 13px;
-                font-weight: 700;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            `;
             const rResult = roundsData.find(rd => rd.round === parseInt(rKey))?.result || 'em andamento';
             header.innerHTML = `
-                <span>ROUND ${rKey}</span>
-                <span style="font-size: 10px; opacity: 0.7; text-transform: uppercase;">${rResult}</span>
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">R${rKey}</span>
+                <span style="font-size: 9px; opacity: 0.6; text-transform: uppercase;">${rResult}</span>
             `;
             list.appendChild(header);
 
             rEvents.forEach(ev => {
-                if (ev.isDivider) return; // We skip dividers in the grouped view as the header replaces them
+                if (ev.isDivider) return;
 
                 const el = document.createElement('div');
                 el.className = 'timeline-item';
@@ -951,13 +939,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isOffensive = ev.acao === 'Ataque Feito';
                 const isFalta = ev.acao?.includes('Falta');
                 const badgeColor = isOffensive ? 'var(--green)' : isFalta ? 'var(--yellow)' : 'var(--red)';
-                const badgeLabel = isOffensive ? 'ATAQUE' : isFalta ? 'FALTA' : 'DEFESA';
+                const badgeLabel = isOffensive ? 'ATQ' : isFalta ? 'FLT' : 'DEF';
 
                 // Construct details string
                 let detailsArr = [];
                 if (ev.tecnica) {
                     let tecStr = ev.tecnica;
-                    if (ev.obsTecnica) tecStr += ` <i style="color:var(--text-muted); font-size: 11px;">(${ev.obsTecnica})</i>`;
+                    if (ev.obsTecnica) tecStr += ` (${ev.obsTecnica})`;
                     detailsArr.push(tecStr);
                 }
                 if (ev.alvo) {
@@ -977,16 +965,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     detailsArr.push(locStr);
                 }
 
-                let resStr = ev.resultado ? ` - <span style="color: ${ev.resultado === 'Com ponto' ? 'var(--green)' : 'var(--text-muted)'}; font-weight: 600;">${ev.resultado}</span>` : '';
+                const resIcon = ev.resultado === 'Com ponto' ? '✓' : ev.resultado === 'Sem ponto' ? '✗' : '';
+                const resColor = ev.resultado === 'Com ponto' ? 'var(--green)' : 'var(--text-muted)';
 
                 el.innerHTML = `
-                    <div class="timeline-time" onclick="jumpToEvent(${ev.time})" style="cursor: pointer;">${ev.formattedTime}</div>
-                    <div class="timeline-content" onclick="jumpToEvent(${ev.time})" style="cursor: pointer; flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                            <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
-                            <span class="timeline-primary-action" style="font-size: 13px;">${ev.acao || 'Ação'} ${resStr}</span>
-                        </div>
-                        <div class="timeline-details" style="font-size: 11px; opacity: 0.8;">${detailsArr.join(' ')}</div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                        <div class="timeline-time" onclick="jumpToEvent(${ev.time})" style="cursor: pointer;">${ev.formattedTime}</div>
+                        <span style="font-size: 9px; font-weight: 800; padding: 2px 4px; border-radius: 3px; background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}44;">${badgeLabel}</span>
+                        ${resIcon ? `<span style="color: ${resColor}; font-weight: 700; font-size: 13px;">${resIcon}</span>` : ''}
+                    </div>
+                    <div class="timeline-content" onclick="jumpToEvent(${ev.time})" style="cursor: pointer;">
+                        <div class="timeline-primary-action">${ev.acao || 'Ação'}</div>
+                        <div class="timeline-details">${detailsArr.join(' · ')}</div>
                     </div>
                     <div class="timeline-actions">
                         <button class="btn-action btn-edit" title="Editar" onclick="editEvent(${ev.id})"><i class="ti ti-edit"></i></button>
@@ -997,9 +987,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Scroll list to bottom if last added
-        list.scrollTop = list.scrollHeight;
+        // Scroll list to the right (newest events)
+        list.scrollLeft = list.scrollWidth;
     }
+
 
     window.deleteEvent = function (id) {
         if (!confirm('Deseja realmente excluir esta ação?')) return;
