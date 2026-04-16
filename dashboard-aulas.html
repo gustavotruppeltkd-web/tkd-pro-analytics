@@ -430,12 +430,7 @@
         }
 
         function copiarLinkAluno(id) {
-            const url = window.location.href.split('/').slice(0, -1).join('/') + '/atleta-login.html?atleta=' + id;
-            navigator.clipboard.writeText(url).then(() => {
-                showToast('Link copiado! Envie ao aluno.');
-            }).catch(() => {
-                prompt('Copie o link abaixo:', url);
-            });
+            copiarLinkAtleta(id);
         }
 
         // Inicializar

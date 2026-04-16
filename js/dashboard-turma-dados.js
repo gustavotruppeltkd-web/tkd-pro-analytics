@@ -703,20 +703,6 @@
                 window.location.href = 'perfil-aluno.html#edit';
             }
         }
-        function copiarLinkAtleta(id) {
-            // Include coach's user_id so the athlete page can fetch data from Supabase directly
-            window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-                const coachId = authData?.user?.id || '';
-                const base = window.location.href.split('/').slice(0, -1).join('/');
-                const url = `${base}/atleta-login.html?atleta=${id}&coach=${coachId}`;
-                navigator.clipboard.writeText(url).then(() => {
-                    showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
-                }).catch(() => {
-                    prompt('Copie o link abaixo:', url);
-                });
-            });
-        }
-
 
         function openModalAluno() {
             const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);

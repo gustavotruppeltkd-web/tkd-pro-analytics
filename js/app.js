@@ -69,6 +69,19 @@ function escapeHtml(str) {
         .replace(/'/g, '&#39;');
 }
 
+// Gera e copia o link de acesso do atleta (inclui coachId para busca no Supabase)
+function copiarLinkAtleta(id) {
+    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+        const coachId = authData?.user?.id || '';
+        const url = `${window.location.origin}/atleta-login.html?atleta=${encodeURIComponent(id)}&coach=${encodeURIComponent(coachId)}`;
+        navigator.clipboard.writeText(url).then(() => {
+            showToast('Link copiado! Envie ao atleta pelo WhatsApp ou e-mail.');
+        }).catch(() => {
+            prompt('Copie o link abaixo:', url);
+        });
+    });
+}
+
 // Load Database from LocalStorage or initialize with MOCK_DATA
 function loadDB() {
     // -- Device mode ------------------------------------------
