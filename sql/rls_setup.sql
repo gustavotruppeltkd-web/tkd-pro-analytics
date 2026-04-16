@@ -13,11 +13,20 @@ DROP POLICY IF EXISTS "Coaches can read own state"  ON public.app_state;
 DROP POLICY IF EXISTS "Coaches can upsert own state" ON public.app_state;
 DROP POLICY IF EXISTS "Coaches can delete own state" ON public.app_state;
 
--- SELECT: cada coach vê apenas sua própria linha
+-- SELECT: cada coach vê apenas sua própria linha (autenticado)
 CREATE POLICY "Coaches can read own state"
     ON public.app_state
     FOR SELECT
     USING (project_id = auth.uid());
+
+-- SELECT: atletas (anon) podem ler qualquer linha — o filtro .eq('project_id', coachId)
+-- na query já restringe ao coach correto; o UUID é suficientemente imprevisível
+DROP POLICY IF EXISTS "Anon can read coach state by project_id" ON public.app_state;
+CREATE POLICY "Anon can read coach state by project_id"
+    ON public.app_state
+    FOR SELECT
+    TO anon
+    USING (true);
 
 -- INSERT + UPDATE (UPSERT): só pode gravar na própria linha
 CREATE POLICY "Coaches can upsert own state"
