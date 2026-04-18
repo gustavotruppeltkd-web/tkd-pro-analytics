@@ -712,7 +712,7 @@
             if (!t) return;
 
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = patchDocText(new jsPDF());
 
             const [y, m, d] = (t.data || '').split('-');
             const dataFmt = t.data ? `${d}/${m}/${y}` : '';

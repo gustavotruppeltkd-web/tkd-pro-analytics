@@ -60,6 +60,40 @@ function resolveDeviceMode() {
 }
 
 // XSS-safe HTML escaping — use on any user-supplied string inside innerHTML
+// Remove acentos e caracteres especiais para uso em PDFs com fontes helvetica/courier
+// (jsPDF built-in fonts só suportam ASCII; sem essa normalização surgem "?" e caixas)
+function pdfStr(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .normalize('NFD')                    // decompõe: "ã" → "a" + combining ~
+        .replace(/[\u0300-\u036f]/g, '')     // remove diacríticos (acentos, til, cedilha-base)
+        .replace(/ç/gi, 'c')                 // ç não é decomposto pelo NFD — tratar à mão
+        .replace(/Ç/g, 'C')
+        .replace(/[^\x00-\x7F]/g, '?');      // qualquer outro não-ASCII vira ?
+}
+
+// Aplica pdfStr em todos os doc.text() e splitTextToSize de um objeto jsPDF
+// Chame logo após: const doc = new jsPDF(); patchDocText(doc);
+function patchDocText(doc) {
+    const origText = doc.text.bind(doc);
+    const origSplit = doc.splitTextToSize.bind(doc);
+
+    doc.text = function(text, x, y, options, transform) {
+        if (Array.isArray(text)) {
+            text = text.map(t => pdfStr(t));
+        } else {
+            text = pdfStr(text);
+        }
+        return origText(text, x, y, options, transform);
+    };
+
+    doc.splitTextToSize = function(text, maxWidth, options) {
+        return origSplit(pdfStr(text), maxWidth, options);
+    };
+
+    return doc;
+}
+
 function escapeHtml(str) {
     return String(str)
         .replace(/&/g, '&amp;')
@@ -1150,7 +1184,7 @@ function openGlobalCropper(file, callback) {
 
         modal.classList.add('active');
 
-        // Destruir inst?ncia anterior se existir
+        // Destruir instância anterior se existir
         if (globalCropperInstance) {
             globalCropperInstance.destroy();
         }
@@ -1216,7 +1250,7 @@ function confirmGlobalCrop() {
 function openScoutDetail(scoutId) {
     const scout = db.lutasScout.find(s => s.id === parseInt(scoutId));
     if (!scout) {
-        showToast("Scout n?o encontrado!", "error");
+        showToast("Scout não encontrado!", "error");
         return;
     }
 
@@ -1256,7 +1290,7 @@ function openScoutDetail(scoutId) {
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
-        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma a??o registrada nesta luta.</p>';
+        timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma ação registrada nesta luta.</p>';
     } else {
         timelineHtml = acoes.map(ev => {
             if (ev.isDivider) {
@@ -1280,8 +1314,8 @@ function openScoutDetail(scoutId) {
                 <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'A??o'} ${resStr}</div>
-                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' ?')}</div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'Ação'} ${resStr}</div>
+                        <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' · ')}</div>
                     </div>
                     <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">R${ev.round}</div>
                 </div>
@@ -1441,7 +1475,7 @@ function openScoutDetail(scoutId) {
             new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Velocidade', 'Força', 'T?tica', 'Defesa', 'Varia??o', 'Precis?o', 'Obedi?ncia'],
+                    labels: ['Velocidade', 'Força', 'Tática', 'Defesa', 'Variação', 'Precisão', 'Obediência'],
                     datasets: [{
                         label: 'Desempenho nesta Luta',
                         data: dataArr,
@@ -1501,7 +1535,7 @@ function deleteScout(scoutId, callback) {
 }
 
 /**
- * Redireciona para a tela de scout carregando os dados para edi??o.
+ * Redireciona para a tela de scout carregando os dados para edição.
  * @param {number} scoutId 
  */
 function editScout(scoutId) {
@@ -1524,7 +1558,7 @@ async function downloadScoutPDF(scoutId) {
     const atleta = scout.atletaId === 'adversario' ? { nome: 'Adversário' } : db.alunos.find(a => String(a.id) === String(scout.atletaId));
     const nomeAtleta = atleta ? atleta.nome : "Atleta Removido";
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
+    const doc = patchDocText(new jsPDF());
 
     const dataObj = new Date(scout.dataRegistro);
     const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1538,7 +1572,7 @@ async function downloadScoutPDF(scoutId) {
         locais: { 'Meio': 0, 'Não Canto': 0 },
         subLocais: { 'Pressionando': 0, 'Pressionado': 0 },
         pernas: { 'Direita': 0, 'Esquerda': 0 },
-        subPernas: { 'Direita': { 'Frente': 0, 'Tr?s': 0 }, 'Esquerda': { 'Frente': 0, 'Tr?s': 0 } },
+        subPernas: { 'Direita': { 'Frente': 0, 'Trás': 0 }, 'Esquerda': { 'Frente': 0, 'Trás': 0 } },
         bases: { 'Aberta': 0, 'Fechada': 0 }
     });
 
@@ -1596,7 +1630,7 @@ async function downloadScoutPDF(scoutId) {
         if (ev.base) tgt.bases[ev.base]++;
     });
 
-    // --- PDF Helper: Se??o Título (Compacta) ---
+    // --- PDF Helper: Seção Título (Compacta) ---
     const drawSectionHeader = (title, y) => {
         doc.setFillColor(241, 245, 249);
         doc.rect(15, y, 180, 6, 'F');
@@ -1639,28 +1673,28 @@ async function downloadScoutPDF(scoutId) {
 
     doc.text(`Ataques Efetuados: ${ofensiva.total}`, 15, yPos);
     doc.text(`Pontos Marcados: ${ofensiva.pontos}`, 15, yPos + 4.5);
-    doc.text(`Efici?ncia: ${ofpEfic}%`, 15, yPos + 9);
+    doc.text(`Eficiência: ${ofpEfic}%`, 15, yPos + 9);
     doc.text(`Faltas Cometidas: ${faltasFeitas}`, 15, yPos + 13.5);
 
     doc.text(`Ataques Recebidos: ${defensiva.total}`, 110, yPos);
     doc.text(`Pontos Sofridos: ${defensiva.pontos}`, 110, yPos + 4.5);
-    doc.text(`Efici?ncia da Defesa: ${defEfic}%`, 110, yPos + 9);
+    doc.text(`Eficiência da Defesa: ${defEfic}%`, 110, yPos + 9);
     doc.text(`Faltas Sofridas: ${faltasSofridas}`, 110, yPos + 13.5);
 
     yPos += 20;
 
-    // --- T?CNICAS (Top 6) ---
+    // --- TÉCNICAS (Top 6) ---
     doc.setFillColor(239, 246, 255);
     doc.rect(15, yPos, 85, 5, 'F');
     doc.rect(110, yPos, 85, 5, 'F');
     doc.setFontSize(8); doc.setFont('helvetica', 'bold');
-    doc.text("TOP T?CNICAS APLICADAS", 20, yPos + 3.5);
-    doc.text("TOP T?CNICAS RECEBIDAS", 115, yPos + 3.5);
+    doc.text("TOP TÉCNICAS APLICADAS", 20, yPos + 3.5);
+    doc.text("TOP TÉCNICAS RECEBIDAS", 115, yPos + 3.5);
     yPos += 7;
 
     doc.setFontSize(7); doc.setTextColor(71, 85, 105);
-    doc.text("T?CNICA", 15, yPos); doc.text("USO", 75, yPos); doc.text("PT(%)", 90, yPos);
-    doc.text("T?CNICA", 110, yPos); doc.text("USO", 170, yPos); doc.text("PT(%)", 185, yPos);
+    doc.text("TÉCNICA", 15, yPos); doc.text("USO", 75, yPos); doc.text("PT(%)", 90, yPos);
+    doc.text("TÉCNICA", 110, yPos); doc.text("USO", 170, yPos); doc.text("PT(%)", 185, yPos);
     yPos += 4;
 
     doc.setTextColor(30, 41, 59); doc.setFont('helvetica', 'normal');
@@ -1746,7 +1780,7 @@ async function downloadScoutPDF(scoutId) {
     };
 
     printIndicatorGroup("Alvos Alcançados / Sofridos (Apenas Ações c/ Ponto)", 'alvos', ofensiva, defensiva, 'subAlvos');
-    printIndicatorGroup("Localiza??o da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
+    printIndicatorGroup("Localização da Quadra (Tentativas)", 'locais', ofensiva, defensiva, 'subLocais');
     printIndicatorGroup("Uso de Pernas (Tentativas)", 'pernas', ofensiva, defensiva, 'subPernas');
     printIndicatorGroup("Posicionamento de Base (Tentativas)", 'bases', ofensiva, defensiva);
 
@@ -1790,7 +1824,7 @@ async function downloadScoutPDF(scoutId) {
             if (ev.local) sub.push(ev.local + (ev.subLocal ? ` (${ev.subLocal})` : ''));
 
             doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(100);
-            doc.text(sub.join(' ?'), 30, yPos + 3.5);
+            doc.text(sub.join(' · '), 30, yPos + 3.5);
 
             yPos += 8;
             doc.setTextColor(30);

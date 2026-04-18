@@ -888,7 +888,7 @@
         async function downloadCoachPDF() {
             if (!currentCoachObj) return;
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = patchDocText(new jsPDF());
             const coach = currentCoachObj;
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();

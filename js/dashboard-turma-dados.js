@@ -372,7 +372,7 @@
             if (!t) return;
 
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = patchDocText(new jsPDF());
 
             const [y, m, d] = (t.data || '').split('-');
             const dataFmt = t.data ? `${d}/${m}/${y}` : '';
@@ -933,7 +933,7 @@
 
         function generateRelatorioAlunos() {
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = patchDocText(new jsPDF());
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
 
@@ -964,7 +964,7 @@
         function generateRelatorioChamada() {
             const mes = parseInt(document.getElementById('mesRelatorioChamada').value);
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = patchDocText(new jsPDF());
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
             const mesNome = document.getElementById('mesRelatorioChamada').options[mes - 1].text;
@@ -1008,7 +1008,7 @@
         function generateRelatorioFinanceiro() {
             const mes = parseInt(document.getElementById('mesRelatorioFinanceiro').value);
             const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const doc = patchDocText(new jsPDF());
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
             const mesNome = document.getElementById('mesRelatorioFinanceiro').options[mes - 1].text;
