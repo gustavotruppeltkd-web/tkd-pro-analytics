@@ -1110,6 +1110,7 @@ function renderSidebar() {
 }
 
 function setupOfflineBanner() {
+    if (window._disableOfflineBanner) return;
     let banner = document.getElementById('offlineBanner');
     if (!banner) {
         banner = document.createElement('div');
