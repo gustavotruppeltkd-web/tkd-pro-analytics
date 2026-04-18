@@ -1120,14 +1120,14 @@ function setupOfflineBanner() {
         banner.classList.remove('visible');
         if (typeof syncToSupabase === 'function') syncToSupabase();
     }
-    window.addEventListener('offline', showOffline);
-    window.addEventListener('online', hideOffline);
-    // Verifica conectividade real — navigator.onLine pode dar falso negativo
-    if (!navigator.onLine) {
+    function checkReal() {
         fetch(window.location.origin + '/js/app.js', { method: 'HEAD', cache: 'no-store' })
             .then(function() { hideOffline(); })
             .catch(function() { showOffline(); });
     }
+    window.addEventListener('offline', checkReal);
+    window.addEventListener('online', hideOffline);
+    if (!navigator.onLine) checkReal();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

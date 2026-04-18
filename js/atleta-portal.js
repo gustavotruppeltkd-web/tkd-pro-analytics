@@ -1296,17 +1296,11 @@
                 loadPortal();
             }
 
-            // Se realmente offline, aguarda reconexão
-            if (!navigator.onLine) {
-                window.addEventListener('online', function() {
-                    if (coachId && window.supabaseClient) iniciarPortal(coachId);
-                }, { once: true });
-                return;
-            }
-
-            if (coachId && window.supabaseClient) {
-                iniciarPortal(coachId);
-            } else if (window.supabaseClient) {
+            // Sempre tenta iniciar o portal — navigator.onLine é pouco confiável
+            function tentarIniciar() {
+                if (coachId && window.supabaseClient) {
+                    iniciarPortal(coachId);
+                } else if (window.supabaseClient) {
                 window.supabaseClient.auth.getUser().then(function(res) {
                     var uid = res.data && res.data.user && res.data.user.id;
                     if (uid) {
@@ -1317,6 +1311,18 @@
                 }).catch(function() { setTimeout(loadPortal, 300); });
             } else {
                 setTimeout(loadPortal, 300);
+            }
+            }
+
+            if (!navigator.onLine) {
+                // Verifica conectividade real antes de desistir
+                fetch(window.location.origin + '/js/app.js', { method: 'HEAD', cache: 'no-store' })
+                    .then(function() { tentarIniciar(); })
+                    .catch(function() {
+                        window.addEventListener('online', function() { tentarIniciar(); }, { once: true });
+                    });
+            } else {
+                tentarIniciar();
             }
         });
 
