@@ -276,7 +276,9 @@ function fetchFromSupabase() {
 
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
         if (!authData || !authData.user) {
-            // Mesmo sem Supabase Auth, ativa o realtime se tiver tkd_coach_id
+            // Sem auth (portal do atleta ou sessão expirada)
+            isFetchingSupabase = false;
+            showSyncSpinner(false);
             setupRealtimeSubscription();
             checkTrainerOnboarding();
             return;
@@ -1113,14 +1115,19 @@ function setupOfflineBanner() {
         banner.innerHTML = '<i class="ti ti-wifi-off"></i> Você está offline. Os dados serão sincronizados quando a conexão voltar.';
         document.body.appendChild(banner);
     }
-    window.addEventListener('offline', () => {
-        banner.classList.add('visible');
-    });
-    window.addEventListener('online', () => {
+    function showOffline() { banner.classList.add('visible'); }
+    function hideOffline() {
         banner.classList.remove('visible');
         if (typeof syncToSupabase === 'function') syncToSupabase();
-    });
-    if (!navigator.onLine) banner.classList.add('visible');
+    }
+    window.addEventListener('offline', showOffline);
+    window.addEventListener('online', hideOffline);
+    // Verifica conectividade real — navigator.onLine pode dar falso negativo
+    if (!navigator.onLine) {
+        fetch(window.location.origin + '/js/app.js', { method: 'HEAD', cache: 'no-store' })
+            .then(function() { hideOffline(); })
+            .catch(function() { showOffline(); });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

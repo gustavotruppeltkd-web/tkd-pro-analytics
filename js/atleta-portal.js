@@ -1288,15 +1288,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             var coachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
 
-            // Offline: carrega do localStorage imediatamente sem esperar Supabase
-            if (!navigator.onLine) {
-                var stored = localStorage.getItem('tkd_scout_db');
-                if (stored) {
-                    try { window.db = JSON.parse(stored); db = window.db; } catch(e) {}
-                }
+            // Carrega do localStorage imediatamente para UX rápida
+            var stored = localStorage.getItem('tkd_scout_db');
+            if (stored) {
+                try { window.db = JSON.parse(stored); db = window.db; } catch(e) {}
                 portalLoaded = false;
                 loadPortal();
-                // Quando voltar online, tenta sincronizar
+            }
+
+            // Se realmente offline, aguarda reconexão
+            if (!navigator.onLine) {
                 window.addEventListener('online', function() {
                     if (coachId && window.supabaseClient) iniciarPortal(coachId);
                 }, { once: true });
