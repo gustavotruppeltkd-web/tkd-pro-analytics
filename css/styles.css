@@ -1142,7 +1142,8 @@ body.mode-tablet .nav-item {
 }
 
 body.mode-tablet .main-content {
-    padding: 24px;
+    padding: 24px 24px 24px calc(80px + 24px); /* 80px sidebar + 24px padding interno */
+    box-sizing: border-box;
 }
 
 body.mode-tablet .topbar {
@@ -2049,6 +2050,17 @@ body.mode-mobile .ob-card {
         -webkit-overflow-scrolling: touch;
     }
     .sidebar.open { transform: translateX(0) !important; }
+
+    /* Tablet: sidebar fica visível como barra de ícones (80px) */
+    body.mode-tablet .sidebar {
+        position: fixed !important;
+        width: 80px !important;
+        transform: translateX(0) !important; /* VISÍVEL no tablet */
+    }
+    body.mode-tablet .main-content {
+        padding-left: calc(80px + 24px) !important; /* 80px sidebar + 24px interno */
+        box-sizing: border-box !important;
+    }
 
     /* Main content sempre ocupa largura total */
     .main-content {
