@@ -734,12 +734,12 @@
                 }
             }
 
-            buildTimeline();
-            populateRadarSelect();
-            buildRadarChart();
-            updateDynamicCharts();
-            buildAlerts();
-            buildCargaDiaria();
+            try { buildTimeline(); } catch(e) { console.error('buildTimeline:', e); }
+            try { populateRadarSelect(); } catch(e) { console.error('populateRadarSelect:', e); }
+            try { buildRadarChart(); } catch(e) { console.error('buildRadarChart:', e); }
+            try { updateDynamicCharts(); } catch(e) { console.error('updateDynamicCharts:', e); }
+            try { buildAlerts(); } catch(e) { console.error('buildAlerts:', e); }
+            try { buildCargaDiaria(); } catch(e) { console.error('buildCargaDiaria:', e); }
         }
 
         function populateRadarSelect() {

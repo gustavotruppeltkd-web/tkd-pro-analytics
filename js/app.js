@@ -540,7 +540,9 @@ function setupRealtimeSubscription() {
                 if (typeof renderAlunosUI === 'function') renderAlunosUI();
                 if (typeof renderDashboard === 'function') renderDashboard();
                 if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
-                if (typeof onDataLoaded === 'function') onDataLoaded();
+                if (typeof buildAlerts === 'function') buildAlerts();
+                if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
             })
             .subscribe((status) => {
                 console.log('Realtime status:', status);
