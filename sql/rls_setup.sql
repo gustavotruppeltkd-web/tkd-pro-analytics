@@ -75,14 +75,23 @@ AS $$
     );
 $$;
 
--- ── 4. IMPORTANTE: app_state também precisa permitir escrita do portal do atleta ──
--- Atletas NÃO fazem login no Supabase, então usam a anon key.
--- A policy acima (auth.uid()) bloqueia a escrita deles — o portal do atleta usa
--- savePortalDB() que escreve na linha do COACH.
--- Opção A (atual, menos seguro): manter app_state sem RLS no INSERT para anon.
--- Opção B (recomendado): usar a tabela athlete_responses abaixo e nunca deixar
--- anon escrever em app_state. Quando athlete_responses estiver em produção,
--- habilite o RLS acima.
+-- ── 4. Escrita do portal do atleta em app_state ──────────────
+-- Atletas (anon) precisam fazer upsert na linha do coach para
+-- enviar wellnessLogs, cargaTreino e respostas via savePortalDB().
+DROP POLICY IF EXISTS "Anon can update coach state" ON public.app_state;
+CREATE POLICY "Anon can update coach state"
+    ON public.app_state
+    FOR UPDATE
+    TO anon
+    USING (true)
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Anon can insert coach state" ON public.app_state;
+CREATE POLICY "Anon can insert coach state"
+    ON public.app_state
+    FOR INSERT
+    TO anon
+    WITH CHECK (true);
 
 -- ============================================================
 -- A2 — Tabela athlete_responses (respostas individuais de atletas)

@@ -1054,7 +1054,7 @@
                 db.alunos[index].statusFin = newStatus;
                 if (newStatus === 'pago') {
                     const payDateVal = document.getElementById('payDate').value;
-                    db.alunos[index].ultimoPagamento = payDateVal || new Date().toISOString().split('T')[0];
+                    db.alunos[index].ultimoPagamento = payDateVal || todayBR();
                 }
                 saveDB();
                 renderFinanceData();

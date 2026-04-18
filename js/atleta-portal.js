@@ -6,8 +6,7 @@
             localStorage.getItem('tkd_atleta_id') ||
             '0'
         );
-        const nowLocal = new Date();
-        const today = `${nowLocal.getFullYear()}-${String(nowLocal.getMonth() + 1).padStart(2, '0')}-${String(nowLocal.getDate()).padStart(2, '0')}`;
+        const today = (typeof todayBR === 'function') ? todayBR() : (function() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); })();
 
         const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
         const FULL_MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
@@ -354,8 +353,8 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const monthName = MESES[month] || '';
 
-            const startOfMonth = new Date(year, month, 1).toISOString().split('T')[0];
-            const endOfMonth = new Date(year, month + 1, 0).toISOString().split('T')[0];
+            const startOfMonth = toDateStrBR(new Date(year, month, 1));
+            const endOfMonth = toDateStrBR(new Date(year, month + 1, 0));
 
             // Treinos for the month
             const treinosList = (window.db.treinos || []).filter(t => {
@@ -1180,6 +1179,7 @@
 
                 if (saveErr) {
                     console.error('savePortalDB upsert erro:', saveErr);
+                    showToast('Erro ao sincronizar: ' + (saveErr.message || saveErr.code || 'desconhecido'), 'error');
                 } else {
                     console.log('savePortalDB OK — atleta', atletaId, 'sincronizado com treinador', portalCoachId);
                     window.db = coachData;

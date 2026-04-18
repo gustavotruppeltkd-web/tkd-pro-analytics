@@ -358,7 +358,7 @@
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
             if (turma) document.getElementById('turmaName').innerText = turma.nome;
 
-            document.getElementById('dataResposta').value = new Date().toISOString().split('T')[0];
+            document.getElementById('dataResposta').value = todayBR();
 
             populateSelects();
             renderBuilderPreview();
@@ -641,7 +641,7 @@
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", `Questionario_${quest.titulo.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute("download", `Questionario_${quest.titulo.replace(/\s+/g, '_')}_${todayBR()}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();

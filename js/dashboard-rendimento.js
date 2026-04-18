@@ -6,7 +6,7 @@
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             replaceRangesWithButtons();
         }
-        document.getElementById('dataFiltro').value = new Date().toISOString().split('T')[0];
+        document.getElementById('dataFiltro').value = todayBR();
 
         // UI para os inputs range
         function getWellnessColor(value) {
@@ -58,7 +58,7 @@
             for (let i = 0; i < daysBefore; i++) {
                 let d = new Date(endDateStr);
                 d.setDate(d.getDate() - i);
-                dates.push(d.toISOString().split('T')[0]);
+                dates.push(d.toLocaleDateString('sv-SE'));
             }
             return dates;
         }
@@ -566,7 +566,7 @@
             const sel = document.getElementById('selCargaAtleta');
             if (!sel) return;
             const athleteId = sel.value;
-            const today = document.getElementById('dataFiltro').value || new Date().toISOString().split('T')[0];
+            const today = document.getElementById('dataFiltro').value || todayBR();
 
             // Últimas 4 semanas (começa na segunda da semana atual)
             const weekStarts = [];
@@ -594,7 +594,7 @@
                 for (let d = 0; d < 7; d++) {
                     const dd = new Date(start);
                     dd.setDate(start.getDate() + d);
-                    days.push(dd.toISOString().split('T')[0]);
+                    days.push(dd.toLocaleDateString('sv-SE'));
                 }
                 return (db.cargaTreino || [])
                     .filter(c => atletaId === 'equipe'
@@ -617,7 +617,7 @@
             const acwrs = weekStarts.map(s => {
                 const lastDay = new Date(s);
                 lastDay.setDate(s.getDate() + 6);
-                const lastDayStr = lastDay.toISOString().split('T')[0];
+                const lastDayStr = lastDay.toLocaleDateString('sv-SE');
                 if (athleteId === 'equipe') {
                     if (alunosTurma.length === 0) return null;
                     const vals = alunosTurma.map(a => calculateFosterMetrics(a.id, lastDayStr).acwr).filter(v => v > 0);
@@ -703,7 +703,7 @@
 
         // ── Painel 2: Wellness Trend 14 dias ───────────────────────
         function renderWellnessTrendPanel() {
-            const today = document.getElementById('dataFiltro').value || new Date().toISOString().split('T')[0];
+            const today = document.getElementById('dataFiltro').value || todayBR();
             const dates = getDatesInRange(today, 14).reverse();
             const diasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
             const labels = dates.map(d => diasShort[new Date(d+'T00:00:00').getDay()]);
@@ -789,7 +789,7 @@
             const sel = document.getElementById('selPSEAtleta');
             if (!sel) return;
             const athleteId = sel.value;
-            const today = document.getElementById('dataFiltro').value || new Date().toISOString().split('T')[0];
+            const today = document.getElementById('dataFiltro').value || todayBR();
 
             // Dias da semana atual (seg a dom)
             const refDate = new Date(today + 'T00:00:00');
@@ -799,7 +799,7 @@
             for (let d = 0; d < 7; d++) {
                 const dd = new Date(refDate);
                 dd.setDate(refDate.getDate() + diffToMon + d);
-                weekDays.push(dd.toISOString().split('T')[0]);
+                weekDays.push(dd.toLocaleDateString('sv-SE'));
             }
             const diasLabel = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
@@ -892,7 +892,7 @@
         function renderAlertasPanel() {
             const panel = document.getElementById('panelAlertas');
             if (!panel) return;
-            const today = document.getElementById('dataFiltro').value || new Date().toISOString().split('T')[0];
+            const today = document.getElementById('dataFiltro').value || todayBR();
             const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
             const alertas = [];
 
@@ -925,7 +925,7 @@
 
         // ── Painel Individual (expande ao clicar no semáforo) ───────
         function openPanelIndividual(atletaId) {
-            const today = document.getElementById('dataFiltro').value || new Date().toISOString().split('T')[0];
+            const today = document.getElementById('dataFiltro').value || todayBR();
             const aluno = db.alunos.find(a => a.id === atletaId);
             if (!aluno) return;
 
@@ -1507,7 +1507,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `${filename}_${formatBRDate(new Date().toISOString().split('T')[0]).replace(/\//g, '-')}.csv`;
+            link.download = `${filename}_${formatBRDate(todayBR()).replace(/\//g, '-')}.csv`;
             link.click();
             showToast("Dados exportados com sucesso!");
         }
@@ -1553,7 +1553,7 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Antropometria_${formatBRDate(new Date().toISOString().split('T')[0]).replace(/\//g, '-')}.csv`;
+            link.download = `Antropometria_${formatBRDate(todayBR()).replace(/\//g, '-')}.csv`;
             link.click();
             showToast("CSV de Antropometria exportado!");
         }
@@ -2012,10 +2012,10 @@
             const mesoAtivo = (db.mesociclos || []).find(m => m.turmaId === db.activeTurmaId);
             const mesoPlanned = dates.map(d => {
                 const weekStartObj = getWeekStartFor(new Date(d + 'T00:00:00'));
-                const wsStr = weekStartObj.toISOString().split('T')[0];
+                const wsStr = weekStartObj.toLocaleDateString('sv-SE');
                 const weekDates = Array.from({ length: 7 }, (_, i) => {
                     let x = new Date(weekStartObj); x.setDate(x.getDate() + i);
-                    return x.toISOString().split('T')[0];
+                    return x.toLocaleDateString('sv-SE');
                 });
                 const dayIndex = weekDates.indexOf(d);
                 if (dayIndex < 0 || !mesoAtivo || !mesoAtivo.semanas) return null;
@@ -2122,8 +2122,8 @@
                 end.setDate(end.getDate() - (i * 7));
                 const start = new Date(end);
                 start.setDate(start.getDate() - 6);
-                const startStr = start.toISOString().split('T')[0];
-                const endStr = end.toISOString().split('T')[0];
+                const startStr = start.toLocaleDateString('sv-SE');
+                const endStr = end.toLocaleDateString('sv-SE');
                 weeksLabels.push(`Sem ${5 - i}\n${start.getDate()}/${start.getMonth()+1}`);
 
                 let wt = allTreinosTurma.filter(t => t.data >= startStr && t.data <= endStr);
@@ -2186,7 +2186,7 @@
                     selectAtleta.appendChild(opt);
                 });
             }
-            document.getElementById('tfData').value = new Date().toISOString().split('T')[0];
+            document.getElementById('tfData').value = todayBR();
             document.getElementById('tfTipo').value = '';
             renderTestInputs();
             document.getElementById('tfObs').value = '';
@@ -2383,10 +2383,10 @@
             const planejadaData = dates.map(d => {
                 const dateObj = new Date(d + 'T00:00:00');
                 const weekStartObj = getWeekStartFor(dateObj); // Assuming getWeekStartFor returns a Date obj
-                const wsStr = weekStartObj.toISOString().split('T')[0];
+                const wsStr = weekStartObj.toLocaleDateString('sv-SE');
                 const dayIndex = Array.from({ length: 7 }, (_, i) => {
                     let d = new Date(weekStartObj); d.setDate(d.getDate() + i);
-                    return d.toISOString().split('T')[0];
+                    return d.toLocaleDateString('sv-SE');
                 }).indexOf(d);
 
                 let cargaPlan = 0;
@@ -2500,7 +2500,7 @@
                 const endIterObj = new Date(weekIterStartObj);
                 endIterObj.setDate(weekIterStartObj.getDate() + 6);
 
-                const startStr = weekIterStartObj.toISOString().split('T')[0];
+                const startStr = weekIterStartObj.toLocaleDateString('sv-SE');
 
                 // Label format: DD/MM a DD/MM
                 const labelStr = `${weekIterStartObj.getDate().toString().padStart(2, '0')}/${(weekIterStartObj.getMonth() + 1).toString().padStart(2, '0')}\na\n${endIterObj.getDate().toString().padStart(2, '0')}/${(endIterObj.getMonth() + 1).toString().padStart(2, '0')}`;
@@ -2514,7 +2514,7 @@
                 // Generate the 7 days array to fetch data
                 const weekDatesList = Array.from({ length: 7 }, (_, k) => {
                     let d = new Date(weekIterStartObj); d.setDate(d.getDate() + k);
-                    return d.toISOString().split('T')[0];
+                    return d.toLocaleDateString('sv-SE');
                 });
 
                 let sumWeek = 0;
@@ -2815,7 +2815,7 @@
 
             // Gráfico 1: Volume Projetado (Linha) vs Intensidade Planejada (Barra) - Últimos 7 dias
             const psePlan = dates.map(d => {
-                const ws = getWeekStartFor(new Date(d + 'T00:00:00')).toISOString().split('T')[0];
+                const ws = getWeekStartFor(new Date(d + 'T00:00:00')).toLocaleDateString('sv-SE');
                 const sem = semanas.find(s => s.weekStart === ws);
                 if (sem) {
                     const dayIdx = new Date(d + 'T00:00:00').getDay();
@@ -2826,7 +2826,7 @@
                 return 0;
             });
             const volPlan = dates.map(d => {
-                const ws = getWeekStartFor(new Date(d + 'T00:00:00')).toISOString().split('T')[0];
+                const ws = getWeekStartFor(new Date(d + 'T00:00:00')).toLocaleDateString('sv-SE');
                 const sem = semanas.find(s => s.weekStart === ws);
                 if (sem) {
                     const dayIdx = new Date(d + 'T00:00:00').getDay();

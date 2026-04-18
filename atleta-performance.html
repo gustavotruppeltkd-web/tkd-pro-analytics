@@ -1099,7 +1099,7 @@
             for (let i = 0; i < daysBefore; i++) {
                 let d = new Date(end);
                 d.setDate(d.getDate() - i);
-                dates.push(d.toISOString().split('T')[0]);
+                dates.push(d.toLocaleDateString('sv-SE'));
             }
             return dates;
         }

@@ -238,9 +238,7 @@
             }
 
             // Set today's date on the input
-            const hoje = new Date();
-            hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
-            document.getElementById('dataChamada').value = hoje.toISOString().split('T')[0];
+            document.getElementById('dataChamada').value = todayBR();
 
             renderStatsUI();
             renderChamadaUI();
@@ -386,7 +384,7 @@
         function saveChamada() {
             const btnSave = document.getElementById('btnSaveChamada');
             const dataChamadaInput = document.getElementById('dataChamada');
-            const dataSelecionada = dataChamadaInput.value || new Date().toISOString().split('T')[0];
+            const dataSelecionada = dataChamadaInput.value || todayBR();
 
             if (!db.chamadas) db.chamadas = [];
 

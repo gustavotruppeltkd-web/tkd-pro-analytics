@@ -867,7 +867,7 @@
             const dataFim = new Date(dataInicio);
             dataFim.setMonth(dataFim.getMonth() + plano.duracaoMeses);
 
-            document.getElementById('fimPlano').value = dataFim.toISOString().split('T')[0];
+            document.getElementById('fimPlano').value = dataFim.toLocaleDateString('sv-SE');
         }
 
         function savePerfil(e) {

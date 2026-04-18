@@ -524,7 +524,7 @@
 
                 let card = '';
                 if (isRendHere) {
-                    const todayStr = new Date().toISOString().split('T')[0];
+                    const todayStr = todayBR();
                     const allWLogs = (db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id);
                     const wLog = allWLogs[0]; // mais recente (qualquer dia)
                     const wLogToday = allWLogs.find(w => w.data === todayStr); // só hoje
@@ -539,7 +539,7 @@
                         const dd = String(d.getDate()).padStart(2, '0');
                         const mo = String(d.getMonth() + 1).padStart(2, '0');
                         const isToday = wLog.data === todayStr;
-                        const isYesterday = wLog.data === new Date(Date.now() - 86400000).toISOString().split('T')[0];
+                        const isYesterday = wLog.data === toDateStrBR(new Date(Date.now() - 86400000));
                         const diaLabel = isToday ? 'Hoje' : isYesterday ? 'Ontem' : `${dd}/${mo}`;
                         const labelColor = isToday ? 'var(--green)' : 'var(--red)';
                         ultimoWellnessLabel = `<i class="ti ti-clock" style="font-size:10px; color:${labelColor};"></i> <span style="color:${labelColor};">${diaLabel} às ${hh}:${mm}</span>`;
@@ -629,7 +629,7 @@
             const query = (document.getElementById('atletaSearchInput')?.value || '').toLowerCase().trim();
             const catFilter = document.getElementById('atletaFilterCategoria')?.value || '';
             const statusFilter = document.getElementById('atletaFilterStatus')?.value || '';
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = todayBR();
 
             const cards = document.querySelectorAll('#alunosGrid .student-square-card');
             let visible = 0;
@@ -799,7 +799,7 @@
                 nome: form.nomeAluno.value,
                 faixa: form.faixaAluno.value,
                 dataNascimento: form.nascimentoAluno.value,
-                matricula: new Date().toISOString().split('T')[0],
+                matricula: todayBR(),
                 statusFin: isRend ? 'isento' : 'pago',
                 vencimento: isRend ? '' : form.diaVencimento.value.padStart(2, '0'),
                 mensalidade: isRend ? 0 : parseFloat(form.valorMensalidade.value) || 0,

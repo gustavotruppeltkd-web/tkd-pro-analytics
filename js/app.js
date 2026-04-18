@@ -50,6 +50,16 @@ var db = {};
 var lastSyncTime = 0;
 
 
+// Data "hoje" no fuso de Brasília (UTC-3). Evita que às 21h+ apareça o dia seguinte.
+function todayBR() {
+    const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function toDateStrBR(date) {
+    const d = new Date(date.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
 // Resolve device mode: telas pequenas sempre forçam o modo certo;
 // preferência manual só vale em desktop (>1024px)
 function resolveDeviceMode() {

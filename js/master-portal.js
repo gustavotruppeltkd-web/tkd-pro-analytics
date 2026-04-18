@@ -318,8 +318,10 @@
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const monthName = MESES[month] || '';
 
-            const startOfMonth = new Date(year, month, 1).toISOString().split('T')[0];
-            const endOfMonth = new Date(year, month + 1, 0).toISOString().split('T')[0];
+            const _sm = new Date(year, month, 1);
+            const startOfMonth = _sm.getFullYear() + '-' + String(_sm.getMonth()+1).padStart(2,'0') + '-' + String(_sm.getDate()).padStart(2,'0');
+            const _em = new Date(year, month + 1, 0);
+            const endOfMonth = _em.getFullYear() + '-' + String(_em.getMonth()+1).padStart(2,'0') + '-' + String(_em.getDate()).padStart(2,'0');
 
             // Treinos for the month
             let treinoDays = new Set();
