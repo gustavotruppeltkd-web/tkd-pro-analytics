@@ -84,8 +84,42 @@
             checkWellnessDone();
             checkPseDone();
             renderTreinosHoje();
+            checkFeedbacksNovos();
 
             portalLoaded = true;
+        }
+
+        // Alerta proativo: se o treinador enviou feedback desde a última visita, notifica o atleta
+        function checkFeedbacksNovos() {
+            const lastCheck = parseInt(localStorage.getItem('tkd_feedback_check_' + atletaId) || '0');
+            const novosFeedbacks = (window.db.respostas || []).filter(r =>
+                r.atletaId === atletaId &&
+                r.coachFeedback &&
+                r.coachFeedbackAt &&
+                r.coachFeedbackAt > lastCheck
+            );
+            if (novosFeedbacks.length === 0) return;
+
+            // Marca como visto
+            localStorage.setItem('tkd_feedback_check_' + atletaId, String(Date.now()));
+
+            const msg = novosFeedbacks.length === 1
+                ? 'Seu treinador analisou seu questionário e enviou um feedback!'
+                : `Seu treinador enviou ${novosFeedbacks.length} feedbacks nos seus questionários!`;
+
+            // Banner persistente (não toast) para o atleta não perder
+            const banner = document.createElement('div');
+            banner.style.cssText = 'position:fixed;bottom:80px;left:16px;right:16px;z-index:9999;background:linear-gradient(135deg,rgba(99,102,241,0.95),rgba(59,130,246,0.95));color:#fff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(0,0,0,0.4);cursor:pointer;';
+            banner.innerHTML = `<i class="ti ti-message-circle" style="font-size:22px;flex-shrink:0;"></i>
+                <div style="flex:1;"><div style="font-weight:700;font-size:14px;">Feedback do Treinador</div><div style="font-size:12px;opacity:0.9;">${msg}</div></div>
+                <i class="ti ti-x" style="font-size:18px;flex-shrink:0;opacity:0.7;" onclick="event.stopPropagation();this.closest('div[style]').remove()"></i>`;
+            banner.onclick = function() {
+                banner.remove();
+                // Abre o seletor de questionários para o atleta ver o feedback
+                const qSec = document.getElementById('qSelector');
+                if (qSec) qSec.scrollIntoView({ behavior: 'smooth' });
+            };
+            document.body.appendChild(banner);
         }
 
         window.onDataLoaded = () => {
@@ -407,6 +441,16 @@
                 r.questionarioId === qId && r.atletaId === atletaId && r.data === today);
 
             if (resp) {
+                // Bloco de feedback do treinador (se existir)
+                const feedbackHtml = resp.coachFeedback
+                    ? `<div style="margin-top:10px; padding:12px; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.3); border-radius:10px;">
+                        <div style="font-size:12px; font-weight:700; color:var(--primary); margin-bottom:6px;">
+                            <i class="ti ti-message-circle"></i> Feedback do treinador
+                        </div>
+                        <div style="font-size:13px; color:var(--text-primary); line-height:1.5;">${escapeHtml(resp.coachFeedback)}</div>
+                       </div>`
+                    : '';
+
                 content.innerHTML = `
                     <div class="already-done" style="flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 12px;">
                         <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -416,6 +460,7 @@
                         <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
                             Seu treinador já recebeu suas respostas. Caso tenha enviado algo errado, você pode clicar em <b>Editar</b> para corrigir agora.
                         </div>
+                        ${feedbackHtml}
                     </div>
                 `;
                 return;
@@ -912,9 +957,17 @@
                 const tipoLabel = TIPOS_FISICO_IDS.includes(t.tipo) ? 'Físico' : 'Taekwondo';
                 const hora = t.horario ? `${t.horario} · ` : '';
                 const dur = t.duracaoMins ? `${t.duracaoMins}min` : '';
-                const jaSubmetido = (window.db.cargaTreino || []).some(c =>
+                // Busca entrada de carga vinculada a este treino específico (por treinoId como FK)
+                const entradaVinculada = (window.db.cargaTreino || []).find(c =>
                     String(c.atletaId) === String(atletaId) && c.data === today && c.treinoId === t.id
                 );
+                const jaSubmetido = !!entradaVinculada;
+                const pseInfo = jaSubmetido
+                    ? `<div style="text-align:right;">
+                        <div style="font-size:13px; font-weight:700; color:var(--green);">PSE ${entradaVinculada.pse}/10</div>
+                        <div style="font-size:10px; color:var(--text-muted);">${entradaVinculada.cargaCalculada} CARGA</div>
+                       </div>`
+                    : '<span style="font-size:11px; color:var(--primary); font-weight:600;">Registrar PSE</span>';
                 return `
                     <div onclick="selecionarTreino(${t.id}, '${tipoLabel}', ${t.duracaoMins || 90})"
                         style="padding:10px 12px; border-radius:var(--radius-sm); border:1px solid ${jaSubmetido ? 'var(--green)' : 'var(--border-color)'}; background:${jaSubmetido ? 'rgba(16,185,129,0.08)' : 'rgba(255,255,255,0.03)'}; cursor:${jaSubmetido ? 'default' : 'pointer'}; display:flex; align-items:center; justify-content:space-between; gap:8px; transition:border-color 0.15s;" id="treino-card-${t.id}">
@@ -922,9 +975,7 @@
                             <div style="font-size:13px; font-weight:600; margin-bottom:2px;">${escapeHtml(t.titulo)}</div>
                             <div style="font-size:11px; color:var(--text-muted);">${hora}${tipoLabel} · ${dur}</div>
                         </div>
-                        ${jaSubmetido
-                            ? '<i class="ti ti-check" style="color:var(--green); font-size:16px;"></i>'
-                            : '<span style="font-size:11px; color:var(--primary); font-weight:600;">Selecionar</span>'}
+                        ${pseInfo}
                     </div>
                 `;
             }).join('');
@@ -1160,6 +1211,53 @@
             }
         }
 
+        // Realtime: ouve mudanças do TREINADOR e atualiza o portal sem apagar dados do atleta
+        function setupPortalRealtime(coachId) {
+            if (!window.supabaseClient || window._portalRealtimeActive) return;
+            window._portalRealtimeActive = true;
+
+            window.supabaseClient
+                .channel('portal:coach:' + coachId)
+                .on('postgres_changes', {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'app_state',
+                    filter: 'project_id=eq.' + coachId
+                }, function(payload) {
+                    var remoto = payload.new && payload.new.data;
+                    if (!remoto) return;
+
+                    // Só aplica se o remoto for mais novo
+                    var remoteTs = remoto._last_updated || 0;
+                    var localTs  = (window.db && window.db._last_updated) || 0;
+                    if (remoteTs <= localTs) return;
+
+                    // Preserva arrays do ATLETA no db local, atualiza o resto (treinos, eventos, etc.)
+                    var atletaArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
+                    atletaArrays.forEach(function(key) {
+                        var minhas = (window.db[key] || []).filter(function(e) {
+                            return String(e.atletaId) === String(atletaId);
+                        });
+                        var outros = (remoto[key] || []).filter(function(e) {
+                            return String(e.atletaId) !== String(atletaId);
+                        });
+                        remoto[key] = outros.concat(minhas);
+                    });
+
+                    window.db = remoto;
+                    db = remoto;
+                    localStorage.setItem('tkd_scout_db', JSON.stringify(remoto));
+
+                    // Re-renderiza painéis que dependem de dados do treinador
+                    try { renderTreino(); } catch (e) { }
+                    try { renderTreinosHoje(); } catch (e) { }
+                    try { renderSchedule(); } catch (e) { }
+
+                    showToast('Treinos atualizados pelo treinador!', 'info');
+                })
+                .subscribe();
+        }
+
         // START
         function iniciarPortal(coachId) {
             portalCoachId = coachId;
@@ -1167,10 +1265,11 @@
                 .from('app_state')
                 .select('data')
                 .eq('project_id', coachId)
-                .single()
+                .limit(1)
                 .then(function(result) {
-                    if (!result.error && result.data && result.data.data) {
-                        var remoto = result.data.data;
+                    var row = result.data && result.data[0];
+                    if (!result.error && row && row.data) {
+                        var remoto = row.data;
                         var localRaw = localStorage.getItem('tkd_scout_db');
                         var localData = localRaw ? JSON.parse(localRaw) : null;
                         window.db = (localData && typeof mergeAppState === 'function')
@@ -1180,7 +1279,7 @@
                     }
                     portalLoaded = false;
                     loadPortal();
-                    if (typeof setupRealtimeSubscription === 'function') setupRealtimeSubscription();
+                    setupPortalRealtime(coachId);
                 })
                 .catch(function() { loadPortal(); });
         }

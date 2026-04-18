@@ -1055,6 +1055,15 @@
             showToast("PDF gerado com sucesso!");
         }
 
+        // Hook chamado pelo Realtime (app.js) quando dados do Supabase chegam
+        window.onDataLoaded = function() {
+            currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            try { renderAlunosUI(); } catch (e) { }
+            try { renderWidgetTreinosHoje(); } catch (e) { }
+            try { renderWidgetCargaTreino(); } catch (e) { }
+            try { renderWidgetCompeticoes(); } catch (e) { }
+        };
+
         // Inicializar os horários na tela
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(loadPageData, 100);

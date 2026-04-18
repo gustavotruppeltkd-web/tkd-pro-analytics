@@ -785,6 +785,15 @@
             renderCalendarView();
         }
 
+        // Hook chamado pelo Realtime (app.js) quando dados do Supabase chegam
+        window.onDataLoaded = function() {
+            try {
+                const activeTab = document.querySelector('.view-btn.active')?.dataset?.view;
+                if (activeTab === 'calendar') renderCalendarView();
+                else renderListView();
+            } catch (e) { }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             setTimeout(renderListView, 100);
         });

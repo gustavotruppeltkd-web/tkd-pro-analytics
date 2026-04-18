@@ -323,6 +323,21 @@
             <div id="viewRespostaContent" style="margin-top: 16px;">
                 <!-- JS Inject -->
             </div>
+            <!-- Feedback do treinador -->
+            <div style="margin-top:20px; border-top:1px solid var(--border-color); padding-top:16px;">
+                <label style="font-size:13px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:8px;">
+                    <i class="ti ti-message-circle" style="margin-right:4px;"></i> Feedback para o atleta
+                </label>
+                <textarea id="coachFeedbackInput" rows="3"
+                    style="width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:10px 12px; color:var(--text-primary); font-size:13px; resize:vertical;"
+                    placeholder="Escreva um comentário ou avaliação para este atleta..."></textarea>
+                <div style="display:flex; justify-content:flex-end; margin-top:10px; gap:8px;">
+                    <button class="btn" onclick="closeModalView()">Fechar</button>
+                    <button class="btn btn-primary" onclick="saveCoachFeedback()">
+                        <i class="ti ti-send"></i> Enviar Feedback
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -331,6 +346,14 @@
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
+        // Hook chamado pelo Realtime (app.js) quando chegam dados novos do atleta
+        window.onDataLoaded = function() {
+            try { populateSelects(); } catch (e) { }
+            try { renderExistentes(); } catch (e) { }
+            try { renderHistorico(); } catch (e) { }
+            try { renderGraficos(); } catch (e) { }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const turma = db.turmas.find(t => t.id === db.activeTurmaId);
             if (turma) document.getElementById('turmaName').innerText = turma.nome;
@@ -686,44 +709,69 @@
 
                 if (!atleta || !quest) return;
 
+                const hasFeedback = !!resp.coachFeedback;
                 grid.insertAdjacentHTML('beforeend', `
-                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; gap: 16px; align-items: center;">
-                            <img src="${atleta.avatar}" style="width: 40px; height: 40px; border-radius: 50%;">
-                            <div>
-                                <h4 style="margin: 0; font-size: 15px;">${atleta.nome}</h4>
-                                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">${quest.titulo} • ${formatarDataBR(resp.data)}</p>
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; gap:12px;">
+                        <div style="display: flex; gap: 16px; align-items: center; min-width:0;">
+                            <img src="${atleta.avatar}" style="width: 40px; height: 40px; border-radius: 50%; flex-shrink:0;">
+                            <div style="min-width:0;">
+                                <h4 style="margin: 0; font-size: 15px;">${escapeHtml(atleta.nome)}</h4>
+                                <p style="margin: 0; font-size: 13px; color: var(--text-muted);">${escapeHtml(quest.titulo)} • ${formatarDataBR(resp.data)}</p>
+                                ${hasFeedback ? `<span style="font-size:11px; color:var(--green);"><i class="ti ti-message-check"></i> Feedback enviado</span>` : ''}
                             </div>
                         </div>
-                        <button class="btn btn-primary" onclick="viewRespostaComleta(${resp.id})">Ver Respostas</button>
+                        <button class="btn btn-primary" style="flex-shrink:0;" onclick="viewRespostaComleta(${resp.id})">${hasFeedback ? 'Ver / Editar' : 'Ver Respostas'}</button>
                     </div>
                 `);
             });
         }
+
+        let _viewingRespId = null;
 
         function viewRespostaComleta(respId) {
             const resp = db.respostas.find(r => r.id === respId);
             if (!resp) return;
             const quest = db.questionarios.find(q => q.id === resp.questionarioId);
             const html = document.getElementById('viewRespostaContent');
+            _viewingRespId = respId;
 
             let respsHtml = '';
             quest.perguntas.forEach(p => {
                 const answer = resp.respostas[p.id] || 'Não respondido';
                 respsHtml += `
                     <div style="margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
-                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">${p.texto}</div>
-                        <div style="font-size: 16px; font-weight: 500;">${answer}</div>
+                        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">${escapeHtml(p.texto)}</div>
+                        <div style="font-size: 16px; font-weight: 500;">${escapeHtml(String(answer))}</div>
                     </div>
                 `;
             });
 
             html.innerHTML = respsHtml;
+
+            // Preenche feedback existente (se já enviou antes)
+            const feedbackInput = document.getElementById('coachFeedbackInput');
+            feedbackInput.value = resp.coachFeedback || '';
+
             document.getElementById('modalViewResposta').classList.add('active');
+        }
+
+        function saveCoachFeedback() {
+            if (!_viewingRespId) return;
+            const texto = document.getElementById('coachFeedbackInput').value.trim();
+            const idx = db.respostas.findIndex(r => r.id === _viewingRespId);
+            if (idx === -1) return;
+
+            db.respostas[idx].coachFeedback = texto;
+            db.respostas[idx].coachFeedbackAt = Date.now();
+            saveDB();
+            showToast('Feedback enviado ao atleta!');
+            closeModalView();
+            renderHistorico();
         }
 
         function closeModalView() {
             document.getElementById('modalViewResposta').classList.remove('active');
+            _viewingRespId = null;
         }
 
         // ==========================================
