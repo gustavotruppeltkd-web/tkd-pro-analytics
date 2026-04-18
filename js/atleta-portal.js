@@ -1144,18 +1144,19 @@
 
             try {
                 // 1. Busca os dados atuais do treinador para não sobrescrever outros atletas
-                const { data: result, error: fetchErr } = await window.supabaseClient
+                const { data: rows, error: fetchErr } = await window.supabaseClient
                     .from('app_state')
                     .select('data')
                     .eq('project_id', portalCoachId)
-                    .single();
+                    .limit(1);
 
-                if (fetchErr || !result || !result.data) {
+                const row = rows && rows[0];
+                if (fetchErr || !row || !row.data) {
                     console.error('savePortalDB: não encontrou linha do treinador', fetchErr);
                     return;
                 }
 
-                const coachData = result.data;
+                const coachData = row.data;
 
                 // 2. Merge cirúrgico — só substitui as entradas DESTE atleta nos arrays relevantes
                 //    Entradas de outros atletas ficam intactas
@@ -1286,6 +1287,22 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             var coachId = sessionStorage.getItem('tkd_coach_id') || localStorage.getItem('tkd_coach_id');
+
+            // Offline: carrega do localStorage imediatamente sem esperar Supabase
+            if (!navigator.onLine) {
+                var stored = localStorage.getItem('tkd_scout_db');
+                if (stored) {
+                    try { window.db = JSON.parse(stored); db = window.db; } catch(e) {}
+                }
+                portalLoaded = false;
+                loadPortal();
+                // Quando voltar online, tenta sincronizar
+                window.addEventListener('online', function() {
+                    if (coachId && window.supabaseClient) iniciarPortal(coachId);
+                }, { once: true });
+                return;
+            }
+
             if (coachId && window.supabaseClient) {
                 iniciarPortal(coachId);
             } else if (window.supabaseClient) {

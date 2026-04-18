@@ -1587,17 +1587,25 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Called by app.js after Supabase sync — ensures fresh data is used
+            // Chamado pelo Realtime/fetchFromSupabase em app.js — garante dados frescos
             window.onDataLoaded = function() {
                 loadProfile();
                 if (window.location.hash === '#edit') {
                     setTimeout(openModalEdit, 100);
                 }
             };
-            // Also render immediately from localStorage (don't wait for Supabase)
+
+            // Renderiza imediatamente do localStorage se disponível
+            setTimeout(() => {
+                if (window.db && window.db.alunos) {
+                    loadProfile();
+                }
+            }, 150);
+
+            // Safety net: se após 3s ainda não renderizou (Supabase lento), força com o que tiver
             setTimeout(() => {
                 if (window.db && window.db.alunos) loadProfile();
-            }, 100);
+            }, 3000);
         });
     </script>
 </body>

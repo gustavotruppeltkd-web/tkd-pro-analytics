@@ -4194,3 +4194,10 @@
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
             setTimeout(initPage, 0);
         }
+
+        // Hook chamado pelo Realtime (app.js) quando chegam dados novos do atleta
+        window.onDataLoaded = function() {
+            try { renderSemaforo(); } catch (e) { }
+            try { buildAverageChart(document.getElementById('dataFiltro')?.value); } catch (e) { }
+            try { updateDynamicCharts(); } catch (e) { }
+        };
