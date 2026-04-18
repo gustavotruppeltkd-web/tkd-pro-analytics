@@ -1781,6 +1781,128 @@ body.mode-mobile .main-content > * {
     word-break: break-word;
 }
 
+/* Flex rows inline (modais/formulários) → empilhar no mobile */
+body.mode-mobile .modal-content div[style*="display: flex"][style*="gap"],
+body.mode-mobile .modal-content div[style*="display:flex"][style*="gap"] {
+    flex-direction: column !important;
+}
+body.mode-mobile .modal-content div[style*="flex: 1"],
+body.mode-mobile .modal-content div[style*="flex:1"] {
+    width: 100% !important;
+    flex: none !important;
+}
+
+/* grid-template-columns: 1fr 1fr (2 colunas inline) → 1 coluna no mobile */
+body.mode-mobile [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+}
+
+/* grid com coluna fixa px + fr → 1 coluna */
+body.mode-mobile [style*="grid-template-columns: 180px"],
+body.mode-mobile [style*="grid-template-columns:180px"] {
+    grid-template-columns: 1fr !important;
+}
+
+/* grid-column span 3 → span 1 no mobile */
+body.mode-mobile [style*="grid-column: span 3"],
+body.mode-mobile [style*="grid-column:span 3"] {
+    grid-column: span 1 !important;
+}
+body.mode-mobile [style*="grid-column: span 2"],
+body.mode-mobile [style*="grid-column:span 2"] {
+    grid-column: span 1 !important;
+}
+
+/* min-height grande demais no mobile */
+body.mode-mobile .card[style*="min-height: 280px"],
+body.mode-mobile div[style*="min-height: 280px"] {
+    min-height: auto !important;
+}
+
+/* position absolute buttons (atleta-performance action buttons) */
+body.mode-mobile div[style*="position: absolute"][style*="top: 32px"] {
+    position: static !important;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Filtros inline do atletaFilterBar */
+body.mode-mobile #atletaFilterBar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+body.mode-mobile #atletaFilterBar select {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Comparison controls selects → full width */
+body.mode-mobile .comparison-controls select,
+body.mode-mobile .comparison-controls .form-control {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Profile info-grid no mobile: labels empilham melhor */
+body.mode-mobile .profile-main-info {
+    width: 100% !important;
+}
+
+/* Tabs com scroll no mobile */
+body.mode-mobile .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+}
+body.mode-mobile .tabs .tab,
+body.mode-mobile .tabs button {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Chart boxes no mobile — sem min-height excessivo */
+body.mode-mobile .chart-box {
+    min-height: auto !important;
+}
+body.mode-mobile div[style*="min-height: 260px"] {
+    min-height: 180px !important;
+}
+body.mode-mobile div[style*="min-height: 200px"] {
+    min-height: 150px !important;
+}
+
+/* === TABLET: grids inline === */
+
+/* repeat(3) → repeat(2) no tablet */
+body.mode-tablet [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+
+/* 180px 1fr 1fr → 1fr 1fr no tablet */
+body.mode-tablet [style*="grid-template-columns: 180px"],
+body.mode-tablet [style*="grid-template-columns:180px"] {
+    grid-template-columns: 1fr 1fr !important;
+}
+
+/* grid-column span 3 → span 2 no tablet */
+body.mode-tablet [style*="grid-column: span 3"],
+body.mode-tablet [style*="grid-column:span 3"] {
+    grid-column: span 2 !important;
+}
+
+/* min-height 280px → menor no tablet */
+body.mode-tablet .card[style*="min-height: 280px"],
+body.mode-tablet div[style*="min-height: 280px"] {
+    min-height: 180px !important;
+}
+
+/* Flex rows em modais no tablet: wrap */
+body.mode-tablet .modal-content div[style*="display: flex"][style*="gap"] {
+    flex-wrap: wrap !important;
+}
+
 /* Overflow geral — evita scroll horizontal indesejado na página */
 body.mode-mobile .main-content {
     overflow-x: hidden;
@@ -1945,6 +2067,17 @@ body.mode-mobile .ob-card {
         max-width: 100% !important;
     }
 
+    /* Grids inline: repeat(3) → 2 colunas */
+    [style*="grid-template-columns: repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
+    [style*="grid-template-columns: 180px"] { grid-template-columns: 1fr 1fr !important; }
+    [style*="grid-column: span 3"], [style*="grid-column:span 3"] { grid-column: span 2 !important; }
+
+    /* Flex rows em modais: wrap */
+    .modal-content div[style*="display: flex"][style*="gap"] { flex-wrap: wrap !important; }
+
+    /* min-height 280px → menor */
+    div[style*="min-height: 280px"] { min-height: 180px !important; }
+
     /* Geral: sem overflow lateral */
     html, body { overflow-x: hidden; }
     .app-container { overflow-x: hidden; display: block !important; }
@@ -2068,4 +2201,29 @@ body.mode-mobile .ob-card {
 
     /* Botões min touch target */
     .btn { min-height: 44px; }
+
+    /* Grids inline → colapsar */
+    [style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
+    [style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+    [style*="grid-template-columns: 1fr 1fr 1fr 1fr"] { grid-template-columns: 1fr 1fr !important; }
+    [style*="grid-template-columns: 1fr 1fr"]:not([style*="1fr 1fr 1fr"]) { grid-template-columns: 1fr !important; }
+    [style*="grid-template-columns: 180px"] { grid-template-columns: 1fr !important; }
+    [style*="grid-template-columns: 2fr 1fr"] { grid-template-columns: 1fr !important; }
+    [style*="grid-column: span 3"], [style*="grid-column:span 3"] { grid-column: span 1 !important; }
+    [style*="grid-column: span 2"], [style*="grid-column:span 2"] { grid-column: span 1 !important; }
+
+    /* Flex rows em modais → empilhar */
+    .modal-content div[style*="display: flex"][style*="gap"],
+    .modal-content div[style*="display:flex"][style*="gap"] {
+        flex-direction: column !important;
+    }
+    .modal-content div[style*="flex: 1"],
+    .modal-content div[style*="flex:1"] {
+        width: 100% !important;
+        flex: none !important;
+    }
+
+    /* min-height excessivo */
+    div[style*="min-height: 280px"] { min-height: auto !important; }
+    div[style*="min-height: 260px"] { min-height: 180px !important; }
 }
