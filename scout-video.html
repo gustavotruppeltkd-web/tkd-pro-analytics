@@ -264,20 +264,16 @@
 
                         <div class="scout-groups-wrapper">
 
-                            <!-- Ação Principal -->
+                            <!-- Ação Principal — 2x2 para botões mais largos e legíveis -->
                             <div class="scout-group">
                                 <div class="scout-label">Ação Principal</div>
-                                <div class="scout-options group-4">
-                                    <button class="scout-opt-btn act-principal" data-val="Ataque Feito"
-                                        data-group="acao">Ataque Feito</button>
-                                    <button class="scout-opt-btn act-principal" data-val="Ataque Sofrido"
-                                        data-group="acao">Ataque Sofrido</button>
-                                    <button class="scout-opt-btn act-principal" data-val="Falta Feita"
-                                        data-group="acao">Falta Feita</button>
-                                    <button class="scout-opt-btn act-principal" data-val="Falta Sofrida"
-                                        data-group="acao">Falta Sofrida</button>
+                                <div class="scout-options group-2">
+                                    <button class="scout-opt-btn act-principal" data-val="Ataque Feito" data-group="acao">Ataque Feito</button>
+                                    <button class="scout-opt-btn act-principal" data-val="Ataque Sofrido" data-group="acao">Ataque Sofrido</button>
+                                    <button class="scout-opt-btn act-principal" data-val="Falta Feita" data-group="acao">Falta Feita</button>
+                                    <button class="scout-opt-btn act-principal" data-val="Falta Sofrida" data-group="acao">Falta Sofrida</button>
                                 </div>
-                                <!-- Descrição da falta (aparece só para Falta Feita/Sofrida) -->
+                                <!-- Descrição da falta -->
                                 <div id="faltaDescContainer" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
                                     <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Descrição da Falta</div>
                                     <input type="text" id="faltaDescInput" class="form-control"
@@ -286,7 +282,7 @@
                                 </div>
                             </div>
 
-                            <!-- Ação (tipo) -->
+                            <!-- Ação (tipo) — 3 colunas iguais -->
                             <div class="scout-group" id="tipoAcaoGroup">
                                 <div class="scout-label">Ação</div>
                                 <div class="scout-options group-3">
@@ -296,99 +292,70 @@
                                 </div>
                             </div>
 
-                            <!-- Resultado -->
+                            <!-- Resultado — 2 colunas -->
                             <div class="scout-group">
                                 <div class="scout-label">Resultado</div>
                                 <div class="scout-options group-2">
-                                    <button class="scout-opt-btn act-resultado" data-val="Com ponto"
-                                        data-group="resultado" style="--btn-color: var(--green);">Com Ponto</button>
-                                    <button class="scout-opt-btn act-resultado" data-val="Sem ponto"
-                                        data-group="resultado" style="--btn-color: var(--text-muted);">Sem
-                                        Ponto</button>
+                                    <button class="scout-opt-btn act-resultado" data-val="Com ponto" data-group="resultado" style="--btn-color: var(--green);">Com Ponto</button>
+                                    <button class="scout-opt-btn act-resultado" data-val="Sem ponto" data-group="resultado" style="--btn-color: var(--text-muted);">Sem Ponto</button>
                                 </div>
                             </div>
 
-                            <!-- Detalhes Físicos (2x2 grid) -->
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                <div class="scout-group" style="grid-column: span 2;">
-                                    <div class="scout-label">Alvo principal</div>
-                                    <div class="scout-options group-2">
-                                        <button class="scout-opt-btn act-alvo" data-val="Colete"
-                                            data-group="alvo">Colete</button>
-                                        <button class="scout-opt-btn act-alvo" data-val="Capacete"
-                                            data-group="alvo">Capacete</button>
-                                    </div>
-                                    <!-- Sub opções Alvo -->
-                                    <div id="subAlvoContainer"
-                                        style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
-                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Sub-alvo
-                                        </div>
-                                        <div class="scout-options" id="subAlvoOptions"
-                                            style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                            <!-- Sub options rendered via JS -->
-                                        </div>
-                                    </div>
+                            <!-- Alvo Principal — 2 colunas -->
+                            <div class="scout-group">
+                                <div class="scout-label">Alvo Principal</div>
+                                <div class="scout-options group-2">
+                                    <button class="scout-opt-btn act-alvo" data-val="Colete" data-group="alvo">Colete</button>
+                                    <button class="scout-opt-btn act-alvo" data-val="Capacete" data-group="alvo">Capacete</button>
                                 </div>
+                                <div id="subAlvoContainer" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                    <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Sub-alvo</div>
+                                    <div class="scout-options" id="subAlvoOptions" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+                                </div>
+                            </div>
 
+                            <!-- Distância — 3 colunas -->
+                            <div class="scout-group">
+                                <div class="scout-label">Distância</div>
+                                <div class="scout-options group-3">
+                                    <button class="scout-opt-btn" data-val="Longa" data-group="distancia">Longa</button>
+                                    <button class="scout-opt-btn" data-val="Media" data-group="distancia">Média</button>
+                                    <button class="scout-opt-btn" data-val="Curta" data-group="distancia">Curta</button>
+                                </div>
+                            </div>
+
+                            <!-- Perna + Base — lado a lado, cada um com 2 colunas -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                 <div class="scout-group">
                                     <div class="scout-label">Perna</div>
                                     <div class="scout-options group-2">
-                                        <button class="scout-opt-btn act-perna" data-val="Direita"
-                                            data-group="perna">Direita</button>
-                                        <button class="scout-opt-btn act-perna" data-val="Esquerda"
-                                            data-group="perna">Esquerda</button>
+                                        <button class="scout-opt-btn act-perna" data-val="Direita" data-group="perna">Direita</button>
+                                        <button class="scout-opt-btn act-perna" data-val="Esquerda" data-group="perna">Esquerda</button>
                                     </div>
-                                    <!-- Sub opções Perna -->
-                                    <div id="subPernaContainer"
-                                        style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
-                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Detalhe da
-                                            Perna</div>
-                                        <div class="scout-options" id="subPernaOptions"
-                                            style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                            <!-- Sub options rendered via JS -->
-                                        </div>
+                                    <div id="subPernaContainer" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Detalhe da Perna</div>
+                                        <div class="scout-options" id="subPernaOptions" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
                                     </div>
                                 </div>
-
                                 <div class="scout-group">
                                     <div class="scout-label">Base</div>
                                     <div class="scout-options group-2">
-                                        <button class="scout-opt-btn act-base" data-val="Aberta"
-                                            data-group="base">Aberta</button>
-                                        <button class="scout-opt-btn act-base" data-val="Fechada"
-                                            data-group="base">Fechada</button>
+                                        <button class="scout-opt-btn act-base" data-val="Aberta" data-group="base">Aberta</button>
+                                        <button class="scout-opt-btn act-base" data-val="Fechada" data-group="base">Fechada</button>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Distância -->
-                                <div class="scout-group" style="grid-column: span 2;">
-                                    <div class="scout-label">Distância</div>
-                                    <div class="scout-options group-3">
-                                        <button class="scout-opt-btn" data-val="Longa" data-group="distancia">Longa</button>
-                                        <button class="scout-opt-btn" data-val="Media" data-group="distancia">Média</button>
-                                        <button class="scout-opt-btn" data-val="Curta" data-group="distancia">Curta</button>
-                                    </div>
+                            <!-- Localização da Quadra — 2 colunas -->
+                            <div class="scout-group">
+                                <div class="scout-label">Localização da Quadra</div>
+                                <div class="scout-options group-2">
+                                    <button class="scout-opt-btn act-local" data-val="Meio" data-group="local">Meio</button>
+                                    <button class="scout-opt-btn act-local" data-val="No Canto" data-group="local">No Canto</button>
                                 </div>
-
-                                <div class="scout-group" style="grid-column: span 2;">
-                                    <div class="scout-label">Localização da Quadra</div>
-                                    <div class="scout-options group-2"
-                                        style="display: grid; grid-template-columns: 1fr 1fr;">
-                                        <button class="scout-opt-btn act-local" data-val="Meio"
-                                            data-group="local">Meio</button>
-                                        <button class="scout-opt-btn act-local" data-val="No Canto" data-group="local"
-                                            style="font-size: 13px;">No Canto</button>
-                                    </div>
-                                    <!-- Sub opções Localização -->
-                                    <div id="subLocalContainer"
-                                        style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
-                                        <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Detalhe da
-                                            posição</div>
-                                        <div class="scout-options" id="subLocalOptions"
-                                            style="display: flex; flex-wrap: wrap; gap: 8px;">
-                                            <!-- Sub options rendered via JS -->
-                                        </div>
-                                    </div>
+                                <div id="subLocalContainer" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                    <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Detalhe da posição</div>
+                                    <div class="scout-options" id="subLocalOptions" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
                                 </div>
                             </div>
 

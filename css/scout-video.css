@@ -169,6 +169,12 @@
     gap: 6px;
 }
 
+.scout-options.group-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+
 .scout-options.group-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -180,7 +186,8 @@
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     color: var(--text-main);
-    padding: 8px 6px;
+    padding: 0 6px;
+    min-height: 36px;
     border-radius: var(--radius-sm);
     font-size: 12px;
     font-weight: 500;
@@ -190,6 +197,9 @@
     user-select: none;
     font-family: inherit;
     line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .scout-opt-btn:hover {
