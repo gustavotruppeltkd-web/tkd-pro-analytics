@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         optionsDiv.innerHTML = '';
 
-        if (localSelecionado !== 'Não Canto') {
+        if (localSelecionado !== 'No Canto') {
             container.style.display = 'none';
             return;
         }
@@ -819,7 +819,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (alvoLabel) parts.push(`[${alvoLabel}]`);
 
         let localLabel = currentScoutState.local || "";
-        if (localLabel === 'Não Canto' && currentScoutState.subLocal) {
+        if (localLabel === 'No Canto' && currentScoutState.subLocal) {
             localLabel += ` - ${currentScoutState.subLocal}`;
         }
         if (localLabel) parts.push(`@ ${localLabel}`);

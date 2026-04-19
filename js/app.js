@@ -1589,7 +1589,7 @@ async function downloadScoutPDF(scoutId) {
         matriz: {},
         alvos: { 'Colete': 0, 'Capacete': 0 },
         subAlvos: {}, // { 'Colete': { 'Peito': 0... }, 'Capacete': { 'Face': 0... } }
-        locais: { 'Meio': 0, 'Não Canto': 0 },
+        locais: { 'Meio': 0, 'No Canto': 0 },
         subLocais: { 'Pressionando': 0, 'Pressionado': 0 },
         pernas: { 'Direita': 0, 'Esquerda': 0 },
         subPernas: { 'Direita': { 'Frente': 0, 'Trás': 0 }, 'Esquerda': { 'Frente': 0, 'Trás': 0 } },
@@ -1637,7 +1637,7 @@ async function downloadScoutPDF(scoutId) {
         }
         if (ev.local) {
             tgt.locais[ev.local]++;
-            if (ev.local === 'Não Canto' && ev.subLocal) {
+            if (ev.local === 'No Canto' && ev.subLocal) {
                 tgt.subLocais[ev.subLocal]++;
             }
         }
