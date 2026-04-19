@@ -1464,11 +1464,16 @@ function openScoutDetail(scoutId) {
                 </div>
             </div>
 
-            <div style="padding: 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0;">
-                <button class="btn" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="downloadScoutPDF(${scout.id})">
-                    <i class="ti ti-download"></i> Baixar PDF
+            <div style="padding: 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap;">
+                <button class="btn btn-outline" style="color: var(--yellow); border-color: rgba(234,179,8,0.4); background: rgba(234,179,8,0.08);" onclick="document.getElementById('modalScoutDetail').classList.remove('active'); editScout(${scout.id})">
+                    <i class="ti ti-edit"></i> Editar Scout
                 </button>
-                <button class="btn btn-primary" onclick="document.getElementById('modalScoutDetail').classList.remove('active')">Fechar Detalhes</button>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="downloadScoutPDF(${scout.id})">
+                        <i class="ti ti-download"></i> Baixar PDF
+                    </button>
+                    <button class="btn btn-primary" onclick="document.getElementById('modalScoutDetail').classList.remove('active')">Fechar</button>
+                </div>
             </div>
         </div>
     `;
