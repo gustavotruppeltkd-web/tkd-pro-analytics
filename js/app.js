@@ -1810,59 +1810,184 @@ async function downloadScoutPDF(scoutId) {
     yPos = drawSectionHeader("Timeline Detalhada por Round", yPos);
 
     const rounds = {};
+    // Preserva a ordem original (mais antigo primeiro = ordem de registro)
     (scout.acoes || []).forEach(a => {
         const r = a.round || 1;
         if (!rounds[r]) rounds[r] = [];
         rounds[r].push(a);
     });
 
-    Object.keys(rounds).sort((a, b) => a - b).forEach(rKey => {
+    Object.keys(rounds).sort((a, b) => Number(a) - Number(b)).forEach(rKey => {
         if (yPos > 260) { doc.addPage(); yPos = 20; }
 
         doc.setFontSize(9); doc.setFont('helvetica', 'bold');
         doc.setFillColor(239, 246, 255); doc.rect(15, yPos, 180, 6, 'F');
         doc.setTextColor(59, 130, 246);
-        doc.text(`ROUND ${rKey}`, 105, yPos + 4.5, { align: 'center' });
+        doc.text('ROUND ' + rKey, 105, yPos + 4.5, { align: 'center' });
         yPos += 10;
         doc.setTextColor(30, 41, 59);
 
-        rounds[rKey].forEach(ev => {
-            if (ev.isDivider) return;
+        // Mais antigo no topo: inverte se o primeiro item tiver tempo maior que o último
+        const evList = rounds[rKey].filter(ev => !ev.isDivider);
+        const parseTime = (t) => {
+            if (!t) return 0;
+            const s = String(t);
+            if (s.includes(':')) { const [m, sc] = s.split(':'); return parseInt(m) * 60 + parseInt(sc); }
+            return parseInt(s) || 0;
+        };
+        const ordered = evList.length > 1 && parseTime(evList[0].formattedTime) > parseTime(evList[evList.length - 1].formattedTime)
+            ? [...evList].reverse()
+            : evList;
+
+        ordered.forEach(ev => {
             if (yPos > 275) { doc.addPage(); yPos = 20; }
 
             doc.setFontSize(7.5); doc.setFont('helvetica', 'bold');
-            doc.text(ev.formattedTime, 15, yPos);
+            doc.text(ev.formattedTime || '', 15, yPos);
 
             doc.setFontSize(8);
             const resBadge = ev.resultado === 'Com ponto' ? ' [PONTO]' : '';
-            doc.text(`${ev.acao}: ${ev.tecnica || ''}${resBadge}`, 30, yPos);
+            doc.text((ev.acao || '') + ': ' + (ev.tecnica || '') + resBadge, 30, yPos);
 
-            let sub = [];
-            if (ev.alvo) sub.push(ev.alvo + (ev.subAlvo ? ` (${ev.subAlvo})` : ''));
-            if (ev.perna) sub.push(ev.perna + (ev.subPerna ? ` (${ev.subPerna})` : ''));
-            if (ev.base) sub.push(`Base ${ev.base}`);
-            if (ev.local) sub.push(ev.local + (ev.subLocal ? ` (${ev.subLocal})` : ''));
+            const sub = [];
+            if (ev.alvo) sub.push(ev.alvo + (ev.subAlvo ? ' (' + ev.subAlvo + ')' : ''));
+            if (ev.perna) sub.push(ev.perna + (ev.subPerna ? ' (' + ev.subPerna + ')' : ''));
+            if (ev.base) sub.push('Base ' + ev.base);
+            if (ev.local) sub.push(ev.local + (ev.subLocal ? ' (' + ev.subLocal + ')' : ''));
+            if (ev.obsTecnica) sub.push(ev.obsTecnica);
 
-            doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(100);
-            doc.text(sub.join(' · '), 30, yPos + 3.5);
-
-            yPos += 8;
-            doc.setTextColor(30);
+            if (sub.length) {
+                doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(100);
+                doc.text(sub.join(' | '), 30, yPos + 3.5);
+                doc.setTextColor(30);
+                yPos += 8;
+            } else {
+                yPos += 5;
+            }
         });
         yPos += 4;
     });
 
-    // --- RADAR Chart (Agora após a Timeline) ---
+    // --- RADAR TÁTICO (desenhado com primitivas jsPDF) ---
     if (scout.avaliacaoTreinador) {
-        if (yPos > 200) { doc.addPage(); yPos = 20; } else { yPos += 10; }
-        yPos = drawSectionHeader("Avaliação Técnica (Radar)", yPos);
-        const canvas = document.getElementById('scoutRadarChart');
-        if (canvas) {
-            const chartImg = canvas.toDataURL('image/png');
-            // Tamanho reduzido para caber melhor: 80x80
-            doc.addImage(chartImg, 'PNG', 65, yPos, 80, 80);
-            yPos += 85;
+        if (yPos > 170) { doc.addPage(); yPos = 20; } else { yPos += 10; }
+        yPos = drawSectionHeader("Avaliacao Tatica - Radar de Desempenho", yPos);
+
+        const av = scout.avaliacaoTreinador;
+        const radarLabels = ['Velocidade', 'Forca', 'Tatica', 'Defesa', 'Variacao', 'Precisao', 'Obediencia'];
+        const radarKeys  = ['velocidade', 'forca',  'tatica', 'defesa', 'variacao', 'precisao', 'obediencia'];
+        const radarVals  = radarKeys.map(k => Math.min(10, Math.max(0, Number(av[k]) || 0)));
+        const n = radarLabels.length;
+        const cx = 105, cy = yPos + 58, R = 46;
+
+        const radarPt = (val, idx, radius) => {
+            const r = radius !== undefined ? radius : R * val / 10;
+            const angle = (2 * Math.PI * idx / n) - Math.PI / 2;
+            return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+        };
+
+        // Fundo branco para o radar
+        doc.setFillColor(248, 250, 252);
+        doc.rect(20, yPos - 2, 170, 130, 'F');
+
+        // Grade (5 níveis)
+        for (let level = 1; level <= 5; level++) {
+            const r = R * level / 5;
+            const isMain = level === 5 || level === 3;
+            doc.setDrawColor(isMain ? 180 : 210, isMain ? 180 : 210, isMain ? 180 : 210);
+            doc.setLineWidth(isMain ? 0.4 : 0.2);
+            for (let i = 0; i < n; i++) {
+                const p1 = radarPt(0, i, r);
+                const p2 = radarPt(0, (i + 1) % n, r);
+                doc.line(p1.x, p1.y, p2.x, p2.y);
+            }
+            // Label de nível (2, 4, 6, 8, 10)
+            doc.setFontSize(5); doc.setTextColor(160, 160, 160);
+            const lp = radarPt(0, 0, r);
+            doc.text(String(level * 2), lp.x + 1, lp.y - 0.5);
         }
+
+        // Eixos
+        doc.setDrawColor(160, 160, 160); doc.setLineWidth(0.3);
+        for (let i = 0; i < n; i++) {
+            const p = radarPt(0, i, R);
+            doc.line(cx, cy, p.x, p.y);
+        }
+
+        // Polígono de dados (linha azul)
+        doc.setDrawColor(59, 130, 246); doc.setLineWidth(1.5);
+        for (let i = 0; i < n; i++) {
+            const p1 = radarPt(radarVals[i], i);
+            const p2 = radarPt(radarVals[(i + 1) % n], (i + 1) % n);
+            doc.line(p1.x, p1.y, p2.x, p2.y);
+        }
+
+        // Pontos de dados
+        doc.setFillColor(59, 130, 246);
+        for (let i = 0; i < n; i++) {
+            const p = radarPt(radarVals[i], i);
+            doc.circle(p.x, p.y, 1.3, 'F');
+            // Valor dentro do ponto (branco)
+            doc.setFontSize(4.5); doc.setTextColor(255, 255, 255);
+            doc.text(String(radarVals[i]), p.x, p.y + 1.5, { align: 'center' });
+        }
+
+        // Labels dos eixos
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(30, 41, 59);
+        for (let i = 0; i < n; i++) {
+            const angle = (2 * Math.PI * i / n) - Math.PI / 2;
+            const labelR = R + 9;
+            const lx = cx + labelR * Math.cos(angle);
+            const ly = cy + labelR * Math.sin(angle);
+            const cosA = Math.cos(angle);
+            const align = cosA < -0.3 ? 'right' : cosA > 0.3 ? 'left' : 'center';
+            doc.text(radarLabels[i], lx, ly + 2, { align });
+        }
+
+        // Tabela de legenda (abaixo do radar)
+        const legY = cy + R + 18;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(30, 41, 59);
+        doc.text('LEGENDA DE ATRIBUTOS', 105, legY, { align: 'center' });
+
+        const barMaxW = 38;
+        radarLabels.forEach((lbl, i) => {
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+            const lx = col === 0 ? 25 : 115;
+            const ly = legY + 6 + row * 9;
+            const val = radarVals[i];
+            const fillW = barMaxW * val / 10;
+            const barColor = val >= 8 ? [34, 197, 94] : val >= 5 ? [59, 130, 246] : [239, 68, 68];
+
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(50, 50, 50);
+            doc.text(lbl + ':', lx, ly);
+            // Barra de fundo
+            doc.setFillColor(220, 220, 220);
+            doc.rect(lx + 24, ly - 4, barMaxW, 4.5, 'F');
+            // Barra de valor
+            doc.setFillColor(...barColor);
+            if (fillW > 0) doc.rect(lx + 24, ly - 4, fillW, 4.5, 'F');
+            // Valor
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...barColor);
+            doc.text(val + '/10', lx + 24 + barMaxW + 2, ly);
+        });
+
+        // Linha restante se n for ímpar
+        if (n % 2 === 1) {
+            const lastRow = Math.floor((n - 1) / 2);
+            const ly = legY + 6 + lastRow * 9;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(50, 50, 50);
+            doc.text(radarLabels[n - 1] + ':', 25, ly);
+            const val = radarVals[n - 1];
+            const fillW = barMaxW * val / 10;
+            const barColor = val >= 8 ? [34, 197, 94] : val >= 5 ? [59, 130, 246] : [239, 68, 68];
+            doc.setFillColor(220, 220, 220); doc.rect(49, ly - 4, barMaxW, 4.5, 'F');
+            doc.setFillColor(...barColor); if (fillW > 0) doc.rect(49, ly - 4, fillW, 4.5, 'F');
+            doc.setFont('helvetica', 'bold'); doc.setTextColor(...barColor);
+            doc.text(val + '/10', 49 + barMaxW + 2, ly);
+        }
+
+        yPos = legY + 6 + Math.ceil(n / 2) * 9 + 8;
     }
 
     doc.save(`Analise_Scout_${nomeAtleta.replace(/\s+/g, '_')}_ID${scout.id}.pdf`);
