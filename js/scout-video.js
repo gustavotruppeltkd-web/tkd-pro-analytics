@@ -8,9 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==== SCOUT STATE ====
     let currentScoutState = {
         acao: null,
+        tipoAcao: null,
+        descFalta: "",
         resultado: null,
         alvo: null,
         subAlvo: null,
+        distancia: null,
         perna: null,
         subPerna: null,
         base: null,
@@ -235,12 +238,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // Mostra/esconde caixinha de descrição de falta
+            const isFalta = currentScoutState.acao === 'Falta Feita' || currentScoutState.acao === 'Falta Sofrida';
+            document.getElementById('faltaDescContainer').style.display = isFalta ? 'block' : 'none';
+            if (!isFalta) {
+                currentScoutState.descFalta = '';
+                document.getElementById('faltaDescInput').value = '';
+            }
+
             updateSummaryPreview();
         });
 
         // Input observation listener
         document.getElementById('obsTecnica').addEventListener('input', (e) => {
             currentScoutState.obsTecnica = e.target.value;
+            updateSummaryPreview();
+        });
+
+        // Descrição da falta
+        document.getElementById('faltaDescInput').addEventListener('input', (e) => {
+            currentScoutState.descFalta = e.target.value;
             updateSummaryPreview();
         });
 
@@ -871,12 +888,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clear State
         currentScoutState = {
-            acao: null, resultado: null, alvo: null, subAlvo: null, perna: null, subPerna: null, base: null, local: null, subLocal: null, tecnica: null, obsTecnica: ""
+            acao: null, tipoAcao: null, descFalta: "", resultado: null, alvo: null, subAlvo: null, distancia: null, perna: null, subPerna: null, base: null, local: null, subLocal: null, tecnica: null, obsTecnica: ""
         };
         // Reset UI Buttons & Inputs
         document.querySelectorAll('.scout-opt-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('obsTecnica').value = '';
         document.getElementById('manualTimeInput').value = '';
+        document.getElementById('faltaDescInput').value = '';
+        document.getElementById('faltaDescContainer').style.display = 'none';
         renderSubAlvos(null);
         renderSubLocais(null);
         renderSubPernas(null);

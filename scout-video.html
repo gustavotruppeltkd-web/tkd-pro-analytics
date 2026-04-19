@@ -277,6 +277,23 @@
                                     <button class="scout-opt-btn act-principal" data-val="Falta Sofrida"
                                         data-group="acao">Falta Sofrida</button>
                                 </div>
+                                <!-- Descrição da falta (aparece só para Falta Feita/Sofrida) -->
+                                <div id="faltaDescContainer" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                                    <div class="scout-label" style="font-size: 10px; margin-bottom: 6px;">Descrição da Falta</div>
+                                    <input type="text" id="faltaDescInput" class="form-control"
+                                        placeholder="Descreva a falta..."
+                                        style="font-size: 12px; padding: 6px 10px; background: rgba(0,0,0,0.2);">
+                                </div>
+                            </div>
+
+                            <!-- Ação (tipo) -->
+                            <div class="scout-group" id="tipoAcaoGroup">
+                                <div class="scout-label">Ação</div>
+                                <div class="scout-options group-3">
+                                    <button class="scout-opt-btn" data-val="Ataque direto" data-group="tipoAcao">Ataque direto</button>
+                                    <button class="scout-opt-btn" data-val="Contra ataque" data-group="tipoAcao">Contra ataque</button>
+                                    <button class="scout-opt-btn" data-val="Rebatida" data-group="tipoAcao">Rebatida</button>
+                                </div>
                             </div>
 
                             <!-- Resultado -->
@@ -340,6 +357,16 @@
                                             data-group="base">Aberta</button>
                                         <button class="scout-opt-btn act-base" data-val="Fechada"
                                             data-group="base">Fechada</button>
+                                    </div>
+                                </div>
+
+                                <!-- Distância -->
+                                <div class="scout-group" style="grid-column: span 2;">
+                                    <div class="scout-label">Distância</div>
+                                    <div class="scout-options group-3">
+                                        <button class="scout-opt-btn" data-val="Longa" data-group="distancia">Longa</button>
+                                        <button class="scout-opt-btn" data-val="Media" data-group="distancia">Média</button>
+                                        <button class="scout-opt-btn" data-val="Curta" data-group="distancia">Curta</button>
                                     </div>
                                 </div>
 

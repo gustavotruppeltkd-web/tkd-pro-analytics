@@ -1847,10 +1847,13 @@ async function downloadScoutPDF(scoutId) {
 
             doc.setFontSize(8);
             const resBadge = ev.resultado === 'Com ponto' ? ' [PONTO]' : '';
-            doc.text((ev.acao || '') + ': ' + (ev.tecnica || '') + resBadge, 30, yPos);
+            const acaoLabel = (ev.acao || '') + (ev.tipoAcao ? ' / ' + ev.tipoAcao : '') + ': ' + (ev.tecnica || '') + resBadge;
+            doc.text(acaoLabel, 30, yPos);
 
             const sub = [];
+            if (ev.descFalta) sub.push('Falta: ' + ev.descFalta);
             if (ev.alvo) sub.push(ev.alvo + (ev.subAlvo ? ' (' + ev.subAlvo + ')' : ''));
+            if (ev.distancia) sub.push('Dist. ' + ev.distancia);
             if (ev.perna) sub.push(ev.perna + (ev.subPerna ? ' (' + ev.subPerna + ')' : ''));
             if (ev.base) sub.push('Base ' + ev.base);
             if (ev.local) sub.push(ev.local + (ev.subLocal ? ' (' + ev.subLocal + ')' : ''));
