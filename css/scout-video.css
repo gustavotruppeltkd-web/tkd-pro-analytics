@@ -181,6 +181,12 @@
     gap: 6px;
 }
 
+.scout-options.group-6 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+}
+
 .scout-opt-btn {
     --btn-color: var(--primary);
     background: var(--bg-card);

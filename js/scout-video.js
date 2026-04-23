@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tipoAcao: null,
         descFalta: "",
         resultado: null,
+        pontos: null,
         alvo: null,
         subAlvo: null,
         distancia: null,
@@ -246,6 +247,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('faltaDescInput').value = '';
             }
 
+            // Mostra/esconde seletor de pontos
+            const comPonto = currentScoutState.resultado === 'Com ponto';
+            document.getElementById('pontosContainer').style.display = comPonto ? 'block' : 'none';
+            if (!comPonto) {
+                currentScoutState.pontos = null;
+                document.querySelectorAll('[data-group="pontos"]').forEach(b => b.classList.remove('active'));
+            }
+
             updateSummaryPreview();
         });
 
@@ -279,18 +288,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnEndRound = document.getElementById('btnEndRound');
         if (btnEndRound) {
             btnEndRound.addEventListener('click', () => {
-                const result = prompt(`Resultado do Round ${currentRound} (vitoria/derrota/empate):`, "vitoria");
-                if (result === null) return;
+                // Calcula placar do round a partir dos eventos
+                const roundEvents = timelineEvents.filter(e => !e.isDivider && e.round === currentRound);
+                let scoreAtleta = 0, scoreAdversario = 0;
+                roundEvents.forEach(ev => {
+                    const pts = parseInt(ev.pontos) || 0;
+                    if (pts > 0) {
+                        if (ev.acao === 'Ataque Feito') scoreAtleta += pts;
+                        else if (ev.acao === 'Ataque Sofrido') scoreAdversario += pts;
+                    }
+                    // Falta feita = ponto para adversário; falta sofrida = ponto para atleta
+                    if (ev.acao === 'Falta Feita') scoreAdversario += 1;
+                    else if (ev.acao === 'Falta Sofrida') scoreAtleta += 1;
+                });
 
-                const validResults = ['vitoria', 'derrota', 'empate'];
-                const cleanResult = result.toLowerCase().trim();
+                const cleanResult = scoreAtleta > scoreAdversario ? 'vitoria' : scoreAtleta < scoreAdversario ? 'derrota' : 'empate';
 
-                if (!validResults.includes(cleanResult)) {
-                    alert("Resultado invlido. Use: vitoria, derrota ou empate.");
-                    return;
-                }
-
-                roundsData.push({ round: currentRound, result: cleanResult });
+                roundsData.push({
+                    round: currentRound,
+                    result: cleanResult,
+                    scoreAtleta,
+                    scoreAdversario
+                });
 
                 // Add a divider event to the timeline
                 const divider = {
@@ -298,6 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     isDivider: true,
                     round: currentRound,
                     result: cleanResult,
+                    scoreAtleta,
+                    scoreAdversario,
                     time: lastKnownTime,
                     formattedTime: formatTime(lastKnownTime)
                 };
@@ -312,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (endBtnText) endBtnText.innerHTML = `<i class="ti ti-flag-3"></i> <span class="btn-label">Concluir R${currentRound}</span>`;
 
                 renderTimeline();
-                showToast(`Round ${currentRound - 1} finalizado como ${cleanResult}!`, "info");
+                showToast(`Round ${currentRound - 1}: ${scoreAtleta} x ${scoreAdversario} (${cleanResult})`, "info");
             });
         }
 
@@ -927,7 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clear State
         currentScoutState = {
-            acao: null, tipoAcao: null, descFalta: "", resultado: null, alvo: null, subAlvo: null, distancia: null, perna: null, subPerna: null, base: null, local: null, subLocal: null, tecnica: null, obsTecnica: ""
+            acao: null, tipoAcao: null, descFalta: "", resultado: null, pontos: null, alvo: null, subAlvo: null, distancia: null, perna: null, subPerna: null, base: null, local: null, subLocal: null, tecnica: null, obsTecnica: ""
         };
         // Reset UI Buttons & Inputs
         document.querySelectorAll('.scout-opt-btn').forEach(b => b.classList.remove('active'));
@@ -935,6 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('manualTimeInput').value = '';
         document.getElementById('faltaDescInput').value = '';
         document.getElementById('faltaDescContainer').style.display = 'none';
+        document.getElementById('pontosContainer').style.display = 'none';
         renderSubAlvos(null);
         renderSubLocais(null);
         renderSubPernas(null);

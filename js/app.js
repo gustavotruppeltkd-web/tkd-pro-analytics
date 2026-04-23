@@ -1292,16 +1292,55 @@ function openScoutDetail(scoutId) {
     const dataFormatada = dataObj.toLocaleDateString('pt-BR') + ' às ' + dataObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     // Sum?rio de Rounds
+    // Calcula placar total e por round
+    const acoesFiltradas0 = (scout.acoes || []).filter(a => !a.isDivider);
+    let totalAtleta = 0, totalAdversario = 0;
+    const roundScores = {};
+    acoesFiltradas0.forEach(ev => {
+        const r = ev.round || 1;
+        if (!roundScores[r]) roundScores[r] = { a: 0, b: 0 };
+        const pts = parseInt(ev.pontos) || 0;
+        if (pts > 0) {
+            if (ev.acao === 'Ataque Feito') { roundScores[r].a += pts; totalAtleta += pts; }
+            else if (ev.acao === 'Ataque Sofrido') { roundScores[r].b += pts; totalAdversario += pts; }
+        }
+        if (ev.acao === 'Falta Feita') { roundScores[r].b += 1; totalAdversario += 1; }
+        else if (ev.acao === 'Falta Sofrida') { roundScores[r].a += 1; totalAtleta += 1; }
+    });
+
+    // Vencedor de cada round (para placar de rounds)
+    let roundsVencidos = 0, roundsPerdidos = 0;
+    const roundKeys = Object.keys(roundScores).sort((a, b) => Number(a) - Number(b));
+    roundKeys.forEach(r => {
+        const sc = roundScores[r];
+        if (sc.a > sc.b) roundsVencidos++;
+        else if (sc.b > sc.a) roundsPerdidos++;
+    });
+
     let roundsHtml = '';
     if (scout.rounds && scout.rounds.length > 0) {
+        const roundResultSummary = scout.rounds.length >= 2
+            ? `<div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 20px; text-align: center; flex-shrink: 0;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Resultado por Rounds</div>
+                <div style="font-size: 22px; font-weight: 800; color: ${roundsVencidos > roundsPerdidos ? 'var(--green)' : roundsVencidos < roundsPerdidos ? 'var(--red)' : 'var(--yellow)'};">${roundsVencidos} x ${roundsPerdidos}</div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">Pontos totais: ${totalAtleta} x ${totalAdversario}</div>
+               </div>`
+            : '';
+
         roundsHtml = `
-            <div style="display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px;">
-                ${scout.rounds.map(r => `
+            <div style="display: flex; gap: 12px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 8px; flex-wrap: wrap; align-items: flex-start;">
+                ${scout.rounds.map(r => {
+                    const sc = roundScores[r.round] || { a: 0, b: 0 };
+                    const scoreStr = `${sc.a} x ${sc.b}`;
+                    const col = r.result === 'vitoria' ? 'var(--green)' : r.result === 'derrota' ? 'var(--red)' : 'var(--yellow)';
+                    return `
                     <div style="background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; min-width: 100px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Round ${r.round}</div>
-                        <div style="font-weight: 700; color: ${r.result === 'vitoria' ? 'var(--green)' : r.result === 'derrota' ? 'var(--red)' : 'var(--yellow)'}">${r.result.toUpperCase()}</div>
-                    </div>
-                `).join('')}
+                        <div style="font-size: 20px; font-weight: 800; color: ${col};">${scoreStr}</div>
+                        <div style="font-size: 11px; color: ${col}; margin-top: 2px;">${r.result.toUpperCase()}</div>
+                    </div>`;
+                }).join('')}
+                ${roundResultSummary}
             </div>
         `;
     }
@@ -1429,8 +1468,11 @@ function openScoutDetail(scoutId) {
                         <div style="color: var(--text-muted); font-size: 14px;">${escapeHtml(scout.evento || '')}</div>
                     </div>
                     <div style="margin-left: auto; text-align: right;">
-                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Resultado Final</div>
-                        <div style="font-size: 20px; font-weight: 800; color: ${scout.resultadoLuta === 'vitoria' ? 'var(--green)' : scout.resultadoLuta === 'derrota' ? 'var(--red)' : 'var(--text-muted)'}">
+                        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Resultado Final</div>
+                        <div style="font-size: 22px; font-weight: 800; color: ${scout.resultadoLuta === 'vitoria' ? 'var(--green)' : scout.resultadoLuta === 'derrota' ? 'var(--red)' : 'var(--text-muted)'}">
+                            ${totalAtleta} x ${totalAdversario}
+                        </div>
+                        <div style="font-size: 12px; color: ${scout.resultadoLuta === 'vitoria' ? 'var(--green)' : scout.resultadoLuta === 'derrota' ? 'var(--red)' : 'var(--text-muted)'}; font-weight: 600;">
                             ${(scout.resultadoLuta || '---').toUpperCase()}
                         </div>
                     </div>
@@ -1628,7 +1670,7 @@ async function downloadScoutPDF(scoutId) {
         }
 
         tgt.total++;
-        if (ev.resultado === 'Com ponto') tgt.pontos++;
+        if (ev.resultado === 'Com ponto') tgt.pontos += (parseInt(ev.pontos) || 1);
 
         if (ev.tecnica) {
             // Matriz analítica para ofensiva usa Perna e Base. Para defensiva, apenas técnica/resultado.
@@ -1674,20 +1716,59 @@ async function downloadScoutPDF(scoutId) {
         return y + 10;
     };
 
-    // --- Header (Compacto: 35mm) ---
+    // Calcula placar por round para o PDF
+    const pdfRoundScores = {};
+    acoesFiltradas.forEach(ev => {
+        const r = ev.round || 1;
+        if (!pdfRoundScores[r]) pdfRoundScores[r] = { a: 0, b: 0 };
+        const pts = parseInt(ev.pontos) || 0;
+        if (pts > 0) {
+            if (ev.acao === 'Ataque Feito') pdfRoundScores[r].a += pts;
+            else if (ev.acao === 'Ataque Sofrido') pdfRoundScores[r].b += pts;
+        }
+        if (ev.acao === 'Falta Feita') pdfRoundScores[r].b += 1;
+        else if (ev.acao === 'Falta Sofrida') pdfRoundScores[r].a += 1;
+    });
+    const pdfRoundKeys = Object.keys(pdfRoundScores).sort((a, b) => Number(a) - Number(b));
+    let pdfRoundsV = 0, pdfRoundsP = 0;
+    pdfRoundKeys.forEach(r => {
+        const sc = pdfRoundScores[r];
+        if (sc.a > sc.b) pdfRoundsV++;
+        else if (sc.b > sc.a) pdfRoundsP++;
+    });
+    const pdfRoundSummary = pdfRoundKeys.map(r => {
+        const sc = pdfRoundScores[r];
+        return `R${r}: ${sc.a}x${sc.b}`;
+    }).join('  |  ');
+
+    // Calcula quantas linhas o header precisa
+    const hasRoundScores = pdfRoundKeys.length > 0;
+    const headerH = hasRoundScores ? 42 : 35;
+
+    // --- Header ---
     doc.setFillColor(30, 41, 59);
-    doc.rect(0, 0, 210, 35, 'F');
+    doc.rect(0, 0, 210, headerH, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-    doc.text("ANÁLISE DE PERFORMANCE - SCOUT", 15, 15);
+    doc.text("ANALISE DE PERFORMANCE - SCOUT", 15, 13);
     doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-    doc.text(`ATLETA: ${nomeAtleta.toUpperCase()}`, 15, 25);
-    doc.text(`EVENTO: ${(scout.evento || 'N/A').toUpperCase()}`, 15, 30);
-    doc.text(`DATA: ${dataFormatada}`, 145, 25);
+    doc.text(`ATLETA: ${pdfStr(nomeAtleta).toUpperCase()}`, 15, 23);
+    doc.text(`EVENTO: ${pdfStr(scout.evento || 'N/A').toUpperCase()}`, 15, 28);
+    doc.text(`DATA: ${dataFormatada}`, 145, 23);
     doc.setFontSize(12); doc.setFont('helvetica', 'bold');
-    doc.text(`SCORE: ${ofensiva.pontos} x ${defensiva.pontos}`, 145, 31);
+    doc.text(`SCORE: ${ofensiva.pontos} x ${defensiva.pontos}`, 145, 29);
+    if (hasRoundScores) {
+        doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+        doc.setTextColor(200, 220, 255);
+        doc.text(pdfStr(pdfRoundSummary), 15, 35);
+        if (pdfRoundKeys.length >= 2) {
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 200);
+            doc.text(`ROUNDS: ${pdfRoundsV} x ${pdfRoundsP}`, 145, 35);
+        }
+    }
 
-    let yPos = 45;
+    let yPos = headerH + 8;
 
     // --- OBSERVAÇÕES FINAIS (topo do PDF) ---
     if (scout.observacaoFinal && scout.observacaoFinal.trim()) {
