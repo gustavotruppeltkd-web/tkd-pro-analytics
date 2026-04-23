@@ -1462,6 +1462,14 @@ function openScoutDetail(scoutId) {
                         </div>
                     </div>
                 </div>
+
+                ${scout.observacaoFinal ? `
+                <div style="margin-top: 24px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                    <h3 style="font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="ti ti-notes" style="color: var(--primary);"></i> Observações Finais
+                    </h3>
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6; white-space: pre-wrap;">${escapeHtml(scout.observacaoFinal)}</p>
+                </div>` : ''}
             </div>
 
             <div style="padding: 24px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap;">
@@ -1680,6 +1688,19 @@ async function downloadScoutPDF(scoutId) {
     doc.text(`SCORE: ${ofensiva.pontos} x ${defensiva.pontos}`, 145, 31);
 
     let yPos = 45;
+
+    // --- OBSERVAÇÕES FINAIS (topo do PDF) ---
+    if (scout.observacaoFinal && scout.observacaoFinal.trim()) {
+        yPos = drawSectionHeader("Observações do Treinador", yPos);
+        doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 41, 59);
+        const obsLines = doc.splitTextToSize(pdfStr(scout.observacaoFinal.trim()), 175);
+        obsLines.forEach(line => {
+            if (yPos > 280) { doc.addPage(); yPos = 20; }
+            doc.text(line, 15, yPos);
+            yPos += 4.5;
+        });
+        yPos += 6;
+    }
 
     const calcPct = (val, total) => total > 0 ? ` (${Math.round((val / total) * 100)}%)` : ' (0%)';
 

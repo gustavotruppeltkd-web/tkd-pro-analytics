@@ -431,6 +431,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modalAvaliacaoTreinador').classList.remove('active');
     }
 
+    // Armazena dados pendentes entre o modal de avaliação e o de observação
+    let _pendingScoutData = null;
+
     window.confirmSaveWithAssessment = function (event) {
         if (event) event.preventDefault();
 
@@ -452,8 +455,44 @@ document.addEventListener('DOMContentLoaded', () => {
             obediencia: parseFloat(form.obediencia.value) || 0
         };
 
+        _pendingScoutData = { atletaFinal, evento, resultadoLuta, avaliacao };
+
+        closeModalAvaliacao();
+
+        // Pré-preencher observação se estiver editando
+        const obsEl = document.getElementById('inputObservacaoFinal');
+        if (obsEl) {
+            if (editModeScoutId) {
+                const existing = db.lutasScout.find(s => String(s.id) === String(editModeScoutId));
+                obsEl.value = (existing && existing.observacaoFinal) ? existing.observacaoFinal : '';
+            } else {
+                obsEl.value = '';
+            }
+        }
+
+        document.getElementById('modalObservacaoFinal').classList.add('active');
+    }
+
+    window.closeModalObservacao = function () {
+        document.getElementById('modalObservacaoFinal').classList.remove('active');
+        if (_pendingScoutData) {
+            // Pular observação — salva sem ela
+            _doSaveScout('');
+        }
+    }
+
+    window.confirmSaveWithObservacao = function () {
+        const obs = (document.getElementById('inputObservacaoFinal').value || '').trim();
+        document.getElementById('modalObservacaoFinal').classList.remove('active');
+        _doSaveScout(obs);
+    }
+
+    function _doSaveScout(observacaoFinal) {
+        if (!_pendingScoutData) return;
+        const { atletaFinal, evento, resultadoLuta, avaliacao } = _pendingScoutData;
+        _pendingScoutData = null;
+
         if (editModeScoutId) {
-            // Edit Mode: Update existing
             const index = db.lutasScout.findIndex(s => String(s.id) === String(editModeScoutId));
             if (index !== -1) {
                 db.lutasScout[index].atletaId = atletaFinal;
@@ -462,11 +501,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 db.lutasScout[index].rounds = [...roundsData];
                 db.lutasScout[index].acoes = [...timelineEvents];
                 db.lutasScout[index].avaliacaoTreinador = avaliacao;
+                db.lutasScout[index].observacaoFinal = observacaoFinal;
                 db.lutasScout[index].ultimaEdicao = new Date().toISOString();
 
                 saveDB();
                 showToast("Scout atualizado com sucesso!", "success");
-                closeModalAvaliacao();
 
                 if (confirm("Deseja voltar para a visão geral ou continuar editando?")) {
                     window.location.href = 'scout-video.html';
@@ -483,14 +522,14 @@ document.addEventListener('DOMContentLoaded', () => {
             resultadoLuta: resultadoLuta,
             rounds: [...roundsData],
             acoes: [...timelineEvents],
-            avaliacaoTreinador: avaliacao
+            avaliacaoTreinador: avaliacao,
+            observacaoFinal: observacaoFinal
         };
 
         db.lutasScout.push(scoutObj);
         saveDB();
 
         showToast("Scout salvo com sucesso!", "success");
-        closeModalAvaliacao();
 
         if (confirm("Deseja limpar o painel para iniciar um novo scout?")) {
             timelineEvents = [];

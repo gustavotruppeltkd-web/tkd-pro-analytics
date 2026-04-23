@@ -434,6 +434,29 @@
         </main>
     </div>
 
+    <!-- Modal Observações Finais -->
+    <div class="modal-overlay" id="modalObservacaoFinal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="ti ti-notes"></i> Observações Finais</h2>
+                <button class="btn-close" onclick="closeModalObservacao()"><i class="ti ti-x"></i></button>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                Adicione um comentário geral sobre a análise desta luta. Este texto aparecerá no topo do PDF e no resumo do scout.
+            </p>
+            <div class="form-group">
+                <textarea id="inputObservacaoFinal" class="form-control" rows="6"
+                    placeholder="Ex: Atleta demonstrou boa variação técnica no segundo round, mas precisa melhorar a guarda ao receber contra-ataques..."></textarea>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline" onclick="closeModalObservacao()">Pular</button>
+                <button type="button" class="btn btn-success" onclick="confirmSaveWithObservacao()">
+                    <i class="ti ti-device-floppy"></i> Salvar Scout
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Avaliação Subjetiva do Treinador -->
     <div class="modal-overlay" id="modalAvaliacaoTreinador">
         <div class="modal-content" style="max-width: 500px;">
