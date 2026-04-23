@@ -898,10 +898,13 @@
                 <div style="font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:4px;">Exercícios</div>
                 <div class="exercicios-container" id="exContainer_${id}"></div>
                 <div class="ex-add-row">
-                    <input type="text" list="exLib_${id}" id="exNome_${id}" class="form-control ex-nome-input"
-                        placeholder="Nome do exercício..."
-                        onkeydown="if(event.key==='Enter'){event.preventDefault();addExercicio(${id});}">
-                    <datalist id="exLib_${id}"></datalist>
+                    <div class="ex-nome-wrap">
+                        <input type="text" id="exNome_${id}" class="form-control ex-nome-input"
+                            placeholder="Nome do exercício..."
+                            onkeydown="if(event.key==='Enter'){event.preventDefault();addExercicio(${id});}">
+                        <button type="button" class="ex-nome-arrow" onclick="toggleExLibDropdown('${id}')">&#9660;</button>
+                        <div class="ex-lib-dropdown" id="exLib_${id}"></div>
+                    </div>
                     <select id="exTipo_${id}" class="form-control ex-tipo-sel" onchange="updateExValInput(${id})">
                         <option value="series">Séries × Rep</option>
                         <option value="tempo">Tempo</option>
@@ -1143,25 +1146,59 @@
                 db.exercicios.push(nome);
                 saveDB();
             }
-            // Update all datalists in the modal
+            // Update all dropdowns in the modal
             document.querySelectorAll('[id^="exLib_"]').forEach(dl => {
-                if (!dl.querySelector(`option[value="${CSS.escape(nome)}"]`)) {
-                    const opt = document.createElement('option');
-                    opt.value = nome;
-                    dl.appendChild(opt);
-                }
+                populateExLibDropdownEl(dl);
+            });
+        }
+
+        function populateExLibDropdownEl(el) {
+            if (!el) return;
+            const sorted = [...(db.exercicios || [])].sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
+            el.innerHTML = '';
+            if (sorted.length === 0) {
+                el.innerHTML = '<div class="ex-lib-empty">Nenhum exercício salvo</div>';
+                return;
+            }
+            sorted.forEach(name => {
+                const opt = document.createElement('div');
+                opt.className = 'ex-lib-option';
+                opt.textContent = name;
+                opt.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    const blocoId = el.id.replace('exLib_', '');
+                    const input = document.getElementById(`exNome_${blocoId}`);
+                    if (input) input.value = name;
+                    el.classList.remove('open');
+                });
+                el.appendChild(opt);
             });
         }
 
         function populateExLibDatalist(blocoId) {
             const dl = document.getElementById(`exLib_${blocoId}`);
+            populateExLibDropdownEl(dl);
+        }
+
+        function toggleExLibDropdown(blocoId) {
+            const dl = document.getElementById(`exLib_${blocoId}`);
             if (!dl) return;
-            dl.innerHTML = '';
-            (db.exercicios || []).forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                dl.appendChild(opt);
-            });
+            const isOpen = dl.classList.contains('open');
+            // Close all open dropdowns first
+            document.querySelectorAll('.ex-lib-dropdown.open').forEach(d => d.classList.remove('open'));
+            if (!isOpen) {
+                populateExLibDropdownEl(dl);
+                dl.classList.add('open');
+                // Close when clicking outside
+                setTimeout(() => {
+                    document.addEventListener('click', function closeOnOutside(e) {
+                        if (!dl.closest('.ex-nome-wrap').contains(e.target)) {
+                            dl.classList.remove('open');
+                            document.removeEventListener('click', closeOnOutside);
+                        }
+                    });
+                }, 0);
+            }
         }
 
         // kept for backward compatibility with old saved data
