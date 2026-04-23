@@ -1163,14 +1163,33 @@
             sorted.forEach(name => {
                 const opt = document.createElement('div');
                 opt.className = 'ex-lib-option';
-                opt.textContent = name;
-                opt.addEventListener('mousedown', function(e) {
+
+                const label = document.createElement('span');
+                label.className = 'ex-lib-option-label';
+                label.textContent = name;
+                label.addEventListener('mousedown', function(e) {
                     e.preventDefault();
                     const blocoId = el.id.replace('exLib_', '');
                     const input = document.getElementById(`exNome_${blocoId}`);
                     if (input) input.value = name;
                     el.classList.remove('open');
                 });
+
+                const del = document.createElement('button');
+                del.type = 'button';
+                del.className = 'ex-lib-del';
+                del.innerHTML = '&times;';
+                del.title = 'Excluir';
+                del.addEventListener('mousedown', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    db.exercicios = (db.exercicios || []).filter(n => n !== name);
+                    saveDB();
+                    document.querySelectorAll('[id^="exLib_"]').forEach(d => populateExLibDropdownEl(d));
+                });
+
+                opt.appendChild(label);
+                opt.appendChild(del);
                 el.appendChild(opt);
             });
         }
