@@ -386,6 +386,24 @@ function fetchFromSupabase() {
                             arrayKeys.forEach(k => { if (!remoteDB[k]) remoteDB[k] = []; });
                             if (!remoteDB.periodizacao) remoteDB.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao));
                             remoteDB._owner_id = userId; // Marca o dono no dado remoto ao cachear
+
+                            // Migração: faixas antigas (padrão 'u GUB') → nova nomenclatura
+                            if (remoteDB.faixas && remoteDB.faixas.some(f => /\du GUB/.test(f))) {
+                                remoteDB.faixas = [...MOCK_DATA.faixas];
+                            }
+                            if (!remoteDB.faixas || remoteDB.faixas.length === 0) {
+                                remoteDB.faixas = [...MOCK_DATA.faixas];
+                            }
+
+                            // Migração: categorias de peso antigas (sem prefixo de divisão)
+                            if (remoteDB.categoriasPeso && remoteDB.categoriasPeso.length > 0 &&
+                                !remoteDB.categoriasPeso[0].match(/^(Cad|Juv|S21|Sên|Mst)/)) {
+                                remoteDB.categoriasPeso = [...MOCK_DATA.categoriasPeso];
+                            }
+                            if (!remoteDB.categoriasPeso || remoteDB.categoriasPeso.length === 0) {
+                                remoteDB.categoriasPeso = [...MOCK_DATA.categoriasPeso];
+                            }
+
                             db = remoteDB;
                             window.db = db;
                             localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
