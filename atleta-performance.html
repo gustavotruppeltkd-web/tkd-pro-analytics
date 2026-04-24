@@ -283,7 +283,7 @@
                     </div>
 
                     <!-- Moved Info Grid into Header -->
-                    <div class="info-grid" style="grid-template-columns: repeat(5, auto); gap: 10px 20px; justify-content: start;">
+                    <div class="info-grid" style="grid-template-columns: repeat(6, auto); gap: 10px 20px; justify-content: start;">
                         <!-- Coluna 1 -->
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
@@ -333,7 +333,7 @@
                             </div>
                         </div>
 
-                        <!-- Coluna 5 — Registros federativos -->
+                        <!-- Coluna 5 — GMS e Kukkiwon -->
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
                                 <span class="info-label">GMS</span>
@@ -343,13 +343,17 @@
                                 <span class="info-label">Kukkiwon</span>
                                 <span class="info-value" id="displayKukkiwon">--</span>
                             </div>
+                        </div>
+
+                        <!-- Coluna 6 — Registro CBTKD -->
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
                                 <span class="info-label">Registro CBTKD</span>
                                 <span class="info-value" id="displayCBTKD">--</span>
                             </div>
                         </div>
 
-                        <div class="info-row" id="rowSaude" style="grid-column: span 5; margin-top: 4px;">
+                        <div class="info-row" id="rowSaude" style="grid-column: span 6; margin-top: 4px;">
                             <span class="info-label" style="color: var(--red);">Obs Médica</span>
                             <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
                                 registrada</span>
