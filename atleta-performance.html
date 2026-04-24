@@ -237,9 +237,12 @@
                 flex: 1 !important;
                 justify-content: center !important;
             }
-            /* Info grid de 4 colunas → 2 colunas */
-            .info-grid[style*="1fr 1fr 1fr 1fr"] {
+            /* Info grid de 5 colunas → 2 colunas */
+            .info-grid {
                 grid-template-columns: 1fr 1fr !important;
+            }
+            .info-grid > [style*="grid-column: span 5"] {
+                grid-column: 1 / -1 !important;
             }
             /* Select de scout: largura automática */
             #selectRadarSource { width: 100% !important; }
@@ -280,9 +283,9 @@
                     </div>
 
                     <!-- Moved Info Grid into Header -->
-                    <div class="info-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px;">
+                    <div class="info-grid" style="grid-template-columns: repeat(5, auto); gap: 10px 20px; justify-content: start;">
                         <!-- Coluna 1 -->
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
                                 <span class="info-label">Idade</span>
                                 <span class="info-value" id="displayIdade">--</span>
@@ -294,7 +297,7 @@
                         </div>
 
                         <!-- Coluna 2 -->
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
                                 <span class="info-label">Cat. Idade</span>
                                 <span class="info-value" id="displayCatIdade">--</span>
@@ -307,7 +310,7 @@
                         </div>
 
                         <!-- Coluna 3 -->
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
                                 <span class="info-label">CPF</span>
                                 <span class="info-value" id="displayCPF">--</span>
@@ -319,7 +322,7 @@
                         </div>
 
                         <!-- Coluna 4 -->
-                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
                             <div class="info-row">
                                 <span class="info-label">Telefone</span>
                                 <span class="info-value" id="displayContato">--</span>
@@ -330,7 +333,23 @@
                             </div>
                         </div>
 
-                        <div class="info-row" id="rowSaude" style="grid-column: span 4; margin-top: 8px;">
+                        <!-- Coluna 5 — Registros federativos -->
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div class="info-row">
+                                <span class="info-label">GMS</span>
+                                <span class="info-value" id="displayGMS">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Kukkiwon</span>
+                                <span class="info-value" id="displayKukkiwon">--</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Registro CBTKD</span>
+                                <span class="info-value" id="displayCBTKD">--</span>
+                            </div>
+                        </div>
+
+                        <div class="info-row" id="rowSaude" style="grid-column: span 5; margin-top: 4px;">
                             <span class="info-label" style="color: var(--red);">Obs Médica</span>
                             <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
                                 registrada</span>
@@ -606,6 +625,22 @@
                     </div>
                 </div>
 
+                <h4 style="font-size: 14px; margin: 20px 0 12px; color: var(--primary); padding-top: 16px; border-top: 1px solid var(--border-color);">2. Registros Federativos</h4>
+                <div style="display: flex; gap: 16px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>GMS</label>
+                        <input type="text" class="form-control" name="gmsAluno" placeholder="Nº GMS">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Kukkiwon</label>
+                        <input type="text" class="form-control" name="kukkiwonAluno" placeholder="Nº Kukkiwon">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Registro CBTKD</label>
+                        <input type="text" class="form-control" name="cbtkdAluno" placeholder="Nº CBTKD">
+                    </div>
+                </div>
+
                 <div class="form-group"
                     style="margin-top: 8px; padding-top: 20px; border-top: 1px solid var(--border-color);">
                     <label style="display:flex;align-items:center;gap:6px;">
@@ -715,6 +750,9 @@
 
             document.getElementById('displayCPF').innerText = alunoData.cpf || 'Não informado';
             document.getElementById('displayRG').innerText = alunoData.rg || 'Não informado';
+            if (document.getElementById('displayGMS')) document.getElementById('displayGMS').innerText = alunoData.gms || 'Não informado';
+            if (document.getElementById('displayKukkiwon')) document.getElementById('displayKukkiwon').innerText = alunoData.kukkiwon || 'Não informado';
+            if (document.getElementById('displayCBTKD')) document.getElementById('displayCBTKD').innerText = alunoData.cbtkd || 'Não informado';
             document.getElementById('displayCatIdade').innerText = alunoData.categoriaIdade || 'Não informado';
             const lastWellness = (db.wellnessLogs || []).filter(w => w.atletaId == currentAlunoId).sort((a, b) => b.id - a.id)[0];
             const pesoReportado = lastWellness ? lastWellness.pesoAtual : null;
@@ -1489,6 +1527,11 @@
             selectFaixa.innerHTML = (db.faixas || []).map(f => `<option value="${f}">${f}</option>`).join('');
             selectFaixa.value = alunoData.faixa || '';
 
+            // Registros federativos
+            if (form.gmsAluno) form.gmsAluno.value = alunoData.gms || '';
+            if (form.kukkiwonAluno) form.kukkiwonAluno.value = alunoData.kukkiwon || '';
+            if (form.cbtkdAluno) form.cbtkdAluno.value = alunoData.cbtkd || '';
+
             // PIN
             if (form.pinAtleta) form.pinAtleta.value = '';
 
@@ -1516,6 +1559,9 @@
             alunoData.categoriaIdade = form.catIdadeAluno.value;
             alunoData.obs = form.obsAluno.value || null;
             alunoData.faixa = form.faixaAluno.value;
+            alunoData.gms = form.gmsAluno ? (form.gmsAluno.value.trim() || null) : alunoData.gms;
+            alunoData.kukkiwon = form.kukkiwonAluno ? (form.kukkiwonAluno.value.trim() || null) : alunoData.kukkiwon;
+            alunoData.cbtkd = form.cbtkdAluno ? (form.cbtkdAluno.value.trim() || null) : alunoData.cbtkd;
 
             // Save PIN if provided
             if (form.pinAtleta && form.pinAtleta.value.length === 4) {
