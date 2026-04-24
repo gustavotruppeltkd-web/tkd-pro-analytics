@@ -254,14 +254,14 @@ function loadDB() {
         if (!db.categoriasPeso) { db.categoriasPeso = [...(MOCK_DATA.categoriasPeso || [])]; modified = true; }
         if (!db.faixas) { db.faixas = [...MOCK_DATA.faixas]; modified = true; }
 
-        // Migração: substituir faixas antigas (nomenclatura com 'u GUB') pela nova
-        if (db.faixas && db.faixas.some(f => /\du GUB/.test(f))) {
+        // Migração: faixas desatualizadas — detecta se a lista nova não está presente
+        if (!db.faixas || !db.faixas.includes('9° GUB (Cinza)')) {
             db.faixas = [...MOCK_DATA.faixas];
             modified = true;
         }
 
-        // Migração: substituir categorias de peso antigas (lista plana sem prefixo de divisão)
-        if (db.categoriasPeso && db.categoriasPeso.length > 0 && !db.categoriasPeso[0].match(/^(Cad|Juv|S21|Sên|Mst)/)) {
+        // Migração: categorias de peso antigas (sem prefixo de divisão como 'Cad M')
+        if (!db.categoriasPeso || !db.categoriasPeso[0] || !db.categoriasPeso[0].match(/^(Cad|Juv|S21|Sên|Mst)/)) {
             db.categoriasPeso = [...MOCK_DATA.categoriasPeso];
             modified = true;
         }
@@ -387,20 +387,14 @@ function fetchFromSupabase() {
                             if (!remoteDB.periodizacao) remoteDB.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao));
                             remoteDB._owner_id = userId; // Marca o dono no dado remoto ao cachear
 
-                            // Migração: faixas antigas (padrão 'u GUB') → nova nomenclatura
-                            if (remoteDB.faixas && remoteDB.faixas.some(f => /\du GUB/.test(f))) {
-                                remoteDB.faixas = [...MOCK_DATA.faixas];
-                            }
-                            if (!remoteDB.faixas || remoteDB.faixas.length === 0) {
+                            // Migração: faixas desatualizadas
+                            if (!remoteDB.faixas || !remoteDB.faixas.includes('9° GUB (Cinza)')) {
                                 remoteDB.faixas = [...MOCK_DATA.faixas];
                             }
 
                             // Migração: categorias de peso antigas (sem prefixo de divisão)
-                            if (remoteDB.categoriasPeso && remoteDB.categoriasPeso.length > 0 &&
+                            if (!remoteDB.categoriasPeso || !remoteDB.categoriasPeso[0] ||
                                 !remoteDB.categoriasPeso[0].match(/^(Cad|Juv|S21|Sên|Mst)/)) {
-                                remoteDB.categoriasPeso = [...MOCK_DATA.categoriasPeso];
-                            }
-                            if (!remoteDB.categoriasPeso || remoteDB.categoriasPeso.length === 0) {
                                 remoteDB.categoriasPeso = [...MOCK_DATA.categoriasPeso];
                             }
 
