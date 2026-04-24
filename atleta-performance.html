@@ -736,11 +736,7 @@
             document.getElementById('displayPic').src = alunoData.avatar;
             document.getElementById('displayNome').innerText = alunoData.nome;
 
-            let faixaDisplay = alunoData.faixa;
-            if (faixaDisplay === '1º DAN (Preta)') {
-                faixaDisplay = 'Faixa preta 1° DAN';
-            }
-            document.getElementById('displayFaixa').innerText = faixaDisplay;
+            document.getElementById('displayFaixa').innerText = alunoData.faixa || '--';
 
             // document.getElementById('displaySubInfo').innerHTML = `Equipe: ${getTurmaName(alunoData.turmaId)}`;
 
