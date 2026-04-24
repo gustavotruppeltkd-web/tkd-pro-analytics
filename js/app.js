@@ -253,6 +253,18 @@ function loadDB() {
         db = JSON.parse(stored);
         if (!db.categoriasPeso) { db.categoriasPeso = [...(MOCK_DATA.categoriasPeso || [])]; modified = true; }
         if (!db.faixas) { db.faixas = [...MOCK_DATA.faixas]; modified = true; }
+
+        // Migração: substituir faixas antigas (nomenclatura com 'u GUB') pela nova
+        if (db.faixas && db.faixas.some(f => /\du GUB/.test(f))) {
+            db.faixas = [...MOCK_DATA.faixas];
+            modified = true;
+        }
+
+        // Migração: substituir categorias de peso antigas (lista plana sem prefixo de divisão)
+        if (db.categoriasPeso && db.categoriasPeso.length > 0 && !db.categoriasPeso[0].match(/^(Cad|Juv|S21|Sên|Mst)/)) {
+            db.categoriasPeso = [...MOCK_DATA.categoriasPeso];
+            modified = true;
+        }
         if (!db.treinadores) { db.treinadores = [...MOCK_DATA.treinadores]; modified = true; }
         if (!db.wellnessLogs) { db.wellnessLogs = [...MOCK_DATA.wellnessLogs]; modified = true; }
         if (!db.questionarios) { db.questionarios = [...MOCK_DATA.questionarios]; modified = true; }
