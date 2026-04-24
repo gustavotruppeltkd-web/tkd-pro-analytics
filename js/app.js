@@ -9,7 +9,36 @@ const MOCK_DATA = {
     planos: [],
     horarios: [],
     categoriasPeso: [
-        '-54kg', '-58kg', '-63kg', '-68kg', '-74kg', '-80kg', '-87kg', '+87kg'
+        // --- Cadete Masculino (12-14 anos) ---
+        'Cad M -33kg', 'Cad M -37kg', 'Cad M -41kg', 'Cad M -45kg', 'Cad M -49kg',
+        'Cad M -53kg', 'Cad M -57kg', 'Cad M -61kg', 'Cad M -65kg', 'Cad M +65kg',
+        // --- Cadete Feminino (12-14 anos) ---
+        'Cad F -29kg', 'Cad F -33kg', 'Cad F -37kg', 'Cad F -41kg', 'Cad F -44kg',
+        'Cad F -47kg', 'Cad F -51kg', 'Cad F -55kg', 'Cad F -59kg', 'Cad F +59kg',
+        // --- Juvenil Masculino (15-17 anos) ---
+        'Juv M -45kg', 'Juv M -48kg', 'Juv M -51kg', 'Juv M -55kg', 'Juv M -59kg',
+        'Juv M -63kg', 'Juv M -68kg', 'Juv M -73kg', 'Juv M -78kg', 'Juv M +78kg',
+        // --- Juvenil Feminino (15-17 anos) ---
+        'Juv F -42kg', 'Juv F -44kg', 'Juv F -46kg', 'Juv F -49kg', 'Juv F -52kg',
+        'Juv F -55kg', 'Juv F -59kg', 'Juv F -63kg', 'Juv F -68kg', 'Juv F +68kg',
+        // --- Sub-21 Masculino ---
+        'S21 M -54kg', 'S21 M -58kg', 'S21 M -63kg', 'S21 M -68kg',
+        'S21 M -74kg', 'S21 M -80kg', 'S21 M -87kg', 'S21 M +87kg',
+        // --- Sub-21 Feminino ---
+        'S21 F -46kg', 'S21 F -49kg', 'S21 F -53kg', 'S21 F -57kg',
+        'S21 F -62kg', 'S21 F -67kg', 'S21 F -73kg', 'S21 F +73kg',
+        // --- Adulto/Sênior Masculino ---
+        'Sên M -54kg', 'Sên M -58kg', 'Sên M -63kg', 'Sên M -68kg',
+        'Sên M -74kg', 'Sên M -80kg', 'Sên M -87kg', 'Sên M +87kg',
+        // --- Adulto/Sênior Feminino ---
+        'Sên F -46kg', 'Sên F -49kg', 'Sên F -53kg', 'Sên F -57kg',
+        'Sên F -62kg', 'Sên F -67kg', 'Sên F -73kg', 'Sên F +73kg',
+        // --- Master Masculino ---
+        'Mst M -54kg', 'Mst M -58kg', 'Mst M -63kg', 'Mst M -68kg',
+        'Mst M -74kg', 'Mst M -80kg', 'Mst M -87kg', 'Mst M +87kg',
+        // --- Master Feminino ---
+        'Mst F -46kg', 'Mst F -49kg', 'Mst F -53kg', 'Mst F -57kg',
+        'Mst F -62kg', 'Mst F -67kg', 'Mst F -73kg', 'Mst F +73kg'
     ],
     faixas: [
         '10° GUB (Branca)',
