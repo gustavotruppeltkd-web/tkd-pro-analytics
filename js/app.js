@@ -1131,11 +1131,15 @@ function renderSidebar() {
     const nav = document.getElementById('navMenuContainer');
     if (!nav) return;
     const turma = db.turmas ? db.turmas.find(t => String(t.id) === String(db.activeTurmaId)) : null;
+    const temTurma = !!(turma);
     const tipo = (turma && turma.tipo || '').toLowerCase();
     const isRendimento = tipo.includes('rendimento') || tipo.includes('competi\u00e7\u00e3o');
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     let menuItens = [];
-    if (isRendimento) {
+    if (!temTurma) {
+        // Sem turma selecionada: exibe apenas "Trocar de Turma"
+        menuItens = [];
+    } else if (isRendimento) {
         menuItens = [
             { href: 'dashboard-turma-dados.html', icon: 'ti-calendar-event', label: 'Vis\u00e3o da Equipe' },
             { href: 'dashboard-rendimento.html', icon: 'ti-activity', label: 'Monitoramento' },
