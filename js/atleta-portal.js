@@ -1141,8 +1141,19 @@
 
             if (!window.supabaseClient || !portalCoachId) return;
 
-            try {
-                // 1. Busca os dados atuais do treinador para não sobrescrever outros atletas
+            // Guarda snapshot das entradas DESTE atleta no momento do salvamento
+            const atletaArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
+            const minhasEntradas = {};
+            atletaArrays.forEach(function(key) {
+                minhasEntradas[key] = (window.db[key] || []).filter(function(e) {
+                    return String(e.atletaId) === String(atletaId);
+                });
+            });
+
+            const MAX_TENTATIVAS = 3;
+            for (let tentativa = 1; tentativa <= MAX_TENTATIVAS; tentativa++) {
+              try {
+                // 1. Busca os dados MAIS RECENTES do treinador (fresh fetch a cada tentativa)
                 const { data: rows, error: fetchErr } = await window.supabaseClient
                     .from('app_state')
                     .select('data')
@@ -1157,59 +1168,57 @@
 
                 const coachData = row.data;
 
-                // 2. Merge cirúrgico — só substitui as entradas DESTE atleta nos arrays relevantes
-                //    Entradas de outros atletas ficam intactas
-                const atletaArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
+                // 2. Merge cirúrgico — substitui apenas as entradas DESTE atleta
                 atletaArrays.forEach(function(key) {
-                    const minhasEntradas = (window.db[key] || []).filter(function(e) {
-                        return String(e.atletaId) === String(atletaId);
-                    });
                     const entradaOutros = (coachData[key] || []).filter(function(e) {
                         return String(e.atletaId) !== String(atletaId);
                     });
-                    coachData[key] = entradaOutros.concat(minhasEntradas);
+                    coachData[key] = entradaOutros.concat(minhasEntradas[key]);
                 });
 
                 coachData._last_updated = Date.now();
 
-                // 3. Salva de volta na linha do treinador (blob merge)
+                // 3. Salva de volta
                 const { error: saveErr } = await window.supabaseClient
                     .from('app_state')
                     .upsert({ project_id: portalCoachId, data: coachData });
 
                 if (saveErr) {
-                    console.error('savePortalDB upsert erro:', saveErr);
-                    showToast('Erro ao sincronizar: ' + (saveErr.message || saveErr.code || 'desconhecido'), 'error');
+                    console.error('savePortalDB upsert erro (tentativa ' + tentativa + '):', saveErr);
+                    if (tentativa === MAX_TENTATIVAS) {
+                        showToast('Erro ao sincronizar: ' + (saveErr.message || saveErr.code || 'desconhecido'), 'error');
+                    } else {
+                        await new Promise(r => setTimeout(r, 800 * tentativa));
+                        continue;
+                    }
                 } else {
+                    // 4. Verifica se nosso dado ainda está presente (detecta race condition)
+                    await new Promise(r => setTimeout(r, 600));
+                    const { data: verif } = await window.supabaseClient
+                        .from('app_state').select('data').eq('project_id', portalCoachId).limit(1);
+                    const verifData = verif && verif[0] && verif[0].data;
+                    const nossoDadoPresente = verifData && atletaArrays.every(function(key) {
+                        const remoto = (verifData[key] || []).filter(function(e) { return String(e.atletaId) === String(atletaId); });
+                        return remoto.length >= minhasEntradas[key].length;
+                    });
+
+                    if (!nossoDadoPresente && tentativa < MAX_TENTATIVAS) {
+                        console.warn('savePortalDB: race condition detectada, re-salvando (tentativa ' + tentativa + ')...');
+                        await new Promise(r => setTimeout(r, 500 * tentativa));
+                        continue;
+                    }
+
                     console.log('savePortalDB OK — atleta', atletaId, 'sincronizado com treinador', portalCoachId);
                     window.db = coachData;
                     localStorage.setItem('tkd_scout_db', JSON.stringify(coachData));
+                    break;
                 }
-
-                // 4. Dual-write: registros individuais em athlete_responses (para futuro RLS granular)
-                const responseRows = [
-                    ...((window.db.wellnessLogs || [])
-                        .filter(e => String(e.atletaId) === String(atletaId))
-                        .map(e => ({ coach_id: portalCoachId, athlete_id: atletaId, type: 'wellness', payload: e }))),
-                    ...((window.db.cargaTreino || [])
-                        .filter(e => String(e.atletaId) === String(atletaId))
-                        .map(e => ({ coach_id: portalCoachId, athlete_id: atletaId, type: 'carga', payload: e }))),
-                    ...((window.db.respostas || [])
-                        .filter(e => String(e.atletaId) === String(atletaId))
-                        .map(e => ({ coach_id: portalCoachId, athlete_id: atletaId, type: 'resposta', payload: e }))),
-                ];
-                if (responseRows.length > 0) {
-                    // Ignora erros — tabela pode não existir ainda (antes da migration)
-                    window.supabaseClient
-                        .from('athlete_responses')
-                        .upsert(responseRows, { ignoreDuplicates: true })
-                        .then(({ error }) => {
-                            if (error) console.warn('athlete_responses dual-write:', error.message);
-                        });
-                }
-            } catch (e) {
-                console.error('savePortalDB exception:', e);
+              } catch (e) {
+                console.error('savePortalDB exception (tentativa ' + tentativa + '):', e);
+                if (tentativa < MAX_TENTATIVAS) await new Promise(r => setTimeout(r, 800 * tentativa));
+              }
             }
+
         }
 
         // Realtime: ouve mudanças do TREINADOR e atualiza o portal sem apagar dados do atleta

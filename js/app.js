@@ -569,7 +569,6 @@ function setupRealtimeSubscription() {
     if (!window.supabaseClient) return;
 
     window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-        // Funciona com Supabase Auth OU com o fluxo de localStorage (tkd_coach_id)
         let userId = authData?.user?.id
             || localStorage.getItem('tkd_coach_id')
             || sessionStorage.getItem('tkd_coach_id');
@@ -580,34 +579,64 @@ function setupRealtimeSubscription() {
         }
 
         window._supabaseSubscribed = true;
+        window._realtimeUserId = userId;
         console.log('Realtime subscription ativa para project_id:', userId);
+
+        function applyRealtimeUpdate(remoteData) {
+            if (!remoteData) return;
+            console.log('Realtime: dados recebidos do atleta!');
+            window.db = remoteData;
+            db = remoteData;
+            lastSyncTime = remoteData._last_updated || Date.now();
+            localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
+
+            showToast('Atleta atualizou dados!', 'info');
+
+            if (typeof renderSemaforo === 'function') renderSemaforo();
+            if (typeof renderAlunosUI === 'function') renderAlunosUI();
+            if (typeof renderDashboard === 'function') renderDashboard();
+            if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
+            if (typeof buildAlerts === 'function') buildAlerts();
+            if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+            if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+        }
 
         window.supabaseClient
             .channel('public:app_state:' + userId)
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
-                const remoteData = payload.new.data;
-                if (!remoteData) return;
-
-                console.log('Realtime: dados recebidos do atleta!');
-                window.db = remoteData;
-                db = remoteData;
-                lastSyncTime = remoteData._last_updated || Date.now();
-                localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
-
-                showToast('Atleta atualizou dados!', 'info');
-
-                // Re-renderiza qualquer função disponível na página atual
-                if (typeof renderSemaforo === 'function') renderSemaforo();
-                if (typeof renderAlunosUI === 'function') renderAlunosUI();
-                if (typeof renderDashboard === 'function') renderDashboard();
-                if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
-                if (typeof buildAlerts === 'function') buildAlerts();
-                if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
-                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+                applyRealtimeUpdate(payload.new.data);
             })
             .subscribe((status) => {
                 console.log('Realtime status:', status);
+                if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || status === 'TIMED_OUT') {
+                    console.warn('Realtime desconectado (' + status + '). Reagendando reconexão...');
+                    window._supabaseSubscribed = false;
+                    // Tenta reconectar após 5 segundos
+                    setTimeout(() => setupRealtimeSubscription(), 5000);
+                }
             });
+
+        // Polling de segurança a cada 45 segundos — garante sincronização mesmo se o realtime falhar
+        if (!window._realtimePollingActive) {
+            window._realtimePollingActive = true;
+            setInterval(() => {
+                if (!window.supabaseClient || !window._realtimeUserId) return;
+                window.supabaseClient
+                    .from('app_state')
+                    .select('data')
+                    .eq('project_id', window._realtimeUserId)
+                    .limit(1)
+                    .then(({ data, error }) => {
+                        if (error || !data || !data[0] || !data[0].data) return;
+                        const remoteTs = data[0].data._last_updated || 0;
+                        const localTs = lastSyncTime || 0;
+                        if (remoteTs > localTs) {
+                            console.log('Polling detectou dados mais novos. Aplicando...');
+                            applyRealtimeUpdate(data[0].data);
+                        }
+                    });
+            }, 45000);
+        }
     });
 }
 
