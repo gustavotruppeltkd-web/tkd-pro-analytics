@@ -1378,18 +1378,15 @@
 
             const todayLog = logs[0];
 
+            const DOT_COLORS_POS = ['#ef4444','#ef4444','#f59e0b','#10b981','#10b981'];
+            const DOT_COLORS_NEG = ['#10b981','#10b981','#f59e0b','#ef4444','#ef4444'];
             const renderWellnessDots = (label, icon, value, reverseBad = false) => {
                 if (value === undefined) return '';
+                const palette = reverseBad ? DOT_COLORS_NEG : DOT_COLORS_POS;
                 let dots = '';
-                let color = 'var(--primary)';
-                if (reverseBad) {
-                    color = value >= 4 ? 'var(--red)' : (value >= 3 ? 'var(--yellow)' : 'var(--green)');
-                } else {
-                    color = value <= 2 ? 'var(--red)' : (value <= 3 ? 'var(--yellow)' : 'var(--green)');
-                }
 
                 for (let i = 1; i <= 5; i++) {
-                    const bg = i <= value ? color : 'rgba(255,255,255,0.1)';
+                    const bg = i <= value ? palette[i - 1] : 'rgba(255,255,255,0.1)';
                     dots += `<div style="width: 8px; height: 8px; border-radius: 50%; background: ${bg}; transition: 0.3s;"></div>`;
                 }
 
