@@ -537,7 +537,9 @@
                 else if (ta) respostasVal[p.id] = ta.value;
             });
             if (!window.db.respostas) window.db.respostas = [];
-            window.db.respostas.push({ id: Date.now(), atletaId, questionarioId: activeQId, data: today, respostas: respostasVal });
+            const respostaEntry = { id: Date.now(), atletaId, questionarioId: activeQId, data: today, respostas: respostasVal };
+            window.db.respostas.push(respostaEntry);
+            pushAthleteResponse('resposta', respostaEntry);
             savePortalDB();
             showToast('Respostas enviadas!');
             loadSelectedQ();
@@ -1053,6 +1055,7 @@
             window.db.wellnessLogs.push(log);
             // Backup dedicado — garante persistência mesmo se o merge do Supabase falhar
             localStorage.setItem('tkd_wellness_' + atletaId + '_' + today, JSON.stringify(log));
+            pushAthleteResponse('wellness', log);
             savePortalDB();
             showToast('Wellness salvo!');
             checkWellnessDone();
@@ -1093,6 +1096,7 @@
             const pseBkp = pseBkpRaw ? JSON.parse(pseBkpRaw) : [];
             pseBkp.push(novaEntrada);
             localStorage.setItem('tkd_pse_' + atletaId + '_' + today, JSON.stringify(pseBkp));
+            pushAthleteResponse('carga', novaEntrada);
             savePortalDB();
 
             // Reset fields — sem pré-seleção
@@ -1133,6 +1137,29 @@
 
         // ID do treinador cujos dados o portal está exibindo
         var portalCoachId = null;
+
+        // Insere em athlete_responses (tabela append-only) — fonte primária para o coach
+        // Não tem race condition: cada atleta insere uma linha nova, sem reler/regravar blob
+        async function pushAthleteResponse(type, payload) {
+            if (!window.supabaseClient || !portalCoachId) return;
+            try {
+                const { error } = await window.supabaseClient
+                    .from('athlete_responses')
+                    .insert({
+                        coach_id: portalCoachId,
+                        athlete_id: parseInt(atletaId),
+                        type: type,
+                        payload: payload
+                    });
+                if (error) {
+                    console.error('pushAthleteResponse erro (' + type + '):', error);
+                } else {
+                    console.log('athlete_responses INSERT OK:', type, 'id=' + payload.id);
+                }
+            } catch (e) {
+                console.error('pushAthleteResponse exception:', e);
+            }
+        }
 
         // Salva na linha do TREINADOR — merge cirúrgico: só toca arrays do atleta atual
         async function savePortalDB() {

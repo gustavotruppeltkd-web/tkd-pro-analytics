@@ -430,11 +430,68 @@ function fetchFromSupabase() {
                 if (typeof window.onDataLoaded === 'function') {
                     window.onDataLoaded();
                 }
+                // Mescla respostas append-only — fonte primária para dados de atletas
+                fetchAthleteResponses(userId);
             }).finally(() => {
                 isFetchingSupabase = false;
                 showSyncSpinner(false);
             });
     });
+}
+
+// Busca todas as respostas de athlete_responses e mescla em db (deduplicação por payload.id)
+// Esta tabela é append-only e a fonte de verdade — atletas nunca sobrescrevem o blob app_state
+function fetchAthleteResponses(userId) {
+    if (!window.supabaseClient || !userId) return Promise.resolve();
+    return window.supabaseClient
+        .from('athlete_responses')
+        .select('*')
+        .eq('coach_id', userId)
+        .order('submitted_at', { ascending: true })
+        .then(({ data, error }) => {
+            if (error) {
+                console.warn('fetchAthleteResponses erro:', error.code, error.message);
+                return;
+            }
+            if (!data || data.length === 0) return;
+            let added = 0;
+            data.forEach(row => {
+                if (mergeAthleteResponse(row, { silent: true })) added++;
+            });
+            if (added > 0) {
+                console.log('fetchAthleteResponses: ' + added + ' respostas novas mescladas em db');
+                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                if (typeof renderSemaforo === 'function') renderSemaforo();
+                if (typeof renderAlunosUI === 'function') renderAlunosUI();
+                if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
+                if (typeof buildAlerts === 'function') buildAlerts();
+                if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+            }
+        });
+}
+
+// Aplica uma linha de athlete_responses no db. Retorna true se algo novo foi adicionado.
+const ATHLETE_RESPONSE_TYPE_MAP = { wellness: 'wellnessLogs', carga: 'cargaTreino', resposta: 'respostas' };
+function mergeAthleteResponse(row) {
+    const key = ATHLETE_RESPONSE_TYPE_MAP[row.type];
+    if (!key) return false;
+    if (!db[key]) db[key] = [];
+    const payload = row.payload;
+    if (!payload || !payload.id) return false;
+    if (db[key].some(e => e.id === payload.id)) return false;
+
+    // Proteção contra entries antigas editadas/deletadas pelo atleta
+    // Se o app_state foi atualizado >5min APÓS a inserção da resposta e ainda assim
+    // ela não está lá, foi removida intencionalmente — não ressuscita.
+    const submittedAt = row.submitted_at ? new Date(row.submitted_at).getTime() : 0;
+    const lastAppStateUpdate = db._last_updated || 0;
+    const FIVE_MIN = 5 * 60 * 1000;
+    if (submittedAt > 0 && lastAppStateUpdate > submittedAt + FIVE_MIN) {
+        return false;
+    }
+
+    db[key].push(payload);
+    return true;
 }
 
 function renderUserProfile() {
@@ -616,6 +673,27 @@ function setupRealtimeSubscription() {
                 }
             });
 
+        // Realtime para athlete_responses — fonte primária de respostas de atletas
+        window.supabaseClient
+            .channel('public:athlete_responses:' + userId)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'athlete_responses', filter: 'coach_id=eq.' + userId }, payload => {
+                const row = payload.new;
+                if (!row) return;
+                if (mergeAthleteResponse(row)) {
+                    console.log('Realtime athlete_responses INSERT:', row.type, 'atleta=' + row.athlete_id);
+                    localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                    const labelMap = { wellness: 'Bem-estar', carga: 'Carga (PSE)', resposta: 'Resposta' };
+                    showToast((labelMap[row.type] || 'Resposta') + ' recebida de atleta!', 'info');
+                    if (typeof renderSemaforo === 'function') renderSemaforo();
+                    if (typeof renderAlunosUI === 'function') renderAlunosUI();
+                    if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
+                    if (typeof buildAlerts === 'function') buildAlerts();
+                    if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+                    if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+                }
+            })
+            .subscribe();
+
         // Polling de segurança a cada 45 segundos — garante sincronização mesmo se o realtime falhar
         if (!window._realtimePollingActive) {
             window._realtimePollingActive = true;
@@ -635,6 +713,8 @@ function setupRealtimeSubscription() {
                             applyRealtimeUpdate(data[0].data);
                         }
                     });
+                // Polling paralelo de athlete_responses — pega respostas que o realtime perdeu
+                fetchAthleteResponses(window._realtimeUserId);
             }, 45000);
         }
     });
