@@ -128,6 +128,26 @@ CREATE POLICY "Coaches can read own athlete data"
     FOR SELECT
     USING (coach_id = auth.uid());
 
+-- ── Realtime: habilita publicação de mudanças via WebSocket ──
+-- Sem isso, postgres_changes não dispara eventos. Esquecer disso causa o sync
+-- silenciosamente cair em fallback (polling) e perder janelas de tempo.
+DO $$
+BEGIN
+    BEGIN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.app_state;
+    EXCEPTION WHEN duplicate_object THEN
+        NULL; -- já estava
+    END;
+    BEGIN
+        ALTER PUBLICATION supabase_realtime ADD TABLE public.athlete_responses;
+    EXCEPTION WHEN duplicate_object THEN
+        NULL;
+    END;
+END $$;
+
+-- Verificação:
+-- SELECT schemaname, tablename FROM pg_publication_tables WHERE pubname = 'supabase_realtime';
+
 -- ── 5. A3 — Seed inicial: garante que o admin sempre esteja autorizado ──
 -- Execute ANTES de remover o bypass hardcoded do index.html
 INSERT INTO public.authorized_emails (email)
