@@ -694,28 +694,47 @@ function setupRealtimeSubscription() {
             })
             .subscribe();
 
-        // Polling de segurança a cada 45 segundos — garante sincronização mesmo se o realtime falhar
+        // Polling de segurança a cada 15 segundos — necessário porque o realtime do app_state
+        // falha silenciosamente (blob de 3MB excede limite de 250KB do Supabase Realtime)
         if (!window._realtimePollingActive) {
             window._realtimePollingActive = true;
-            setInterval(() => {
+
+            function runPoll() {
                 if (!window.supabaseClient || !window._realtimeUserId) return;
+                // Passo 1: busca só updated_at (sem o blob de 3MB) para detectar mudança
                 window.supabaseClient
                     .from('app_state')
-                    .select('data')
+                    .select('updated_at')
                     .eq('project_id', window._realtimeUserId)
                     .limit(1)
-                    .then(({ data, error }) => {
-                        if (error || !data || !data[0] || !data[0].data) return;
-                        const remoteTs = data[0].data._last_updated || 0;
+                    .then(({ data: tsData, error: tsErr }) => {
+                        if (tsErr || !tsData || !tsData[0]) return;
+                        const remoteTs = new Date(tsData[0].updated_at).getTime();
                         const localTs = lastSyncTime || 0;
                         if (remoteTs > localTs) {
-                            console.log('Polling detectou dados mais novos. Aplicando...');
-                            applyRealtimeUpdate(data[0].data);
+                            console.log('Polling: mudança detectada. Buscando dados...');
+                            // Passo 2: só então baixa o blob completo
+                            window.supabaseClient
+                                .from('app_state')
+                                .select('data')
+                                .eq('project_id', window._realtimeUserId)
+                                .limit(1)
+                                .then(({ data, error }) => {
+                                    if (error || !data || !data[0] || !data[0].data) return;
+                                    applyRealtimeUpdate(data[0].data);
+                                });
                         }
                     });
-                // Polling paralelo de athlete_responses — pega respostas que o realtime perdeu
+                // Polling paralelo de athlete_responses (payload pequeno, sem limite de tamanho)
                 fetchAthleteResponses(window._realtimeUserId);
-            }, 45000);
+            }
+
+            setInterval(runPoll, 15000);
+
+            // Também roda ao voltar para a aba — coach vê dados frescos ao retornar
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') runPoll();
+            });
         }
     });
 }
