@@ -112,11 +112,18 @@ function resolveDeviceMode() {
 function pdfStr(str) {
     if (str === null || str === undefined) return '';
     return String(str)
-        .normalize('NFD')                    // decompõe: "ã" → "a" + combining ~
-        .replace(/[\u0300-\u036f]/g, '')     // remove diacríticos (acentos, til, cedilha-base)
-        .replace(/ç/gi, 'c')                 // ç não é decomposto pelo NFD — tratar à mão
-        .replace(/Ç/g, 'C')
-        .replace(/[^\x00-\x7F]/g, '?');      // qualquer outro não-ASCII vira ?
+        .normalize('NFD')
+        .replace(/[̀-ͯ]/g, '')     // remove diacriticos
+        .replace(/[°º]/g, 'o')     // grau/ordinal: "1o DAN", "10o GUB"
+        .replace(/ª/g, 'a')             // ordinal feminino
+        .replace(/[×✕✗]/g, 'x')
+        .replace(/[–—]/g, '-')     // travessao / meia-risca
+        .replace(/[‘’]/g, "'")     // aspas simples tipograficas
+        .replace(/[“”]/g, '"')     // aspas duplas tipograficas
+        .replace(/[·•‣]/g, '.') // bullet / ponto mediano
+        .replace(/ /g, ' ')             // espaco nao-quebavel
+        .replace(/…/g, '...')           // reticencias
+        .replace(/[^\x00-\x7F]/g, '');       // qualquer outro nao-ASCII: remove
 }
 
 // Aplica pdfStr em todos os doc.text() e splitTextToSize de um objeto jsPDF
