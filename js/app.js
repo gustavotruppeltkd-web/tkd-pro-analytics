@@ -642,10 +642,14 @@ function setupRealtimeSubscription() {
         function applyRealtimeUpdate(remoteData) {
             if (!remoteData) return;
             console.log('Realtime: dados recebidos do atleta!');
+            // Preserva o activeTurmaId local — é estado de navegação do treinador,
+            // não deve ser sobrescrito por saves de atletas
+            const activeTurmaIdLocal = db.activeTurmaId;
             window.db = remoteData;
             db = remoteData;
+            if (activeTurmaIdLocal) db.activeTurmaId = activeTurmaIdLocal;
             lastSyncTime = remoteData._last_updated || Date.now();
-            localStorage.setItem('tkd_scout_db', JSON.stringify(remoteData));
+            localStorage.setItem('tkd_scout_db', JSON.stringify(db));
 
             showToast('Atleta atualizou dados!', 'info');
 
