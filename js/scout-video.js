@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     else if (ev.acao === 'Falta Sofrida') scoreAtleta += 1;
                 });
 
-                const cleanResult = scoreAtleta > scoreAdversario ? 'vitoria' : scoreAtleta < scoreAdversario ? 'derrota' : 'empate';
+                const cleanResult = scoreAtleta > scoreAdversario ? 'vitoria' : scoreAtleta < scoreAdversario ? 'derrota' : 'ponto_ouro';
 
                 roundsData.push({
                     round: currentRound,

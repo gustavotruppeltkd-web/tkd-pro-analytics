@@ -1537,11 +1537,12 @@ function openScoutDetail(scoutId) {
                     const sc = roundScores[r.round] || { a: 0, b: 0 };
                     const scoreStr = `${sc.a} x ${sc.b}`;
                     const col = r.result === 'vitoria' ? 'var(--green)' : r.result === 'derrota' ? 'var(--red)' : 'var(--yellow)';
+                    const resultLabel = r.result === 'vitoria' ? 'VITÓRIA' : r.result === 'derrota' ? 'DERROTA' : 'PONTO DE OURO';
                     return `
                     <div style="background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; min-width: 100px;">
                         <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Round ${r.round}</div>
                         <div style="font-size: 20px; font-weight: 800; color: ${col};">${scoreStr}</div>
-                        <div style="font-size: 11px; color: ${col}; margin-top: 2px;">${r.result.toUpperCase()}</div>
+                        <div style="font-size: 11px; color: ${col}; margin-top: 2px;">${resultLabel}</div>
                     </div>`;
                 }).join('')}
                 ${roundResultSummary}
@@ -1960,9 +1961,9 @@ async function downloadScoutPDF(scoutId) {
     doc.text(`EVENTO: ${pdfStr(scout.evento || 'N/A').toUpperCase()}`, 15, 28);
     doc.text(`DATA: ${dataFormatada}`, 145, 23);
     // Resultado da luta (não score acumulado — score zera a cada round no TKD)
-    const pdfResultado = scout.resultadoLuta || (pdfRoundsV > pdfRoundsP ? 'vitoria' : pdfRoundsV < pdfRoundsP ? 'derrota' : 'empate');
-    const pdfResultadoLabel = pdfResultado === 'vitoria' ? 'VITORIA' : pdfResultado === 'derrota' ? 'DERROTA' : 'EMPATE';
-    const pdfResultadoRgb = pdfResultado === 'vitoria' ? [34, 197, 94] : pdfResultado === 'derrota' ? [239, 68, 68] : [245, 158, 11];
+    const pdfResultado = scout.resultadoLuta || (pdfRoundsV > pdfRoundsP ? 'vitoria' : 'derrota');
+    const pdfResultadoLabel = pdfResultado === 'vitoria' ? 'VITORIA' : 'DERROTA';
+    const pdfResultadoRgb = pdfResultado === 'vitoria' ? [34, 197, 94] : [239, 68, 68];
     doc.setFontSize(12); doc.setFont('helvetica', 'bold');
     doc.setTextColor(...pdfResultadoRgb);
     doc.text(pdfResultadoLabel, 145, 29);
