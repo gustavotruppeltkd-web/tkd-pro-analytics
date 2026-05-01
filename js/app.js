@@ -1947,7 +1947,7 @@ async function downloadScoutPDF(scoutId) {
 
     // Calcula quantas linhas o header precisa
     const hasRoundScores = pdfRoundKeys.length > 0;
-    const headerH = hasRoundScores ? 42 : 35;
+    const headerH = hasRoundScores ? 42 : 38;
 
     // --- Header ---
     doc.setFillColor(30, 41, 59);
@@ -1959,17 +1959,23 @@ async function downloadScoutPDF(scoutId) {
     doc.text(`ATLETA: ${pdfStr(nomeAtleta).toUpperCase()}`, 15, 23);
     doc.text(`EVENTO: ${pdfStr(scout.evento || 'N/A').toUpperCase()}`, 15, 28);
     doc.text(`DATA: ${dataFormatada}`, 145, 23);
+    // Resultado da luta (não score acumulado — score zera a cada round no TKD)
+    const pdfResultado = scout.resultadoLuta || (pdfRoundsV > pdfRoundsP ? 'vitoria' : pdfRoundsV < pdfRoundsP ? 'derrota' : 'empate');
+    const pdfResultadoLabel = pdfResultado === 'vitoria' ? 'VITORIA' : pdfResultado === 'derrota' ? 'DERROTA' : 'EMPATE';
+    const pdfResultadoRgb = pdfResultado === 'vitoria' ? [34, 197, 94] : pdfResultado === 'derrota' ? [239, 68, 68] : [245, 158, 11];
     doc.setFontSize(12); doc.setFont('helvetica', 'bold');
-    doc.text(`SCORE: ${ofensiva.pontos} x ${defensiva.pontos}`, 145, 29);
+    doc.setTextColor(...pdfResultadoRgb);
+    doc.text(pdfResultadoLabel, 145, 29);
+    doc.setTextColor(255, 255, 255);
     if (hasRoundScores) {
         doc.setFontSize(8); doc.setFont('helvetica', 'normal');
         doc.setTextColor(200, 220, 255);
+        // Placar por round: R1: 3x2 | R2: 1x4
         doc.text(pdfStr(pdfRoundSummary), 15, 35);
-        if (pdfRoundKeys.length >= 2) {
-            doc.setFontSize(8); doc.setFont('helvetica', 'bold');
-            doc.setTextColor(255, 255, 200);
-            doc.text(`ROUNDS: ${pdfRoundsV} x ${pdfRoundsP}`, 145, 35);
-        }
+        // Rounds ganhos: X x Y
+        doc.setFontSize(8); doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 200);
+        doc.text(`ROUNDS GANHOS: ${pdfRoundsV} x ${pdfRoundsP}`, 145, 35);
     }
 
     let yPos = headerH + 8;
