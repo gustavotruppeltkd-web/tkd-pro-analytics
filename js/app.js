@@ -1550,40 +1550,58 @@ function openScoutDetail(scoutId) {
         `;
     }
 
-    // Timeline das Ações
+    // Timeline das Ações — agrupada por round para não misturar eventos
     let timelineHtml = '';
     const acoes = scout.acoes || [];
     if (acoes.length === 0) {
         timelineHtml = '<p style="color: var(--text-muted); text-align: center;">Nenhuma ação registrada nesta luta.</p>';
     } else {
-        timelineHtml = acoes.map(ev => {
-            if (ev.isDivider) {
-                return `
-                    <div style="margin: 20px 0; padding: 8px; background: rgba(59, 130, 246, 0.1); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 6px; text-align: center; color: var(--primary); font-size: 12px; font-weight: 600;">
-                        Fim do Round ${ev.round} - ${ev.result.toUpperCase()}
-                    </div>
-                `;
-            }
+        // Agrupa eventos e dividers por round, mantendo ordem de inserção
+        const roundGroups = {};
+        acoes.forEach(ev => {
+            const r = ev.round || 1;
+            if (!roundGroups[r]) roundGroups[r] = { events: [], divider: null };
+            if (ev.isDivider) roundGroups[r].divider = ev;
+            else roundGroups[r].events.push(ev);
+        });
 
+        const renderEvent = ev => {
             let detailsArr = [];
             if (ev.tecnica) detailsArr.push(ev.tecnica + (ev.obsTecnica ? ` (${ev.obsTecnica})` : ''));
             if (ev.alvo) detailsArr.push(ev.alvo + (ev.subAlvo ? ` (${ev.subAlvo})` : ''));
             if (ev.perna) detailsArr.push(ev.perna);
             if (ev.base) detailsArr.push(`Base ${ev.base}`);
             if (ev.local) detailsArr.push(ev.local + (ev.subLocal ? ` (${ev.subLocal})` : ''));
-
             const resStr = ev.resultado ? ` - <span style="color: ${ev.resultado === 'Com ponto' ? 'var(--green)' : 'var(--text-muted)'}; font-weight: 600;">${ev.resultado}</span>` : '';
-
             return `
-                <div style="display: flex; gap: 16px; margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
+                <div style="display: flex; gap: 16px; margin-bottom: 10px; padding: 10px 12px; background: rgba(255,255,255,0.02); border-radius: 8px; align-items: flex-start;">
                     <div style="background: var(--bg-hover); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-family: monospace; font-weight: 700;">${ev.formattedTime}</div>
                     <div style="flex: 1;">
-                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'Ação'} ${resStr}</div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">${ev.acao || 'Ação'}${resStr}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">${detailsArr.join(' · ')}</div>
                     </div>
-                    <div style="font-size: 10px; color: var(--text-muted); font-weight: 700;">R${ev.round}</div>
-                </div>
-            `;
+                </div>`;
+        };
+
+        timelineHtml = Object.keys(roundGroups).sort((a, b) => Number(a) - Number(b)).map(rKey => {
+            const g = roundGroups[rKey];
+            const divider = g.divider;
+            const divResult = divider ? (divider.result === 'vitoria' ? 'VITÓRIA' : divider.result === 'derrota' ? 'DERROTA' : 'PONTO DE OURO') : null;
+            const divColor = divider ? (divider.result === 'vitoria' ? 'var(--green)' : divider.result === 'derrota' ? 'var(--red)' : 'var(--yellow)') : 'var(--primary)';
+            const divScore = divider ? ` — ${divider.scoreAtleta} x ${divider.scoreAdversario}` : '';
+            const eventsHtml = g.events.sort((a, b) => (a.time || 0) - (b.time || 0)).map(renderEvent).join('');
+            const dividerHtml = divResult
+                ? `<div style="margin: 8px 0 20px; padding: 8px 12px; background: rgba(255,255,255,0.04); border: 1px solid ${divColor}44; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 12px; font-weight: 700; color: ${divColor};">Fim do Round ${rKey}${divScore}</span>
+                    <span style="font-size: 11px; font-weight: 800; color: ${divColor};">${divResult}</span>
+                   </div>`
+                : '';
+            return `
+                <div style="margin-bottom: 8px;">
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border-color);">Round ${rKey}</div>
+                    ${eventsHtml || '<div style="font-size: 12px; color: var(--text-muted); padding: 8px 0;">Nenhuma ação registrada neste round.</div>'}
+                    ${dividerHtml}
+                </div>`;
         }).join('');
     }
 
