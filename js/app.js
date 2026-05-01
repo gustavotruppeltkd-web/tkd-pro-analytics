@@ -1622,7 +1622,7 @@ function openScoutDetail(scoutId) {
     const totalAtaques = Object.values(tecnicaCount).reduce((a, b) => a + b, 0);
     let tecnicasHtml = topTecnicas.length > 0 ? topTecnicas.map(t => {
         const pct = Math.round((t[1] / totalAtaques) * 100);
-        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">?${t[0]}: ${pct}%</div>`;
+        return `<div style="font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${t[0]}">${t[0]}: ${pct}%</div>`;
     }).join('') : '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
 
     let topFaltaHtml = '<div style="font-size: 13px; color: var(--text-muted);">Nenhuma</div>';
