@@ -169,25 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        renderTechniquesList();
         renderTechniquesGrid();
-
-        // Add technique listener
-        document.getElementById('btnAddTechnique').addEventListener('click', () => {
-            const input = document.getElementById('newTechniqueName');
-            const val = input.value.trim();
-            if (val && !customTechniques.includes(val)) {
-                customTechniques.push(val);
-                localStorage.setItem('scout_techniques', JSON.stringify(customTechniques));
-                input.value = '';
-                renderTechniquesList();
-                renderTechniquesGrid();
-            }
-        });
-
-        document.getElementById('newTechniqueName').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') document.getElementById('btnAddTechnique').click();
-        });
 
         // Source Toggle
         document.getElementById('btnYoutubeSource').addEventListener('click', (e) => setVideoSource('youtube', e.target));
@@ -570,25 +552,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==== TECHNIQUES MANAGEMENT ====
-    function renderTechniquesList() {
-        const container = document.getElementById('techniquesList');
-        if (!container) return;
-        container.innerHTML = '';
-        customTechniques.forEach(t => {
-            const span = document.createElement('span');
-            span.className = 'tech-tag';
-            span.innerHTML = `${t} <button class="remove-btn" onclick="removeTechnique('${t}')"><i class="ti ti-x"></i></button>`;
-            container.appendChild(span);
-        });
-    }
-
     window.removeTechnique = function (name) {
         customTechniques = customTechniques.filter(t => t !== name);
         localStorage.setItem('scout_techniques', JSON.stringify(customTechniques));
-        renderTechniquesList();
         renderTechniquesGrid();
-
-        // If the removed technique was selected, clear it
         if (currentScoutState.tecnica === name) {
             currentScoutState.tecnica = null;
             updateSummaryPreview();
@@ -598,18 +565,77 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTechniquesGrid() {
         const container = document.getElementById('techniquesGrid');
         container.innerHTML = '';
+
         customTechniques.forEach(t => {
             const btn = document.createElement('button');
             btn.className = 'scout-opt-btn act-tecnica';
             btn.dataset.val = t;
             btn.dataset.group = 'tecnica';
-            btn.innerText = t;
-            btn.style.flex = "1 1 calc(33.333% - 8px)";
-
+            btn.style.cssText = 'flex: 1 1 calc(33.333% - 8px); position: relative; padding-right: 20px;';
             if (currentScoutState.tecnica === t) btn.classList.add('active');
+
+            const label = document.createElement('span');
+            label.textContent = t;
+            btn.appendChild(label);
+
+            const del = document.createElement('span');
+            del.textContent = '×';
+            del.title = 'Excluir';
+            del.style.cssText = 'position:absolute;top:3px;right:5px;font-size:12px;opacity:0.45;line-height:1;cursor:pointer;';
+            del.addEventListener('click', e => { e.stopPropagation(); window.removeTechnique(t); });
+            btn.appendChild(del);
 
             container.appendChild(btn);
         });
+
+        // Botão "+" para adicionar nova técnica inline
+        const addBtn = document.createElement('button');
+        addBtn.className = 'scout-opt-btn';
+        addBtn.id = 'btnAddTechInGrid';
+        addBtn.title = 'Adicionar técnica';
+        addBtn.innerHTML = '<i class="ti ti-plus"></i>';
+        addBtn.style.cssText = 'flex: 0 0 36px; width: 36px; padding: 0;';
+        addBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (document.getElementById('inlineTechInput')) {
+                document.getElementById('inlineTechInput').focus();
+                return;
+            }
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'display:flex;gap:4px;flex:1 1 140px;';
+
+            const inp = document.createElement('input');
+            inp.id = 'inlineTechInput';
+            inp.type = 'text';
+            inp.className = 'form-control';
+            inp.placeholder = 'Nome da técnica';
+            inp.style.cssText = 'font-size:12px;padding:4px 8px;flex:1;min-width:0;';
+
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn btn-primary';
+            saveBtn.style.cssText = 'padding:0 10px;';
+            saveBtn.innerHTML = '<i class="ti ti-check"></i>';
+
+            const doSave = () => {
+                const val = inp.value.trim();
+                if (val && !customTechniques.includes(val)) {
+                    customTechniques.push(val);
+                    localStorage.setItem('scout_techniques', JSON.stringify(customTechniques));
+                }
+                renderTechniquesGrid();
+            };
+
+            saveBtn.addEventListener('click', e2 => { e2.stopPropagation(); doSave(); });
+            inp.addEventListener('keypress', e2 => { if (e2.key === 'Enter') doSave(); });
+            inp.addEventListener('keydown', e2 => { if (e2.key === 'Escape') renderTechniquesGrid(); });
+
+            wrapper.appendChild(inp);
+            wrapper.appendChild(saveBtn);
+            container.insertBefore(wrapper, addBtn);
+            inp.focus();
+        });
+
+        container.appendChild(addBtn);
     }
 
     function renderSubAlvos(alvoSelecionado) {
