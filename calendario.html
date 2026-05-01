@@ -296,8 +296,8 @@
                         Mensal</button>
                 </div>
                 <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-outline" onclick="downloadYearlyCalendar()">
-                        <i class="ti ti-download"></i> Baixar Calendário do Ano
+                    <button class="btn btn-outline" onclick="abrirModalPeriodoPDF()">
+                        <i class="ti ti-download"></i> Baixar Calendário em PDF
                     </button>
                     <button class="btn btn-primary" onclick="openModalEvent()">
                         <i class="ti ti-plus"></i> Novo Evento
@@ -336,6 +336,33 @@
     </div>
 
     <!-- Modal Novo Evento -->
+    <!-- Modal: Período do PDF -->
+    <div class="modal-overlay" id="modalPeriodoPDF">
+        <div class="modal-content" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Baixar Calendário em PDF</h2>
+                <button class="btn-close" onclick="document.getElementById('modalPeriodoPDF').classList.remove('active')"><i class="ti ti-x"></i></button>
+            </div>
+            <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Escolha o período que deseja exportar.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+                <div class="form-group">
+                    <label style="font-size:13px;color:var(--text-muted);margin-bottom:6px;display:block;">De (mês/ano)</label>
+                    <select id="pdfMesInicio" class="form-control" style="margin-bottom:8px;"></select>
+                    <input type="number" id="pdfAnoInicio" class="form-control" min="2020" max="2040" style="width:100%;box-sizing:border-box;">
+                </div>
+                <div class="form-group">
+                    <label style="font-size:13px;color:var(--text-muted);margin-bottom:6px;display:block;">Até (mês/ano)</label>
+                    <select id="pdfMesFim" class="form-control" style="margin-bottom:8px;"></select>
+                    <input type="number" id="pdfAnoFim" class="form-control" min="2020" max="2040" style="width:100%;box-sizing:border-box;">
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="document.getElementById('modalPeriodoPDF').classList.remove('active')">Cancelar</button>
+                <button class="btn btn-primary" onclick="confirmarDownloadPDF()"><i class="ti ti-download"></i> Baixar PDF</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modalEvent">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
@@ -659,107 +686,141 @@
             }
         }
 
-        function downloadYearlyCalendar() {
-            const { jsPDF } = window.jspdf;
-            const doc = patchDocText(new jsPDF());
-            const currentYear = new Date().getFullYear();
+        const MONTHS_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+        const MONTHS_PDF = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
 
-            // Filtra e ordena eventos do ano atual
-            const yearlyEvents = db.eventos
-                .filter(ev => new Date(ev.data + "T00:00:00").getFullYear() === currentYear)
-                .sort((a, b) => new Date(a.data) - new Date(b.data));
+        function abrirModalPeriodoPDF() {
+            const now = new Date();
+            const ano = now.getFullYear();
+            // Preenche os selects de mês
+            ['pdfMesInicio','pdfMesFim'].forEach(id => {
+                const sel = document.getElementById(id);
+                sel.innerHTML = MONTHS_PT.map((m, i) => `<option value="${i}">${m}</option>`).join('');
+            });
+            // Defaults: janeiro do ano atual → dezembro do ano atual
+            document.getElementById('pdfMesInicio').value = '0';
+            document.getElementById('pdfAnoInicio').value = ano;
+            document.getElementById('pdfMesFim').value = '11';
+            document.getElementById('pdfAnoFim').value = ano;
+            document.getElementById('modalPeriodoPDF').classList.add('active');
+        }
 
-            if (yearlyEvents.length === 0) {
-                showToast('Nenhum evento encontrado para o ano atual.', 'error');
+        function confirmarDownloadPDF() {
+            const mesInicio = parseInt(document.getElementById('pdfMesInicio').value);
+            const anoInicio = parseInt(document.getElementById('pdfAnoInicio').value);
+            const mesFim = parseInt(document.getElementById('pdfMesFim').value);
+            const anoFim = parseInt(document.getElementById('pdfAnoFim').value);
+
+            const inicio = new Date(anoInicio, mesInicio, 1);
+            const fim = new Date(anoFim, mesFim + 1, 0); // último dia do mês final
+
+            if (inicio > fim) {
+                showToast('A data inicial deve ser anterior à final.', 'error');
                 return;
             }
 
-            // Configurações Estéticas
-            const primaryColor = [37, 99, 235]; // Blue
+            document.getElementById('modalPeriodoPDF').classList.remove('active');
+            downloadYearlyCalendar(inicio, fim);
+        }
+
+        function downloadYearlyCalendar(dataInicio, dataFim) {
+            // Defaults: ano corrente inteiro (para compatibilidade com chamadas antigas)
+            if (!dataInicio) {
+                const y = new Date().getFullYear();
+                dataInicio = new Date(y, 0, 1);
+                dataFim = new Date(y, 11, 31);
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = patchDocText(new jsPDF());
+
+            // Filtra eventos dentro do período
+            const eventos = (db.eventos || [])
+                .filter(ev => {
+                    const d = new Date(ev.data + "T00:00:00");
+                    return d >= dataInicio && d <= dataFim;
+                })
+                .sort((a, b) => new Date(a.data) - new Date(b.data));
+
+            if (eventos.length === 0) {
+                showToast('Nenhum evento encontrado no período selecionado.', 'error');
+                return;
+            }
+
+            const primaryColor = [37, 99, 235];
             const textColor = [31, 41, 55];
             const secondaryText = [107, 114, 128];
 
-            // Cabeçalho do PDF
+            // Título dinâmico baseado no período
+            const periodoLabel = (() => {
+                const mesIni = MONTHS_PDF[dataInicio.getMonth()];
+                const anoIni = dataInicio.getFullYear();
+                const mesFim = MONTHS_PDF[dataFim.getMonth()];
+                const anoFim = dataFim.getFullYear();
+                if (anoIni === anoFim && dataInicio.getMonth() === 0 && dataFim.getMonth() === 11)
+                    return `CALENDÁRIO ANUAL - ${anoIni}`;
+                if (anoIni === anoFim)
+                    return `CALENDÁRIO ${mesIni} A ${mesFim} - ${anoIni}`;
+                return `CALENDÁRIO ${mesIni}/${anoIni} A ${mesFim}/${anoFim}`;
+            })();
+
+            // Cabeçalho
             doc.setFillColor(...primaryColor);
             doc.rect(0, 0, 210, 40, 'F');
-
             doc.setTextColor(255, 255, 255);
-            doc.setFontSize(22);
+            doc.setFontSize(18);
             doc.setFont("helvetica", "bold");
-            doc.text("CALENDÁRIO ANUAL - " + currentYear, 15, 20);
-
+            doc.text(periodoLabel, 15, 20);
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            doc.text("PRO COACH ANALYTICS | Planejamento da Equipe", 15, 28);
+            doc.text("PRO COACH ANALYTICS | Planejamento da Equipe", 15, 30);
 
             let currentY = 55;
-            const months = [
-                "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO",
-                "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"
-            ];
 
-            // Agrupa por mês
-            const eventsByMonth = {};
-            yearlyEvents.forEach(ev => {
-                const month = new Date(ev.data + "T00:00:00").getMonth();
-                if (!eventsByMonth[month]) eventsByMonth[month] = [];
-                eventsByMonth[month].push(ev);
+            // Agrupa por ano+mês para suportar períodos multi-ano
+            const grupos = {};
+            eventos.forEach(ev => {
+                const d = new Date(ev.data + "T00:00:00");
+                const chave = d.getFullYear() * 100 + d.getMonth(); // ex: 202601
+                if (!grupos[chave]) grupos[chave] = { ano: d.getFullYear(), mes: d.getMonth(), events: [] };
+                grupos[chave].events.push(ev);
             });
 
-            // Itera pelos meses
-            for (let m = 0; m < 12; m++) {
-                if (!eventsByMonth[m]) continue;
+            Object.keys(grupos).sort((a, b) => a - b).forEach(chave => {
+                const g = grupos[chave];
+                const tituloMes = g.ano !== dataInicio.getFullYear() || g.ano !== dataFim.getFullYear()
+                    ? `${MONTHS_PDF[g.mes]} ${g.ano}`
+                    : MONTHS_PDF[g.mes];
 
-                // Verifica quebra de página
-                if (currentY > 250) {
-                    doc.addPage();
-                    currentY = 20;
-                }
+                if (currentY > 250) { doc.addPage(); currentY = 20; }
 
-                // Título do Mês
                 doc.setTextColor(...primaryColor);
                 doc.setFontSize(14);
                 doc.setFont("helvetica", "bold");
-                doc.text(months[m], 15, currentY);
+                doc.text(tituloMes, 15, currentY);
                 currentY += 2;
                 doc.setDrawColor(...primaryColor);
                 doc.setLineWidth(0.5);
                 doc.line(15, currentY, 195, currentY);
                 currentY += 10;
 
-                // Eventos do Mês
-                eventsByMonth[m].forEach(ev => {
-                    const d = new Date(ev.data + "T00:00:00");
-                    const dateStr = d.toLocaleDateString('pt-BR');
-
-                    // Verifica quebra de página por evento
-                    if (currentY > 270) {
-                        doc.addPage();
-                        currentY = 20;
-                    }
-
-                    // Card do Evento (Simulado no PDF)
+                g.events.forEach(ev => {
+                    if (currentY > 270) { doc.addPage(); currentY = 20; }
+                    const dateStr = new Date(ev.data + "T00:00:00").toLocaleDateString('pt-BR');
                     doc.setTextColor(...textColor);
                     doc.setFontSize(11);
                     doc.setFont("helvetica", "bold");
                     doc.text(`${dateStr} - ${ev.titulo}`, 20, currentY);
-
+                    currentY += 6;
                     doc.setFontSize(9);
                     doc.setFont("helvetica", "normal");
                     doc.setTextColor(...secondaryText);
-                    currentY += 6;
                     doc.text(`Tipo: ${ev.tipo} | Local: ${ev.local || 'N/A'}`, 25, currentY);
-
-                    if (ev.organizador) {
-                        currentY += 5;
-                        doc.text(`Organizador: ${ev.organizador}`, 25, currentY);
-                    }
-
+                    if (ev.organizador) { currentY += 5; doc.text(`Organizador: ${ev.organizador}`, 25, currentY); }
                     currentY += 10;
                 });
-
-                currentY += 5; // Espaço extra após o mês
-            }
+                currentY += 5;
+            });
 
             // Rodapé
             const pageCount = doc.internal.getNumberOfPages();
@@ -771,7 +832,12 @@
                 doc.text(`Página ${i} de ${pageCount}`, 195, 290, { align: 'right' });
             }
 
-            doc.save(`Calendario_ProCoach_${currentYear}.pdf`);
+            const anoIni = dataInicio.getFullYear();
+            const anoFimVal = dataFim.getFullYear();
+            const nomeArquivo = anoIni === anoFimVal
+                ? `Calendario_ProCoach_${anoIni}.pdf`
+                : `Calendario_ProCoach_${anoIni}_${anoFimVal}.pdf`;
+            doc.save(nomeArquivo);
             showToast('Calendário baixado com sucesso!');
         }
 
