@@ -1372,7 +1372,7 @@
             }).catch(err => {
                 console.error('Erro ao gerar PDF:', err);
                 element.style.display = 'none';
-                alert('Erro ao gerar o contrato. Verifique o console.');
+                showToast('Erro ao gerar o contrato. Verifique o console.', 'error');
             });
         }
 

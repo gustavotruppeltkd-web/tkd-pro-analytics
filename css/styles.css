@@ -60,24 +60,6 @@
     --ob-error:      #f87171;
 }
 
-[data-theme="light"] {
-    --bg-dark: #f8fafc;
-    --bg-sidebar: #ffffff;
-    --bg-card: #ffffff;
-    --bg-hover: #f1f5f9;
-
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-
-    --border-color: rgba(0, 0, 0, 0.1);
-
-    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-
-    /* Keep primary and alert colors the same, or gently tweak */
-    --green-bg: rgba(16, 185, 129, 0.1);
-    --yellow-bg: rgba(245, 158, 11, 0.1);
-    --red-bg: rgba(239, 68, 68, 0.1);
-}
 
 * {
     margin: 0;

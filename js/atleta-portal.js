@@ -1,4 +1,4 @@
-        // -- INIT --
+﻿        // -- INIT --
         const params = new URLSearchParams(location.search);
         const atletaId = parseInt(
             params.get('atleta') ||
@@ -184,12 +184,12 @@
             });
         }
 
-        // â”€â”€ COMPETITIONS â”€â”€
+        // ── COMPETITIONS ──
         function renderCompetitions() {
             // Removido a pedido do usuário: O painel de competições foi removido do HTML.
         }
 
-        // â”€â”€ MEDALS â”€â”€
+        // ── MEDALS ──
         function renderMedals() {
             // Busca nas duas fontes: db.competicoes (legado) e db.eventos[].participantes (atual)
             const medalColocacoes = ['Ouro', 'Prata', 'Bronze'];
@@ -256,7 +256,7 @@
             medalsEl.innerHTML = `<div class="medals-grid">${html}</div>`;
         }
 
-        // â”€â”€ TREINO â”€â”€
+        // ── TREINO ──
         function renderTreino() {
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -309,7 +309,7 @@
             }).join('');
         }
 
-        // â”€â”€ SCHEDULE â”€â”€
+        // ── SCHEDULE ──
         function renderSchedule() {
             const eventos = (window.db.eventos || [])
                 .filter(e => e.data >= today)
@@ -341,7 +341,7 @@
             el.innerHTML = `<div class="timeline">${items}</div>`;
         }
 
-        // â”€â”€ CALENDAR SUMMARY â”€â”€
+        // ── CALENDAR SUMMARY ──
         function renderCalendarSummary() {
             if (!atleta) return;
 
@@ -405,7 +405,7 @@
             if (calEl) calEl.innerHTML = html;
         }
 
-        // â”€â”€ QUESTIONNAIRES â”€â”€
+        // ── QUESTIONNAIRES ──
         function renderQSelector() {
             const ativos = (window.db.questionarios || []).filter(q => q.ativo !== false);
             const sel = document.getElementById('qSelector');
@@ -572,7 +572,7 @@
             showToast("Editando respostas...");
         }
 
-        // â”€â”€ WELLNESS â”€â”€
+        // ── WELLNESS ──
         function getWellnessColor(val, max) {
             const pct = (parseInt(val) - 1) / (max - 1 || 1);
             if (pct <= 0.25) return 'var(--red)';
@@ -721,7 +721,7 @@
             }
         }
 
-        // â”€â”€ TREINO MODAL â”€â”€
+        // ── TREINO MODAL ──
         function toggleTreinoModal() {
             const m = document.getElementById('treinoModal');
             if (m.classList.contains('show')) {

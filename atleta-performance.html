@@ -1310,7 +1310,7 @@
                     data: {
                         labels: labels7, datasets: [
                             { label: 'Score Wellness', data: wellData, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)', fill: true, tension: 0.4, pointRadius: 4 },
-                            { label: 'Zona Segura (â‰¥70)', data: labels7.map(() => 70), borderColor: 'rgba(16,185,129,0.4)', borderDash: [5, 4], borderWidth: 1, pointRadius: 0, fill: false }
+                            { label: 'Zona Segura (>=70)', data: labels7.map(() => 70), borderColor: 'rgba(16,185,129,0.4)', borderDash: [5, 4], borderWidth: 1, pointRadius: 0, fill: false }
                         ]
                     },
                     options: { ...commonOptions, scales: { y: { min: 0, max: 100 } }, plugins: { legend: { display: true, labels: { font: { size: 10 }, boxWidth: 14 } } } }

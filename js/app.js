@@ -662,7 +662,6 @@ function setupRealtimeSubscription() {
 
             if (typeof renderSemaforo === 'function') renderSemaforo();
             if (typeof renderAlunosUI === 'function') renderAlunosUI();
-            if (typeof renderDashboard === 'function') renderDashboard();
             if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
             if (typeof buildAlerts === 'function') buildAlerts();
             if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
@@ -927,6 +926,35 @@ function showToast(message, type = 'success') {
             toast.remove();
         }, 400); // tempo da transição css
     }, 3000);
+}
+
+// Modal de confirmação customizado (substitui confirm() nativo)
+function showConfirmModal(title, message, onConfirm) {
+    let modal = document.getElementById('_confirmModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = '_confirmModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        modal.innerHTML = `
+            <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:28px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+                <h3 id="_confirmTitle" style="margin:0 0 10px;font-size:18px;font-weight:700;"></h3>
+                <p id="_confirmMsg" style="margin:0 0 24px;color:var(--text-muted);font-size:14px;line-height:1.5;"></p>
+                <div style="display:flex;gap:10px;justify-content:flex-end;">
+                    <button id="_confirmCancel" style="padding:10px 20px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:transparent;color:var(--text-main);cursor:pointer;font-size:14px;font-weight:600;">Cancelar</button>
+                    <button id="_confirmOk" style="padding:10px 20px;border-radius:var(--radius-sm);border:none;background:var(--red);color:#fff;cursor:pointer;font-size:14px;font-weight:600;">Confirmar</button>
+                </div>
+            </div>`;
+        document.body.appendChild(modal);
+        document.getElementById('_confirmCancel').addEventListener('click', () => { modal.style.display = 'none'; });
+        modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+    }
+    document.getElementById('_confirmTitle').textContent = title;
+    document.getElementById('_confirmMsg').textContent = message;
+    modal.style.display = 'flex';
+    const okBtn = document.getElementById('_confirmOk');
+    const newOk = okBtn.cloneNode(true);
+    okBtn.replaceWith(newOk);
+    newOk.addEventListener('click', () => { modal.style.display = 'none'; onConfirm(); });
 }
 
 // Reset Database (useful for testing)

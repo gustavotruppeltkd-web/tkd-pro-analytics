@@ -502,9 +502,15 @@
         function deleteSavedTitle(title) {
             if (!title) return;
 
-            if (!confirm(`Deseja excluir o título "${title}" das sugestões? Isso removerá o nome desta sessão de todos os treinos desta equipe que a utilizam.`)) {
-                return;
-            }
+            showConfirmModal(
+                `Excluir sugestão "${title}"?`,
+                'Isso removerá o nome desta sessão de todos os treinos desta equipe que a utilizam.',
+                () => { _doDeleteSavedTitle(title); }
+            );
+            return;
+        }
+        function _doDeleteSavedTitle(title) {
+            if (!title) return;
 
             const turmaId = db.activeTurmaId;
             let count = 0;
@@ -1269,7 +1275,7 @@
 
         function saveTreino(e) {
             const titulo = getTituloFinal();
-            if (!titulo) { alert('Digite ou selecione um título para a sessão.'); return; }
+            if (!titulo) { showToast('Digite ou selecione um título para a sessão.', 'error'); return; }
 
             const editId = document.getElementById('treinoEditId').value;
             const trainingId = editId ? parseInt(editId) : Date.now();
@@ -1327,12 +1333,13 @@
         function deleteTreinoAtual() {
             const editId = parseInt(document.getElementById('treinoEditId').value);
             if (!editId) return;
-            if (!confirm('Excluir esta sessão de treino?')) return;
-            db.treinos = db.treinos.filter(t => t.id !== editId);
-            saveDB();
-            closeModalTreino();
-            renderCalendar();
-            showToast('Treino excluído.');
+            showConfirmModal('Excluir treino?', 'Esta sessão de treino será removida permanentemente.', () => {
+                db.treinos = db.treinos.filter(t => t.id !== editId);
+                saveDB();
+                closeModalTreino();
+                renderCalendar();
+                showToast('Treino excluído.');
+            });
         }
 
         // ============================================================
@@ -1735,10 +1742,10 @@
 
         function salvarMeso() {
             const nome = document.getElementById('mesoNome').value.trim();
-            if (!nome) { alert('Informe um nome para o mesociclo.'); return; }
+            if (!nome) { showToast('Informe um nome para o mesociclo.', 'error'); return; }
             const dataInicio = document.getElementById('mesoDataInicio').value;
             const dataFim = document.getElementById('mesoDataFim').value;
-            if (!dataInicio || !dataFim || dataFim <= dataInicio) { alert('Datas inválidas.'); return; }
+            if (!dataInicio || !dataFim || dataFim <= dataInicio) { showToast('Datas inválidas. A data final deve ser após a inicial.', 'error'); return; }
 
             const editId = document.getElementById('mesoEditId').value;
             const cargaTotalAlvo = parseInt(document.getElementById('mesoCargaTotal').value) || 0;
@@ -1801,12 +1808,13 @@
         }
 
         function deleteMeso(mesoId) {
-            if (!confirm('Excluir este mesociclo?')) return;
-            db.mesociclos = (db.mesociclos || []).filter(m => m.id !== mesoId);
-            saveDB();
-            if (_activeMesoId === mesoId) _activeMesoId = null;
-            renderMesoView();
-            showToast('Mesociclo excluído.');
+            showConfirmModal('Excluir mesociclo?', 'Esta ação não poderá ser desfeita.', () => {
+                db.mesociclos = (db.mesociclos || []).filter(m => m.id !== mesoId);
+                saveDB();
+                if (_activeMesoId === mesoId) _activeMesoId = null;
+                renderMesoView();
+                showToast('Mesociclo excluído.');
+            });
         }
 
         function renderMesoView() {

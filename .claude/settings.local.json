@@ -3,7 +3,8 @@
     "allow": [
       "Bash(ls -la *.html)",
       "Bash(awk '{print $NF}')",
-      "Bash(grep -rn 'href=\"treino\\\\.html\"' *.html)"
+      "Bash(grep -rn 'href=\"treino\\\\.html\"' *.html)",
+      "Bash(grep -v \"master_portal_v2\\\\|master_portal\\\\.html$\\\\|scout\\\\.html$\")"
     ]
   }
 }

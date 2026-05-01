@@ -621,15 +621,15 @@
 
         function loadProfile() {
             if (!currentAlunoId) {
-                alert("Nenhum aluno selecionado.");
-                window.location.href = 'dashboard-turma-dados.html';
+                showToast("Nenhum aluno selecionado.", 'error');
+                setTimeout(() => { window.location.href = 'dashboard-turma-dados.html'; }, 1200);
                 return;
             }
 
             alunoData = db.alunos.find(a => a.id == currentAlunoId);
             if (!alunoData) {
-                alert("Aluno não encontrado na base de dados.");
-                window.location.href = 'dashboard-turma-dados.html';
+                showToast("Aluno não encontrado na base de dados.", 'error');
+                setTimeout(() => { window.location.href = 'dashboard-turma-dados.html'; }, 1200);
                 return;
             }
 
@@ -933,20 +933,22 @@
         }
 
         function deleteAluno() {
-            if (confirm(`Tem absoluta certeza de que deseja EXCLUIR permanentemente o aluno ${alunoData.nome}?\n\nEsta ação não poderá ser desfeita e todo o histórico de presenças e pagamentos será apagado.`)) {
-                // Removeráá aluno
-                const aIndex = db.alunos.findIndex(a => a.id === parseInt(currentAlunoId));
-                if (aIndex > -1) {
-                    db.alunos.splice(aIndex, 1);
-                    // Diminuir count da turma
-                    const tIndex = db.turmas.findIndex(t => t.id === alunoData.turmaId);
-                    if (tIndex > -1) {
-                        db.turmas[tIndex].alunosCount = Math.max(0, db.turmas[tIndex].alunosCount - 1);
+            showConfirmModal(
+                `Excluir ${alunoData.nome}?`,
+                'Esta ação não pode ser desfeita. Todo o histórico de presenças e pagamentos será apagado.',
+                () => {
+                    const aIndex = db.alunos.findIndex(a => a.id === parseInt(currentAlunoId));
+                    if (aIndex > -1) {
+                        db.alunos.splice(aIndex, 1);
+                        const tIndex = db.turmas.findIndex(t => t.id === alunoData.turmaId);
+                        if (tIndex > -1) {
+                            db.turmas[tIndex].alunosCount = Math.max(0, db.turmas[tIndex].alunosCount - 1);
+                        }
+                        saveDB();
+                        window.location.href = 'dashboard-turma-dados.html';
                     }
-                    saveDB();
-                    window.location.href = 'dashboard-turma-dados.html';
                 }
-            }
+            );
         }
 
         // Initialize page
