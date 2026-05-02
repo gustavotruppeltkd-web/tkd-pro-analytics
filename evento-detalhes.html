@@ -255,7 +255,7 @@
                     <div class="stat-icon-circle" style="background: rgba(245, 158, 11, 0.1); color: var(--yellow);">
                         <i class="ti ti-medal"></i>
                     </div>
-                    <div style="flex: 1;">
+                    <div class="u-flex1">
                         <div style="display: flex; justify-content: space-between; align-items: flex-end;">
                             <div>
                                 <p style="color: var(--text-muted); font-size: 13px;">Medalhas</p>
@@ -485,7 +485,7 @@
                         ${medalIcon || roundDisplay || '<span style="font-size: 12px; color: var(--text-muted);">-</span>'}
                     </div>
                     <div class="col-actions" style="display: flex; align-items: center; gap: 8px; width: auto;">
-                        <button class="btn btn-icon" style="color: var(--text-muted);" onclick="openAthleteDetails(${athlete.id})" title="Detalhes">
+                        <button class="btn btn-icon u-text-muted"  onclick="openAthleteDetails(${athlete.id})" title="Detalhes">
                             <i class="ti ti-edit"></i>
                         </button>
                         <button class="btn btn-icon btn-danger" onclick="removeParticipation(${athlete.id})" title="Removeráá Atleta">
@@ -506,7 +506,7 @@
                             <div style="display: flex; align-items: center; margin-bottom: 8px; font-size: 12.5px;">
                                 <div style="width: 70px; color: var(--primary); font-weight: 600;">Luta ${index + 1}</div>
                                 <div style="flex: 1; display: flex; align-items: center; gap: 8px;">
-                                    <span style="color: var(--text-muted);">vs</span> 
+                                    <span class="u-text-muted">vs</span> 
                                     <span style="font-weight: 500;">${luta.oponente || 'Oponente não definido'}</span>
                                 </div>
                                 <div style="flex: 2; color: ${resultColor}; text-align: right; padding-right: 16px; font-weight: 500;">
@@ -702,7 +702,7 @@
                 </div>
             </div>
 
-            <div style="margin-bottom: 24px;">
+            <div class="u-mb24">
                 <h3
                     style="font-size: 14px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
                     Histórico de Lutas</h3>

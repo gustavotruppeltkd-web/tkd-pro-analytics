@@ -265,7 +265,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div style="margin-bottom: 24px;">
+            <div class="u-mb24">
                 <a href="dashboard-turma-dados.html"
                     style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px;">
                     <i class="ti ti-arrow-left"></i> Voltar para Dados da Equipe
@@ -274,7 +274,7 @@
 
             <div class="profile-header-card">
                 <img src="" class="profile-avatar-large" onerror="this.src=DEFAULT_AVATAR" style="background:#1e293b" id="displayPic">
-                <div class="profile-main-info" style="flex: 1;">
+                <div class="profile-main-info u-flex1" >
                     <h1 id="displayNome">Atleta</h1>
                     <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
                         <div class="belt-tag" id="displayFaixa" style="margin-bottom: 0;">Faixa</div>
@@ -285,7 +285,7 @@
                     <!-- Moved Info Grid into Header -->
                     <div class="info-grid" style="grid-template-columns: repeat(6, auto); gap: 10px 40px; justify-content: start;">
                         <!-- Coluna 1 -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="u-flex-col-10">
                             <div class="info-row">
                                 <span class="info-label">Idade</span>
                                 <span class="info-value" id="displayIdade">--</span>
@@ -297,7 +297,7 @@
                         </div>
 
                         <!-- Coluna 2 -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="u-flex-col-10">
                             <div class="info-row">
                                 <span class="info-label">Cat. Idade</span>
                                 <span class="info-value" id="displayCatIdade">--</span>
@@ -310,7 +310,7 @@
                         </div>
 
                         <!-- Coluna 3 -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="u-flex-col-10">
                             <div class="info-row">
                                 <span class="info-label">CPF</span>
                                 <span class="info-value" id="displayCPF">--</span>
@@ -322,7 +322,7 @@
                         </div>
 
                         <!-- Coluna 4 -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="u-flex-col-10">
                             <div class="info-row">
                                 <span class="info-label">Telefone</span>
                                 <span class="info-value" id="displayContato">--</span>
@@ -334,7 +334,7 @@
                         </div>
 
                         <!-- Coluna 5 — GMS e Kukkiwon -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="u-flex-col-10">
                             <div class="info-row">
                                 <span class="info-label">GMS</span>
                                 <span class="info-value" id="displayGMS">--</span>
@@ -346,7 +346,7 @@
                         </div>
 
                         <!-- Coluna 6 — Registro CBTKD -->
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div class="u-flex-col-10">
                             <div class="info-row">
                                 <span class="info-label">Registro CBTKD</span>
                                 <span class="info-value" id="displayCBTKD">--</span>
@@ -354,8 +354,8 @@
                         </div>
 
                         <div class="info-row" id="rowSaude" style="grid-column: span 6; margin-top: 4px;">
-                            <span class="info-label" style="color: var(--red);">Obs Médica</span>
-                            <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
+                            <span class="info-label u-text-red" >Obs Médica</span>
+                            <span class="info-value u-text-muted"  id="displaySaude">Nenhuma
                                 registrada</span>
                         </div>
                         <div style="display: none;">
@@ -390,14 +390,14 @@
                                 <option value="media">Média (Todos)</option>
                             </select>
                         </div>
-                        <div class="chart-container-radar" style="flex: 1;">
+                        <div class="chart-container-radar u-flex1" >
                             <canvas id="radarChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="detail-card" style="flex: 1;">
+                    <div class="detail-card u-flex1" >
                         <h3><i class="ti ti-video"></i> Análises de Lutas (Scout)</h3>
-                        <div class="timeline" id="timelineScouts" style="flex: 1;">
+                        <div class="timeline u-flex1" id="timelineScouts" >
                             <div
                                 style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
                                 Nenhuma análise registrada.</div>
@@ -407,7 +407,7 @@
 
                 <!-- COLUNA 2 (Bem-Estar) -->
                 <div style="display: flex; flex-direction: column; gap: 24px;">
-                    <div class="detail-card" style="flex: 1;">
+                    <div class="detail-card u-flex1" >
                         <h3><i class="ti ti-heart-rate-monitor"></i> Último Bem-Estar</h3>
                         <div id="alertArea"
                             style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
@@ -421,7 +421,7 @@
 
                 <!-- COLUNA 3 (Competições Alvo e Passadas + Carga Diária) -->
                 <div style="display: flex; flex-direction: column; gap: 24px;">
-                    <div class="detail-card" style="flex: 1;">
+                    <div class="detail-card u-flex1" >
                         <h3><i class="ti ti-shield-up-heartbeat"></i> Última Carga Diária</h3>
                         <div id="cargaArea"
                             style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px; flex: 1;">
@@ -432,16 +432,16 @@
                         </div>
                     </div>
 
-                    <div class="detail-card" style="flex: 1;">
+                    <div class="detail-card u-flex1" >
                         <h3><i class="ti ti-flag"></i> Próxima Competição (Alvo)</h3>
-                        <div class="timeline" id="timelineProxima" style="flex: 1;">
+                        <div class="timeline u-flex1" id="timelineProxima" >
                             <div
                                 style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
                                 Nenhuma competição agendada.</div>
                         </div>
                     </div>
 
-                    <div class="detail-card" style="flex: 1;">
+                    <div class="detail-card u-flex1" >
                         <div
                             style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom:10px; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
                             <h3 style="border:none; margin:0; padding:0;"><i class="ti ti-medal"></i> Últimas
@@ -458,7 +458,7 @@
                                         id="cntTotal">0</span></span>
                             </div>
                         </div>
-                        <div class="timeline" id="timelineCompeticoes" style="flex: 1;">
+                        <div class="timeline u-flex1" id="timelineCompeticoes" >
                             <div
                                 style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed var(--border-color);">
                                 Nenhuma competição registrada.</div>
@@ -473,7 +473,7 @@
                         <h3 style="border: none; margin: 0; padding: 0;"><i class="ti ti-chart-bar"></i> Gráficos de
                             Monitoramento</h3>
 
-                        <div class="comparison-controls" style="display: flex; gap: 12px; align-items: center;">
+                        <div class="comparison-controls u-flex-ac-12" >
                             <div>
                                 <span class="selector-label"
                                     style="font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Dado:</span>
@@ -547,34 +547,34 @@
                     <input type="text" class="form-control" name="nomeAluno" required>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Data de Nascimento</label>
                         <input type="date" class="form-control" name="nascAluno" required>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Telefone Contato</label>
                         <input type="text" class="form-control" name="telAluno" required>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>CPF</label>
                         <input type="text" class="form-control" name="cpfAluno" placeholder="000.000.000-00">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>E-mail</label>
                         <input type="email" class="form-control" name="emailAluno" placeholder="email@exemplo.com">
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>RG</label>
                         <input type="text" class="form-control" name="rgAluno" placeholder="00.000.000-X">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Sexo</label>
                         <select class="form-control" name="sexoAluno">
                             <option value="Masculino">Masculino</option>
@@ -583,14 +583,14 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;" id="editRowCat">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16" id="editRowCat">
+                    <div class="form-group u-flex1" >
                         <label>Cat. Peso</label>
                         <select class="form-control" name="pesoAluno">
                             <!-- Populated by JS -->
                         </select>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Cat. Idade</label>
                         <select class="form-control" name="catIdadeAluno">
                             <option value="">Nenhuma</option>
@@ -630,16 +630,16 @@
                 </div>
 
                 <h4 style="font-size: 14px; margin: 20px 0 12px; color: var(--primary); padding-top: 16px; border-top: 1px solid var(--border-color);">2. Registros Federativos</h4>
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>GMS</label>
                         <input type="text" class="form-control" name="gmsAluno" placeholder="Nº GMS">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Kukkiwon</label>
                         <input type="text" class="form-control" name="kukkiwonAluno" placeholder="Nº Kukkiwon">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Registro CBTKD</label>
                         <input type="text" class="form-control" name="cbtkdAluno" placeholder="Nº CBTKD">
                     </div>

@@ -39,7 +39,7 @@
                     <p class="subtitle">Scout de Lutas baseado em vídeo (Painel Ágil)</p>
                 </div>
                 <!-- Source Toggle -->
-                <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="u-flex-ac-12">
                     <div class="source-toggle">
                         <button class="btn btn-outline" id="btnYoutubeSource"><i class="ti ti-brand-youtube"></i>
                             YouTube</button>
@@ -70,8 +70,8 @@
                             style="font-size: 15px; margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px;">
                             <i class="ti ti-users"></i> Scouts: Atletas da Equipe
                         </h3>
-                        <div style="display: flex; gap: 12px; align-items: center;">
-                            <select id="selectTeamScouts" class="form-control" style="flex: 1;">
+                        <div class="u-flex-ac-12">
+                            <select id="selectTeamScouts" class="form-control u-flex1" >
                                 <option value="">Nenhum scout de equipe encontrado</option>
                             </select>
                             <button class="btn btn-primary"
@@ -91,8 +91,8 @@
                             style="font-size: 15px; margin-bottom: 16px; color: var(--red); display: flex; align-items: center; gap: 8px;">
                             <i class="ti ti-swords"></i> Scouts: Adversários
                         </h3>
-                        <div style="display: flex; gap: 12px; align-items: center;">
-                            <select id="selectOpponentScouts" class="form-control" style="flex: 1;">
+                        <div class="u-flex-ac-12">
+                            <select id="selectOpponentScouts" class="form-control u-flex1" >
                                 <option value="">Nenhum scout de adversário encontrado</option>
                             </select>
                             <button class="btn btn-primary"
@@ -178,10 +178,10 @@
                 <div class="scout-middle-col" style="position: relative; display: flex; flex-direction: column;">
 
                     <!-- Configurações da Luta -->
-                    <div class="card" style="margin-bottom: 24px;">
+                    <div class="card u-mb24" >
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
-                            <h3 style="margin: 0;">
+                            <h3 class="u-m0">
                                 <i class="ti ti-settings"></i> Configurações da Luta
                             </h3>
                             <button id="toggleConfigBtn" class="btn btn-icon"
@@ -234,7 +234,7 @@
                     <div class="card">
                         <div
                             style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                            <h3 style="margin: 0;">
+                            <h3 class="u-m0">
                                 <i class="ti ti-bolt"></i> Painel Rápido
                             </h3>
                             <div class="badge"
@@ -384,7 +384,7 @@
                                 <div class="scout-group" style="padding: 8px 12px;">
                                     <div class="scout-label">Tempo do Evento</div>
                                     <div style="display: flex; align-items: center; gap: 6px;">
-                                        <i class="ti ti-clock" style="color: var(--text-muted);"></i>
+                                        <i class="ti ti-clock u-text-muted" ></i>
                                         <input type="text" id="manualTimeInput" class="form-control"
                                             placeholder="Ex: 01:23 ou 45"
                                             style="font-size: 12px; padding: 6px 10px; background: rgba(0,0,0,0.2); width: 100%;">
@@ -413,7 +413,7 @@
             <div class="timeline-bottom-strip card">
                 <div class="timeline-strip-left">
                     <div class="timeline-header">
-                        <h3 style="margin: 0;"><i class="ti ti-history"></i> Timeline</h3>
+                        <h3 class="u-m0"><i class="ti ti-history"></i> Timeline</h3>
                         <div class="badge-count" id="eventCount">0</div>
                     </div>
                     <div class="timeline-list" id="timelineList">

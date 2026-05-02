@@ -809,7 +809,7 @@
                     <h1>Turma: Adulto Iniciante</h1>
                     <p class="subtitle" id="pageSubtitle">Horários e Lista Completa de Alunos</p>
                 </div>
-                <div class="topbar-actions" style="display: flex; gap: 12px; align-items: center;">
+                <div class="topbar-actions u-flex-ac-12" >
                     <button id="btnRelatorios" class="btn btn-primary" onclick="openModalRelatorios()"
                         style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color);">
                         <i class="ti ti-file-description"></i>
@@ -1037,12 +1037,12 @@
                     <input type="text" class="form-control" name="nomeAluno" placeholder="Ex: Lucas Silva" required>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Data de Nascimento</label>
                         <input type="date" class="form-control" name="nascimentoAluno" required>
                     </div>
-                    <div class="form-group" id="groupContato" style="flex: 1;">
+                    <div class="form-group u-flex1" id="groupContato" >
                         <label>Contato do Responsável</label>
                         <input type="tel" class="form-control" name="contatoResp" placeholder="(00) 00000-0000"
                             required>
@@ -1055,11 +1055,11 @@
                 </div>
 
                 <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>CPF</label>
                         <input type="text" class="form-control" name="cpfAtleta" placeholder="000.000.000-00">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>RG</label>
                         <input type="text" class="form-control" name="rgAtleta" placeholder="00.000.000-0">
                     </div>
@@ -1069,8 +1069,8 @@
                     <h4
                         style="margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; color: var(--primary);">
                         Atleta de Rendimento</h4>
-                    <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;">
+                    <div class="u-flex-16">
+                        <div class="form-group u-flex1" >
                             <label>Sexo</label>
                             <select class="form-control" name="sexoAtleta">
                                 <option value="Masculino">Masculino</option>
@@ -1091,7 +1091,7 @@
                     </div>
 
                     <div style="display: flex; gap: 16px; margin-top: 12px;">
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label style="display: flex; justify-content: space-between;">
                                 <span>Cat. Peso</span>
                                 <a href="#" onclick="openConfigPesos(event)"
@@ -1102,7 +1102,7 @@
                                 <!-- Populated by JS -->
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>Cat. Idade</label>
                             <select class="form-control" name="idadeAtleta">
                                 <option value="Infantil">Infantil</option>
@@ -1118,11 +1118,11 @@
                 </div>
 
                 <div id="fieldsComercial" style="display: flex; gap: 16px; align-items: flex-end; margin-bottom: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Valor Mensalidade (R$)</label>
                         <input type="number" class="form-control" name="valorMensalidade" placeholder="150" value="0">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Vencimento</label>
                         <input type="number" class="form-control" name="diaVencimento" placeholder="10" min="1" max="31"
                             value="10">
@@ -1197,7 +1197,7 @@
                     <h4 style="margin-bottom: 8px; font-size: 15px;">Listagem Geral de Alunos</h4>
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Gera um PDF com todos os
                         alunos da turma, faixas e categorias.</p>
-                    <button class="btn btn-primary" onclick="generateRelatorioAlunos()" style="width: 100%;">
+                    <button class="btn btn-primary u-w100" onclick="generateRelatorioAlunos()" >
                         <i class="ti ti-download"></i> Baixar Lista de Alunos
                     </button>
                 </div>
@@ -1209,7 +1209,7 @@
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Selecione o mês para ver
                         a frequência dos alunos.</p>
                     <div style="display: flex; gap: 8px;">
-                        <select id="mesRelatorioChamada" class="form-control" style="flex: 1;">
+                        <select id="mesRelatorioChamada" class="form-control u-flex1" >
                             <option value="1">Janeiro</option>
                             <option value="2">Fevereiro</option>
                             <option value="3">Março</option>
@@ -1236,7 +1236,7 @@
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Status de pagamentos e
                         valores da turma por mês.</p>
                     <div style="display: flex; gap: 8px;">
-                        <select id="mesRelatorioFinanceiro" class="form-control" style="flex: 1;">
+                        <select id="mesRelatorioFinanceiro" class="form-control u-flex1" >
                             <option value="1">Janeiro</option>
                             <option value="2">Fevereiro</option>
                             <option value="3">Março</option>

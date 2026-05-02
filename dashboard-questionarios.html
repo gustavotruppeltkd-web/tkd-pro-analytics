@@ -190,7 +190,7 @@
 
             <!-- Tab: Responder -->
             <div id="tab-responder" class="tab-pane active">
-                <div class="card" style="margin-bottom: 24px;">
+                <div class="card u-mb24" >
                     <div class="q-header">
                         <h2>Nova Resposta</h2>
                         <div style="display: flex; gap: 16px; align-items: center;">
@@ -228,9 +228,9 @@
 
             <!-- Tab: Histórico -->
             <div id="tab-historico" class="tab-pane">
-                <div class="card" style="margin-bottom: 24px;">
+                <div class="card u-mb24" >
                     <h2>Respostas Recentes</h2>
-                    <p class="subtitle" style="margin-bottom: 24px;">Lista de submissões feitas pelos atletas.</p>
+                    <p class="subtitle u-mb24" >Lista de submissões feitas pelos atletas.</p>
                     <div id="historicoGrid" style="display: flex; flex-direction: column; gap: 12px;">
                         <!-- JS Inject -->
                     </div>
@@ -239,7 +239,7 @@
 
             <!-- Tab: Gráficos -->
             <div id="tab-graficos" class="tab-pane">
-                <div class="card" style="margin-bottom: 24px;">
+                <div class="card u-mb24" >
                     <div class="q-header">
                         <div>
                             <h2>Análise por Questionário</h2>
@@ -274,7 +274,7 @@
 
             <!-- Tab: Builder (Criador) -->
             <div id="tab-builder" class="tab-pane">
-                <div class="card" style="margin-bottom: 24px;">
+                <div class="card u-mb24" >
                     <div class="q-header">
                         <h2>Criar Novo Questionário</h2>
                         <button class="btn btn-primary" onclick="salvarNovoQuestionario()"><i class="ti ti-check"></i>
@@ -303,7 +303,7 @@
                     </div>
                 </div>
 
-                <div class="card" style="margin-bottom: 24px;">
+                <div class="card u-mb24" >
                     <h2>Questionários Existentes</h2>
                     <div id="existentesGrid" style="margin-top: 16px;">
                         <!-- JS Inject -->
@@ -659,7 +659,7 @@
                             <h4 style="margin:0; font-size:16px;">${q.titulo}</h4>
                             <p style="margin:0; font-size:12px; color:var(--text-muted);">${q.perguntas.length} perguntas cadastradas</p>
                         </div>
-                        <div style="display: flex; gap: 12px; align-items: center;">
+                        <div class="u-flex-ac-12">
                             <span style="color: var(--green); font-size:12px;"><i class="ti ti-check"></i> Ativo</span>
                             <button class="btn" onclick="deleteQuestionario(${q.id})" style="background: rgba(239, 68, 68, 0.1); color: var(--red); border: none; padding: 8px; cursor: pointer;">
                                 <i class="ti ti-trash"></i>
@@ -696,7 +696,7 @@
             grid.innerHTML = '';
 
             if (!db.respostas || db.respostas.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-muted);">Nenhuma resposta registrada ainda.</p>';
+                grid.innerHTML = '<p class="u-text-muted">Nenhuma resposta registrada ainda.</p>';
                 return;
             }
 

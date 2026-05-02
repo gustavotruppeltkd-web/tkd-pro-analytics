@@ -305,7 +305,7 @@
                         </button>
                         <div>
                             <h1 style="color: #fff;">Perfil Profissional</h1>
-                            <p class="subtitle" style="color: var(--text-muted);">Currículo e Conquistas</p>
+                            <p class="subtitle u-text-muted" >Currículo e Conquistas</p>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center;">
@@ -808,7 +808,7 @@
             const row = document.createElement('div');
             row.style.cssText = 'background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); position: relative;';
             row.innerHTML = `
-                <button class="btn-close" style="position: absolute; top: 8px; right: 8px;" onclick="this.parentElement.remove()" title="Removeráá"><i class="ti ti-trash" style="color: var(--red);"></i></button>
+                <button class="btn-close" style="position: absolute; top: 8px; right: 8px;" onclick="this.parentElement.remove()" title="Removeráá"><i class="ti ti-trash u-text-red" ></i></button>
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 8px; padding-right: 30px;">
                     <input type="text" class="form-control title-nome" placeholder="Nome do Título/Conquista" value="${titulo}">
                     <input type="text" class="form-control title-ano" placeholder="Ano (Ex: 2023)" value="${ano}">
@@ -823,7 +823,7 @@
             const row = document.createElement('div');
             row.style.cssText = 'background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); position: relative;';
             row.innerHTML = `
-                <button class="btn-close" style="position: absolute; top: 8px; right: 8px;" onclick="this.parentElement.remove()" title="Removeráá"><i class="ti ti-trash" style="color: var(--red);"></i></button>
+                <button class="btn-close" style="position: absolute; top: 8px; right: 8px;" onclick="this.parentElement.remove()" title="Removeráá"><i class="ti ti-trash u-text-red" ></i></button>
                 <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 8px; padding-right: 30px;">
                     <input type="text" class="form-control course-nome" placeholder="Nome do Curso/Certificação" value="${curso}">
                     <input type="text" class="form-control course-local" placeholder="Instituição/Local" value="${local}">

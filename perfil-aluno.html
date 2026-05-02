@@ -310,7 +310,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div style="margin-bottom: 24px;">
+            <div class="u-mb24">
                 <a href="dashboard-turma-dados.html"
                     style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 14px;">
                     <i class="ti ti-arrow-left"></i> Voltar para Dados da Turma
@@ -372,7 +372,7 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Observações Médicas</span>
-                        <span class="info-value" style="color: var(--text-muted);" id="displaySaude">Nenhuma
+                        <span class="info-value u-text-muted"  id="displaySaude">Nenhuma
                             registrada</span>
                     </div>
                 </div>
@@ -395,17 +395,17 @@
                     </div>
                     <div
                         style="display: flex; justify-content: space-between; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
-                        <div style="text-align: center;" class="tooltip"
+                        <div class="u-text-center" class="tooltip"
                             data-tooltip="Presente em:&#10;01/Out, 03/Out, 08/Out, 10/Out,&#10;15/Out, 17/Out, 22/Out, 24/Out,&#10;29/Out, 31/Out, 05/Nov, 07/Nov,&#10;12/Nov, 14/Nov">
                             <div style="font-size: 20px; font-weight: 600; color: var(--green);">14</div>
                             <div style="font-size: 12px; color: var(--text-muted);">Presenças</div>
                         </div>
-                        <div style="text-align: center;" class="tooltip"
+                        <div class="u-text-center" class="tooltip"
                             data-tooltip="Faltou nos dias:&#10;12/Set&#10;25/Out">
                             <div style="font-size: 20px; font-weight: 600; color: var(--red);">2</div>
                             <div style="font-size: 12px; color: var(--text-muted);">Faltas</div>
                         </div>
-                        <div style="text-align: center;">
+                        <div class="u-text-center">
                             <div style="font-size: 20px; font-weight: 600;">2</div>
                             <div style="font-size: 12px; color: var(--text-muted);">Treinos/Sem</div>
                         </div>
@@ -458,27 +458,27 @@
                     <input type="text" class="form-control" name="nomeAluno" value="João Pedro Santos" required>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Data de Nascimento</label>
                         <input type="date" class="form-control" name="nascAluno" value="2008-04-12" required>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Telefone Contato</label>
                         <input type="text" class="form-control" name="telAluno" value="(11) 98765-4321" required>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>CPF</label>
                         <input type="text" class="form-control" name="cpfAluno" placeholder="000.000.000-00">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>RG</label>
                         <input type="text" class="form-control" name="rgAluno" placeholder="00.000.000-X">
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Sexo</label>
                         <select class="form-control" name="sexoAluno">
                             <option value="Masculino">Masculino</option>
@@ -487,8 +487,8 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;" id="editRowCat">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16" id="editRowCat">
+                    <div class="form-group u-flex1" >
                         <label style="display: flex; justify-content: space-between;">
                             <span>Cat. Peso</span>
                             <a href="#" onclick="openConfigPesos(event)"
@@ -499,7 +499,7 @@
                             <!-- Populated by JS -->
                         </select>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Cat. Idade</label>
                         <select class="form-control" name="catIdadeAluno">
                             <option value="">Nenhuma</option>
@@ -556,12 +556,12 @@
                     </div>
 
                     <div style="display: flex; gap: 16px; margin-top: 16px;">
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>Data de Início</label>
                             <input type="date" class="form-control" name="inicioPlano" id="inicioPlano"
                                 onchange="calcVencimento()">
                         </div>
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>Válido até <span
                                     style="color:var(--text-muted); font-size:11px;">(Auto)</span></label>
                             <input type="date" class="form-control" name="fimPlano" id="fimPlano" readonly
@@ -785,15 +785,15 @@
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
-                    <div style="text-align: center;" class="tooltip" data-tooltip="Presente em:\n${presencasDatas.length > 0 ? presencasDatas.join('\n') : 'Nenhuma data'}">
+                    <div class="u-text-center" class="tooltip" data-tooltip="Presente em:\n${presencasDatas.length > 0 ? presencasDatas.join('\n') : 'Nenhuma data'}">
                         <div style="font-size: 20px; font-weight: 600; color: var(--green);">${nPresencas}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">Presenças</div>
                     </div>
-                    <div style="text-align: center;" class="tooltip" data-tooltip="Faltou em:\n${faltasDatas.length > 0 ? faltasDatas.join('\n') : 'Nenhuma data'}">
+                    <div class="u-text-center" class="tooltip" data-tooltip="Faltou em:\n${faltasDatas.length > 0 ? faltasDatas.join('\n') : 'Nenhuma data'}">
                         <div style="font-size: 20px; font-weight: 600; color: var(--red);">${nFaltas}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">Faltas</div>
                     </div>
-                    <div style="text-align: center;">
+                    <div class="u-text-center">
                         <div style="font-size: 20px; font-weight: 600;">--</div>
                         <div style="font-size: 12px; color: var(--text-muted);">Treinos/Sem</div>
                     </div>

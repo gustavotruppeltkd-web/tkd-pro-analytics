@@ -547,12 +547,12 @@
                     <label>Nome do Plano</label>
                     <input type="text" class="form-control" id="planoNome" placeholder="Ex: Mensal Livre" required>
                 </div>
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Valor (R$)</label>
                         <input type="number" class="form-control" id="planoValor" step="0.01" required>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Duração (Meses)</label>
                         <input type="number" class="form-control" id="planoDuracao" min="1" value="1" required>
                     </div>
@@ -604,35 +604,35 @@
                     </select>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Valor Total (à vista)</label>
                         <input type="number" class="form-control" id="contratoValorTotal" step="0.01" required>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Mensalidade (Ref. PIX)</label>
                         <input type="number" class="form-control" id="contratoMensalidade" step="0.01" required>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Data de Início</label>
                         <input type="date" class="form-control" id="contratoDataInicio" required>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Data de Término</label>
                         <input type="date" class="form-control" id="contratoDataFim" required>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 16px;">
-                    <div class="form-group" style="flex: 1;">
+                <div class="u-flex-16">
+                    <div class="form-group u-flex1" >
                         <label>Dia de Vencimento</label>
                         <input type="number" class="form-control" id="contratoVencimento" min="1" max="31" value="5"
                             required>
                     </div>
-                    <div class="form-group" style="flex: 1;">
+                    <div class="form-group u-flex1" >
                         <label>Local (Cidade/UF)</label>
                         <input type="text" class="form-control" id="contratoLocal" value=""
                             placeholder="Ex: Campinas/SC" required>
@@ -649,11 +649,11 @@
                         <input type="text" class="form-control" id="contratoContratanteNome" required>
                     </div>
                     <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>CPF</label>
                             <input type="text" class="form-control" id="contratoContratanteCPF" required>
                         </div>
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>Data Nasc. (Opcional)</label>
                             <input type="date" class="form-control" id="contratoContratanteNasc">
                         </div>
@@ -663,11 +663,11 @@
                         <input type="text" class="form-control" id="contratoContratanteEnd">
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>Telefone/WhatsApp</label>
                             <input type="text" class="form-control" id="contratoContratanteTel">
                         </div>
-                        <div class="form-group" style="flex: 1;">
+                        <div class="form-group u-flex1" >
                             <label>E-mail</label>
                             <input type="email" class="form-control" id="contratoContratanteEmail">
                         </div>
@@ -707,7 +707,7 @@
                 </div>
 
                 <div style="margin-top: 24px; display: flex; gap: 12px;">
-                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                    <button type="button" class="btn btn-outline u-flex1" 
                         onclick="closeModalGerarContrato()">Cancelar</button>
                     <button type="submit" class="btn btn-primary" style="flex: 2; justify-content: center;">
                         <i class="ti ti-download"></i> Baixar Contrato em PDF
@@ -723,7 +723,7 @@
         <h2 style="text-align: center; text-transform: uppercase; margin-bottom: 30px; font-size: 16pt;">CONTRATO DE
             PRESTAÇÃO DE SERVIÇOS - PLANOS DE TREINAMENTO</h2>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Dados do Contratante:</strong></p>
             <p>Nome: <span id="pdf-contratante-nome">_______________________________</span></p>
             <p>CPF: <span id="pdf-contratante-cpf">_______________________________</span></p>
@@ -736,7 +736,7 @@
             <p>E-mail: <span id="pdf-contratante-email">_____________________________</span></p>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Dados do Contratado (Academia/Escola):</strong></p>
             <p>Nome: <span id="pdf-empresa-nome">_______________________________</span></p>
             <p>CNPJ: <span id="pdf-empresa-cnpj">_______________________________</span></p>
@@ -744,14 +744,14 @@
             <p>Contato: <span id="pdf-empresa-contato">_______________________________</span></p>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Objeto do Contrato:</strong></p>
             <p>O Contratante contrata os serviços de treinamento físico [Taekwondo] pelo plano escolhido abaixo, com
                 vigência a partir de <span id="pdf-contrato-inicio">__________</span> até <span
                     id="pdf-contrato-fim">__________</span>.</p>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Planos e Valores (com descontos para pagamento antecipado):</strong></p>
             <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11pt;">
                 <thead>
@@ -779,14 +779,14 @@
                 Chave PIX: [inserir chave].</p>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Forma de Pagamento:</strong></p>
             <p>Parcelamento em <span id="pdf-pag-meses">__</span> meses via PIX, com vencimento todo dia <span
                     id="pdf-pag-venc">__</span> de cada mês.</p>
             <p>Em caso de atraso, multa de 2% + juros de 1% ao mês.</p>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Cancelamento Antecipado:</strong></p>
             <p>Caso o Contratante cancele o plano antes do término, deverá pagar imediatamente a diferença entre o valor
                 já pago (com desconto) e o equivalente à mensalidade avulsa pelo período utilizado. Não há reembolso de
@@ -799,7 +799,7 @@
             <p>- Contratado: Fornecer aulas conforme plano e manter instalações seguras.</p>
         </div>
 
-        <div style="margin-bottom: 20px;">
+        <div class="u-mb20">
             <p><strong>Vigência e Rescisão:</strong></p>
             <p>Vigência de <span id="pdf-vig-inicio">__________</span> a <span id="pdf-vig-fim">__________</span>.
                 Rescisão
@@ -955,7 +955,7 @@
                     <div class="stat-icon red"><i class="ti ti-alert-triangle"></i></div>
                     <div class="stat-content">
                         <h3>Total em Atraso</h3>
-                        <div class="value" style="color: var(--red);">${formatCurrency(totalAtrasado)}</div>
+                        <div class="value u-text-red" >${formatCurrency(totalAtrasado)}</div>
                         <div class="meta">${countAtrasado} pagamentos pendentes</div>
                     </div>
                 </div>
@@ -1033,7 +1033,7 @@
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 14px; padding-top: 12px; border-top: 1px solid var(--border-color);">
-                    <span style="color: var(--text-muted);">Status Atual:</span>
+                    <span class="u-text-muted">Status Atual:</span>
                     ${getStatusHTML(aluno.statusFin, aluno.vencimento)}
                 </div>
             `;
