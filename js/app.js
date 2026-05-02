@@ -412,6 +412,10 @@ function fetchFromSupabase() {
                         }
                     } else if (remoteDate === 0 && localDate > 0 && db._owner_id === userId) {
                         syncToSupabase();
+                    } else if (localDate > remoteDate && db._owner_id === userId) {
+                        // Local tem mudanças não sincronizadas (ex: usuário navegou antes do debounce de 2s)
+                        console.log("Local mais novo que remote. Subindo dados pendentes...");
+                        syncToSupabase();
                     }
                 } else {
                     // Supabase sem dados para este usuário ainda (novo cadastro)
@@ -487,16 +491,8 @@ function mergeAthleteResponse(row) {
     if (!payload || !payload.id) return false;
     if (db[key].some(e => e.id === payload.id)) return false;
 
-    // Proteção contra entries antigas editadas/deletadas pelo atleta
-    // Se o app_state foi atualizado >5min APÓS a inserção da resposta e ainda assim
-    // ela não está lá, foi removida intencionalmente — não ressuscita.
-    const submittedAt = row.submitted_at ? new Date(row.submitted_at).getTime() : 0;
-    const lastAppStateUpdate = db._last_updated || 0;
-    const FIVE_MIN = 5 * 60 * 1000;
-    if (submittedAt > 0 && lastAppStateUpdate > submittedAt + FIVE_MIN) {
-        return false;
-    }
-
+    // athlete_responses é append-only — se a resposta não está no db local, sempre adicionar.
+    // A deduplicação por payload.id (linha acima) é suficiente para evitar duplicatas.
     db[key].push(payload);
     return true;
 }
@@ -658,7 +654,7 @@ function setupRealtimeSubscription() {
             lastSyncTime = remoteData._last_updated || Date.now();
             localStorage.setItem('tkd_scout_db', JSON.stringify(db));
 
-            showToast('Atleta atualizou dados!', 'info');
+            showToast('Dados sincronizados!', 'info');
 
             if (typeof renderSemaforo === 'function') renderSemaforo();
             if (typeof renderAlunosUI === 'function') renderAlunosUI();
@@ -1537,6 +1533,15 @@ function patchA11y() {
         hamburger.setAttribute('aria-label', 'Abrir menu');
     }
 }
+
+// Ao sair da página, tenta subir mudanças pendentes que o debounce de 2s não capturou.
+window.addEventListener('beforeunload', () => {
+    const remoteTs = lastSyncTime || 0;
+    const localTs = db._last_updated || 0;
+    if (localTs > remoteTs && db._owner_id) {
+        syncToSupabase(); // fire-and-forget — melhor esforço
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     // Carrega o Banco de Dados no carregamento da página
