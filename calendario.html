@@ -305,6 +305,12 @@
                 </div>
             </div>
 
+            <!-- Search bar for list view -->
+            <div id="eventoSearchBar" style="margin-bottom:16px; display:none; position:relative;">
+                <i class="ti ti-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; pointer-events:none;"></i>
+                <input type="text" id="eventoSearchInput" class="form-control" placeholder="Buscar evento por nome ou local..." style="padding-left:38px;" oninput="renderListView()">
+            </div>
+
             <!-- List View Container -->
             <div id="listView" class="event-list">
                 <!-- Rendered by JS -->
@@ -451,6 +457,8 @@
             } else {
                 document.getElementById('listView').style.display = 'none';
                 document.getElementById('calendarView').style.display = 'block';
+                const sb = document.getElementById('eventoSearchBar');
+                if (sb) sb.style.display = 'none';
                 renderCalendarView();
             }
         }
@@ -536,24 +544,40 @@
 
         function deleteEvent(id, e) {
             if (e) e.stopPropagation();
-            if (confirm('Tem certeza que deseja excluir este evento?')) {
+            showConfirmModal('Excluir Evento', 'Tem certeza que deseja excluir este evento?', () => {
                 db.eventos = db.eventos.filter(ev => ev.id !== id);
                 saveDB();
                 showToast('Evento excluído.', 'info');
                 if (currentView === 'list') renderListView();
                 else renderCalendarView();
-            }
+            });
         }
 
         function renderListView() {
             const list = document.getElementById('listView');
             list.innerHTML = '';
 
-            // Sort by date
-            const sortedEvents = [...db.eventos].sort((a, b) => new Date(a.data) - new Date(b.data));
+            const searchBar = document.getElementById('eventoSearchBar');
+            if (searchBar) searchBar.style.display = 'block';
+
+            const query = (document.getElementById('eventoSearchInput')?.value || '').toLowerCase().trim();
+
+            // Sort by date, filter by search
+            let sortedEvents = [...db.eventos].sort((a, b) => new Date(a.data) - new Date(b.data));
+            if (query) {
+                sortedEvents = sortedEvents.filter(ev =>
+                    (ev.titulo || '').toLowerCase().includes(query) ||
+                    (ev.local || '').toLowerCase().includes(query)
+                );
+            }
+
+            if (db.eventos.length === 0) {
+                list.innerHTML = `<div class="empty-state"><i class="ti ti-calendar-off"></i><h3>Nenhum evento programado</h3><p>Adicione eventos usando o botão "Novo Evento" acima.</p></div>`;
+                return;
+            }
 
             if (sortedEvents.length === 0) {
-                list.innerHTML = '<div style="padding: 40px; text-align: center; color: var(--text-muted);">Nenhum evento programado.</div>';
+                list.innerHTML = `<div class="empty-state"><i class="ti ti-search-off"></i><h3>Nenhum resultado encontrado</h3><p>Tente buscar por outro nome ou local.</p></div>`;
                 return;
             }
 
