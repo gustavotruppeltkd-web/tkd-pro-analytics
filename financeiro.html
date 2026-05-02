@@ -352,16 +352,25 @@
                 gap: 10px !important;
             }
             .filter-select, .search-bar { width: 100% !important; min-width: 0 !important; }
-            /* Tabela com scroll horizontal — nunca comprime colunas */
-            .table-container {
-                overflow-x: auto !important;
-                -webkit-overflow-scrolling: touch;
+            /* Tabela → cards verticais em mobile */
+            .table-container table, .table-container thead { display: block; }
+            .table-container thead tr { display: none; }
+            .table-container tbody { display: flex; flex-direction: column; gap: 12px; padding: 12px; }
+            .table-container tr {
+                display: flex; flex-direction: column; gap: 8px;
+                background: var(--bg-hover); border-radius: var(--radius-md);
+                padding: 14px; border: 1px solid var(--border-color);
             }
-            .table-container table {
-                min-width: 600px;
-                width: 100%;
+            .table-container td {
+                display: flex; justify-content: space-between; align-items: center;
+                border: none; padding: 0; font-size: 13px;
             }
-            th, td { padding: 12px 16px; white-space: nowrap; }
+            .table-container td[data-label]::before {
+                content: attr(data-label);
+                font-size: 11px; font-weight: 600; color: var(--text-muted);
+                text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; margin-right: 8px;
+            }
+            .table-container td:last-child { justify-content: flex-end; }
             .tabs-header { overflow-x: auto; flex-wrap: nowrap; gap: 16px; }
             .tab-btn { white-space: nowrap; }
         }
@@ -988,12 +997,12 @@
                             </div>
                         </div>
                     </td>
-                    <td>${getStatusHTML(a.statusFin, a.vencimento)}</td>
-                    <td>
+                    <td data-label="Status">${getStatusHTML(a.statusFin, a.vencimento)}</td>
+                    <td data-label="Valor">
                         <div style="font-weight: 500;">${formatCurrency(a.mensalidade)}</div>
                         <div style="font-size: 12px; color: var(--text-muted);">${getPlanoName(a.planoId) || 'Sem Plano'}</div>
                     </td>
-                    <td style="color: var(--text-muted); font-size: 13px;">${a.ultimoPagamento ? a.ultimoPagamento.split('-').reverse().join('/') : (a.statusFin === 'pago' ? 'Neste Mês' : '—')}</td>
+                    <td data-label="Último Pag." style="color: var(--text-muted); font-size: 13px;">${a.ultimoPagamento ? a.ultimoPagamento.split('-').reverse().join('/') : (a.statusFin === 'pago' ? 'Neste Mês' : '—')}</td>
                     <td style="text-align: right;">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
                             <button class="btn btn-icon btn-success" title="Enviar WhatsApp" onclick="sendWhatsApp(${a.id})"><i class="ti ti-brand-whatsapp"></i></button>
