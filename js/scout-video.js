@@ -45,6 +45,91 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderHistoryList = renderHistoryList;
     initPlayerListeners();
     checkEditMode();
+    initKeyboardShortcuts();
+
+    function initKeyboardShortcuts() {
+        document.addEventListener('keydown', e => {
+            // Skip when typing in an input/textarea
+            if (e.target.matches('input, textarea, select')) return;
+
+            // Helper: click a scout-opt-btn by data-group + data-val
+            function clickOpt(group, val) {
+                const btn = document.querySelector(`[data-group="${group}"][data-val="${val}"]`);
+                if (btn && !btn.disabled) btn.click();
+            }
+
+            switch (e.key) {
+                case ' ':
+                case 'Spacebar':
+                    e.preventDefault();
+                    if (currentVideoType === 'local' && localPlayer) {
+                        if (localPlayer.paused) localPlayer.play().catch(() => {});
+                        else localPlayer.pause();
+                    } else if (currentVideoType === 'youtube' && ytPlayer) {
+                        const state = ytPlayer.getPlayerState?.();
+                        if (state === 1) ytPlayer.pauseVideo?.();
+                        else ytPlayer.playVideo?.();
+                    }
+                    break;
+                case 'a': case 'A':
+                    e.preventDefault();
+                    clickOpt('acao', 'Ataque Feito');
+                    break;
+                case 's': case 'S':
+                    e.preventDefault();
+                    clickOpt('acao', 'Ataque Sofrido');
+                    break;
+                case 'f': case 'F':
+                    e.preventDefault();
+                    clickOpt('acao', 'Falta Feita');
+                    break;
+                case 'd': case 'D':
+                    e.preventDefault();
+                    clickOpt('acao', 'Falta Sofrida');
+                    break;
+                case 'e': case 'E':
+                    e.preventDefault();
+                    clickOpt('perna', 'Esquerda');
+                    break;
+                case 'r': case 'R':
+                    if (e.ctrlKey || e.metaKey) {
+                        // Ctrl+R → end round
+                        e.preventDefault();
+                        const btnEnd = document.getElementById('btnEndRound');
+                        if (btnEnd && !btnEnd.disabled) btnEnd.click();
+                    } else {
+                        e.preventDefault();
+                        clickOpt('perna', 'Direita');
+                    }
+                    break;
+                case '1':
+                    e.preventDefault();
+                    clickOpt('pontos', '1');
+                    break;
+                case '2':
+                    e.preventDefault();
+                    clickOpt('pontos', '2');
+                    break;
+                case '3':
+                    e.preventDefault();
+                    clickOpt('pontos', '3');
+                    break;
+                case '4':
+                    e.preventDefault();
+                    clickOpt('pontos', '4');
+                    break;
+                case '6':
+                    e.preventDefault();
+                    clickOpt('pontos', '6');
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    const btnReg = document.getElementById('btnRegisterEvent');
+                    if (btnReg && !btnReg.disabled) btnReg.click();
+                    break;
+            }
+        });
+    }
 
     function checkEditMode() {
         const urlParams = new URLSearchParams(window.location.search);
