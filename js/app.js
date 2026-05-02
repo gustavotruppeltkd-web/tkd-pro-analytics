@@ -1293,6 +1293,147 @@ function renderActiveCoach() {
     });
 }
 
+// --- NOTIFICATION CENTER ---
+function getNotifications() {
+    if (!db.notifications) db.notifications = [];
+    return db.notifications;
+}
+
+function addNotification(msg, type, link) {
+    if (!db.notifications) db.notifications = [];
+    const id = Date.now() + Math.random();
+    db.notifications.unshift({ id, msg, type: type || 'info', link: link || null, read: false, ts: new Date().toISOString() });
+    if (db.notifications.length > 50) db.notifications = db.notifications.slice(0, 50);
+    saveDB();
+    renderNotifBadge();
+}
+
+function markAllNotifRead() {
+    if (!db.notifications) return;
+    db.notifications.forEach(n => n.read = true);
+    saveDB();
+    renderNotifBadge();
+}
+
+function clearNotifications() {
+    db.notifications = [];
+    saveDB();
+    renderNotifBadge();
+    renderNotifList();
+}
+
+function renderNotifBadge() {
+    const badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    const unread = (db.notifications || []).filter(n => !n.read).length;
+    badge.textContent = unread > 9 ? '9+' : unread;
+    badge.style.display = unread > 0 ? 'flex' : 'none';
+}
+
+function renderNotifList() {
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    const notifs = db.notifications || [];
+    if (notifs.length === 0) {
+        list.innerHTML = '<div class="notif-empty"><i class="ti ti-bell-off"></i><p>Nenhuma notificação</p></div>';
+        return;
+    }
+    list.innerHTML = notifs.map(n => {
+        const iconMap = { warning: 'ti-alert-triangle', error: 'ti-circle-x', success: 'ti-circle-check', info: 'ti-info-circle' };
+        const icon = iconMap[n.type] || 'ti-info-circle';
+        const ts = new Date(n.ts);
+        const now = new Date();
+        const diffMin = Math.round((now - ts) / 60000);
+        let timeLabel = diffMin < 1 ? 'agora' : diffMin < 60 ? diffMin + 'm' : diffMin < 1440 ? Math.floor(diffMin/60) + 'h' : Math.floor(diffMin/1440) + 'd';
+        return `<div class="notif-item ${n.read ? '' : 'unread'}" data-id="${n.id}" onclick="handleNotifClick('${n.id}','${n.link || ''}')">
+            <i class="ti ${icon} notif-icon notif-type-${n.type}"></i>
+            <div class="notif-body"><span>${n.msg}</span><span class="notif-time">${timeLabel}</span></div>
+        </div>`;
+    }).join('');
+}
+
+function handleNotifClick(id, link) {
+    const n = (db.notifications || []).find(x => String(x.id) === String(id));
+    if (n) { n.read = true; saveDB(); renderNotifBadge(); renderNotifList(); }
+    if (link) window.location.href = link;
+}
+
+function toggleNotifPanel() {
+    const panel = document.getElementById('notifPanel');
+    if (!panel) return;
+    const open = panel.classList.toggle('open');
+    if (open) { markAllNotifRead(); renderNotifList(); }
+}
+
+function injectNotifBell() {
+    if (document.getElementById('notifBellBtn')) return;
+    const topbarActions = document.querySelector('.topbar-actions');
+    if (!topbarActions) return;
+    const bellHTML = `<div class="notif-bell-wrapper" style="position:relative;">
+        <button id="notifBellBtn" class="btn" onclick="toggleNotifPanel()" aria-label="Notificações" style="position:relative;background:var(--bg-card);border:1px solid var(--border-color);color:var(--text-main);padding:8px 10px;">
+            <i class="ti ti-bell"></i>
+            <span id="notifBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;align-items:center;justify-content:center;padding:0 3px;line-height:1;"></span>
+        </button>
+        <div id="notifPanel" class="notif-panel">
+            <div class="notif-header">
+                <span>Notificações</span>
+                <button onclick="clearNotifications()" class="notif-clear-btn" aria-label="Limpar tudo">Limpar</button>
+            </div>
+            <div id="notifList" class="notif-list"></div>
+        </div>
+    </div>`;
+    topbarActions.insertAdjacentHTML('afterbegin', bellHTML);
+    renderNotifBadge();
+    document.addEventListener('click', e => {
+        const panel = document.getElementById('notifPanel');
+        if (panel && panel.classList.contains('open') && !e.target.closest('.notif-bell-wrapper')) {
+            panel.classList.remove('open');
+        }
+    });
+}
+
+function generateAutoNotifications() {
+    if (!db.turmas || !db.turmas.length) return;
+    const today = todayBR();
+    const existing = (db.notifications || []).map(n => n.msg);
+
+    // Pagamentos vencidos (financeiro)
+    if (db.alunos) {
+        db.alunos.forEach(a => {
+            if (!a.statusPagamento || a.statusPagamento === 'pago') return;
+            const msg = `Pagamento pendente: ${a.nome}`;
+            if (!existing.includes(msg)) addNotification(msg, 'warning', 'financeiro.html');
+        });
+    }
+
+    // Turma sem treino na semana atual
+    if (db.treinos) {
+        const weekStart = getWeekStartStr(today);
+        const weekEnd = addDays(weekStart, 6);
+        db.turmas.forEach(t => {
+            const hasTreino = db.treinos.some(tr => tr.turmaId == t.id && tr.data >= weekStart && tr.data <= weekEnd);
+            if (!hasTreino) {
+                const msg = `Turma "${t.nome}" sem treino esta semana`;
+                if (!existing.includes(msg)) addNotification(msg, 'info', 'treino-equipe.html');
+            }
+        });
+    }
+}
+
+function getWeekStartStr(dateStr) {
+    const d = new Date(dateStr + 'T12:00:00');
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function addDays(dateStr, n) {
+    const d = new Date(dateStr + 'T12:00:00');
+    d.setDate(d.getDate() + n);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
 // --- SIDEBAR STANDARDIZATION ---
 function renderSidebar() {
     const nav = document.getElementById('navMenuContainer');
@@ -1405,6 +1546,8 @@ document.addEventListener('DOMContentLoaded', () => {
     populatePesoSelects();
     renderActiveCoach();
     renderSidebar();
+    injectNotifBell();
+    generateAutoNotifications();
     setTimeout(patchA11y, 300); // após renderização inicial
 
     const themeBtn = document.getElementById('themeToggle');

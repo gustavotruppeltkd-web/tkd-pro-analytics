@@ -2327,3 +2327,66 @@ body.mode-mobile .ob-card {
     max-width: 280px;
     margin: 0;
 }
+
+/* ── NOTIFICATION CENTER ── */
+.notif-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius, 12px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    z-index: 9000;
+    overflow: hidden;
+}
+.notif-panel.open { display: flex; flex-direction: column; }
+.notif-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-main);
+}
+.notif-clear-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+.notif-clear-btn:hover { color: var(--red); background: rgba(239,68,68,.1); }
+.notif-list { max-height: 360px; overflow-y: auto; }
+.notif-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background .15s;
+    border-bottom: 1px solid var(--border-color);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--bg-hover, rgba(255,255,255,.05)); }
+.notif-item.unread { background: rgba(59,130,246,.07); }
+.notif-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+.notif-type-info    { color: var(--primary); }
+.notif-type-warning { color: var(--yellow); }
+.notif-type-error   { color: var(--red); }
+.notif-type-success { color: var(--green); }
+.notif-body { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.notif-body span:first-child { font-size: 13px; color: var(--text-main); line-height: 1.4; }
+.notif-time { font-size: 11px; color: var(--text-muted); }
+.notif-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 16px; color: var(--text-muted); }
+.notif-empty i { font-size: 32px; opacity: .4; }
+.notif-empty p { font-size: 13px; margin: 0; }
+@media (max-width: 480px) {
+    .notif-panel { width: calc(100vw - 32px); right: -8px; }
+}
