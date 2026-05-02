@@ -608,6 +608,18 @@
                 alunosGrid.insertAdjacentHTML('beforeend', card);
             });
 
+            if (alunosTurma.length === 0) {
+                const labelVazio = isRendHere ? 'Nenhum atleta cadastrado' : 'Nenhum aluno cadastrado';
+                const descVazio = isRendHere
+                    ? 'Adicione atletas à equipe usando o botão acima.'
+                    : 'Adicione alunos à turma usando o botão acima.';
+                alunosGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+                    <i class="ti ti-users-off"></i>
+                    <h3>${labelVazio}</h3>
+                    <p>${descVazio}</p>
+                </div>`;
+            }
+
             if (isRendHere) {
                 setTimeout(initComparisonCharts, 150);
                 // Show filter bar for Rendimento turmas and populate category options
