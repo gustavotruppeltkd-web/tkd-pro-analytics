@@ -1365,6 +1365,38 @@ function setupOfflineBanner() {
     if (!navigator.onLine) checkReal();
 }
 
+// Acessibilidade: adiciona role/aria-label automaticamente onde faltam
+function patchA11y() {
+    // role="dialog" + aria-modal em todas modal-overlay
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        if (!m.getAttribute('role')) m.setAttribute('role', 'dialog');
+        m.setAttribute('aria-modal', 'true');
+        const title = m.querySelector('.modal-title, h2, h3');
+        if (title && title.id) m.setAttribute('aria-labelledby', title.id);
+    });
+    // aria-label em botões só com ícone (sem texto visível)
+    const iconOnlyBtns = document.querySelectorAll('button:not([aria-label])');
+    iconOnlyBtns.forEach(btn => {
+        const text = btn.textContent.trim();
+        if (!text || text.length <= 1) {
+            const icon = btn.querySelector('i[class*="ti-"]');
+            if (icon) {
+                const cls = [...icon.classList].find(c => c.startsWith('ti-'));
+                if (cls) btn.setAttribute('aria-label', cls.replace('ti-', '').replace(/-/g, ' '));
+            }
+        }
+    });
+    // aria-label em imagens sem alt
+    document.querySelectorAll('img:not([alt])').forEach(img => img.setAttribute('alt', ''));
+    // Hamburger button
+    const hamburger = document.getElementById('hamburgerBtn');
+    if (hamburger && !hamburger.getAttribute('aria-expanded')) {
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-controls', 'navMenuContainer');
+        hamburger.setAttribute('aria-label', 'Abrir menu');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Carrega o Banco de Dados no carregamento da página
     loadDB();
@@ -1373,6 +1405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populatePesoSelects();
     renderActiveCoach();
     renderSidebar();
+    setTimeout(patchA11y, 300); // após renderização inicial
 
     const themeBtn = document.getElementById('themeToggle');
     if (themeBtn) {

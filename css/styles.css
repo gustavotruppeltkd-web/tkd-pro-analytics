@@ -2220,4 +2220,25 @@ body.mode-mobile .ob-card {
     /* min-height excessivo */
     div[style*="min-height: 280px"] { min-height: auto !important; }
     div[style*="min-height: 260px"] { min-height: 180px !important; }
+
+    /* Touch targets mínimos — WCAG 2.5.5 (44x44px) */
+    .btn-icon,
+    .btn-close,
+    .remove-btn,
+    button[class*="icon"],
+    .nav-item,
+    .tab-btn,
+    .view-btn,
+    .scout-opt-btn,
+    a.nav-item {
+        min-height: 44px !important;
+        min-width: 44px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    /* Botões de texto curto não precisam de 44px de width */
+    .btn:not(.btn-icon) {
+        min-height: 44px !important;
+    }
 }
