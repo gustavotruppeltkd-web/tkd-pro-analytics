@@ -58,6 +58,17 @@
     --ob-label:      #d1d5db;
     --ob-muted:      #9ca3af;
     --ob-error:      #f87171;
+
+    /* Aliases para atleta-portal.html (evitar :root local duplicado) */
+    --bg: var(--bg-dark);
+    --bg-card2: var(--bg-card);
+    --border: var(--border-color);
+    --text: var(--text-main);
+    --muted: var(--text-muted);
+    --radius: var(--radius-lg);
+    --shadow: var(--shadow-card);
+    --purple: #a855f7;
+    --primary-light: rgba(59, 130, 246, 0.15);
 }
 
 
