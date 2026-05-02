@@ -1272,6 +1272,9 @@
             <div class="hero-sub" id="heroFaixa"></div>
         </div>
         <div class="hero-date" id="heroDate"></div>
+        <button id="btnColorblind" onclick="toggleColorblind()" title="Modo Daltônico" style="background:transparent;border:1px solid var(--border);border-radius:8px;padding:6px 8px;color:var(--muted);cursor:pointer;font-size:12px;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+            <i class="ti ti-eye"></i>
+        </button>
     </header>
 
     <!-- MAIN DASHBOARD GRID -->
@@ -1598,6 +1601,23 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').catch(() => {});
         }
+        // Colorblind mode
+        function applyColorblind(on) {
+            document.body.setAttribute('data-colorblind', on ? 'true' : 'false');
+            const btn = document.getElementById('btnColorblind');
+            if (btn) {
+                btn.style.color = on ? 'var(--primary)' : 'var(--muted)';
+                btn.style.borderColor = on ? 'var(--primary)' : 'var(--border)';
+                btn.title = on ? 'Desativar Modo Daltônico' : 'Ativar Modo Daltônico';
+            }
+        }
+        function toggleColorblind() {
+            const current = localStorage.getItem('colorblind') === 'true';
+            localStorage.setItem('colorblind', !current);
+            applyColorblind(!current);
+        }
+        // Init on load
+        applyColorblind(localStorage.getItem('colorblind') === 'true');
     </script>
 </body>
 

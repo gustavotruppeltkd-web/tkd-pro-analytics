@@ -497,9 +497,13 @@
                 }
             }
 
-            // Helper para níveis de Bem-Estar
-            const DOT_COLORS_POS = ['#ef4444','#ef4444','#f59e0b','#10b981','#10b981']; // positivo: 1-2 vermelho, 3 amarelo, 4-5 verde
-            const DOT_COLORS_NEG = ['#10b981','#10b981','#f59e0b','#ef4444','#ef4444']; // negativo: 1-2 verde, 3 amarelo, 4-5 vermelho
+            // Helper para níveis de Bem-Estar — respeitam modo daltônico via variáveis CSS
+            const cs = getComputedStyle(document.documentElement);
+            const clRed    = cs.getPropertyValue('--red').trim()    || '#ef4444';
+            const clYellow = cs.getPropertyValue('--yellow').trim() || '#f59e0b';
+            const clGreen  = cs.getPropertyValue('--green').trim()  || '#10b981';
+            const DOT_COLORS_POS = [clRed, clRed, clYellow, clGreen, clGreen];
+            const DOT_COLORS_NEG = [clGreen, clGreen, clYellow, clRed, clRed];
             const renderWellnessDots = (label, icon, value, reverseBad = false) => {
                 if (value === undefined || value === null) return '';
                 const palette = reverseBad ? DOT_COLORS_NEG : DOT_COLORS_POS;

@@ -71,6 +71,15 @@
     --primary-light: rgba(59, 130, 246, 0.15);
 }
 
+/* ── MODO DALTÔNICO ── */
+[data-colorblind="true"] {
+    --green:  #2563eb;  /* azul em vez de verde */
+    --red:    #f97316;  /* laranja em vez de vermelho */
+    --yellow: #7c3aed;  /* roxo em vez de amarelo */
+    --green-bg: rgba(37, 99, 235, 0.15);
+    --yellow-bg: rgba(124, 58, 237, 0.15);
+    --red-bg: rgba(249, 115, 22, 0.15);
+}
 
 * {
     margin: 0;
