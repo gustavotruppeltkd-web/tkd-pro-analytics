@@ -909,9 +909,152 @@
                 renderTurmas();
                 const un = document.querySelector('.user-name');
                 if (un && un.innerText === 'Carregando...') un.innerText = 'Treinador';
-            }, 100);
+
+                // Onboarding: exibe apenas se nunca concluído e sem turmas
+                if (!db.onboardingDone && (!db.turmas || db.turmas.length === 0)) {
+                    showOnboarding();
+                }
+            }, 300);
         });
+
+        // ── ONBOARDING ──────────────────────────────────────────────
+        let _obStep = 1;
+        const OB_STEPS = 3;
+
+        function showOnboarding() {
+            document.getElementById('onboardingOverlay').style.display = 'flex';
+            goObStep(1);
+        }
+
+        function goObStep(n) {
+            _obStep = n;
+            document.querySelectorAll('.ob-step').forEach((el, i) => {
+                el.style.display = (i + 1 === n) ? 'block' : 'none';
+            });
+            document.getElementById('obProgressBar').style.width = `${(n / OB_STEPS) * 100}%`;
+            document.getElementById('obStepLabel').innerText = `Passo ${n} de ${OB_STEPS}`;
+        }
+
+        function obNext() { if (_obStep < OB_STEPS) goObStep(_obStep + 1); }
+        function obBack() { if (_obStep > 1) goObStep(_obStep - 1); }
+
+        function obFinish() {
+            db.onboardingDone = true;
+            saveDB();
+            document.getElementById('onboardingOverlay').style.display = 'none';
+            // Abre o modal de criação de turma automaticamente
+            openModal();
+        }
+
+        function obSkip() {
+            db.onboardingDone = true;
+            saveDB();
+            document.getElementById('onboardingOverlay').style.display = 'none';
+        }
     </script>
+
+    <!-- ONBOARDING OVERLAY -->
+    <div id="onboardingOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+        <div style="background:var(--ob-bg,#111827);border:1px solid var(--ob-border,#1e40af);border-radius:var(--radius-lg);padding:32px;max-width:480px;width:100%;animation:fadeIn 0.4s ease;position:relative;">
+
+            <!-- Progress -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <span id="obStepLabel" style="font-size:12px;color:var(--ob-muted,#9ca3af);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Passo 1 de 3</span>
+                <button onclick="obSkip()" style="background:none;border:none;color:var(--ob-muted,#9ca3af);cursor:pointer;font-size:12px;">Pular configuração</button>
+            </div>
+            <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-bottom:28px;overflow:hidden;">
+                <div id="obProgressBar" style="height:100%;background:var(--primary);border-radius:2px;transition:width 0.3s ease;width:33%;"></div>
+            </div>
+
+            <!-- Step 1: Boas-vindas -->
+            <div class="ob-step">
+                <div style="text-align:center;margin-bottom:24px;">
+                    <div style="width:64px;height:64px;background:linear-gradient(135deg,#1e40af,#2563eb);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">
+                        <i class="ti ti-shield-up" style="color:#fff;"></i>
+                    </div>
+                    <h2 style="margin:0 0 8px;font-size:22px;font-weight:800;color:var(--ob-label,#d1d5db);">Bem-vindo ao PRO COACH!</h2>
+                    <p style="margin:0;color:var(--ob-muted,#9ca3af);font-size:14px;line-height:1.6;">Vamos configurar seu espaço em menos de 1 minuto. Você pode pular qualquer passo e configurar depois.</p>
+                </div>
+                <div style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:12px;padding:16px;margin-bottom:24px;">
+                    <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:var(--ob-label,#d1d5db);">O que você vai encontrar:</p>
+                    <ul style="margin:0;padding-left:20px;color:var(--ob-muted,#9ca3af);font-size:13px;line-height:1.8;">
+                        <li>Gestão de turmas de rendimento e comerciais</li>
+                        <li>Monitoramento de wellness e carga de treino</li>
+                        <li>Análise tática de lutas (Scout)</li>
+                        <li>Planejamento por mesociclos</li>
+                    </ul>
+                </div>
+                <div style="display:flex;justify-content:flex-end;">
+                    <button onclick="obNext()" style="background:var(--primary);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+                        Começar <i class="ti ti-arrow-right" style="margin-left:4px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Tipo de uso -->
+            <div class="ob-step" style="display:none;">
+                <h2 style="margin:0 0 8px;font-size:20px;font-weight:800;color:var(--ob-label,#d1d5db);">Qual é o seu contexto?</h2>
+                <p style="margin:0 0 20px;color:var(--ob-muted,#9ca3af);font-size:14px;">Isso ajuda a mostrar as funcionalidades mais relevantes para você.</p>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;">
+                    <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border-color);border-radius:10px;cursor:pointer;background:rgba(37,99,235,0.05);">
+                        <input type="radio" name="obContexto" value="rendimento" checked style="accent-color:var(--primary);width:18px;height:18px;">
+                        <div>
+                            <div style="font-weight:600;color:var(--ob-label,#d1d5db);font-size:14px;"><i class="ti ti-medal" style="margin-right:6px;color:var(--primary);"></i>Equipe de Rendimento / Competição</div>
+                            <div style="font-size:12px;color:var(--ob-muted,#9ca3af);">Atletas federados, monitoramento intensivo, mesociclos</div>
+                        </div>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border-color);border-radius:10px;cursor:pointer;">
+                        <input type="radio" name="obContexto" value="comercial" style="accent-color:var(--primary);width:18px;height:18px;">
+                        <div>
+                            <div style="font-weight:600;color:var(--ob-label,#d1d5db);font-size:14px;"><i class="ti ti-users" style="margin-right:6px;color:var(--green);"></i>Academia / Escola Comercial</div>
+                            <div style="font-size:12px;color:var(--ob-muted,#9ca3af);">Alunos regulares, controle de frequência e financeiro</div>
+                        </div>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border-color);border-radius:10px;cursor:pointer;">
+                        <input type="radio" name="obContexto" value="misto" style="accent-color:var(--primary);width:18px;height:18px;">
+                        <div>
+                            <div style="font-weight:600;color:var(--ob-label,#d1d5db);font-size:14px;"><i class="ti ti-layout-grid" style="margin-right:6px;color:var(--yellow);"></i>Misto (os dois)</div>
+                            <div style="font-size:12px;color:var(--ob-muted,#9ca3af);">Equipe de competição + turmas regulares</div>
+                        </div>
+                    </label>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                    <button onclick="obBack()" style="background:transparent;border:1px solid var(--border-color);color:var(--text-muted);padding:10px 20px;border-radius:10px;cursor:pointer;">
+                        <i class="ti ti-arrow-left"></i> Voltar
+                    </button>
+                    <button onclick="obNext()" style="background:var(--primary);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+                        Continuar <i class="ti ti-arrow-right" style="margin-left:4px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Criar primeira turma -->
+            <div class="ob-step" style="display:none;">
+                <div style="text-align:center;margin-bottom:24px;">
+                    <div style="width:64px;height:64px;background:linear-gradient(135deg,#065f46,#10b981);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;">
+                        <i class="ti ti-check" style="color:#fff;"></i>
+                    </div>
+                    <h2 style="margin:0 0 8px;font-size:20px;font-weight:800;color:var(--ob-label,#d1d5db);">Tudo pronto!</h2>
+                    <p style="margin:0;color:var(--ob-muted,#9ca3af);font-size:14px;line-height:1.6;">Agora vamos criar sua primeira turma. Clique no botão abaixo e preencha o nome e tipo.</p>
+                </div>
+                <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:16px;margin-bottom:24px;">
+                    <p style="margin:0;font-size:13px;color:var(--ob-label,#d1d5db);line-height:1.6;">
+                        <i class="ti ti-bulb" style="color:var(--yellow);margin-right:6px;"></i>
+                        <strong>Dica:</strong> Você pode criar turmas separadas para grupos diferentes — ex. "Sub-15 Feminino", "Adulto Avançado", "Turma Quinta-feira".
+                    </p>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <button onclick="obBack()" style="background:transparent;border:1px solid var(--border-color);color:var(--text-muted);padding:10px 20px;border-radius:10px;cursor:pointer;">
+                        <i class="ti ti-arrow-left"></i> Voltar
+                    </button>
+                    <button onclick="obFinish()" style="background:var(--green);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">
+                        <i class="ti ti-plus" style="margin-right:4px;"></i> Criar minha primeira turma
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </body>
 
 </html>
