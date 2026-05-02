@@ -292,6 +292,8 @@
                 <div class="view-switcher">
                     <button class="view-btn active" onclick="switchView('list')"><i class="ti ti-list"></i>
                         Lista</button>
+                    <button class="view-btn" onclick="switchView('week')"><i class="ti ti-calendar-week"></i>
+                        Semana</button>
                     <button class="view-btn" onclick="switchView('calendar')"><i class="ti ti-calendar"></i>
                         Mensal</button>
                 </div>
@@ -314,6 +316,18 @@
             <!-- List View Container -->
             <div id="listView" class="event-list">
                 <!-- Rendered by JS -->
+            </div>
+
+            <!-- Week View Container -->
+            <div id="weekView" class="card" style="display: none; padding: 0;">
+                <div class="calendar-header" style="padding: 16px 20px; border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                    <button class="btn btn-icon" onclick="changeWeek(-1)"><i class="ti ti-chevron-left"></i></button>
+                    <h2 id="currentWeekLabel" style="margin:0; font-size:16px;"></h2>
+                    <button class="btn btn-icon" onclick="changeWeek(1)"><i class="ti ti-chevron-right"></i></button>
+                </div>
+                <div id="weekGrid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:1px; background:var(--border-color);">
+                    <!-- Rendered by JS -->
+                </div>
             </div>
 
             <!-- Calendar View Container -->
@@ -444,21 +458,89 @@
         let currentView = 'list';
         let displayDate = new Date();
         let editingEventId = null;
+        let currentWeekStart = getWeekStart(new Date());
+
+        function getWeekStart(d) {
+            const day = new Date(d);
+            const diff = day.getDay(); // 0=Sun
+            day.setDate(day.getDate() - diff);
+            day.setHours(0,0,0,0);
+            return day;
+        }
+
+        function changeWeek(dir) {
+            currentWeekStart = new Date(currentWeekStart);
+            currentWeekStart.setDate(currentWeekStart.getDate() + dir * 7);
+            renderWeekView();
+        }
+
+        function renderWeekView() {
+            const grid = document.getElementById('weekGrid');
+            const label = document.getElementById('currentWeekLabel');
+            if (!grid) return;
+
+            const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+            const todayStr = new Date().toISOString().slice(0,10);
+
+            // Week end
+            const weekEnd = new Date(currentWeekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+
+            const fmt = d => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+            label.textContent = `${fmt(currentWeekStart)} — ${fmt(weekEnd)}`;
+
+            let html = '';
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(currentWeekStart);
+                day.setDate(day.getDate() + i);
+                const dayStr = day.toISOString().slice(0,10);
+                const isToday = dayStr === todayStr;
+
+                const dayEvents = db.eventos.filter(ev => {
+                    const start = ev.data;
+                    const end = ev.dataFim || ev.data;
+                    return dayStr >= start && dayStr <= end;
+                });
+
+                const evHTML = dayEvents.map(ev => `
+                    <div onclick="openModalEvent(${ev.id})" style="background:var(--primary);color:#fff;border-radius:4px;padding:3px 6px;font-size:10px;cursor:pointer;margin-bottom:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" title="${ev.titulo}">
+                        ${ev.titulo}
+                    </div>`).join('');
+
+                html += `
+                    <div style="background:${isToday ? 'rgba(59,130,246,0.08)' : 'var(--bg-card)'};padding:10px 8px;min-height:120px;">
+                        <div style="font-size:10px;font-weight:700;color:${isToday ? 'var(--primary)' : 'var(--text-muted)'};text-transform:uppercase;margin-bottom:6px;">
+                            ${days[i]}<br><span style="font-size:14px;color:${isToday ? 'var(--primary)' : 'var(--text-main)'}">${day.getDate()}</span>
+                        </div>
+                        ${evHTML || ''}
+                    </div>`;
+            }
+            grid.innerHTML = html;
+        }
 
         function switchView(view) {
             currentView = view;
             document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
             event.currentTarget.classList.add('active');
 
+            const listView = document.getElementById('listView');
+            const calView = document.getElementById('calendarView');
+            const weekViewEl = document.getElementById('weekView');
+            const sb = document.getElementById('eventoSearchBar');
+
+            listView.style.display = 'none';
+            calView.style.display = 'none';
+            weekViewEl.style.display = 'none';
+            if (sb) sb.style.display = 'none';
+
             if (view === 'list') {
-                document.getElementById('listView').style.display = 'flex';
-                document.getElementById('calendarView').style.display = 'none';
+                listView.style.display = 'flex';
                 renderListView();
+            } else if (view === 'week') {
+                weekViewEl.style.display = 'block';
+                renderWeekView();
             } else {
-                document.getElementById('listView').style.display = 'none';
-                document.getElementById('calendarView').style.display = 'block';
-                const sb = document.getElementById('eventoSearchBar');
-                if (sb) sb.style.display = 'none';
+                calView.style.display = 'block';
                 renderCalendarView();
             }
         }
