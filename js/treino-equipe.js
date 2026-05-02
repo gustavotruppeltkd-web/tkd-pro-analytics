@@ -128,6 +128,8 @@
         }
 
         function renderCalendar() {
+            const copyBtn = document.getElementById('btnCopyPrevWeek');
+            if (copyBtn) copyBtn.style.display = currentView === 'week' ? '' : 'none';
             if (currentView === 'week') {
                 document.getElementById('viewWeek').style.display = '';
                 document.getElementById('viewMonth').style.display = 'none';
@@ -162,6 +164,10 @@
             const sStr = `${s.getDate()} ${s.getMonth() !== e.getMonth() ? MESES[s.getMonth()].slice(0, 3) + ' ' : ''}`;
             const eStr = `${e.getDate()} ${MESES[e.getMonth()]}`;
             document.getElementById('calTitle').innerText = `${sStr}– ${eStr}, ${e.getFullYear()}`;
+
+            // Botão copiar semana anterior
+            const copyBtn = document.getElementById('btnCopyPrevWeek');
+            if (copyBtn) copyBtn.style.display = currentView === 'week' ? '' : 'none';
 
             const today = toDateStr(new Date());
             const container = document.getElementById('viewWeek');
@@ -597,6 +603,7 @@
             setDestinatario('equipe');
             populateAtletasDestinatarioChips([]);
 
+            renderTemplateSelector();
             document.getElementById('treinoViewPanel').style.display = 'none';
             document.getElementById('treinoEditPanel').style.display = '';
             document.getElementById('modalTreino').classList.add('active');
@@ -697,6 +704,9 @@
                         <i class="ti ti-trash"></i> Excluir
                     </button>
                     <div style="display:flex;gap:10px;">
+                        <button class="btn" onclick="saveAsTemplate()" style="background:rgba(245,158,11,0.1);color:var(--yellow);" title="Salvar estrutura deste treino como template reutilizável">
+                            <i class="ti ti-bookmark-plus"></i> Salvar como Template
+                        </button>
                         <button class="btn" onclick="duplicateTreinoAtual()" style="background:rgba(59,130,246,0.1);color:var(--primary);">
                             <i class="ti ti-copy"></i> Duplicar
                         </button>
@@ -1253,6 +1263,212 @@
         // ============================================================
         //  SAVE / DELETE
         // ============================================================
+
+        // ============================================================
+        //  TEMPLATES DE TREINO
+        // ============================================================
+        function saveAsTemplate() {
+            const id = parseInt(document.getElementById('treinoEditId').value);
+            const t = db.treinos.find(t => t.id === id);
+            if (!t) return;
+
+            if (!db.treinoTemplates) db.treinoTemplates = [];
+
+            // Verifica se já existe template com mesmo nome
+            const existing = db.treinoTemplates.find(tpl => tpl.nome === t.titulo);
+            if (existing) {
+                showConfirmModal(
+                    'Template já existe',
+                    `Já existe um template chamado "${t.titulo}". Deseja substituí-lo?`,
+                    () => {
+                        Object.assign(existing, {
+                            tipo: t.tipo, blocos: JSON.parse(JSON.stringify(t.blocos || [])),
+                            obs: t.obs || '', duracaoMins: t.duracaoMins, psePlanejada: t.psePlanejada,
+                            macro: t.tipo
+                        });
+                        saveDB();
+                        showToast(`Template "${t.titulo}" atualizado!`);
+                    }
+                );
+                return;
+            }
+
+            db.treinoTemplates.push({
+                id: Date.now(),
+                nome: t.titulo,
+                tipo: t.tipo,
+                blocos: JSON.parse(JSON.stringify(t.blocos || [])),
+                obs: t.obs || '',
+                duracaoMins: t.duracaoMins,
+                psePlanejada: t.psePlanejada
+            });
+            saveDB();
+            showToast(`Template "${t.titulo}" salvo! Disponível ao criar nova sessão.`);
+        }
+
+        function renderTemplateSelector() {
+            const templates = db.treinoTemplates || [];
+            const container = document.getElementById('templateSelectorRow');
+            if (!container) return;
+
+            if (templates.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+            const sel = document.getElementById('templateSelect');
+            if (!sel) return;
+
+            sel.innerHTML = '<option value="">Carregar template...</option>' +
+                templates.map(tpl =>
+                    `<option value="${tpl.id}">${tpl.nome} (${TIPO_LABELS[tpl.tipo] || tpl.tipo})</option>`
+                ).join('');
+        }
+
+        function loadTemplateIntoForm() {
+            const sel = document.getElementById('templateSelect');
+            if (!sel || !sel.value) return;
+
+            const tpl = (db.treinoTemplates || []).find(t => t.id === parseInt(sel.value));
+            if (!tpl) return;
+
+            showConfirmModal(
+                'Carregar Template',
+                `Isso substituirá os blocos e configurações atuais pelo template "${tpl.nome}". Continuar?`,
+                () => {
+                    // Set tipo
+                    if (tpl.tipo) {
+                        document.getElementById('treinoTipo').value = tpl.tipo;
+                        // Determine macro and update tipo buttons
+                        const isTkd = [...TIPOS_TAEKWONDO].some(t => t.id === tpl.tipo);
+                        const radioTkd = document.querySelector('input[name="treinoMacro"][value="taekwondo"]');
+                        const radioFis = document.querySelector('input[name="treinoMacro"][value="fisico"]');
+                        if (isTkd && radioTkd) radioTkd.checked = true;
+                        else if (radioFis) radioFis.checked = true;
+                        updateTipoOpcoes();
+                        setTimeout(() => {
+                            const btn = document.querySelector(`.tipo-${tpl.tipo}`);
+                            if (btn) selectTipo(tpl.tipo, btn);
+                        }, 50);
+                    }
+                    // Set duracao / pse / obs
+                    if (tpl.duracaoMins) document.getElementById('treinoDuracao').value = tpl.duracaoMins;
+                    if (tpl.psePlanejada) document.getElementById('treinoPse').value = tpl.psePlanejada;
+                    if (tpl.obs !== undefined) document.getElementById('treinoObs').value = tpl.obs;
+                    // Rebuild blocos
+                    document.getElementById('blocosContainer').innerHTML = '';
+                    blocoCounter = 0;
+                    (tpl.blocos || []).forEach(b => addBloco(b));
+                    if ((tpl.blocos || []).length === 0) addBloco();
+                    sel.value = '';
+                    showToast(`Template "${tpl.nome}" carregado!`);
+                }
+            );
+        }
+
+        function showTemplateManager() {
+            const templates = db.treinoTemplates || [];
+            if (templates.length === 0) {
+                showToast('Nenhum template salvo ainda. Salve um treino como template primeiro.', 'info');
+                return;
+            }
+            // Reuse confirmModal structure for a simple list
+            let modal = document.getElementById('_templateManagerModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = '_templateManagerModal';
+                modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+                modal.innerHTML = `<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:24px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <h3 style="margin:0;font-size:16px;">Gerenciar Templates</h3>
+                        <button onclick="document.getElementById('_templateManagerModal').style.display='none'" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;">×</button>
+                    </div>
+                    <div id="_templateList"></div>
+                </div>`;
+                document.body.appendChild(modal);
+                modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+            }
+            const list = document.getElementById('_templateList');
+            list.innerHTML = templates.map(tpl => `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-color);">
+                    <div>
+                        <div style="font-weight:600;font-size:14px;">${tpl.nome}</div>
+                        <div style="font-size:11px;color:var(--text-muted);">${TIPO_LABELS[tpl.tipo] || tpl.tipo} • ${tpl.duracaoMins || '—'}min • PSE ${tpl.psePlanejada || '—'}</div>
+                    </div>
+                    <button class="btn btn-icon" style="color:var(--red);" onclick="deleteTemplate(${tpl.id});document.getElementById('_templateManagerModal').style.display='none';">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>`).join('');
+            modal.style.display = 'flex';
+        }
+
+        function deleteTemplate(templateId) {
+            const tpl = (db.treinoTemplates || []).find(t => t.id === templateId);
+            if (!tpl) return;
+            showConfirmModal('Excluir Template', `Excluir o template "${tpl.nome}"?`, () => {
+                db.treinoTemplates = db.treinoTemplates.filter(t => t.id !== templateId);
+                saveDB();
+                renderTemplateSelector();
+                showToast('Template excluído.');
+            });
+        }
+
+        // ============================================================
+        //  COPIAR SEMANA ANTERIOR
+        // ============================================================
+        function copyPreviousWeek() {
+            const weekStart = getWeekStart(currentDate);
+            const prevStart = new Date(weekStart);
+            prevStart.setDate(prevStart.getDate() - 7);
+
+            // Treinos da semana anterior
+            const prevTreinos = (db.treinos || []).filter(t => {
+                if (t.turmaId !== db.activeTurmaId) return false;
+                const d = new Date(t.data + 'T12:00:00');
+                return d >= prevStart && d < weekStart;
+            });
+
+            if (prevTreinos.length === 0) {
+                showToast('Nenhum treino encontrado na semana anterior.', 'info');
+                return;
+            }
+
+            // Verifica se já existem treinos na semana atual
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 7);
+            const currentHasTreinos = (db.treinos || []).some(t => {
+                if (t.turmaId !== db.activeTurmaId) return false;
+                const d = new Date(t.data + 'T12:00:00');
+                return d >= weekStart && d < weekEnd;
+            });
+
+            const doTheCopy = () => {
+                prevTreinos.forEach(t => {
+                    const prevDate = new Date(t.data + 'T12:00:00');
+                    const newDate = new Date(prevDate);
+                    newDate.setDate(newDate.getDate() + 7);
+                    const clone = JSON.parse(JSON.stringify(t));
+                    clone.id = Date.now() + Math.random() * 1000 | 0;
+                    clone.data = toDateStr(newDate);
+                    clone._updatedAt = Date.now();
+                    db.treinos.push(clone);
+                });
+                saveDB();
+                renderCalendar();
+                showToast(`${prevTreinos.length} treino(s) copiado(s) da semana anterior!`);
+            };
+
+            if (currentHasTreinos) {
+                showConfirmModal(
+                    'Copiar semana anterior',
+                    `A semana atual já tem treinos. Deseja adicionar os ${prevTreinos.length} treino(s) da semana passada mesmo assim?`,
+                    doTheCopy
+                );
+            } else {
+                doTheCopy();
+            }
+        }
 
         function duplicateTreinoAtual() {
             const id = parseInt(document.getElementById('treinoEditId').value);

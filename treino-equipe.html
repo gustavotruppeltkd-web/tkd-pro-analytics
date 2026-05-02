@@ -1662,6 +1662,9 @@
                     <h2 id="calTitle">—</h2>
                     <button class="btn btn-icon" onclick="navCalendar(1)"><i class="ti ti-chevron-right"></i></button>
                     <button class="btn" style="font-size:13px;" onclick="goToToday()">Hoje</button>
+                    <button id="btnCopyPrevWeek" class="btn" style="font-size:12px;background:rgba(245,158,11,0.1);color:var(--yellow);display:none;" onclick="copyPreviousWeek()" title="Copiar todos os treinos da semana anterior para esta semana">
+                        <i class="ti ti-copy"></i> Copiar Semana Ant.
+                    </button>
                 </div>
                 <div class="view-toggle">
                     <button id="btnWeek" class="active" onclick="setView('week')"><i class="ti ti-layout-columns"
@@ -1748,6 +1751,15 @@
 
             <!-- EDIT PANEL (form) -->
             <div id="treinoEditPanel">
+                <!-- Template Selector -->
+                <div id="templateSelectorRow" style="display:none; align-items:center; gap:8px; margin-bottom:16px; padding:10px 12px; background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.2); border-radius:var(--radius-md);">
+                    <i class="ti ti-bookmark" style="color:var(--yellow);flex-shrink:0;"></i>
+                    <select id="templateSelect" class="form-control" style="flex:1;" onchange="loadTemplateIntoForm()">
+                        <option value="">Carregar template...</option>
+                    </select>
+                    <button type="button" class="btn btn-icon" style="color:var(--red);flex-shrink:0;" title="Gerenciar templates" onclick="showTemplateManager()"><i class="ti ti-settings"></i></button>
+                </div>
+
                 <!-- Data + Horário -->
                 <div class="row-2" style="margin-bottom:16px;">
                     <div class="form-group" style="margin:0;">
