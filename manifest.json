@@ -1,0 +1,25 @@
+{
+  "name": "Portal do Atleta",
+  "short_name": "Atleta",
+  "description": "Portal de acompanhamento do atleta — PRO COACH ANALYTICS",
+  "start_url": "/atleta-portal.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/0f172a/3b82f6?text=TKD",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://placehold.co/512x512/0f172a/3b82f6?text=TKD",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
