@@ -658,7 +658,7 @@ function setupRealtimeSubscription() {
             lastSyncTime = remoteData._last_updated || Date.now();
             localStorage.setItem('tkd_scout_db', JSON.stringify(db));
 
-            showToast('Dados sincronizados!', 'info');
+            // Toast removido — sincronização silenciosa para não poluir a UI
 
             if (typeof renderSemaforo === 'function') renderSemaforo();
             if (typeof renderAlunosUI === 'function') renderAlunosUI();
