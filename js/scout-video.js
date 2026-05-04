@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
         _doSaveScout(obs);
     }
 
-    function _doSaveScout(observacaoFinal) {
+    async function _doSaveScout(observacaoFinal) {
         if (!_pendingScoutData) return;
         const { atletaFinal, evento, resultadoLuta, avaliacao } = _pendingScoutData;
         _pendingScoutData = null;
@@ -583,18 +583,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (editModeScoutId) {
             const index = db.lutasScout.findIndex(s => String(s.id) === String(editModeScoutId));
             if (index !== -1) {
-                db.lutasScout[index].atletaId = atletaFinal;
-                db.lutasScout[index].evento = evento;
-                db.lutasScout[index].resultadoLuta = resultadoLuta;
-                db.lutasScout[index].rounds = [...roundsData];
-                db.lutasScout[index].acoes = [...timelineEvents];
-                db.lutasScout[index].avaliacaoTreinador = avaliacao;
-                db.lutasScout[index].observacaoFinal = observacaoFinal;
-                db.lutasScout[index].ultimaEdicao = new Date().toISOString();
-
-                saveDB();
+                const patch = {
+                    atletaId: atletaFinal,
+                    evento,
+                    resultadoLuta,
+                    rounds: [...roundsData],
+                    acoes: [...timelineEvents],
+                    avaliacaoTreinador: avaliacao,
+                    observacaoFinal,
+                    ultimaEdicao: new Date().toISOString()
+                };
+                try {
+                    await Data.update('lutas_scout', parseInt(editModeScoutId), patch);
+                    Object.assign(db.lutasScout[index], patch);
+                    saveDB();
+                } catch (e) {
+                    showToast('Erro ao atualizar scout: ' + e.message, 'error');
+                    return;
+                }
                 showToast("Scout atualizado com sucesso!", "success");
-
                 if (confirm("Deseja voltar para a visão geral ou continuar editando?")) {
                     window.location.href = 'scout-video.html';
                 }
@@ -606,16 +613,22 @@ document.addEventListener('DOMContentLoaded', () => {
             id: Date.now(),
             dataRegistro: new Date().toISOString(),
             atletaId: atletaFinal,
-            evento: evento,
-            resultadoLuta: resultadoLuta,
+            evento,
+            resultadoLuta,
             rounds: [...roundsData],
             acoes: [...timelineEvents],
             avaliacaoTreinador: avaliacao,
-            observacaoFinal: observacaoFinal
+            observacaoFinal
         };
 
-        db.lutasScout.push(scoutObj);
-        saveDB();
+        try {
+            await Data.create('lutas_scout', scoutObj);
+            db.lutasScout.push(scoutObj);
+            saveDB();
+        } catch (e) {
+            showToast('Erro ao salvar scout: ' + e.message, 'error');
+            return;
+        }
 
         showToast("Scout salvo com sucesso!", "success");
 

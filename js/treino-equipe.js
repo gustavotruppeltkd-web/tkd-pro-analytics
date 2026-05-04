@@ -353,7 +353,7 @@
             }
         }
 
-        function onDayDrop(event) {
+        async function onDayDrop(event) {
             event.preventDefault();
             event.currentTarget.classList.remove('drag-over');
 
@@ -364,11 +364,17 @@
 
             const treino = (db.treinos || []).find(t => t.id === treinoId);
             if (!treino) return;
-            if (treino.data === novaData) return; // Mesmo dia, nada a fazer
+            if (treino.data === novaData) return;
 
-            treino.data = novaData;
-            treino._updatedAt = Date.now();
-            saveDB();
+            try {
+                await Data.update('treinos', treinoId, { data: novaData, _updatedAt: Date.now() });
+                treino.data = novaData;
+                treino._updatedAt = Date.now();
+                saveDB();
+            } catch (e) {
+                showToast('Erro ao mover treino: ' + e.message, 'error');
+                return;
+            }
             renderCalendar();
             showToast(`Treino movido para ${novaData.split('-').reverse().join('/')}`);
         }
@@ -1443,8 +1449,8 @@
                 return d >= weekStart && d < weekEnd;
             });
 
-            const doTheCopy = () => {
-                prevTreinos.forEach(t => {
+            const doTheCopy = async () => {
+                const clones = prevTreinos.map(t => {
                     const prevDate = new Date(t.data + 'T12:00:00');
                     const newDate = new Date(prevDate);
                     newDate.setDate(newDate.getDate() + 7);
@@ -1452,11 +1458,18 @@
                     clone.id = Date.now() + Math.random() * 1000 | 0;
                     clone.data = toDateStr(newDate);
                     clone._updatedAt = Date.now();
-                    db.treinos.push(clone);
+                    return clone;
                 });
-                saveDB();
+                try {
+                    await Promise.all(clones.map(c => Data.create('treinos', c)));
+                    clones.forEach(c => db.treinos.push(c));
+                    saveDB();
+                } catch (e) {
+                    showToast('Erro ao copiar treinos: ' + e.message, 'error');
+                    return;
+                }
                 renderCalendar();
-                showToast(`${prevTreinos.length} treino(s) copiado(s) da semana anterior!`);
+                showToast(`${clones.length} treino(s) copiado(s) da semana anterior!`);
             };
 
             if (currentHasTreinos) {
@@ -1470,7 +1483,7 @@
             }
         }
 
-        function duplicateTreinoAtual() {
+        async function duplicateTreinoAtual() {
             const id = parseInt(document.getElementById('treinoEditId').value);
             if (!id) return;
 
@@ -1479,17 +1492,22 @@
 
             const clone = JSON.parse(JSON.stringify(original));
             clone.id = Date.now();
-            // Garante que o título seja identico mas limpo de sufixos de cópia antigos
             clone.titulo = (clone.titulo || '').replace(/\s*\(Cópia\)\s*$/i, '').trim();
 
-            db.treinos.push(clone);
-            saveDB();
+            try {
+                await Data.create('treinos', clone);
+                db.treinos.push(clone);
+                saveDB();
+            } catch (e) {
+                showToast('Erro ao duplicar treino: ' + e.message, 'error');
+                return;
+            }
             renderCalendar();
             closeModalTreino();
             showToast('Treino duplicado com sucesso!');
         }
 
-        function saveTreino(e) {
+        async function saveTreino(e) {
             const titulo = getTituloFinal();
             if (!titulo) { showToast('Digite ou selecione um título para a sessão.', 'error'); return; }
 
@@ -1500,7 +1518,6 @@
 
             const duracaoMins = parseInt(document.getElementById('treinoDuracao').value) || 90;
             const psePlanejada = parseInt(document.getElementById('treinoPse').value);
-            // Cálculo de Foster: Carga Total (CARGA) = PSE (Borg 0-10) × Duração (min)
             const cargaTreino = psePlanejada * duracaoMins;
 
             const destinatario = document.getElementById('treinoDestinatario').value || 'equipe';
@@ -1524,34 +1541,43 @@
                 _updatedAt: Date.now()
             };
 
-            if (editId) {
-                const idx = db.treinos.findIndex(t => t.id === treino.id);
-                if (idx > -1) db.treinos[idx] = treino;
-            } else {
-                db.treinos.push(treino);
-                // Update hidden ID so subsequent saves in same session are "edits"
-                document.getElementById('treinoEditId').value = trainingId;
+            try {
+                if (editId) {
+                    await Data.update('treinos', treino.id, treino);
+                    const idx = db.treinos.findIndex(t => t.id === treino.id);
+                    if (idx > -1) db.treinos[idx] = treino;
+                } else {
+                    await Data.create('treinos', treino);
+                    db.treinos.push(treino);
+                    document.getElementById('treinoEditId').value = trainingId;
+                }
+                saveDB();
+            } catch (e) {
+                showToast('Erro ao salvar treino: ' + e.message, 'error');
+                return;
             }
 
-            saveDB();
             renderCalendar();
             showToast(`Sessão "${titulo}" salva com sucesso!`);
 
-            // Re-render view panel so next time it opens in view mode
             document.getElementById('modalTreinoTitle').innerText = treino.titulo;
             renderViewPanel(treino);
             switchToViewMode();
-
-            // Auto-close as requested by user
             closeModalTreino();
         }
 
         function deleteTreinoAtual() {
             const editId = parseInt(document.getElementById('treinoEditId').value);
             if (!editId) return;
-            showConfirmModal('Excluir treino?', 'Esta sessão de treino será removida permanentemente.', () => {
-                db.treinos = db.treinos.filter(t => t.id !== editId);
-                saveDB();
+            showConfirmModal('Excluir treino?', 'Esta sessão de treino será removida permanentemente.', async () => {
+                try {
+                    await Data.softDelete('treinos', editId);
+                    db.treinos = db.treinos.filter(t => t.id !== editId);
+                    saveDB();
+                } catch (e) {
+                    showToast('Erro ao excluir treino: ' + e.message, 'error');
+                    return;
+                }
                 closeModalTreino();
                 renderCalendar();
                 showToast('Treino excluído.');

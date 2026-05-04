@@ -784,17 +784,18 @@
             }
         }
 
-        function deleteAluno(id) {
+        async function deleteAluno(id) {
             const index = db.alunos.findIndex(a => a.id === id);
             if (index !== -1) {
-                db.alunos.splice(index, 1);
-
-                // Atualiza contagem na turma
-                if (currTurma) {
-                    currTurma.alunosCount = Math.max(0, currTurma.alunosCount - 1);
+                try {
+                    await Data.softDelete('alunos', id);
+                    db.alunos.splice(index, 1);
+                    if (currTurma) currTurma.alunosCount = Math.max(0, currTurma.alunosCount - 1);
+                    saveDB();
+                } catch (e) {
+                    showToast('Erro ao excluir: ' + e.message, 'error');
+                    return;
                 }
-
-                saveDB();
                 renderAlunosUI();
                 showToast("Registro excluído com sucesso!", "info");
             }
@@ -834,15 +835,17 @@
                 faltas: 0
             };
 
-            const finalizeSave = () => {
-                db.alunos.push(novoAluno);
-                if (currTurma) currTurma.alunosCount++;
-                saveDB();
-
-                // Close modal and reset form immediately
+            const finalizeSave = async () => {
+                try {
+                    await Data.create('alunos', novoAluno);
+                    db.alunos.push(novoAluno);
+                    if (currTurma) currTurma.alunosCount++;
+                    saveDB();
+                } catch (e) {
+                    showToast('Erro ao salvar atleta: ' + e.message, 'error');
+                    return;
+                }
                 closeModalAluno();
-
-                // Update UI after closing
                 renderAlunosUI();
                 showToast("Atleta adicionado com sucesso!");
             };
@@ -906,7 +909,7 @@
         }
         function closeModalHorario() { modalHorario.classList.remove('active'); }
 
-        function saveHorario(e) {
+        async function saveHorario(e) {
             e.preventDefault();
             const form = document.getElementById('formAddHorario');
 
@@ -918,17 +921,28 @@
                 tipo: form.diaSemana.value === 'Sábado' || form.diaSemana.value === 'Domingo' ? 'especial' : 'normal'
             };
 
-            db.horarios.push(novoH);
-            saveDB();
+            try {
+                await Data.create('horarios', novoH);
+                db.horarios.push(novoH);
+                saveDB();
+            } catch (err) {
+                showToast('Erro ao salvar horário: ' + err.message, 'error');
+                return;
+            }
             renderScheduleGrids();
             form.reset();
             showToast("Horário salvo com sucesso!");
         }
 
-        function deleteHorario(id) {
-            db.horarios = db.horarios.filter(h => h.id !== id);
-            saveDB();
-
+        async function deleteHorario(id) {
+            try {
+                await Data.softDelete('horarios', id);
+                db.horarios = db.horarios.filter(h => h.id !== id);
+                saveDB();
+            } catch (err) {
+                showToast('Erro ao excluir horário: ' + err.message, 'error');
+                return;
+            }
             const el = document.getElementById(`list-horario-${id}`);
             if (el) {
                 el.style.opacity = '0';

@@ -586,6 +586,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3" integrity="sha384-Y1tzkgTMv0NgNIkhIaJiI9rqNrOLfosToPr6Bzp4XVIOvF1BUd7mNlUVPpo6G8lL" crossorigin="anonymous"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/data-layer.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
@@ -904,12 +905,17 @@
                 }
             }
 
-            const finalizePerfil = () => {
-                saveDB();
+            const finalizePerfil = async () => {
+                try {
+                    await Data.update('alunos', parseInt(currentAlunoId), alunoData);
+                    saveDB();
+                } catch (err) {
+                    showToast('Erro ao salvar perfil: ' + err.message, 'error');
+                    return;
+                }
                 closeModalEdit();
                 loadProfile();
 
-                // Nãotification visual
                 const btn = document.querySelector('.btn-edit-profile');
                 const oldHtml = btn.innerHTML;
                 btn.innerHTML = `<i class="ti ti-check"></i> Salvo com Sucesso!`;
@@ -936,16 +942,18 @@
             showConfirmModal(
                 `Excluir ${alunoData.nome}?`,
                 'Esta ação não pode ser desfeita. Todo o histórico de presenças e pagamentos será apagado.',
-                () => {
-                    const aIndex = db.alunos.findIndex(a => a.id === parseInt(currentAlunoId));
-                    if (aIndex > -1) {
-                        db.alunos.splice(aIndex, 1);
+                async () => {
+                    const aId = parseInt(currentAlunoId);
+                    try {
+                        await Data.softDelete('alunos', aId);
+                        const aIndex = db.alunos.findIndex(a => a.id === aId);
+                        if (aIndex > -1) db.alunos.splice(aIndex, 1);
                         const tIndex = db.turmas.findIndex(t => t.id === alunoData.turmaId);
-                        if (tIndex > -1) {
-                            db.turmas[tIndex].alunosCount = Math.max(0, db.turmas[tIndex].alunosCount - 1);
-                        }
+                        if (tIndex > -1) db.turmas[tIndex].alunosCount = Math.max(0, db.turmas[tIndex].alunosCount - 1);
                         saveDB();
                         window.location.href = 'dashboard-turma-dados.html';
+                    } catch (err) {
+                        showToast('Erro ao excluir: ' + err.message, 'error');
                     }
                 }
             );

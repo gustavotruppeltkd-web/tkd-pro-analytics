@@ -218,6 +218,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3" integrity="sha384-Y1tzkgTMv0NgNIkhIaJiI9rqNrOLfosToPr6Bzp4XVIOvF1BUd7mNlUVPpo6G8lL" crossorigin="anonymous"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/data-layer.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
@@ -381,14 +382,12 @@
         }
 
         // Bloqueio de chamada concluída e salvar no App.js DB
-        function saveChamada() {
-            const btnSave = document.getElementById('btnSaveChamada');
+        async function saveChamada() {
             const dataChamadaInput = document.getElementById('dataChamada');
             const dataSelecionada = dataChamadaInput.value || todayBR();
 
             if (!db.chamadas) db.chamadas = [];
 
-            // Se estiver editando, remove a anterior antes de salvar a nova
             const indexExistente = db.chamadas.findIndex(c => c.data === dataSelecionada && c.turmaId == db.activeTurmaId);
 
             const novaChamada = {
@@ -399,30 +398,29 @@
                 faltas: []
             };
 
-            // Salvar presenças
             alunosTurma.forEach(a => {
                 const row = document.getElementById(`chamada-aluno-${a.id}`);
                 if (!row) return;
-
                 const bPresent = row.querySelector('.present.active');
-
-                // Atualizar record da chamada
-                if (bPresent) {
-                    novaChamada.presencas.push(a.id);
-                } else {
-                    novaChamada.faltas.push(a.id);
-                }
+                if (bPresent) novaChamada.presencas.push(a.id);
+                else novaChamada.faltas.push(a.id);
             });
 
-            if (indexExistente > -1) {
-                db.chamadas[indexExistente] = novaChamada;
-            } else {
-                db.chamadas.push(novaChamada);
+            try {
+                if (indexExistente > -1) {
+                    await Data.update('chamadas', novaChamada.id, novaChamada);
+                    db.chamadas[indexExistente] = novaChamada;
+                } else {
+                    await Data.create('chamadas', novaChamada);
+                    db.chamadas.push(novaChamada);
+                }
+                saveDB();
+            } catch (e) {
+                showToast('Erro ao salvar chamada: ' + e.message, 'error');
+                return;
             }
 
-            saveDB();
             isEditing = false;
-
             showToast(indexExistente > -1 ? "Chamada atualizada com sucesso!" : "Chamada salva com sucesso!");
             renderChamadaUI();
         }

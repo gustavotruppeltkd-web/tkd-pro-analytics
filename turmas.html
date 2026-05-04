@@ -513,6 +513,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3" integrity="sha384-Y1tzkgTMv0NgNIkhIaJiI9rqNrOLfosToPr6Bzp4XVIOvF1BUd7mNlUVPpo6G8lL" crossorigin="anonymous"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/data-layer.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script>
@@ -607,7 +608,7 @@
             });
         }
 
-        function saveTurma(event) {
+        async function saveTurma(event) {
             event.preventDefault();
             const preview = document.getElementById('novaTurmaFotoPreview');
             const nt = {
@@ -617,18 +618,30 @@
                 tipo: document.querySelector('input[name="tipoTurma"]:checked').value === 'rendimento' ? 'Rendimento' : 'Comercial',
                 foto: preview.classList.contains('visible') ? preview.src : null
             };
-            db.turmas.push(nt);
-            saveDB();
+            try {
+                await Data.create('turmas', nt);
+                db.turmas.push(nt);
+                saveDB();
+            } catch (e) {
+                showToast('Erro ao criar turma: ' + e.message, 'error');
+                return;
+            }
             renderTurmas();
             closeModal();
             removeFoto('nova');
         }
 
-        function deleteTurma(event) {
+        async function deleteTurma(event) {
             event.preventDefault();
             const id = parseInt(document.getElementById('selectTurmaDelete').value);
-            db.turmas = db.turmas.filter(x => x.id !== id);
-            saveDB();
+            try {
+                await Data.softDelete('turmas', id);
+                db.turmas = db.turmas.filter(x => x.id !== id);
+                saveDB();
+            } catch (e) {
+                showToast('Erro ao excluir turma: ' + e.message, 'error');
+                return;
+            }
             renderTurmas();
             closeModalExcluir();
         }
@@ -646,15 +659,23 @@
             }
         }
 
-        function saveEditTurma(event) {
+        async function saveEditTurma(event) {
             event.preventDefault();
             const id = parseInt(document.getElementById('selectTurmaEdit').value);
             const turma = db.turmas.find(t => t.id === id);
             if (turma) {
-                turma.nome = document.getElementById('editNomeTurma').value;
+                const nome = document.getElementById('editNomeTurma').value;
                 const preview = document.getElementById('editTurmaFotoPreview');
-                turma.foto = preview.classList.contains('visible') ? preview.src : null;
-                saveDB();
+                const foto = preview.classList.contains('visible') ? preview.src : null;
+                try {
+                    await Data.update('turmas', id, { nome, foto });
+                    turma.nome = nome;
+                    turma.foto = foto;
+                    saveDB();
+                } catch (e) {
+                    showToast('Erro ao editar turma: ' + e.message, 'error');
+                    return;
+                }
                 renderTurmas();
                 closeModalEditar();
             }
