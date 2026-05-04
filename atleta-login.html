@@ -529,16 +529,12 @@
             }
 
             try {
-                const { data: rows, error } = await window.supabaseClient
-                    .from('app_state')
-                    .select('data')
-                    .eq('project_id', coachId)
-                    .limit(1);
-
-                const row = rows && rows[0];
+                const atletaIdForRpc = preSelectedId || 0;
+                const { data: rpcData, error } = await window.supabaseClient
+                    .rpc('get_athlete_portal_data', { p_coach_id: coachId, p_atleta_id: atletaIdForRpc });
 
                 if (error) {
-                    console.error('Supabase error:', error);
+                    console.error('Supabase RPC error:', error);
                     grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
                         <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color:var(--red);"></i>
                         Erro ao buscar dados (${error.code || error.message}).
@@ -546,7 +542,7 @@
                     return;
                 }
 
-                if (!row || !row.data) {
+                if (!rpcData || !rpcData.alunos) {
                     grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--text-muted);">
                         <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color:var(--red);"></i>
                         Link inválido ou expirado.
@@ -554,8 +550,19 @@
                     return;
                 }
 
-                db = row.data;
+                if (!db) db = {};
+                db.alunos      = rpcData.alunos      || [];
+                db.treinos     = rpcData.treinos      || [];
+                db.eventos     = rpcData.eventos      || [];
+                db.competicoes = rpcData.competicoes  || [];
+                db.lutasScout  = rpcData.lutasScout   || [];
+                if (rpcData.settings) {
+                    db.questionarios   = rpcData.settings.questionarios    || [];
+                    db.treinoTemplates = rpcData.settings.treino_templates  || [];
+                    db.periodizacao    = rpcData.settings.periodizacao      || {};
+                }
                 window.db = db;
+                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
 
                 renderAthletes();
 

@@ -1161,164 +1161,85 @@
             }
         }
 
-        // Salva na linha do TREINADOR — merge cirúrgico: só toca arrays do atleta atual
-        async function savePortalDB() {
-            // Backup local sempre, independente do Supabase
+        // savePortalDB removido — pushAthleteResponse (athlete_responses) é a fonte de verdade.
+        // O espelho em app_state era necessário antes da migração per-entity; agora é obsoleto.
+        function savePortalDB() {
+            // Mantém cache local atualizado
             localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
-
-            if (!window.supabaseClient || !portalCoachId) return;
-
-            // Guarda snapshot das entradas DESTE atleta no momento do salvamento
-            const atletaArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
-            const minhasEntradas = {};
-            atletaArrays.forEach(function(key) {
-                minhasEntradas[key] = (window.db[key] || []).filter(function(e) {
-                    return String(e.atletaId) === String(atletaId);
-                });
-            });
-
-            const MAX_TENTATIVAS = 3;
-            for (let tentativa = 1; tentativa <= MAX_TENTATIVAS; tentativa++) {
-              try {
-                // 1. Busca os dados MAIS RECENTES do treinador (fresh fetch a cada tentativa)
-                const { data: rows, error: fetchErr } = await window.supabaseClient
-                    .from('app_state')
-                    .select('data')
-                    .eq('project_id', portalCoachId)
-                    .limit(1);
-
-                const row = rows && rows[0];
-                if (fetchErr || !row || !row.data) {
-                    console.error('savePortalDB: não encontrou linha do treinador', fetchErr);
-                    return;
-                }
-
-                const coachData = row.data;
-
-                // 2. Merge cirúrgico — substitui apenas as entradas DESTE atleta
-                atletaArrays.forEach(function(key) {
-                    const entradaOutros = (coachData[key] || []).filter(function(e) {
-                        return String(e.atletaId) !== String(atletaId);
-                    });
-                    coachData[key] = entradaOutros.concat(minhasEntradas[key]);
-                });
-
-                coachData._last_updated = Date.now();
-
-                // 3. Salva de volta
-                const { error: saveErr } = await window.supabaseClient
-                    .from('app_state')
-                    .upsert({ project_id: portalCoachId, data: coachData });
-
-                if (saveErr) {
-                    console.error('savePortalDB upsert erro (tentativa ' + tentativa + '):', saveErr);
-                    if (tentativa === MAX_TENTATIVAS) {
-                        showToast('Erro ao sincronizar: ' + (saveErr.message || saveErr.code || 'desconhecido'), 'error');
-                    } else {
-                        await new Promise(r => setTimeout(r, 800 * tentativa));
-                        continue;
-                    }
-                } else {
-                    // 4. Verifica se nosso dado ainda está presente (detecta race condition)
-                    await new Promise(r => setTimeout(r, 600));
-                    const { data: verif } = await window.supabaseClient
-                        .from('app_state').select('data').eq('project_id', portalCoachId).limit(1);
-                    const verifData = verif && verif[0] && verif[0].data;
-                    const nossoDadoPresente = verifData && atletaArrays.every(function(key) {
-                        const remoto = (verifData[key] || []).filter(function(e) { return String(e.atletaId) === String(atletaId); });
-                        return remoto.length >= minhasEntradas[key].length;
-                    });
-
-                    if (!nossoDadoPresente && tentativa < MAX_TENTATIVAS) {
-                        console.warn('savePortalDB: race condition detectada, re-salvando (tentativa ' + tentativa + ')...');
-                        await new Promise(r => setTimeout(r, 500 * tentativa));
-                        continue;
-                    }
-
-                    console.log('savePortalDB OK — atleta', atletaId, 'sincronizado com treinador', portalCoachId);
-                    window.db = coachData;
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(coachData));
-                    break;
-                }
-              } catch (e) {
-                console.error('savePortalDB exception (tentativa ' + tentativa + '):', e);
-                if (tentativa < MAX_TENTATIVAS) await new Promise(r => setTimeout(r, 800 * tentativa));
-              }
-            }
-
         }
 
-        // Realtime: ouve mudanças do TREINADOR e atualiza o portal sem apagar dados do atleta
+        // Realtime: ouve mudanças per-entity do treinador e re-renderiza o portal
         function setupPortalRealtime(coachId) {
             if (!window.supabaseClient || window._portalRealtimeActive) return;
             window._portalRealtimeActive = true;
 
-            window.supabaseClient
-                .channel('portal:coach:' + coachId)
-                .on('postgres_changes', {
-                    event: 'UPDATE',
-                    schema: 'public',
-                    table: 'app_state',
-                    filter: 'project_id=eq.' + coachId
-                }, function(payload) {
-                    var remoto = payload.new && payload.new.data;
-                    if (!remoto) return;
+            var TABLE_TO_KEY = {
+                treinos: 'treinos', eventos: 'eventos', competicoes: 'competicoes',
+                alunos: 'alunos', lutas_scout: 'lutasScout'
+            };
 
-                    // Só aplica se o remoto for mais novo
-                    var remoteTs = remoto._last_updated || 0;
-                    var localTs  = (window.db && window.db._last_updated) || 0;
-                    if (remoteTs <= localTs) return;
-
-                    // Preserva arrays do ATLETA no db local, atualiza o resto (treinos, eventos, etc.)
-                    var atletaArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
-                    atletaArrays.forEach(function(key) {
-                        var minhas = (window.db[key] || []).filter(function(e) {
-                            return String(e.atletaId) === String(atletaId);
-                        });
-                        var outros = (remoto[key] || []).filter(function(e) {
-                            return String(e.atletaId) !== String(atletaId);
-                        });
-                        remoto[key] = outros.concat(minhas);
-                    });
-
-                    window.db = remoto;
-                    db = remoto;
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(remoto));
-
-                    // Re-renderiza painéis que dependem de dados do treinador
-                    try { renderTreino(); } catch (e) { }
-                    try { renderTreinosHoje(); } catch (e) { }
-                    try { renderSchedule(); } catch (e) { }
-
-                    showToast('Treinos atualizados pelo treinador!', 'info');
-                })
-                .subscribe();
+            Object.keys(TABLE_TO_KEY).forEach(function(table) {
+                var key = TABLE_TO_KEY[table];
+                window.supabaseClient
+                    .channel('portal:' + table + ':' + coachId)
+                    .on('postgres_changes', {
+                        event: '*', schema: 'public', table: table,
+                        filter: 'coach_id=eq.' + coachId
+                    }, function(payload) {
+                        if (!window.db[key]) window.db[key] = [];
+                        var row = payload.new || payload.old;
+                        if (!row) return;
+                        var idx = window.db[key].findIndex(function(x) { return String(x.id) === String(row.id); });
+                        var isDelete = payload.eventType === 'DELETE' || (payload.new && payload.new.deleted_at);
+                        if (isDelete) {
+                            if (idx >= 0) window.db[key].splice(idx, 1);
+                        } else {
+                            if (idx >= 0) window.db[key][idx] = payload.new;
+                            else window.db[key].push(payload.new);
+                        }
+                        db = window.db;
+                        localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+                        try { renderTreino(); } catch (e) {}
+                        try { renderTreinosHoje(); } catch (e) {}
+                        try { renderSchedule(); } catch (e) {}
+                        if (table === 'treinos' || table === 'eventos') {
+                            showToast('Treinos atualizados pelo treinador!', 'info');
+                        }
+                    })
+                    .subscribe();
+            });
         }
 
-        // START
+        // START — lê das tabelas per-entity via RPC (sem app_state)
         function iniciarPortal(coachId) {
             portalCoachId = coachId;
             window.supabaseClient
-                .from('app_state')
-                .select('data')
-                .eq('project_id', coachId)
-                .limit(1)
+                .rpc('get_athlete_portal_data', { p_coach_id: coachId, p_atleta_id: atletaId })
                 .then(function(result) {
-                    var row = result.data && result.data[0];
-                    if (!result.error && row && row.data) {
-                        var remoto = row.data;
-                        var localRaw = localStorage.getItem('tkd_scout_db');
-                        var localData = localRaw ? JSON.parse(localRaw) : null;
-                        window.db = (localData && typeof mergeAppState === 'function')
-                            ? mergeAppState(localData, remoto)
-                            : remoto;
+                    if (!result.error && result.data) {
+                        var remoto = result.data;
+                        if (!window.db) window.db = {};
+                        if (remoto.alunos)      window.db.alunos      = remoto.alunos;
+                        if (remoto.treinos)     window.db.treinos     = remoto.treinos;
+                        if (remoto.eventos)     window.db.eventos     = remoto.eventos;
+                        if (remoto.competicoes) window.db.competicoes = remoto.competicoes;
+                        if (remoto.lutasScout)  window.db.lutasScout  = remoto.lutasScout;
+                        if (remoto.settings) {
+                            if (remoto.settings.questionarios)    window.db.questionarios    = remoto.settings.questionarios;
+                            if (remoto.settings.treino_templates) window.db.treinoTemplates  = remoto.settings.treino_templates;
+                            if (remoto.settings.periodizacao)     window.db.periodizacao     = remoto.settings.periodizacao;
+                        }
                         db = window.db;
+                        localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
                     }
                     portalLoaded = false;
                     loadPortal();
                     setupPortalRealtime(coachId);
                 })
-                .catch(function() { loadPortal(); });
+                .catch(function(e) {
+                    console.warn('iniciarPortal RPC error, usando cache local:', e);
+                    loadPortal();
+                });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
