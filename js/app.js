@@ -327,134 +327,224 @@ function fetchFromSupabase() {
     if (!window.supabaseClient) return;
     if (isFetchingSupabase) return;
 
+    const _pg = window.location.pathname.toLowerCase();
+
+    // Portal do atleta: continua usando app_state (Fase 4 futura)
+    if (_pg.includes('atleta-')) {
+        _fetchFromSupabaseLegacy();
+        return;
+    }
+
     isFetchingSupabase = true;
     showSyncSpinner(true);
 
-    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+    window.supabaseClient.auth.getUser().then(async ({ data: authData }) => {
         if (!authData || !authData.user) {
-            // Sem auth (portal do atleta ou sessão expirada)
             isFetchingSupabase = false;
             showSyncSpinner(false);
-            setupRealtimeSubscription();
             checkTrainerOnboarding();
             return;
         }
         const userId = authData.user.id;
         window._cachedCoachId = userId;
 
-        // SEGURANÇA: se o cache local pertence a outro usuário, descartá-lo imediatamente
-        // antes de qualquer outra operação para evitar vazamento de dados entre contas.
+        // SEGURANÇA: cache de outro usuário → descarta
         if (db._owner_id && db._owner_id !== userId) {
-            console.warn("Cache local pertence a outro usuário. Descartando para proteger isolamento de dados.");
+            console.warn('Cache local pertence a outro usuário. Descartando.');
             localStorage.removeItem('tkd_scout_db');
-            db = JSON.parse(JSON.stringify(MOCK_DATA));
+            db = structuredClone(MOCK_DATA);
             db._owner_id = userId;
             window.db = db;
             lastSyncTime = 0;
         }
 
-        window.supabaseClient
-            .from('app_state')
-            .select('data')
-            .eq('project_id', userId)
-            .single()
-            .then(({ data, error }) => {
-                if (error && error.code !== 'PGRST116') {
-                    // Permissão negada ou outro erro de Supabase — continua com dados locais
-                    console.error("Erro ao buscar Supabase (continuando com dados locais):", error.code, error.message);
-                } else if (data && data.data) {
-                    const remoteDate = data.data._last_updated || 1;
-                    const localDate = lastSyncTime || 0;
+        try {
+            const [settings, turmas, alunos, treinos, eventos, planos, horarios,
+                   chamadas, presencas, lesoes, lutasScout, competicoes, antropometria] =
+                await Promise.all([
+                    _dataGetSettings(userId),
+                    _dataList('turmas', userId),
+                    _dataList('alunos', userId),
+                    _dataList('treinos', userId),
+                    _dataList('eventos', userId),
+                    _dataList('planos', userId),
+                    _dataList('horarios', userId),
+                    _dataList('chamadas', userId),
+                    _dataList('presencas', userId),
+                    _dataList('lesoes', userId),
+                    _dataList('lutas_scout', userId),
+                    _dataList('competicoes', userId),
+                    _dataList('antropometria', userId)
+                ]);
 
-                    const remoteHasValidTrainer = data.data.treinadores && data.data.treinadores.length > 0;
+            db.turmas = turmas;
+            db.alunos = alunos;
+            db.treinos = treinos;
+            db.eventos = eventos;
+            db.planos = planos;
+            db.horarios = horarios;
+            db.chamadas = chamadas;
+            db.presencas = presencas;
+            db.lesoes = lesoes;
+            db.lutasScout = lutasScout;
+            db.competicoes = competicoes;
+            db.antropometria = antropometria;
 
-                    if (remoteDate > localDate || (!localDate && remoteHasValidTrainer)) {
-                        const remoteDB = data.data;
-
-                        const localHasTrainer = db.treinadores &&
-                            db.treinadores.length > 0 &&
-                            db.treinadores[0].nome &&
-                            db.treinadores[0].nome.trim() !== '';
-                        const remoteHasTrainer = remoteDB.treinadores &&
-                            remoteDB.treinadores.length > 0 &&
-                            remoteDB.treinadores[0].nome &&
-                            remoteDB.treinadores[0].nome.trim() !== '';
-
-                        // Só sobe dados locais se o cache pertence a este mesmo usuário
-                        if (localHasTrainer && !remoteHasTrainer && db._owner_id === userId) {
-                            console.log("Local trainer not in Supabase yet. Pushing local data up.");
-                            syncToSupabase();
-                        } else {
-                            console.log("Supabase has newer data. Updating in-memory and re-rendering...");
-                            // Garante que todos os arrays existam (dados antigos podem ter null)
-                            const arrayKeys = ['turmas','alunos','planos','horarios','wellnessLogs',
-                                'questionarios','respostas','cargaTreino','competicoes','treinos',
-                                'eventos','lutasScout','presencas','chamadas','lesoes','scoutEstatisticas'];
-                            arrayKeys.forEach(k => { if (!remoteDB[k]) remoteDB[k] = []; });
-                            if (!remoteDB.periodizacao) remoteDB.periodizacao = JSON.parse(JSON.stringify(MOCK_DATA.periodizacao));
-                            remoteDB._owner_id = userId; // Marca o dono no dado remoto ao cachear
-
-                            // Migração: faixas desatualizadas
-                            if (!remoteDB.faixas || !remoteDB.faixas.includes('9° GUB (Cinza)')) {
-                                remoteDB.faixas = [...MOCK_DATA.faixas];
-                            }
-
-                            // Migração: categorias de peso antigas (sem prefixo de divisão)
-                            if (!remoteDB.categoriasPeso || !remoteDB.categoriasPeso[0] ||
-                                !remoteDB.categoriasPeso[0].match(/^(Cad|Juv|S21|Sên|Mst)/)) {
-                                remoteDB.categoriasPeso = [...MOCK_DATA.categoriasPeso];
-                            }
-
-                            db = remoteDB;
-                            window.db = db;
-                            localStorage.setItem('tkd_scout_db', JSON.stringify(remoteDB));
-                            lastSyncTime = remoteDate;
-                        }
-                    } else if (remoteDate === 0 && localDate > 0 && db._owner_id === userId) {
-                        syncToSupabase();
-                    } else if (localDate > remoteDate) {
-                        // Local tem mudanças não sincronizadas (ex: usuário navegou antes do debounce)
-                        // Só sobe se estamos em uma página de coach autenticado
-                        const _pg = window.location.pathname.toLowerCase();
-                        if (!_pg.includes('atleta-')) {
-                            // Se _owner_id não estava setado ou batia, considera deste usuário
-                            if (!db._owner_id) db._owner_id = userId;
-                            if (db._owner_id === userId) {
-                                console.log("Local mais novo que remote. Subindo dados pendentes...");
-                                syncToSupabase();
-                            }
-                        }
-                    }
-                } else {
-                    // Supabase sem dados para este usuário ainda (novo cadastro)
-                    // NUNCA subir dados do cache se ele não pertence a este usuário
-                    if (lastSyncTime > 0 && db._owner_id === userId) {
-                        syncToSupabase();
-                    } else if (!db._owner_id || db._owner_id !== userId) {
-                        // Novo usuário sem dados: inicializa vazio e marca o dono
-                        console.log("Novo usuário sem dados. Inicializando conta vazia.");
-                        db = JSON.parse(JSON.stringify(MOCK_DATA));
-                        db._owner_id = userId;
-                        db._last_updated = 0;
-                        window.db = db;
-                        lastSyncTime = 0;
-                        localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-                    }
+            if (settings) {
+                if (settings.treinador && Object.keys(settings.treinador).length > 0) {
+                    db.treinadores = [settings.treinador];
+                } else if (!db.treinadores || db.treinadores.length === 0) {
+                    db.treinadores = [];
                 }
+                if (settings.periodizacao) db.periodizacao = settings.periodizacao;
+                if (settings.notifications) db.notifications = settings.notifications;
+                if (settings.treino_templates) db.treinoTemplates = settings.treino_templates;
+                if (settings.questionarios) db.questionarios = settings.questionarios;
+                if (settings.onboarding_done !== undefined) db.onboardingDone = settings.onboarding_done;
+                if (settings.active_turma_id) db.activeTurmaId = settings.active_turma_id;
+            }
 
-                // Sempre executa após tentativa de sync — independente de erro
-                setupRealtimeSubscription();
+            db._owner_id = userId;
+            db._last_updated = Date.now();
+            lastSyncTime = db._last_updated;
+            window.db = db;
+            localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+
+            console.log('Per-entity load OK: turmas=' + turmas.length + ' alunos=' + alunos.length + ' treinos=' + treinos.length);
+        } catch (e) {
+            console.error('fetchFromSupabase per-entity error:', e);
+        }
+
+        setupEntitySubscriptions(userId);
+        renderUserProfile();
+        checkTrainerOnboarding();
+        if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+        fetchAthleteResponses(userId);
+
+        isFetchingSupabase = false;
+        showSyncSpinner(false);
+    });
+}
+
+// Helpers internos sem depender do window.Data (que pode não estar carregado aqui)
+async function _dataList(table, userId) {
+    const { data, error } = await window.supabaseClient
+        .from(table).select('*').eq('coach_id', userId).is('deleted_at', null);
+    if (error) { console.warn('_dataList ' + table + ':', error.message); return []; }
+    return data || [];
+}
+async function _dataGetSettings(userId) {
+    const { data, error } = await window.supabaseClient
+        .from('coach_settings').select('*').eq('coach_id', userId).maybeSingle();
+    if (error && error.code !== 'PGRST116') console.warn('_dataGetSettings:', error.message);
+    return data || null;
+}
+
+function setupEntitySubscriptions(userId) {
+    if (window._entitySubscriptionsActive) return;
+    if (!window.supabaseClient || !userId) return;
+    window._entitySubscriptionsActive = true;
+
+    const TABLE_TO_KEY = {
+        turmas: 'turmas', alunos: 'alunos', treinos: 'treinos', eventos: 'eventos',
+        planos: 'planos', horarios: 'horarios', chamadas: 'chamadas',
+        presencas: 'presencas', lesoes: 'lesoes', lutas_scout: 'lutasScout',
+        competicoes: 'competicoes', antropometria: 'antropometria'
+    };
+
+    Object.keys(TABLE_TO_KEY).forEach(table => {
+        const key = TABLE_TO_KEY[table];
+        window.supabaseClient
+            .channel('entity:' + table + ':' + userId)
+            .on('postgres_changes', {
+                event: '*', schema: 'public', table,
+                filter: 'coach_id=eq.' + userId
+            }, payload => {
+                if (!db[key]) db[key] = [];
+                const row = payload.new || payload.old;
+                if (!row) return;
+                const idx = db[key].findIndex(x => String(x.id) === String(row.id));
+                const isDelete = payload.eventType === 'DELETE' || (payload.new && payload.new.deleted_at);
+                if (isDelete) {
+                    if (idx >= 0) db[key].splice(idx, 1);
+                } else {
+                    if (idx >= 0) db[key][idx] = payload.new;
+                    else db[key].push(payload.new);
+                }
+                window.db = db;
+                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                if (typeof renderSemaforo === 'function') renderSemaforo();
+                if (typeof renderAlunosUI === 'function') renderAlunosUI();
+                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+            })
+            .subscribe();
+    });
+
+    // Realtime para athlete_responses (INSERT só — append-only)
+    window.supabaseClient
+        .channel('public:athlete_responses:' + userId)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'athlete_responses', filter: 'coach_id=eq.' + userId }, payload => {
+            const row = payload.new;
+            if (!row) return;
+            if (mergeAthleteResponse(row)) {
+                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                const labelMap = { wellness: 'Bem-estar', carga: 'Carga (PSE)', resposta: 'Resposta' };
+                showToast((labelMap[row.type] || 'Resposta') + ' recebida de atleta!', 'info');
+                if (typeof renderSemaforo === 'function') renderSemaforo();
+                if (typeof renderAlunosUI === 'function') renderAlunosUI();
+                if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
+                if (typeof buildAlerts === 'function') buildAlerts();
+                if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+            }
+        })
+        .subscribe();
+
+    // Polling leve a cada 45s apenas para athlete_responses (sem blob)
+    if (!window._realtimePollingActive) {
+        window._realtimePollingActive = true;
+        const runPoll = () => {
+            if (window._realtimeUserId) fetchAthleteResponses(window._realtimeUserId);
+        };
+        setInterval(runPoll, 45000);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') runPoll();
+        });
+    }
+    window._realtimeUserId = userId;
+}
+
+// ─── LEGACY: portal do atleta ainda usa app_state ───────────────────────────
+function _fetchFromSupabaseLegacy() {
+    isFetchingSupabase = true;
+    showSyncSpinner(true);
+    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+        const userId = authData?.user?.id
+            || localStorage.getItem('tkd_coach_id')
+            || sessionStorage.getItem('tkd_coach_id');
+        if (!userId) {
+            isFetchingSupabase = false;
+            showSyncSpinner(false);
+            checkTrainerOnboarding();
+            return;
+        }
+        window._cachedCoachId = userId;
+        window.supabaseClient
+            .from('app_state').select('data').eq('project_id', userId).maybeSingle()
+            .then(({ data, error }) => {
+                if (!error && data && data.data) {
+                    db = data.data;
+                    db._owner_id = userId;
+                    window.db = db;
+                    lastSyncTime = db._last_updated || Date.now();
+                    localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                }
+                setupRealtimeSubscriptionLegacy(userId);
                 renderUserProfile();
                 checkTrainerOnboarding();
-                if (typeof window.onDataLoaded === 'function') {
-                    window.onDataLoaded();
-                }
-                // Mescla respostas append-only — fonte primária para dados de atletas
+                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
                 fetchAthleteResponses(userId);
-            }).finally(() => {
-                isFetchingSupabase = false;
-                showSyncSpinner(false);
-            });
+            }).finally(() => { isFetchingSupabase = false; showSyncSpinner(false); });
     });
 }
 
@@ -632,125 +722,62 @@ function checkTrainerOnboarding() {
     };
 }
 
-function setupRealtimeSubscription() {
+function setupRealtimeSubscriptionLegacy(userId) {
     if (window._supabaseSubscribed) return;
-    if (!window.supabaseClient) return;
+    if (!window.supabaseClient || !userId) return;
+    window._supabaseSubscribed = true;
+    window._realtimeUserId = userId;
 
-    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-        let userId = authData?.user?.id
-            || localStorage.getItem('tkd_coach_id')
-            || sessionStorage.getItem('tkd_coach_id');
+    function applyRealtimeUpdate(remoteData) {
+        if (!remoteData) return;
+        const activeTurmaIdLocal = db.activeTurmaId;
+        db = remoteData;
+        if (activeTurmaIdLocal) db.activeTurmaId = activeTurmaIdLocal;
+        lastSyncTime = remoteData._last_updated || Date.now();
+        window.db = db;
+        localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+        if (typeof renderSemaforo === 'function') renderSemaforo();
+        if (typeof renderAlunosUI === 'function') renderAlunosUI();
+        if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
+        if (typeof buildAlerts === 'function') buildAlerts();
+        if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+        if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+    }
 
-        if (!userId) {
-            console.warn('setupRealtimeSubscription: ID do treinador não encontrado, realtime desativado.');
-            return;
-        }
-
-        window._supabaseSubscribed = true;
-        window._realtimeUserId = userId;
-        console.log('Realtime subscription ativa para project_id:', userId);
-
-        function applyRealtimeUpdate(remoteData) {
-            if (!remoteData) return;
-            console.log('Realtime: dados recebidos do atleta!');
-            // Preserva o activeTurmaId local — é estado de navegação do treinador,
-            // não deve ser sobrescrito por saves de atletas
-            const activeTurmaIdLocal = db.activeTurmaId;
-            window.db = remoteData;
-            db = remoteData;
-            if (activeTurmaIdLocal) db.activeTurmaId = activeTurmaIdLocal;
-            lastSyncTime = remoteData._last_updated || Date.now();
-            localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-
-            // Toast removido — sincronização silenciosa para não poluir a UI
-
-            if (typeof renderSemaforo === 'function') renderSemaforo();
-            if (typeof renderAlunosUI === 'function') renderAlunosUI();
-            if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
-            if (typeof buildAlerts === 'function') buildAlerts();
-            if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
-            if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
-        }
-
-        window.supabaseClient
-            .channel('public:app_state:' + userId)
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
-                applyRealtimeUpdate(payload.new.data);
-            })
-            .subscribe((status) => {
-                console.log('Realtime status:', status);
-                if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || status === 'TIMED_OUT') {
-                    console.warn('Realtime desconectado (' + status + '). Reagendando reconexão...');
-                    window._supabaseSubscribed = false;
-                    // Tenta reconectar após 5 segundos
-                    setTimeout(() => setupRealtimeSubscription(), 5000);
-                }
-            });
-
-        // Realtime para athlete_responses — fonte primária de respostas de atletas
-        window.supabaseClient
-            .channel('public:athlete_responses:' + userId)
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'athlete_responses', filter: 'coach_id=eq.' + userId }, payload => {
-                const row = payload.new;
-                if (!row) return;
-                if (mergeAthleteResponse(row)) {
-                    console.log('Realtime athlete_responses INSERT:', row.type, 'atleta=' + row.athlete_id);
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-                    const labelMap = { wellness: 'Bem-estar', carga: 'Carga (PSE)', resposta: 'Resposta' };
-                    showToast((labelMap[row.type] || 'Resposta') + ' recebida de atleta!', 'info');
-                    if (typeof renderSemaforo === 'function') renderSemaforo();
-                    if (typeof renderAlunosUI === 'function') renderAlunosUI();
-                    if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
-                    if (typeof buildAlerts === 'function') buildAlerts();
-                    if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
-                    if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
-                }
-            })
-            .subscribe();
-
-        // Polling de segurança a cada 15 segundos — necessário porque o realtime do app_state
-        // falha silenciosamente (blob de 3MB excede limite de 250KB do Supabase Realtime)
-        if (!window._realtimePollingActive) {
-            window._realtimePollingActive = true;
-
-            function runPoll() {
-                if (!window.supabaseClient || !window._realtimeUserId) return;
-                // Passo 1: busca só updated_at (sem o blob de 3MB) para detectar mudança
-                window.supabaseClient
-                    .from('app_state')
-                    .select('updated_at')
-                    .eq('project_id', window._realtimeUserId)
-                    .limit(1)
-                    .then(({ data: tsData, error: tsErr }) => {
-                        if (tsErr || !tsData || !tsData[0]) return;
-                        const remoteTs = new Date(tsData[0].updated_at).getTime();
-                        const localTs = lastSyncTime || 0;
-                        if (remoteTs > localTs) {
-                            console.log('Polling: mudança detectada. Buscando dados...');
-                            // Passo 2: só então baixa o blob completo
-                            window.supabaseClient
-                                .from('app_state')
-                                .select('data')
-                                .eq('project_id', window._realtimeUserId)
-                                .limit(1)
-                                .then(({ data, error }) => {
-                                    if (error || !data || !data[0] || !data[0].data) return;
-                                    applyRealtimeUpdate(data[0].data);
-                                });
-                        }
-                    });
-                // Polling paralelo de athlete_responses (payload pequeno, sem limite de tamanho)
-                fetchAthleteResponses(window._realtimeUserId);
+    window.supabaseClient
+        .channel('public:app_state:' + userId)
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
+            applyRealtimeUpdate(payload.new.data);
+        })
+        .subscribe((status) => {
+            if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || status === 'TIMED_OUT') {
+                window._supabaseSubscribed = false;
+                setTimeout(() => setupRealtimeSubscriptionLegacy(userId), 5000);
             }
+        });
 
-            setInterval(runPoll, 15000);
+    window.supabaseClient
+        .channel('public:athlete_responses_legacy:' + userId)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'athlete_responses', filter: 'coach_id=eq.' + userId }, payload => {
+            const row = payload.new;
+            if (!row) return;
+            if (mergeAthleteResponse(row)) {
+                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                if (typeof buildAlerts === 'function') buildAlerts();
+                if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
+                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+            }
+        })
+        .subscribe();
 
-            // Também roda ao voltar para a aba — coach vê dados frescos ao retornar
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') runPoll();
-            });
-        }
-    });
+    if (!window._realtimePollingActive) {
+        window._realtimePollingActive = true;
+        const runPoll = () => fetchAthleteResponses(userId);
+        setInterval(runPoll, 45000);
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') runPoll();
+        });
+    }
 }
 
 // Helper para mesclar o estado local com o remoto (evita perda de dados de atletas)
