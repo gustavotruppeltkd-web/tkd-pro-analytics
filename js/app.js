@@ -414,8 +414,12 @@ function fetchFromSupabase() {
                         syncToSupabase();
                     } else if (localDate > remoteDate && db._owner_id === userId) {
                         // Local tem mudanças não sincronizadas (ex: usuário navegou antes do debounce de 2s)
-                        console.log("Local mais novo que remote. Subindo dados pendentes...");
-                        syncToSupabase();
+                        // Só sobe se estamos em uma página de coach autenticado
+                        const _pg = window.location.pathname.toLowerCase();
+                        if (!_pg.includes('atleta-')) {
+                            console.log("Local mais novo que remote. Subindo dados pendentes...");
+                            syncToSupabase();
+                        }
                     }
                 } else {
                     // Supabase sem dados para este usuário ainda (novo cadastro)
@@ -1535,7 +1539,10 @@ function patchA11y() {
 }
 
 // Ao sair da página, tenta subir mudanças pendentes que o debounce de 2s não capturou.
+// Só executa em páginas de coach (não no portal/login do atleta).
 window.addEventListener('beforeunload', () => {
+    const page = window.location.pathname.toLowerCase();
+    if (page.includes('atleta-')) return; // nunca sincronizar a partir de páginas do atleta
     const remoteTs = lastSyncTime || 0;
     const localTs = db._last_updated || 0;
     if (localTs > remoteTs && db._owner_id) {

@@ -662,10 +662,10 @@
         }
 
         function doLogin() {
-            const atleta = db.alunos.find(a => a.id === selectedAthleteId);
+            const atleta = db.alunos.find(a => String(a.id) === String(selectedAthleteId));
             if (!atleta) return;
 
-            const storedPin = atleta.pin || '0000';
+            const storedPin = String(atleta.pin || '0000');
             const errorEl = document.getElementById('errorMessage');
 
             if (pinValue === storedPin) {
