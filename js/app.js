@@ -412,13 +412,17 @@ function fetchFromSupabase() {
                         }
                     } else if (remoteDate === 0 && localDate > 0 && db._owner_id === userId) {
                         syncToSupabase();
-                    } else if (localDate > remoteDate && db._owner_id === userId) {
-                        // Local tem mudanças não sincronizadas (ex: usuário navegou antes do debounce de 2s)
+                    } else if (localDate > remoteDate) {
+                        // Local tem mudanças não sincronizadas (ex: usuário navegou antes do debounce)
                         // Só sobe se estamos em uma página de coach autenticado
                         const _pg = window.location.pathname.toLowerCase();
                         if (!_pg.includes('atleta-')) {
-                            console.log("Local mais novo que remote. Subindo dados pendentes...");
-                            syncToSupabase();
+                            // Se _owner_id não estava setado ou batia, considera deste usuário
+                            if (!db._owner_id) db._owner_id = userId;
+                            if (db._owner_id === userId) {
+                                console.log("Local mais novo que remote. Subindo dados pendentes...");
+                                syncToSupabase();
+                            }
                         }
                     }
                 } else {
@@ -789,14 +793,21 @@ let _saveDBResolvers = [];
 async function saveDB() {
     db._last_updated = Date.now();
     lastSyncTime = db._last_updated;
-    // Garante que o _owner_id esteja presente antes de salvar localmente
-    if (!db._owner_id) {
-        try {
-            const { data: authData } = await window.supabaseClient.auth.getUser();
-            if (authData && authData.user) db._owner_id = authData.user.id;
-        } catch (_) {}
-    }
+
+    // CRÍTICO: persistir no localStorage IMEDIATAMENTE (síncrono) antes de
+    // qualquer await. Se o usuário atualizar a página rápido, a mudança
+    // sobrevive — sem isso, qualquer await aqui cria janela de perda de dados.
     localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
+
+    // Resolver _owner_id em paralelo, sem bloquear (re-grava localStorage quando resolver)
+    if (!db._owner_id && window.supabaseClient) {
+        window.supabaseClient.auth.getUser().then(({ data: authData }) => {
+            if (authData && authData.user) {
+                db._owner_id = authData.user.id;
+                localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
+            }
+        }).catch(() => {});
+    }
 
     // Debounce: agrupa múltiplas chamadas em 500ms numa única sync ao Supabase
     return new Promise((resolve) => {
