@@ -722,33 +722,27 @@
         }
 
         // ── TREINO MODAL ──
-        let _modalScrollY = 0;
-        function _preventBodyScroll(e) {
-            // Permite scroll dentro do modal-body, bloqueia o resto
-            if (!e.target.closest('.modal-body')) e.preventDefault();
-        }
         function toggleTreinoModal() {
             const m = document.getElementById('treinoModal');
-            if (m.classList.contains('show')) {
-                m.classList.remove('show');
-                document.body.style.position = '';
-                document.body.style.top = '';
-                document.body.style.width = '';
-                document.removeEventListener('touchmove', _preventBodyScroll, { passive: false });
-                window.scrollTo(0, _modalScrollY);
-                setTimeout(() => { m.style.display = 'none'; }, 300);
+            if (m.style.display === 'none' || !m.style.display) {
+                m.style.display = 'block';
+                m.scrollTop = 0;
             } else {
-                _modalScrollY = window.scrollY;
-                document.body.style.position = 'fixed';
-                document.body.style.top = `-${_modalScrollY}px`;
-                document.body.style.width = '100%';
-                document.addEventListener('touchmove', _preventBodyScroll, { passive: false });
-                m.style.display = 'flex';
-                void m.offsetWidth;
-                m.classList.add('show');
+                m.style.display = 'none';
             }
         }
         window.toggleTreinoModal = toggleTreinoModal;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var closeBtn = document.getElementById('treinoModalCloseBtn');
+            if (closeBtn) closeBtn.addEventListener('click', function() {
+                document.getElementById('treinoModal').style.display = 'none';
+            });
+            var overlay = document.getElementById('treinoModal');
+            if (overlay) overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) overlay.style.display = 'none';
+            });
+        });
 
         function openTreinoModal(id) {
             const t = (window.db.treinos || []).find(tr => String(tr.id) === String(id));

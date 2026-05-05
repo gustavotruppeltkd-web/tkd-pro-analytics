@@ -1570,22 +1570,17 @@
     </main>
 
     <!-- TREINO MODAL -->
-    <div class="modal-overlay" id="treinoModal" style="display: none; z-index: 999999;"
-        onclick="if(event.target===this) toggleTreinoModal()">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="treinoModalTitle">Detalhes do Treino</h3>
-                <button onclick="toggleTreinoModal()"
-                    style="display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:6px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); color:#fca5a5; transition:0.2s;">
+    <div id="treinoModal" style="display:none; position:fixed; inset:0; z-index:999999; background:rgba(15,23,42,0.92); padding:16px; box-sizing:border-box; overflow-y:auto; -webkit-overflow-scrolling:touch;">
+        <div style="background:#1e293b; border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:100%; max-width:600px; margin:0 auto; box-shadow:0 25px 50px rgba(0,0,0,0.5);">
+            <div style="padding:16px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.07);">
+                <h3 id="treinoModalTitle" style="margin:0; font-size:20px; font-weight:700; color:#f1f5f9;"></h3>
+                <button id="treinoModalCloseBtn" style="display:inline-flex; align-items:center; gap:4px; padding:6px 12px; border-radius:6px; font-size:12px; font-weight:600; font-family:inherit; cursor:pointer; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5;">
                     <i class="ti ti-x" style="font-size:14px;"></i> Fechar
                 </button>
             </div>
-            <div class="modal-body">
-                <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:12px;"
-                    id="treinoModalMeta"></div>
-                <div id="treinoModalDesc"
-                    style="font-size:14px; line-height:1.6; color:var(--text); background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
-                </div>
+            <div style="padding:16px 20px;">
+                <div id="treinoModalMeta" style="font-size:12px; font-weight:600; color:#94a3b8; margin-bottom:12px;"></div>
+                <div id="treinoModalDesc" style="font-size:14px; line-height:1.6; color:#e2e8f0; background:rgba(255,255,255,0.03); padding:16px; border-radius:8px; border:1px solid rgba(255,255,255,0.08);"></div>
             </div>
         </div>
     </div>
