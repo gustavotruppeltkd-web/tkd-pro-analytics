@@ -730,7 +730,9 @@
             z-index: 9999;
             display: none;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 20px;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -746,12 +748,12 @@
             border-radius: var(--radius-lg);
             width: 100%;
             max-width: 600px;
-            max-height: 90vh;
             display: flex;
             flex-direction: column;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             transform: translateY(20px) scale(0.95);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: auto;
         }
 
         .modal-overlay.show .modal-container {
@@ -776,7 +778,8 @@
 
         .modal-body {
             padding: 16px 20px;
-            overflow-y: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
         }
 
         .modal-body::-webkit-scrollbar {
