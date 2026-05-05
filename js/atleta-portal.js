@@ -722,17 +722,24 @@
         }
 
         // ── TREINO MODAL ──
+        let _modalScrollY = 0;
         function toggleTreinoModal() {
             const m = document.getElementById('treinoModal');
             if (m.classList.contains('show')) {
                 m.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                setTimeout(() => m.style.display = 'none', 300);
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                window.scrollTo(0, _modalScrollY);
+                setTimeout(() => { m.style.display = 'none'; }, 300);
             } else {
+                _modalScrollY = window.scrollY;
+                document.body.style.position = 'fixed';
+                document.body.style.top = `-${_modalScrollY}px`;
+                document.body.style.width = '100%';
                 m.style.display = 'flex';
                 void m.offsetWidth;
                 m.classList.add('show');
-                document.body.classList.add('modal-open');
             }
         }
         window.toggleTreinoModal = toggleTreinoModal;

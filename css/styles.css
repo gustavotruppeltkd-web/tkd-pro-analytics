@@ -845,7 +845,8 @@ body.mode-mobile .tab-btn {
     transition: var(--transition);
 }
 
-.modal-overlay.active {
+.modal-overlay.active,
+.modal-overlay.show {
     opacity: 1;
     pointer-events: auto;
 }
