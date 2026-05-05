@@ -722,26 +722,22 @@
         }
 
         // ── TREINO MODAL ──
-        function toggleTreinoModal() {
-            const m = document.getElementById('treinoModal');
-            if (m.style.display === 'none' || !m.style.display) {
-                m.style.display = 'block';
-                m.scrollTop = 0;
-            } else {
-                m.style.display = 'none';
-            }
+        function closeTreinoModal() {
+            document.getElementById('treinoModal').style.display = 'none';
+            document.getElementById('treinoModalBackdrop').style.display = 'none';
         }
-        window.toggleTreinoModal = toggleTreinoModal;
+        function openTreinoModalOverlay() {
+            const m = document.getElementById('treinoModal');
+            const bd = document.getElementById('treinoModalBackdrop');
+            m.style.display = 'block';
+            m.scrollTop = 0;
+            bd.style.display = 'block';
+        }
+        window.closeTreinoModal = closeTreinoModal;
 
         document.addEventListener('DOMContentLoaded', function() {
-            var closeBtn = document.getElementById('treinoModalCloseBtn');
-            if (closeBtn) closeBtn.addEventListener('click', function() {
-                document.getElementById('treinoModal').style.display = 'none';
-            });
-            var overlay = document.getElementById('treinoModal');
-            if (overlay) overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) overlay.style.display = 'none';
-            });
+            document.getElementById('treinoModalCloseBtn').addEventListener('click', closeTreinoModal);
+            document.getElementById('treinoModalBackdrop').addEventListener('click', closeTreinoModal);
         });
 
         function openTreinoModal(id) {
@@ -822,7 +818,7 @@
             document.getElementById('treinoModalDesc').style.padding = '0';
             document.getElementById('treinoModalDesc').style.background = 'transparent';
 
-            toggleTreinoModal();
+            openTreinoModalOverlay();
         }
 
         function checkPseDone() {
