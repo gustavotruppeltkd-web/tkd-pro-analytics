@@ -723,6 +723,10 @@
 
         // ── TREINO MODAL ──
         let _modalScrollY = 0;
+        function _preventBodyScroll(e) {
+            // Permite scroll dentro do modal-body, bloqueia o resto
+            if (!e.target.closest('.modal-body')) e.preventDefault();
+        }
         function toggleTreinoModal() {
             const m = document.getElementById('treinoModal');
             if (m.classList.contains('show')) {
@@ -730,6 +734,7 @@
                 document.body.style.position = '';
                 document.body.style.top = '';
                 document.body.style.width = '';
+                document.removeEventListener('touchmove', _preventBodyScroll, { passive: false });
                 window.scrollTo(0, _modalScrollY);
                 setTimeout(() => { m.style.display = 'none'; }, 300);
             } else {
@@ -737,6 +742,7 @@
                 document.body.style.position = 'fixed';
                 document.body.style.top = `-${_modalScrollY}px`;
                 document.body.style.width = '100%';
+                document.addEventListener('touchmove', _preventBodyScroll, { passive: false });
                 m.style.display = 'flex';
                 void m.offsetWidth;
                 m.classList.add('show');
