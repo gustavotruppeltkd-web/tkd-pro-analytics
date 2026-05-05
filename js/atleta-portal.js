@@ -726,13 +726,13 @@
             const m = document.getElementById('treinoModal');
             if (m.classList.contains('show')) {
                 m.classList.remove('show');
-                document.body.style.overflow = '';
+                document.body.classList.remove('modal-open');
                 setTimeout(() => m.style.display = 'none', 300);
             } else {
                 m.style.display = 'flex';
                 void m.offsetWidth;
                 m.classList.add('show');
-                document.body.style.overflow = 'hidden';
+                document.body.classList.add('modal-open');
             }
         }
 
