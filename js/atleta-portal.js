@@ -735,10 +735,17 @@
         }
         window.closeTreinoModal = closeTreinoModal;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('treinoModalCloseBtn').addEventListener('click', closeTreinoModal);
-            document.getElementById('treinoModalBackdrop').addEventListener('click', closeTreinoModal);
-        });
+        // Script está no final do <body> — DOM já existe, não precisa de DOMContentLoaded
+        (function attachModalEvents() {
+            var closeBtn = document.getElementById('treinoModalCloseBtn');
+            var backdrop = document.getElementById('treinoModalBackdrop');
+            if (closeBtn) closeBtn.onclick = closeTreinoModal;
+            if (backdrop) backdrop.onclick = closeTreinoModal;
+            if (!closeBtn || !backdrop) {
+                // fallback: se por algum motivo ainda não existem, tenta 1x depois
+                setTimeout(attachModalEvents, 200);
+            }
+        })();
 
         function openTreinoModal(id) {
             const t = (window.db.treinos || []).find(tr => String(tr.id) === String(id));
