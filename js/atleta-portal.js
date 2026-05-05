@@ -735,6 +735,7 @@
                 document.body.classList.add('modal-open');
             }
         }
+        window.toggleTreinoModal = toggleTreinoModal;
 
         function openTreinoModal(id) {
             const t = (window.db.treinos || []).find(tr => String(tr.id) === String(id));
