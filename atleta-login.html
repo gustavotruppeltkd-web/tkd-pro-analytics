@@ -574,7 +574,7 @@
                 console.error('Erro ao carregar dados do treinador:', err);
                 grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); padding:32px;">
                     <i class="ti ti-alert-circle" style="font-size:32px; display:block; margin-bottom:8px; color:var(--red);"></i>
-                    Erro inesperado: ${err.message || err}
+                    Erro inesperado: ${err.message || String(err)}
                 </div>`;
             }
         }
@@ -598,7 +598,7 @@
             }
 
             grid.innerHTML = atletas.map(a => {
-                const primeiroNome = a.nome.split(' ')[0];
+                const primeiroNome = (a.nome || '').split(' ')[0] || 'Atleta';
                 const faixaCurta = a.faixa ? a.faixa.replace(/\(.*?\)/g, '').trim() : '';
                 return `
                     <button class="athlete-btn" onclick="selectAthlete(${a.id})" id="athleteBtn_${a.id}">
@@ -619,7 +619,7 @@
 
             // Update PIN screen
             document.getElementById('pinAthleteAvatar').src = atleta.avatar || DEFAULT_AVATAR;
-            document.getElementById('pinAthleteName').innerText = atleta.nome.split(' ')[0];
+            document.getElementById('pinAthleteName').innerText = (atleta.nome || '').split(' ')[0] || 'Atleta';
 
             // Switch to step 2
             document.getElementById('step1').classList.remove('active');
