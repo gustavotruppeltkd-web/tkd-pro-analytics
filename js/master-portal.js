@@ -905,26 +905,29 @@
             document.getElementById('qi_' + name).value = val;
         }
 
-        // START
+        // START — usa RPC per-entity (sem app_state)
         function iniciarPortal(coachId) {
             window.supabaseClient
-                .from('app_state')
-                .select('data')
-                .eq('project_id', coachId)
-                .single()
+                .rpc('get_athlete_portal_data', { p_coach_id: coachId, p_atleta_id: atletaId })
                 .then(function(result) {
-                    if (!result.error && result.data && result.data.data) {
-                        var remoto = result.data.data;
-                        var localRaw = localStorage.getItem('tkd_scout_db');
-                        var localData = localRaw ? JSON.parse(localRaw) : null;
-                        window.db = (localData && typeof mergeAppState === 'function')
-                            ? mergeAppState(localData, remoto)
-                            : remoto;
+                    if (!result.error && result.data) {
+                        var remoto = result.data;
+                        if (!window.db) window.db = {};
+                        if (remoto.alunos)      window.db.alunos      = remoto.alunos;
+                        if (remoto.treinos)     window.db.treinos     = remoto.treinos;
+                        if (remoto.eventos)     window.db.eventos     = remoto.eventos;
+                        if (remoto.competicoes) window.db.competicoes = remoto.competicoes;
+                        if (remoto.lutasScout)  window.db.lutasScout  = remoto.lutasScout;
+                        if (remoto.settings) {
+                            if (remoto.settings.questionarios)    window.db.questionarios   = remoto.settings.questionarios;
+                            if (remoto.settings.treino_templates) window.db.treinoTemplates = remoto.settings.treino_templates;
+                            if (remoto.settings.periodizacao)     window.db.periodizacao    = remoto.settings.periodizacao;
+                        }
                         db = window.db;
+                        localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
                     }
                     portalLoaded = false;
                     loadPortal();
-                    if (typeof setupRealtimeSubscription === 'function') setupRealtimeSubscription();
                 })
                 .catch(function() { loadPortal(); });
         }

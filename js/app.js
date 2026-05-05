@@ -329,11 +329,10 @@ function fetchFromSupabase() {
 
     const _pg = window.location.pathname.toLowerCase();
 
-    // Portal do atleta: continua usando app_state (Fase 4 futura)
-    if (_pg.includes('atleta-')) {
-        _fetchFromSupabaseLegacy();
-        return;
-    }
+    // Portal do atleta: carrega dados via RPC no atleta-portal.js (iniciarPortal).
+    // O app.js não deve buscar nada aqui — qualquer leitura aqui sobrescreveria
+    // os dados frescos da RPC com cache antigo.
+    if (_pg.includes('atleta-')) return;
 
     isFetchingSupabase = true;
     showSyncSpinner(true);
@@ -426,11 +425,14 @@ function fetchFromSupabase() {
     });
 }
 
-// Helpers internos sem depender do window.Data (que pode não estar carregado aqui)
+// Helpers internos: usam window.Data se disponível para extrair o JSONB original
 async function _dataList(table, userId) {
     const { data, error } = await window.supabaseClient
         .from(table).select('*').eq('coach_id', userId).is('deleted_at', null);
     if (error) { console.warn('_dataList ' + table + ':', error.message); return []; }
+    if (window.Data && typeof window.Data._fromRow === 'function') {
+        return (data || []).map(r => window.Data._fromRow(table, r));
+    }
     return data || [];
 }
 async function _dataGetSettings(userId) {
@@ -452,6 +454,10 @@ function setupEntitySubscriptions(userId) {
         competicoes: 'competicoes', antropometria: 'antropometria'
     };
 
+    const _fromRow = (window.Data && window.Data._fromRow)
+        ? window.Data._fromRow
+        : (t, r) => r;
+
     Object.keys(TABLE_TO_KEY).forEach(table => {
         const key = TABLE_TO_KEY[table];
         window.supabaseClient
@@ -461,15 +467,16 @@ function setupEntitySubscriptions(userId) {
                 filter: 'coach_id=eq.' + userId
             }, payload => {
                 if (!db[key]) db[key] = [];
-                const row = payload.new || payload.old;
-                if (!row) return;
-                const idx = db[key].findIndex(x => String(x.id) === String(row.id));
+                const rawRow = payload.new || payload.old;
+                if (!rawRow) return;
+                const item = _fromRow(table, rawRow);
+                const idx = db[key].findIndex(x => String(x.id) === String(item.id));
                 const isDelete = payload.eventType === 'DELETE' || (payload.new && payload.new.deleted_at);
                 if (isDelete) {
                     if (idx >= 0) db[key].splice(idx, 1);
                 } else {
-                    if (idx >= 0) db[key][idx] = payload.new;
-                    else db[key].push(payload.new);
+                    if (idx >= 0) db[key][idx] = item;
+                    else db[key].push(item);
                 }
                 window.db = db;
                 localStorage.setItem('tkd_scout_db', JSON.stringify(db));
@@ -512,40 +519,6 @@ function setupEntitySubscriptions(userId) {
         });
     }
     window._realtimeUserId = userId;
-}
-
-// ─── LEGACY: portal do atleta ainda usa app_state ───────────────────────────
-function _fetchFromSupabaseLegacy() {
-    isFetchingSupabase = true;
-    showSyncSpinner(true);
-    window.supabaseClient.auth.getUser().then(({ data: authData }) => {
-        const userId = authData?.user?.id
-            || localStorage.getItem('tkd_coach_id')
-            || sessionStorage.getItem('tkd_coach_id');
-        if (!userId) {
-            isFetchingSupabase = false;
-            showSyncSpinner(false);
-            checkTrainerOnboarding();
-            return;
-        }
-        window._cachedCoachId = userId;
-        window.supabaseClient
-            .from('app_state').select('data').eq('project_id', userId).maybeSingle()
-            .then(({ data, error }) => {
-                if (!error && data && data.data) {
-                    db = data.data;
-                    db._owner_id = userId;
-                    window.db = db;
-                    lastSyncTime = db._last_updated || Date.now();
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-                }
-                setupRealtimeSubscriptionLegacy(userId);
-                renderUserProfile();
-                checkTrainerOnboarding();
-                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
-                fetchAthleteResponses(userId);
-            }).finally(() => { isFetchingSupabase = false; showSyncSpinner(false); });
-    });
 }
 
 // Busca todas as respostas de athlete_responses e mescla em db (deduplicação por payload.id)
@@ -722,63 +695,6 @@ function checkTrainerOnboarding() {
     };
 }
 
-function setupRealtimeSubscriptionLegacy(userId) {
-    if (window._supabaseSubscribed) return;
-    if (!window.supabaseClient || !userId) return;
-    window._supabaseSubscribed = true;
-    window._realtimeUserId = userId;
-
-    function applyRealtimeUpdate(remoteData) {
-        if (!remoteData) return;
-        const activeTurmaIdLocal = db.activeTurmaId;
-        db = remoteData;
-        if (activeTurmaIdLocal) db.activeTurmaId = activeTurmaIdLocal;
-        lastSyncTime = remoteData._last_updated || Date.now();
-        window.db = db;
-        localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-        if (typeof renderSemaforo === 'function') renderSemaforo();
-        if (typeof renderAlunosUI === 'function') renderAlunosUI();
-        if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
-        if (typeof buildAlerts === 'function') buildAlerts();
-        if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
-        if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
-    }
-
-    window.supabaseClient
-        .channel('public:app_state:' + userId)
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'app_state', filter: 'project_id=eq.' + userId }, payload => {
-            applyRealtimeUpdate(payload.new.data);
-        })
-        .subscribe((status) => {
-            if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || status === 'TIMED_OUT') {
-                window._supabaseSubscribed = false;
-                setTimeout(() => setupRealtimeSubscriptionLegacy(userId), 5000);
-            }
-        });
-
-    window.supabaseClient
-        .channel('public:athlete_responses_legacy:' + userId)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'athlete_responses', filter: 'coach_id=eq.' + userId }, payload => {
-            const row = payload.new;
-            if (!row) return;
-            if (mergeAthleteResponse(row)) {
-                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-                if (typeof buildAlerts === 'function') buildAlerts();
-                if (typeof buildCargaDiaria === 'function') buildCargaDiaria();
-                if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
-            }
-        })
-        .subscribe();
-
-    if (!window._realtimePollingActive) {
-        window._realtimePollingActive = true;
-        const runPoll = () => fetchAthleteResponses(userId);
-        setInterval(runPoll, 45000);
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') runPoll();
-        });
-    }
-}
 
 // Helper para mesclar o estado local com o remoto (evita perda de dados de atletas)
 function mergeAppState(local, remote) {

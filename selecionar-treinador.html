@@ -433,15 +433,17 @@
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if (!user) throw new Error("Usuário não autenticado.");
 
-                // Overwrite with empty object to force reset
-                const { error } = await window.supabaseClient
-                    .from('app_state')
-                    .update({ data: {} })
-                    .eq('project_id', user.id);
+                // Apaga em todas as tabelas per-entity (RLS garante que só apaga as do próprio coach)
+                const tables = ['turmas','alunos','treinos','eventos','planos','horarios',
+                                'chamadas','presencas','lesoes','lutas_scout','competicoes','antropometria'];
+                await Promise.all(tables.map(t =>
+                    window.supabaseClient.from(t).delete().eq('coach_id', user.id)
+                ));
 
-                if (error) throw error;
+                // Apaga settings e zera o blob legado
+                await window.supabaseClient.from('coach_settings').delete().eq('coach_id', user.id);
+                await window.supabaseClient.from('app_state').update({ data: {} }).eq('project_id', user.id);
 
-                // Clear everything locally
                 localStorage.removeItem('tkd_scout_db');
                 localStorage.removeItem('tkd_active_coach_id');
 

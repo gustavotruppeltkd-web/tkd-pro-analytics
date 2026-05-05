@@ -6,7 +6,9 @@
       "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(npx vercel *)",
-      "Bash(node scripts/refactor-styles.js)"
+      "Bash(node scripts/refactor-styles.js)",
+      "Read(//c/Users/gusta/.claude/projects/c--Users-gusta-tkd-app/memory/**)",
+      "Bash(grep -v \"//.*db\\\\.\")"
     ]
   }
 }

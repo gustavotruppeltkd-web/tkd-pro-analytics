@@ -1178,6 +1178,10 @@
                 alunos: 'alunos', lutas_scout: 'lutasScout'
             };
 
+            var _fromRow = (window.Data && window.Data._fromRow)
+                ? window.Data._fromRow
+                : function(t, r) { return r; };
+
             Object.keys(TABLE_TO_KEY).forEach(function(table) {
                 var key = TABLE_TO_KEY[table];
                 window.supabaseClient
@@ -1187,15 +1191,16 @@
                         filter: 'coach_id=eq.' + coachId
                     }, function(payload) {
                         if (!window.db[key]) window.db[key] = [];
-                        var row = payload.new || payload.old;
-                        if (!row) return;
-                        var idx = window.db[key].findIndex(function(x) { return String(x.id) === String(row.id); });
+                        var rawRow = payload.new || payload.old;
+                        if (!rawRow) return;
+                        var item = _fromRow(table, rawRow);
+                        var idx = window.db[key].findIndex(function(x) { return String(x.id) === String(item.id); });
                         var isDelete = payload.eventType === 'DELETE' || (payload.new && payload.new.deleted_at);
                         if (isDelete) {
                             if (idx >= 0) window.db[key].splice(idx, 1);
                         } else {
-                            if (idx >= 0) window.db[key][idx] = payload.new;
-                            else window.db[key].push(payload.new);
+                            if (idx >= 0) window.db[key][idx] = item;
+                            else window.db[key].push(item);
                         }
                         db = window.db;
                         localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
