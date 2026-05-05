@@ -562,7 +562,7 @@
                     db.periodizacao    = rpcData.settings.periodizacao      || {};
                 }
                 window.db = db;
-                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch (_) { /* quota — ignora */ }
 
                 renderAthletes();
 
