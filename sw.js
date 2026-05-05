@@ -1,4 +1,4 @@
-const CACHE_NAME = 'atleta-portal-v1';
+const CACHE_NAME = 'atleta-portal-v20260505';
 const CACHE_URLS = [
     '/atleta-portal.html',
     '/css/styles.css',
