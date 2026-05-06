@@ -12,6 +12,26 @@
     <meta name="apple-mobile-web-app-title" content="Atleta">
     <link rel="manifest" href="manifest.json">
     <title>Portal do Atleta</title>
+    <script>
+    // KILL SWITCH: limpa SW antigo + caches obsoletos no primeiro carregamento da v2.
+    // Sem isso, atletas com SW antigo no celular continuam servindo JS sem RPC.
+    (function() {
+        const KEY = 'tkd_v2_migration_done';
+        if (localStorage.getItem(KEY)) return;
+        if (!('serviceWorker' in navigator)) { localStorage.setItem(KEY, '1'); return; }
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            return Promise.all(regs.map(r => r.unregister()));
+        }).then(() => {
+            if (window.caches) {
+                return caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+            }
+        }).then(() => {
+            localStorage.setItem(KEY, '1');
+            // Recarrega para garantir que JS novo é servido da rede
+            location.reload();
+        }).catch(() => { localStorage.setItem(KEY, '1'); });
+    })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.41.1/dist/tabler-icons.min.css">
