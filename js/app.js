@@ -306,8 +306,9 @@ function loadDB() {
     // Render profile header if elements exist
     renderUserProfile();
 
-    // Check if trainer profile needs to be set up
-    checkTrainerOnboarding();
+    // NÃO chama checkTrainerOnboarding aqui — db pode estar vazio (mobile sem cache local)
+    // e mostraria o modal de cadastro indevidamente. checkTrainerOnboarding é chamado
+    // dentro de fetchFromSupabase após popular db.treinadores de coach_settings.
 }
 
 let isFetchingSupabase = false;
@@ -341,7 +342,7 @@ function fetchFromSupabase() {
         if (!authData || !authData.user) {
             isFetchingSupabase = false;
             showSyncSpinner(false);
-            checkTrainerOnboarding();
+            // Não autenticado — não mostra onboarding (vai redirecionar para login)
             return;
         }
         const userId = authData.user.id;
