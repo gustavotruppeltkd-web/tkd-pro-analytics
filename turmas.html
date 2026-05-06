@@ -922,20 +922,41 @@
 
         // The crop drag listeners are registered inside the DOMContentLoaded block above.
         // This second listener handles page init.
+        // Verificações que dependem de db carregado do Supabase. Roda quando
+        // fetchFromSupabase termina (via window.onDataLoaded hook) OU como fallback
+        // após 4s caso o fetch demore.
+        let _initialChecksDone = false;
+        function runInitialChecks() {
+            if (_initialChecksDone) return;
+            _initialChecksDone = true;
+            if (!db.treinadores || db.treinadores.length === 0) {
+                document.getElementById('modalFirstTrainer').style.display = 'flex';
+            }
+            // Onboarding: exibe APENAS se nunca concluído E o coach não tem turmas no Supabase.
+            // No mobile sem cache local, db.turmas só está populado após fetchFromSupabase retornar.
+            if (!db.onboardingDone && (!db.turmas || db.turmas.length === 0)) {
+                showOnboarding();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            // Render imediato com o que estiver em cache local
             setTimeout(() => {
-                if (!db.treinadores || db.treinadores.length === 0) {
-                    document.getElementById('modalFirstTrainer').style.display = 'flex';
-                }
                 renderTurmas();
                 const un = document.querySelector('.user-name');
                 if (un && un.innerText === 'Carregando...') un.innerText = 'Treinador';
-
-                // Onboarding: exibe apenas se nunca concluído e sem turmas
-                if (!db.onboardingDone && (!db.turmas || db.turmas.length === 0)) {
-                    showOnboarding();
-                }
             }, 300);
+
+            // Hook que app.js chama após fetchFromSupabase completar
+            const prevHook = window.onDataLoaded;
+            window.onDataLoaded = function() {
+                if (typeof prevHook === 'function') { try { prevHook(); } catch(_) {} }
+                renderTurmas();
+                runInitialChecks();
+            };
+
+            // Fallback: se fetch nunca retornar (offline/erro), roda checks em 4s
+            setTimeout(runInitialChecks, 4000);
         });
 
         // ── ONBOARDING ──────────────────────────────────────────────
