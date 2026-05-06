@@ -98,11 +98,9 @@ BEGIN
     ),
     'respostas', (
       -- Respostas do atleta + feedbacks do treinador (filtrado por atleta)
-      SELECT COALESCE(jsonb_agg(r), '[]'::jsonb) FROM (
-        SELECT r.*
-        FROM jsonb_array_elements(COALESCE(v_settings.respostas, '[]'::jsonb)) r
-        WHERE p_atleta_id = 0 OR (r->>'atletaId')::BIGINT = p_atleta_id
-      ) sub
+      SELECT COALESCE(jsonb_agg(r.value), '[]'::jsonb)
+      FROM jsonb_array_elements(COALESCE(v_settings.respostas, '[]'::jsonb)) AS r(value)
+      WHERE p_atleta_id = 0 OR (r.value->>'atletaId')::BIGINT = p_atleta_id
     )
   ) INTO v_result;
 
