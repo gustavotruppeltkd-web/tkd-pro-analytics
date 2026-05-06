@@ -135,4 +135,63 @@ $$;
 GRANT EXECUTE ON FUNCTION append_athlete_resposta(UUID, JSONB) TO anon;
 GRANT EXECUTE ON FUNCTION append_athlete_resposta(UUID, JSONB) TO authenticated;
 
+-- ===================================================================
+-- RPC para o atleta inserir respostas (wellness, carga, resposta) em athlete_responses.
+-- IMPORTANTE: necessário porque INSERT direto na tabela falha quando o
+-- supabase-js v2 envia Prefer: return=representation (anon não pode SELECT
+-- de volta). Esta RPC SECURITY DEFINER bypassa RLS de forma segura.
+-- ===================================================================
+
+CREATE OR REPLACE FUNCTION submit_athlete_response(
+  p_coach_id UUID, p_athlete_id BIGINT, p_type TEXT, p_payload JSONB
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  INSERT INTO athlete_responses (coach_id, athlete_id, type, payload, submitted_at)
+  VALUES (p_coach_id, p_athlete_id, p_type, p_payload, NOW());
+  RETURN TRUE;
+EXCEPTION WHEN OTHERS THEN
+  RETURN FALSE;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION submit_athlete_response(UUID, BIGINT, TEXT, JSONB) TO anon;
+GRANT EXECUTE ON FUNCTION submit_athlete_response(UUID, BIGINT, TEXT, JSONB) TO authenticated;
+
+-- ===================================================================
+-- RPC para o treinador atualizar o feedback de uma resposta específica
+-- sem corrida com novas inserções de atletas.
+-- ===================================================================
+
+CREATE OR REPLACE FUNCTION update_resposta_feedback(p_resposta_id BIGINT, p_feedback TEXT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_coach UUID := auth.uid();
+  v_now BIGINT := (extract(epoch from now()) * 1000)::BIGINT;
+  v_arr JSONB;
+BEGIN
+  IF v_coach IS NULL THEN RETURN FALSE; END IF;
+  SELECT respostas INTO v_arr FROM coach_settings WHERE coach_id = v_coach;
+  IF v_arr IS NULL THEN RETURN FALSE; END IF;
+  v_arr := (
+    SELECT jsonb_agg(
+      CASE WHEN (r->>'id')::BIGINT = p_resposta_id
+        THEN r || jsonb_build_object('coachFeedback', p_feedback, 'coachFeedbackAt', v_now)
+        ELSE r END
+    )
+    FROM jsonb_array_elements(v_arr) r
+  );
+  UPDATE coach_settings SET respostas = v_arr, updated_at = NOW() WHERE coach_id = v_coach;
+  RETURN TRUE;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION update_resposta_feedback(BIGINT, TEXT) TO authenticated;
+
 COMMIT;

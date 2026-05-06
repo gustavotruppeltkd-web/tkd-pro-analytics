@@ -1174,11 +1174,16 @@
                 || (new URLSearchParams(location.search)).get('coach');
             if (!coach) return false;
             try {
-                // Insere em athlete_responses (append-only, append-safe)
-                const { error: e1 } = await window.supabaseClient
-                    .from('athlete_responses')
-                    .insert({ coach_id: coach, athlete_id: parseInt(atletaId), type: item.type, payload: item.payload });
+                // Usa RPC SECURITY DEFINER — bypassa RLS, evita 401 de anon que não pode SELECT
+                const { data, error: e1 } = await window.supabaseClient
+                    .rpc('submit_athlete_response', {
+                        p_coach_id: coach,
+                        p_athlete_id: parseInt(atletaId),
+                        p_type: item.type,
+                        p_payload: item.payload
+                    });
                 if (e1) throw e1;
+                if (data !== true) throw new Error('submit_athlete_response retornou false');
 
                 // Para questionários: também insere em coach_settings.respostas (visível no painel do treinador)
                 if (item.type === 'resposta') {
