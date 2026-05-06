@@ -5,6 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PRO COACH ANALYTICS | Acesso do Atleta</title>
+    <script>
+    // Kill-switch: limpa SW antigo e caches obsoletos no primeiro acesso à versão nova.
+    (function() {
+        const KEY = 'tkd_v2_migration_done';
+        if (localStorage.getItem(KEY)) return;
+        if (!('serviceWorker' in navigator)) { localStorage.setItem(KEY, '1'); return; }
+        navigator.serviceWorker.getRegistrations().then(regs =>
+            Promise.all(regs.map(r => r.unregister()))
+        ).then(() => {
+            if (window.caches) return caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+        }).then(() => {
+            localStorage.setItem(KEY, '1');
+            location.reload();
+        }).catch(() => { localStorage.setItem(KEY, '1'); });
+    })();
+    </script>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.41.1/dist/tabler-icons.min.css">
@@ -591,10 +607,18 @@
 
         function renderAthletes() {
             const grid = document.getElementById('athletesGrid');
-            // In shared-link mode, show all athletes; in normal mode filter by active turma
-            const atletas = coachIdParam
+            // Apenas atletas de turmas RENDIMENTO/COMPETIÇÃO têm acesso ao portal.
+            // Alunos de turmas Comerciais não devem aparecer aqui.
+            const turmasRendimento = (db.turmas || []).filter(t => {
+                const tipo = (t.tipo || '').toLowerCase();
+                return tipo.includes('rendimento') || tipo.includes('competic') || tipo.includes('competiç');
+            }).map(t => t.id);
+            const turmasRendimentoSet = new Set(turmasRendimento.map(id => String(id)));
+
+            const todosAtletas = coachIdParam
                 ? (db.alunos || [])
                 : (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
+            const atletas = todosAtletas.filter(a => turmasRendimentoSet.has(String(a.turmaId)));
 
             if (atletas.length === 0) {
                 grid.innerHTML = `
