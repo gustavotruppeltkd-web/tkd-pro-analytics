@@ -1,28 +1,13 @@
-// Network-first: sempre busca da rede, usa cache só se offline
-const CACHE_NAME = 'atleta-portal-v20260506c';
-
-self.addEventListener('install', e => { self.skipWaiting(); });
+// Self-destruct service worker — substitui qualquer SW antigo, limpa todos os caches
+// e se desinstala. Sem SW = sem cache stale entre versões.
+self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', e => {
-    e.waitUntil(
-        caches.keys().then(keys =>
-            Promise.all(keys.map(k => caches.delete(k)))
-        )
-    );
-    self.clients.claim();
-});
-
-self.addEventListener('fetch', e => {
-    if (e.request.method !== 'GET') return;
-    // Ignora requisições de extensões do Chrome
-    if (!e.request.url.startsWith('http')) return;
-    e.respondWith(
-        fetch(e.request).then(res => {
-            if (res && res.status === 200 && res.type === 'basic') {
-                const clone = res.clone();
-                caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-            }
-            return res;
-        }).catch(() => caches.match(e.request))
-    );
+    e.waitUntil((async () => {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+        await self.registration.unregister();
+        const clients = await self.clients.matchAll();
+        clients.forEach(c => c.navigate(c.url));
+    })());
 });

@@ -1610,13 +1610,15 @@
 
     <script src="js/atleta-portal-v2.js"></script>
     <script>
+        // Service Worker desativado — registra o /sw.js que se auto-destrói para
+        // limpar SW antigos. Após auto-destruction, não registra mais nada.
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(regs => {
-                regs.forEach(r => r.update());
+                if (regs.length > 0) {
+                    // Tem SW ativo (provavelmente velho) — registra o destruidor
+                    navigator.serviceWorker.register('/sw.js').catch(() => {});
+                }
             });
-            navigator.serviceWorker.register('/sw.js').then(reg => {
-                reg.update();
-            }).catch(() => {});
         }
         // Colorblind mode
         function applyColorblind(on) {
