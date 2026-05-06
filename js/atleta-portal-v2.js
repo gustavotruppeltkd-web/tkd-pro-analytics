@@ -1167,14 +1167,20 @@
         }
 
         async function _tryFlushOne(item) {
-            if (!window.supabaseClient) return false;
+            if (!window.supabaseClient) {
+                window._lastFlushError = 'supabaseClient não disponível';
+                return false;
+            }
             const coach = item.coachId || portalCoachId
                 || sessionStorage.getItem('tkd_coach_id')
                 || localStorage.getItem('tkd_coach_id')
                 || (new URLSearchParams(location.search)).get('coach');
-            if (!coach) return false;
+            if (!coach) {
+                window._lastFlushError = 'coach_id não encontrado (sessionStorage/localStorage/URL vazios)';
+                return false;
+            }
             try {
-                // Usa RPC SECURITY DEFINER — bypassa RLS, evita 401 de anon que não pode SELECT
+                console.log('[pushResponse] Calling RPC submit_athlete_response', { coach, atletaId, type: item.type });
                 const { data, error: e1 } = await window.supabaseClient
                     .rpc('submit_athlete_response', {
                         p_coach_id: coach,
@@ -1183,17 +1189,23 @@
                         p_payload: item.payload
                     });
                 if (e1) throw e1;
-                if (data !== true) throw new Error('submit_athlete_response retornou false');
+                if (data !== true) throw new Error('RPC retornou ' + JSON.stringify(data));
+                console.log('[pushResponse] RPC OK');
 
-                // Para questionários: também insere em coach_settings.respostas (visível no painel do treinador)
                 if (item.type === 'resposta') {
                     const { error: e2 } = await window.supabaseClient
                         .rpc('append_athlete_resposta', { p_coach_id: coach, p_resposta: item.payload });
                     if (e2) console.warn('append_athlete_resposta falhou (não crítico):', e2.message);
                 }
+                window._lastFlushError = null;
                 return true;
             } catch (e) {
-                console.warn('flush response falhou:', e && e.message);
+                const msg = (e && e.message) || JSON.stringify(e);
+                window._lastFlushError = msg;
+                console.error('[pushResponse] FALHOU:', msg, e);
+                if (typeof showToast === 'function') {
+                    showToast('ERRO: ' + msg.slice(0, 120), 'error');
+                }
                 return false;
             }
         }
