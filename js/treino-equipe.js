@@ -69,7 +69,7 @@
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             if (!db.exercicios) { db.exercicios = []; }
-            const turma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             if (turma) document.getElementById('turmaName').innerText = turma.nome;
             const user = db.usuarios?.[0];
             if (user) document.getElementById('userName').innerText = user.nome;
@@ -558,7 +558,7 @@
             selectedIds = selectedIds || [];
             const container = document.getElementById('atletasChipsContainer');
             const emptyMsg = document.getElementById('atletasChipsEmpty');
-            const alunosTurma = (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
             if (alunosTurma.length === 0) {
                 container.innerHTML = '';
                 emptyMsg.style.display = '';

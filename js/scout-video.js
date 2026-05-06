@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         // Filtra os atletas da turma atual
-        const turmaAtletas = (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
+        const turmaAtletas = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
 
         turmaAtletas.forEach(a => {
             const opt = document.createElement('option');

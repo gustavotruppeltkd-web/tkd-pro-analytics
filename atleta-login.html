@@ -617,7 +617,7 @@
 
             const todosAtletas = coachIdParam
                 ? (db.alunos || [])
-                : (db.alunos || []).filter(a => a.turmaId === db.activeTurmaId);
+                : (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
             const atletas = todosAtletas.filter(a => turmasRendimentoSet.has(String(a.turmaId)));
 
             if (atletas.length === 0) {

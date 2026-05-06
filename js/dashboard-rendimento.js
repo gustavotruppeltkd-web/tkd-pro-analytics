@@ -76,7 +76,7 @@
 
             if (selectedAtleta === 'equipe') {
                 // Fetch metrics from everyone on this day
-                logsOfDay = (db.wellnessLogs || []).filter(w => w.data === dataFiltro && db.alunos.find(a => a.id === w.atletaId && a.turmaId === db.activeTurmaId));
+                logsOfDay = (db.wellnessLogs || []).filter(w => w.data === dataFiltro && db.alunos.find(a => String(a.id) === String(w.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             } else {
                 // Fetch metrics from specific athlete
                 logsOfDay = (db.wellnessLogs || []).filter(w => w.data === dataFiltro && w.atletaId === parseInt(selectedAtleta));
@@ -223,7 +223,7 @@
             grid.innerHTML = '';
 
             const dataFiltro = document.getElementById('dataFiltro').value;
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
 
             let listVerde = [];
             let listAmarelo = [];
@@ -327,7 +327,7 @@
             const select = document.getElementById('antropoAtleta');
             select.innerHTML = '<option value="">Selecione o Atleta...</option>';
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             alunosTurma.forEach(a => {
                 const opt = document.createElement('option');
                 opt.value = a.id;
@@ -415,7 +415,7 @@
             const select = document.getElementById('wellnessAtleta');
             select.innerHTML = '<option value="">Selecione o Atleta...</option>';
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             alunosTurma.forEach(a => {
                 const opt = document.createElement('option');
                 opt.value = a.id;
@@ -482,7 +482,7 @@
             const select = document.getElementById('cargaAtleta');
             select.innerHTML = '<option value="">Selecione o Atleta...</option>';
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             alunosTurma.forEach(a => {
                 const opt = document.createElement('option');
                 opt.value = a.id;
@@ -543,7 +543,7 @@
         }
 
         function populateSmartSelects() {
-            const alunos = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunos = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             ['selCargaAtleta','selPSEAtleta','selectComparison'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
@@ -587,7 +587,7 @@
                 return `Sem ${i+1} (${d})`;
             });
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
 
             const getWeekLoad = (atletaId, start) => {
                 const days = [];
@@ -708,7 +708,7 @@
             const diasShort = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
             const labels = dates.map(d => diasShort[new Date(d+'T00:00:00').getDay()]);
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
 
             const datasets = alunosTurma.map((aluno, i) => {
                 const data = dates.map(d => {
@@ -802,7 +802,7 @@
                 weekDays.push(dd.toLocaleDateString('sv-SE'));
             }
             const diasLabel = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
 
             const getCargaDia = (date) => {
                 const logs = (db.cargaTreino || []).filter(c => {
@@ -893,7 +893,7 @@
             const panel = document.getElementById('panelAlertas');
             if (!panel) return;
             const today = document.getElementById('dataFiltro').value || todayBR();
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             const alertas = [];
 
             alunosTurma.forEach(aluno => {
@@ -1136,7 +1136,7 @@
             if (val !== 'equipe') {
                 scoutsFiltrados = scoutsFiltrados.filter(s => s.atletaId === parseInt(val));
             } else {
-                scoutsFiltrados = scoutsFiltrados.filter(s => db.alunos.find(a => a.id === s.atletaId && a.turmaId === db.activeTurmaId));
+                scoutsFiltrados = scoutsFiltrados.filter(s => db.alunos.find(a => String(a.id) === String(s.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             const label = val === 'equipe' ? 'Avaliação Técnica ? Média da Equipe' : 'Avaliação Técnica ? Individual';
@@ -1178,7 +1178,7 @@
             const dataBemEstar = dates7.map(d => {
                 let logs = (db.wellnessLogs || []).filter(w => w.data === d);
                 if (val === 'equipe') {
-                    logs = logs.filter(w => db.alunos.find(a => a.id === w.atletaId && a.turmaId === db.activeTurmaId));
+                    logs = logs.filter(w => db.alunos.find(a => String(a.id) === String(w.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
                 } else {
                     logs = logs.filter(w => w.atletaId === parseInt(val));
                 }
@@ -1413,7 +1413,7 @@
         function exportWellnessCSV(athleteId) {
             let list = (db.wellnessLogs || []);
             if (athleteId !== 'equipe') list = list.filter(l => l.atletaId === parseInt(athleteId));
-            else list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+            else list = list.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             if (list.length === 0) return showToast("Nenhum dado encontrado", "error");
 
@@ -1430,7 +1430,7 @@
         function exportCargaCSV(athleteId) {
             let list = (db.cargaTreino || []);
             if (athleteId !== 'equipe') list = list.filter(l => l.atletaId === parseInt(athleteId));
-            else list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+            else list = list.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             if (list.length === 0) return showToast("Nenhum dado encontrado", "error");
 
@@ -1446,7 +1446,7 @@
         function exportScoutsCSV(athleteId) {
             let list = (db.lutasScout || []);
             if (athleteId !== 'equipe') list = list.filter(l => l.atletaId === parseInt(athleteId));
-            else list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+            else list = list.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             if (list.length === 0) return showToast("Nenhum dado encontrado", "error");
 
@@ -1463,7 +1463,7 @@
         function exportTestesFisicosCSV(athleteId) {
             let list = (db.testesFisicos || []);
             if (athleteId !== 'equipe') list = list.filter(l => l.atletaId === parseInt(athleteId));
-            else list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+            else list = list.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             if (list.length === 0) return showToast("Nenhum dado encontrado", "error");
 
@@ -1481,7 +1481,7 @@
             const quest = db.questionarios.find(q => q.id === qId);
             let list = (db.respostas || []).filter(r => r.questionarioId === qId);
             if (athleteId !== 'equipe') list = list.filter(r => r.atletaId === parseInt(athleteId));
-            else list = list.filter(r => db.alunos.find(a => a.id === r.atletaId && a.turmaId === db.activeTurmaId));
+            else list = list.filter(r => db.alunos.find(a => String(a.id) === String(r.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             if (list.length === 0) return showToast("Nenhuma resposta encontrada", "error");
 
@@ -1519,7 +1519,7 @@
             if (athleteId !== 'equipe') {
                 list = list.filter(l => l.atletaId === parseInt(athleteId));
             } else {
-                list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                list = list.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             if (list.length === 0) return showToast("Nenhum dado antropom?trico encontrado", "error");
@@ -1567,7 +1567,7 @@
             if (athleteId !== 'equipe') {
                 list = list.filter(l => l.atletaId === parseInt(athleteId));
             } else {
-                list = list.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                list = list.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             // Group by date if team (average)
@@ -1644,7 +1644,7 @@
             if (athleteId !== 'equipe') {
                 allLogs = allLogs.filter(l => l.atletaId === parseInt(athleteId));
             } else {
-                allLogs = allLogs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                allLogs = allLogs.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             // 0. Tabela Mestre
@@ -1691,7 +1691,7 @@
 
             // Gráfico 1: Evolução Semanal (Score Geral)
             const avgTeam = dates.map(d => {
-                let logs = (db.wellnessLogs || []).filter(l => l.data === d && db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                let logs = (db.wellnessLogs || []).filter(l => l.data === d && db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
                 if (logs.length === 0) return null;
                 const scores = logs.map(l => calcWellnessScore(l.sono, l.estresse, l.dor, l.humor, l.fadiga, l.alimentacao));
                 return (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
@@ -1829,7 +1829,7 @@
 
             // Gráfico 5: Ranking de Atletas pelo Score Mais Recente
             document.getElementById('titleChart5').innerText = 'Ranking de Atletas — Score Mais Recente';
-            const alunosTurma5 = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma5 = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             const rankingData = alunosTurma5.map(a => {
                 const logs = (db.wellnessLogs || []).filter(l => l.atletaId === a.id).sort((x, y) => y.data.localeCompare(x.data));
                 if (logs.length === 0) return { nome: a.nome.split(' ')[0], score: null };
@@ -1878,7 +1878,7 @@
             if (athleteId !== 'equipe') {
                 allInternalLogs = allInternalLogs.filter(l => l.atletaId === parseInt(athleteId));
             } else {
-                allInternalLogs = allInternalLogs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                allInternalLogs = allInternalLogs.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             // External load: treinos created in training creator (most important source)
@@ -2175,7 +2175,7 @@
             const selectAtleta = document.getElementById('tfAtleta');
             selectAtleta.innerHTML = '';
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             if (alunosTurma.length === 0) {
                 selectAtleta.innerHTML = '<option value="">Nenhum atleta na equipe</option>';
             } else {
@@ -2405,7 +2405,7 @@
             const realizadaData = dates.map(d => {
                 let logs = (db.cargaTreino || []).filter(l => l.data === d);
                 if (athleteId !== 'equipe') logs = logs.filter(l => l.atletaId === parseInt(athleteId));
-                else logs = logs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                else logs = logs.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
                 // Se testar a equipe, calcula-se a média das cargas daquele dia? Ou o somatório?
                 // Historicamente em esportes coletivos analisa-se a MEDIANA ou MÉDIA da carga da equipe. 
@@ -2436,7 +2436,7 @@
             dates.forEach(d => {
                 let logs = (db.cargaTreino || []).filter(l => l.data === d);
                 if (athleteId !== 'equipe') logs = logs.filter(l => l.atletaId === parseInt(athleteId));
-                else logs = logs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                else logs = logs.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
                 logs7dias.push(...logs);
             });
 
@@ -2521,7 +2521,7 @@
                 weekDatesList.forEach(d => {
                     let logs = (db.cargaTreino || []).filter(l => l.data === d);
                     if (athleteId !== 'equipe') logs = logs.filter(l => l.atletaId === parseInt(athleteId));
-                    else logs = logs.filter(l => db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId));
+                    else logs = logs.filter(l => db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
                     if (athleteId === 'equipe' && logs.length > 0) {
                         sumWeek += (logs.reduce((a, b) => a + (b.cargaCalculada || 0), 0) / logs.length);
@@ -2570,7 +2570,7 @@
 
             let scouts = (db.lutasScout || []);
             if (athleteId !== 'equipe') scouts = scouts.filter(s => s.atletaId === parseInt(athleteId));
-            else scouts = scouts.filter(s => db.alunos.find(a => a.id === s.atletaId && a.turmaId === db.activeTurmaId));
+            else scouts = scouts.filter(s => db.alunos.find(a => String(a.id) === String(s.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             // 0. Tabela Mestre
             const tableContainer = document.getElementById('dynamicTableContainer');
@@ -2916,7 +2916,7 @@
             const currentYear = new Date().getFullYear();
             (db.cargaTreino || []).forEach(l => {
                 const d = new Date(l.data);
-                if (d.getFullYear() === currentYear && db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId)) {
+                if (d.getFullYear() === currentYear && db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId))) {
                     macroData[d.getMonth()] += (l.cargaCalculada || 0);
                 }
             });
@@ -2951,7 +2951,7 @@
                 // Realizadas: conta dias únicos com cargaTreino na semana
                 const diasReais = new Set(
                     (db.cargaTreino || [])
-                        .filter(l => l.data >= sem.weekStart && l.data <= (sem.weekEnd || '') && db.alunos.find(a => a.id === l.atletaId && a.turmaId === db.activeTurmaId))
+                        .filter(l => l.data >= sem.weekStart && l.data <= (sem.weekEnd || '') && db.alunos.find(a => String(a.id) === String(l.atletaId) && String(a.turmaId) === String(db.activeTurmaId)))
                         .map(l => l.data)
                 ).size;
                 aderenciaReal.push(diasReais);
@@ -2996,7 +2996,7 @@
             if (athleteId !== 'equipe') {
                 resps = resps.filter(r => r.atletaId === parseInt(athleteId));
             } else {
-                resps = resps.filter(r => db.alunos.find(a => a.id === r.atletaId && a.turmaId === db.activeTurmaId));
+                resps = resps.filter(r => db.alunos.find(a => String(a.id) === String(r.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             // 0. Tabela Mestre
@@ -3099,7 +3099,7 @@
             });
 
             // Gráfico 3: Adesão por Atleta (quantas respostas cada atleta deu no período)
-            const alunosQ = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosQ = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             const adesaoPorAtleta = alunosQ.map(a => ({
                 nome: a.nome.split(' ')[0],
                 count: resps.filter(r => r.atletaId === a.id && dates.includes(r.data)).length
@@ -3221,7 +3221,7 @@
 
             let testes = (db.testesFisicos || []);
             if (athleteId !== 'equipe') testes = testes.filter(t => t.atletaId === parseInt(athleteId));
-            else testes = testes.filter(t => db.alunos.find(a => a.id === t.atletaId && a.turmaId === db.activeTurmaId));
+            else testes = testes.filter(t => db.alunos.find(a => String(a.id) === String(t.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             // 0. Tabela Mestre
             const tableContainer = document.getElementById('dynamicTableContainer');
@@ -3409,7 +3409,7 @@
             if (athleteId !== 'equipe') {
                 testes = testes.filter(t => t.atletaId === parseInt(athleteId));
             } else {
-                testes = testes.filter(t => db.alunos.find(a => a.id === t.atletaId && a.turmaId === db.activeTurmaId));
+                testes = testes.filter(t => db.alunos.find(a => String(a.id) === String(t.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             // Tabela
@@ -3508,7 +3508,7 @@
             if (athleteId !== 'equipe') {
                 testes = testes.filter(t => t.atletaId === parseInt(athleteId));
             } else {
-                testes = testes.filter(t => db.alunos.find(a => a.id === t.atletaId && a.turmaId === db.activeTurmaId));
+                testes = testes.filter(t => db.alunos.find(a => String(a.id) === String(t.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
             }
 
             const tableContainer = document.getElementById('dynamicTableContainer');
@@ -3629,7 +3629,7 @@
             let testes = (db.testesFisicos || []).filter(t => t.tipo === 'vo2max').sort((a, b) => new Date(a.data) - new Date(b.data));
             let baseEquipe = (db.testesFisicos || []).filter(t => t.tipo === 'vo2max');
             if (athleteId !== 'equipe') testes = testes.filter(t => t.atletaId === parseInt(athleteId));
-            else testes = testes.filter(t => db.alunos.find(a => a.id === t.atletaId && a.turmaId === db.activeTurmaId));
+            else testes = testes.filter(t => db.alunos.find(a => String(a.id) === String(t.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">VO2 Max</th></tr></thead><tbody>`;
@@ -3709,7 +3709,7 @@
             let testes = (db.testesFisicos || []).filter(t => t.tipo === 'agilidade' || t.tipo === 'flexibilidade').sort((a, b) => new Date(a.data) - new Date(b.data));
             let baseEquipe = (db.testesFisicos || []).filter(t => t.tipo === 'agilidade' || t.tipo === 'flexibilidade');
             if (athleteId !== 'equipe') testes = testes.filter(t => t.atletaId === parseInt(athleteId));
-            else testes = testes.filter(t => db.alunos.find(a => a.id === t.atletaId && a.turmaId === db.activeTurmaId));
+            else testes = testes.filter(t => db.alunos.find(a => String(a.id) === String(t.atletaId) && String(a.turmaId) === String(db.activeTurmaId)));
 
             const tableContainer = document.getElementById('dynamicTableContainer');
             let tableHTML = `<table class="tkd-table" style="font-size: 13px;"><thead><tr><th style="padding:10px;">Data</th><th style="padding:10px;">Atleta</th><th style="padding:10px;">Agilidade (s)</th><th style="padding:10px;">Flexibilidade (cm)</th></tr></thead><tbody>`;
@@ -3911,7 +3911,7 @@
             if (athleteId !== 'equipe') {
                 if (antro.length > 0) lastAntrosList.push(antro[antro.length - 1]);
             } else {
-                const alunosId = db.alunos.filter(a => a.turmaId === db.activeTurmaId).map(a => a.id);
+                const alunosId = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId)).map(a => a.id);
                 alunosId.forEach(id => {
                     const atr = antro.filter(a => a.atletaId === id);
                     if (atr.length > 0) lastAntrosList.push(atr[atr.length - 1]);
@@ -3996,7 +3996,7 @@
             document.getElementById('titleChart5').innerText = 'Classificação por Severidade (Dias)';
 
             let lesoes = (db.lesoes || []).sort((a, b) => new Date(a.dataInicio) - new Date(b.dataInicio));
-            let alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            let alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
 
             if (athleteId !== 'equipe') {
                 lesoes = lesoes.filter(l => l.atletaId === parseInt(athleteId));
@@ -4164,7 +4164,7 @@
 
 
         function initPage() {
-            const turma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             if (turma) document.getElementById('turmaName').innerText = turma.nome;
             replaceRangesWithButtons();
 

@@ -15,7 +15,7 @@
 
         function loadPageData() {
             loadDB(); // Recarregar dados do localStorage
-            currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             if (currTurma) {
                 document.querySelector('.page-title h1').innerText = currTurma.nome;
 
@@ -69,7 +69,7 @@
             const proximasDiv = document.getElementById('widgetProximasComp');
             if (!ultimasList || !proximasDiv) return;
 
-            const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
             if (!isRendHere) return;
 
@@ -135,7 +135,7 @@
             const widget = document.getElementById('widgetCargaTreino');
             if (!widget) return;
 
-            const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
             if (!isRendHere) return;
 
@@ -222,7 +222,7 @@
             const widget = document.getElementById('widgetTreinosHoje');
             if (!widget) return;
 
-            const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const isRendHere = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
             if (!isRendHere) return;
 
@@ -470,7 +470,7 @@
             const alunosGrid = document.getElementById('alunosGrid');
             alunosGrid.innerHTML = '';
 
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
             const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 
             const labelTitle = isRend ? 'Atletas' : 'Alunos Matriculados';
@@ -697,7 +697,7 @@
 
         function goToPerfil(alunoId) {
             localStorage.setItem('tkd_view_aluno_id', alunoId);
-            const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             if (currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'))) {
                 window.location.href = 'atleta-performance.html';
             } else {
@@ -712,7 +712,7 @@
 
         function openModalEditAluno(id) {
             localStorage.setItem('tkd_view_aluno_id', id);
-            const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             if (currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'))) {
                 window.location.href = 'atleta-performance.html#edit';
             } else {
@@ -721,7 +721,7 @@
         }
 
         function openModalAluno() {
-            const currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const isRend = currTurma && (currTurma.tipo.toLowerCase().includes('rendimento') || currTurma.tipo.toLowerCase().includes('competição'));
 
             const reqComercial = document.querySelectorAll('#fieldsComercial [required]');
@@ -964,8 +964,8 @@
         function generateRelatorioAlunos() {
             const { jsPDF } = window.jspdf;
             const doc = patchDocText(new jsPDF());
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
-            const turma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
 
             doc.setFontSize(18);
             doc.text(`Relat\u00f3rio de Alunos - ${turma ? turma.nome : 'Turma'}`, 14, 20);
@@ -995,8 +995,8 @@
             const mes = parseInt(document.getElementById('mesRelatorioChamada').value);
             const { jsPDF } = window.jspdf;
             const doc = patchDocText(new jsPDF());
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
-            const turma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const mesNome = document.getElementById('mesRelatorioChamada').options[mes - 1].text;
 
             doc.setFontSize(18);
@@ -1039,8 +1039,8 @@
             const mes = parseInt(document.getElementById('mesRelatorioFinanceiro').value);
             const { jsPDF } = window.jspdf;
             const doc = patchDocText(new jsPDF());
-            const alunosTurma = db.alunos.filter(a => a.turmaId === db.activeTurmaId);
-            const turma = db.turmas.find(t => t.id === db.activeTurmaId);
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const mesNome = document.getElementById('mesRelatorioFinanceiro').options[mes - 1].text;
 
             doc.setFontSize(18);
@@ -1087,7 +1087,7 @@
 
         // Hook chamado pelo Realtime (app.js) quando dados do Supabase chegam
         window.onDataLoaded = function() {
-            currTurma = db.turmas.find(t => t.id === db.activeTurmaId);
+            currTurma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             try { renderAlunosUI(); } catch (e) { }
             try { renderWidgetTreinosHoje(); } catch (e) { }
             try { renderWidgetCargaTreino(); } catch (e) { }
