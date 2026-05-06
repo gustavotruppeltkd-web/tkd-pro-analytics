@@ -165,6 +165,36 @@
         return data;
     }
 
+    // Debounced version: agrega múltiplos patches em uma única request por chave.
+    // Útil para campos que mudam em rápida sucessão (mesociclos, notifications, etc).
+    const _debouncePending = {};
+    const _debounceTimers = {};
+    function updateSettingsDebounced(patch, delayMs) {
+        delayMs = delayMs || 800;
+        Object.assign(_debouncePending, patch);
+        const key = '__settings__';
+        if (_debounceTimers[key]) clearTimeout(_debounceTimers[key]);
+        _debounceTimers[key] = setTimeout(() => {
+            const toSend = { ..._debouncePending };
+            for (const k of Object.keys(_debouncePending)) delete _debouncePending[k];
+            updateSettings(toSend).catch(e => console.warn('updateSettings debounced fail', e));
+        }, delayMs);
+    }
+
+    function subscribeSettings(callback) {
+        return _userId().then(coach_id => {
+            if (!coach_id) return null;
+            return window.supabaseClient
+                .channel(`coach_settings:${coach_id}`)
+                .on('postgres_changes', {
+                    event: '*', schema: 'public', table: 'coach_settings',
+                    filter: `coach_id=eq.${coach_id}`
+                }, (payload) => callback(payload.new || null))
+                .subscribe();
+        });
+    }
+
     window.Data = { create, update, softDelete, list, subscribe, getSettings, updateSettings,
+                    updateSettingsDebounced, subscribeSettings,
                     _fromRow, _toRow, COLUMN_MAP };
 })();

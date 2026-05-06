@@ -690,6 +690,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3" integrity="sha384-Y1tzkgTMv0NgNIkhIaJiI9rqNrOLfosToPr6Bzp4XVIOvF1BUd7mNlUVPpo6G8lL" crossorigin="anonymous"></script>
     <script src="js/supabase-client.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/data-layer.js"></script>
     <script src="js/app.js"></script>
     <script>
         // Chart Objects
@@ -1570,6 +1571,10 @@
             }
 
             saveDB();
+            if (window.Data && alunoData.id) {
+                window.Data.update('alunos', alunoData.id, alunoData)
+                    .catch(e => console.warn('Falha ao sincronizar perfil do atleta:', e));
+            }
             closeModalEdit();
             loadProfile();
 

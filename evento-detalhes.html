@@ -305,6 +305,15 @@
         const eventId = parseInt(params.get('id'));
         let currentEvent = null;
 
+        // Persiste o evento (com participantes atualizados) em ambos: localStorage e per-entity
+        function saveEvent() {
+            saveDB();
+            if (window.Data && currentEvent && currentEvent.id) {
+                window.Data.update('eventos', currentEvent.id, currentEvent)
+                    .catch(e => console.warn('Falha ao sincronizar evento:', e));
+            }
+        }
+
         function initPage() {
             currentEvent = db.eventos.find(e => e.id === eventId);
             if (!currentEvent) {
@@ -383,7 +392,7 @@
                 lutas: 0
             });
 
-            saveDB();
+            saveEvent();
             renderAthletesList();
             populateAtletaSelect();
             showToast('Atleta adicionado ao evento.');
@@ -399,7 +408,7 @@
                 } else {
                     p.medalha = false;
                 }
-                saveDB();
+                saveEvent();
                 renderAthletesList(); // Refresh to show medal/round
             }
         }
@@ -408,7 +417,7 @@
             const p = currentEvent.participantes.find(x => x.atletaId === athleteId);
             if (p) {
                 p.lutas = parseInt(lutas) || 0;
-                saveDB();
+                saveEvent();
             }
         }
 
@@ -416,7 +425,7 @@
         function removeParticipation(athleteId) {
             if (confirm('Removeráá participação deste atleta?')) {
                 currentEvent.participantes = currentEvent.participantes.filter(p => p.atletaId !== athleteId);
-                saveDB();
+                saveEvent();
                 renderAthletesList();
                 populateAtletaSelect();
             }
@@ -662,7 +671,7 @@
                 p.medalha = false;
             }
 
-            saveDB();
+            saveEvent();
             closeAthleteDetails();
             renderAthletesList();
             showToast('Detalhes do atleta salvos!');

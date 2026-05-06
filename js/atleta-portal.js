@@ -1150,34 +1150,87 @@
         // ID do treinador cujos dados o portal está exibindo
         var portalCoachId = null;
 
-        // Insere em athlete_responses (tabela append-only) — fonte primária para o coach
-        // Não tem race condition: cada atleta insere uma linha nova, sem reler/regravar blob
-        async function pushAthleteResponse(type, payload) {
-            if (!window.supabaseClient || !portalCoachId) return;
+        // ── QUEUE de respostas com retry ─────────────────────────────────────
+        // Garante que respostas de atletas NÃO sejam perdidas mesmo se:
+        //  - portalCoachId ainda não estiver carregado quando o atleta envia
+        //  - estiver offline / rede falhar / Supabase rejeitar temporariamente
+        // A queue persiste em localStorage e tenta retransmitir a cada 30s
+        // ou quando o portalCoachId estiver disponível ou ao voltar online.
+        const RESPONSE_QUEUE_KEY = 'tkd_response_queue_' + atletaId;
+
+        function _loadQueue() {
+            try { return JSON.parse(localStorage.getItem(RESPONSE_QUEUE_KEY) || '[]'); }
+            catch (_) { return []; }
+        }
+        function _saveQueue(q) {
+            try { localStorage.setItem(RESPONSE_QUEUE_KEY, JSON.stringify(q)); } catch (_) {}
+        }
+
+        async function _tryFlushOne(item) {
+            if (!window.supabaseClient) return false;
+            const coach = item.coachId || portalCoachId
+                || sessionStorage.getItem('tkd_coach_id')
+                || localStorage.getItem('tkd_coach_id')
+                || (new URLSearchParams(location.search)).get('coach');
+            if (!coach) return false;
             try {
-                const { error } = await window.supabaseClient
+                // Insere em athlete_responses (append-only, append-safe)
+                const { error: e1 } = await window.supabaseClient
                     .from('athlete_responses')
-                    .insert({
-                        coach_id: portalCoachId,
-                        athlete_id: parseInt(atletaId),
-                        type: type,
-                        payload: payload
-                    });
-                if (error) {
-                    console.error('pushAthleteResponse erro (' + type + '):', error);
-                } else {
-                    console.log('athlete_responses INSERT OK:', type, 'id=' + payload.id);
+                    .insert({ coach_id: coach, athlete_id: parseInt(atletaId), type: item.type, payload: item.payload });
+                if (e1) throw e1;
+
+                // Para questionários: também insere em coach_settings.respostas (visível no painel do treinador)
+                if (item.type === 'resposta') {
+                    const { error: e2 } = await window.supabaseClient
+                        .rpc('append_athlete_resposta', { p_coach_id: coach, p_resposta: item.payload });
+                    if (e2) console.warn('append_athlete_resposta falhou (não crítico):', e2.message);
                 }
+                return true;
             } catch (e) {
-                console.error('pushAthleteResponse exception:', e);
+                console.warn('flush response falhou:', e && e.message);
+                return false;
             }
         }
 
-        // savePortalDB removido — pushAthleteResponse (athlete_responses) é a fonte de verdade.
-        // O espelho em app_state era necessário antes da migração per-entity; agora é obsoleto.
+        async function flushResponseQueue() {
+            const q = _loadQueue();
+            if (q.length === 0) return;
+            const remaining = [];
+            for (const item of q) {
+                const ok = await _tryFlushOne(item);
+                if (!ok) remaining.push(item);
+            }
+            _saveQueue(remaining);
+            if (remaining.length === 0 && q.length > 0) {
+                if (typeof showToast === 'function') showToast('Respostas pendentes sincronizadas!', 'success');
+            }
+        }
+        window.flushResponseQueue = flushResponseQueue;
+
+        // Insere uma resposta. Tenta enviar imediatamente; se falhar, vai para a queue.
+        async function pushAthleteResponse(type, payload) {
+            const item = { type, payload, coachId: portalCoachId, queuedAt: Date.now() };
+            const ok = await _tryFlushOne(item);
+            if (!ok) {
+                const q = _loadQueue();
+                q.push(item);
+                _saveQueue(q);
+                if (typeof showToast === 'function') {
+                    showToast('Salvo localmente. Será enviado ao treinador quando reconectar.', 'warning');
+                }
+            }
+        }
+
+        // Tenta liberar a fila a cada 30s, ao voltar online, e ao carregar coachId
+        setInterval(() => { flushResponseQueue(); }, 30000);
+        window.addEventListener('online', () => flushResponseQueue());
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') flushResponseQueue();
+        });
+
         function savePortalDB() {
-            // Mantém cache local atualizado
-            localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+            try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch (_) {}
         }
 
         // Realtime: ouve mudanças per-entity do treinador e re-renderiza o portal
@@ -1230,6 +1283,8 @@
         // START — lê das tabelas per-entity via RPC (sem app_state)
         function iniciarPortal(coachId) {
             portalCoachId = coachId;
+            // Tenta liberar respostas pendentes assim que tem o coachId
+            if (typeof flushResponseQueue === 'function') flushResponseQueue();
             window.supabaseClient
                 .rpc('get_athlete_portal_data', { p_coach_id: coachId, p_atleta_id: atletaId })
                 .then(function(result) {
@@ -1241,10 +1296,20 @@
                         if (remoto.eventos)     window.db.eventos     = remoto.eventos;
                         if (remoto.competicoes) window.db.competicoes = remoto.competicoes;
                         if (remoto.lutasScout)  window.db.lutasScout  = remoto.lutasScout;
+                        if (remoto.turmas)      window.db.turmas      = remoto.turmas;
+                        if (remoto.horarios)    window.db.horarios    = remoto.horarios;
+                        // Respostas + feedback do treinador (filtrado por atleta_id na RPC)
+                        if (remoto.respostas)   window.db.respostas   = remoto.respostas;
                         if (remoto.settings) {
                             if (remoto.settings.questionarios)    window.db.questionarios    = remoto.settings.questionarios;
                             if (remoto.settings.treino_templates) window.db.treinoTemplates  = remoto.settings.treino_templates;
                             if (remoto.settings.periodizacao)     window.db.periodizacao     = remoto.settings.periodizacao;
+                            if (remoto.settings.exercicios)       window.db.exercicios       = remoto.settings.exercicios;
+                            if (remoto.settings.mesociclos)       window.db.mesociclos       = remoto.settings.mesociclos;
+                            if (remoto.settings.notifications)    window.db.notifications    = remoto.settings.notifications;
+                            if (remoto.settings.treinador && Object.keys(remoto.settings.treinador).length > 0) {
+                                window.db.treinadores = [remoto.settings.treinador];
+                            }
                         }
                         db = window.db;
                         try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch(_) {}

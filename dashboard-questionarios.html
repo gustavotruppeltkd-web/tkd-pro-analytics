@@ -333,7 +333,7 @@
                     placeholder="Escreva um comentário ou avaliação para este atleta..."></textarea>
                 <div style="display:flex; justify-content:flex-end; margin-top:10px; gap:8px;">
                     <button class="btn" onclick="closeModalView()">Fechar</button>
-                    <button class="btn btn-primary" onclick="saveCoachFeedback()">
+                    <button class="btn btn-primary" onclick="submitCoachFeedback()">
                         <i class="ti ti-send"></i> Enviar Feedback
                     </button>
                 </div>
@@ -502,7 +502,7 @@
             document.getElementById(inputId).value = value;
         }
 
-        function saveRespostas(e) {
+        async function saveRespostas(e) {
             e.preventDefault();
             const aId = document.getElementById('selectAtleta').value;
             const qId = parseInt(document.getElementById('selectQuestionario').value);
@@ -517,15 +517,20 @@
                 respostasVal[p.id] = formData.get(`q_${p.id}`);
             });
 
-            db.respostas.push({
+            const novaResp = {
                 id: Date.now(),
                 atletaId: parseInt(aId),
                 questionarioId: qId,
                 data: data,
                 respostas: respostasVal
-            });
-
+            };
+            db.respostas.push(novaResp);
             saveDB();
+            // Persiste no Supabase via RPC atômica (não sobrescreve respostas concorrentes)
+            const coachId = window._cachedCoachId || (await window.supabaseClient.auth.getUser()).data?.user?.id;
+            if (coachId && window.appendResposta) {
+                window.appendResposta(coachId, novaResp).catch(()=>{});
+            }
             renderHistorico();
             e.target.reset();
             currentQuestionsRaw = [];
@@ -756,7 +761,7 @@
             document.getElementById('modalViewResposta').classList.add('active');
         }
 
-        function saveCoachFeedback() {
+        async function submitCoachFeedback() {
             if (!_viewingRespId) return;
             const texto = document.getElementById('coachFeedbackInput').value.trim();
             const idx = db.respostas.findIndex(r => r.id === _viewingRespId);
@@ -765,7 +770,9 @@
             db.respostas[idx].coachFeedback = texto;
             db.respostas[idx].coachFeedbackAt = Date.now();
             saveDB();
-            showToast('Feedback enviado ao atleta!');
+            // Persiste no Supabase via RPC específica (não sobrescreve respostas concorrentes)
+            const ok = window.saveCoachFeedback ? await window.saveCoachFeedback(_viewingRespId, texto) : false;
+            showToast(ok ? 'Feedback enviado ao atleta!' : 'Salvo localmente. Sincronização pendente.', ok ? 'success' : 'warning');
             closeModalView();
             renderHistorico();
         }

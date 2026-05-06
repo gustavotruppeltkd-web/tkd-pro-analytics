@@ -1,5 +1,5 @@
 // Network-first: sempre busca da rede, usa cache só se offline
-const CACHE_NAME = 'atleta-portal-v20260505';
+const CACHE_NAME = 'atleta-portal-v20260506';
 
 self.addEventListener('install', e => { self.skipWaiting(); });
 

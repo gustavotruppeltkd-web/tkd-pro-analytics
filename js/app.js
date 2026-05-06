@@ -395,10 +395,13 @@ function fetchFromSupabase() {
                 } else if (!db.treinadores || db.treinadores.length === 0) {
                     db.treinadores = [];
                 }
-                if (settings.periodizacao) db.periodizacao = settings.periodizacao;
-                if (settings.notifications) db.notifications = settings.notifications;
-                if (settings.treino_templates) db.treinoTemplates = settings.treino_templates;
-                if (settings.questionarios) db.questionarios = settings.questionarios;
+                if (settings.periodizacao)     db.periodizacao     = settings.periodizacao;
+                if (settings.notifications)    db.notifications    = settings.notifications;
+                if (settings.treino_templates) db.treinoTemplates  = settings.treino_templates;
+                if (settings.questionarios)    db.questionarios    = settings.questionarios;
+                if (settings.exercicios)       db.exercicios       = settings.exercicios;
+                if (settings.mesociclos)       db.mesociclos       = settings.mesociclos;
+                if (settings.respostas)        db.respostas        = settings.respostas;
                 if (settings.onboarding_done !== undefined) db.onboardingDone = settings.onboarding_done;
                 if (settings.active_turma_id) db.activeTurmaId = settings.active_turma_id;
             }
@@ -407,7 +410,7 @@ function fetchFromSupabase() {
             db._last_updated = Date.now();
             lastSyncTime = db._last_updated;
             window.db = db;
-            localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+            try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
 
             console.log('Per-entity load OK: turmas=' + turmas.length + ' alunos=' + alunos.length + ' treinos=' + treinos.length);
         } catch (e) {
@@ -479,13 +482,41 @@ function setupEntitySubscriptions(userId) {
                     else db[key].push(item);
                 }
                 window.db = db;
-                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
                 if (typeof renderSemaforo === 'function') renderSemaforo();
                 if (typeof renderAlunosUI === 'function') renderAlunosUI();
                 if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
             })
             .subscribe();
     });
+
+    // Realtime para coach_settings — sincroniza singletons (questionarios, templates,
+    // mesociclos, notifications, treinador, etc) entre dispositivos do mesmo treinador
+    window.supabaseClient
+        .channel('settings:' + userId)
+        .on('postgres_changes', {
+            event: '*', schema: 'public', table: 'coach_settings',
+            filter: 'coach_id=eq.' + userId
+        }, payload => {
+            const s = payload.new;
+            if (!s) return;
+            if (s.treinador && Object.keys(s.treinador).length > 0) db.treinadores = [s.treinador];
+            if (s.periodizacao)     db.periodizacao     = s.periodizacao;
+            if (s.notifications)    db.notifications    = s.notifications;
+            if (s.treino_templates) db.treinoTemplates  = s.treino_templates;
+            if (s.questionarios)    db.questionarios    = s.questionarios;
+            if (s.exercicios)       db.exercicios       = s.exercicios;
+            if (s.mesociclos)       db.mesociclos       = s.mesociclos;
+            if (s.respostas)        db.respostas        = s.respostas;
+            if (s.onboarding_done !== undefined) db.onboardingDone = s.onboarding_done;
+            if (s.active_turma_id)  db.activeTurmaId    = s.active_turma_id;
+            window.db = db;
+            try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
+            if (typeof renderSemaforo === 'function') renderSemaforo();
+            if (typeof renderAlunosUI === 'function') renderAlunosUI();
+            if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
+        })
+        .subscribe();
 
     // Realtime para athlete_responses (INSERT só — append-only)
     window.supabaseClient
@@ -764,88 +795,63 @@ async function saveDB() {
     });
 }
 
-// Faz o UPSERT direto do estado local atual — sem merge no save
-// (merge só acontece no carregamento da página, não no save)
-async function syncToSupabase() {
-    if (!window.supabaseClient) return;
-
+// Insere uma resposta de questionário usando RPC atômica (append-only).
+// Usar tanto pelo treinador (registrando em nome do atleta) quanto pelo portal do atleta.
+async function appendResposta(coachId, resposta) {
+    if (!window.supabaseClient) return false;
     try {
-        let userId = null;
+        const { error } = await window.supabaseClient
+            .rpc('append_athlete_resposta', { p_coach_id: coachId, p_resposta: resposta });
+        if (error) throw error;
+        return true;
+    } catch (e) {
+        console.warn('appendResposta falhou:', e && e.message);
+        return false;
+    }
+}
+window.appendResposta = appendResposta;
+
+// Atualiza feedback do treinador em uma resposta específica (sem corrida com novas inserções).
+async function saveCoachFeedback(respostaId, feedback) {
+    if (!window.supabaseClient) return false;
+    try {
+        const { error } = await window.supabaseClient
+            .rpc('update_resposta_feedback', { p_resposta_id: Number(respostaId), p_feedback: feedback || '' });
+        if (error) throw error;
+        return true;
+    } catch (e) {
+        console.warn('saveCoachFeedback falhou:', e && e.message);
+        return false;
+    }
+}
+window.saveCoachFeedback = saveCoachFeedback;
+
+// Sincroniza para coach_settings as chaves "singleton" do db que NÃO viraram tabelas per-entity.
+// Per-entity (turmas/alunos/treinos/etc) são gravados via Data.create/update/softDelete.
+// app_state foi descontinuado — não é mais lido em lugar nenhum.
+async function syncToSupabase() {
+    if (!window.supabaseClient || !window.Data) return;
+    try {
         const { data: authData } = await window.supabaseClient.auth.getUser();
+        if (!authData || !authData.user) return;
 
-        if (authData && authData.user) {
-            userId = authData.user.id;
-        } else {
-            userId = localStorage.getItem('tkd_coach_id') || sessionStorage.getItem('tkd_coach_id');
-        }
-
-        if (!userId) {
-            console.warn("Sincronização abortada: ID do treinador não encontrado.");
-            return;
-        }
-
-        // Bloqueia se o cache local pertence a outro usuário
-        if (db._owner_id && db._owner_id !== userId) {
-            console.warn("syncToSupabase bloqueado: cache pertence a outro usuário.");
-            return;
-        }
-
-        // Faz um deep copy para não mutar o objeto em memória
-        const dataToSave = JSON.parse(JSON.stringify(window.db || db));
-
-        // Busca o estado remoto atual antes de salvar para preservar respostas dos atletas.
-        // Sem isso, dados enviados pelo atleta enquanto o treinador está com a aba aberta
-        // seriam sobrescritos no próximo saveDB() do treinador.
-        const { data: remoteResult } = await window.supabaseClient
-            .from('app_state')
-            .select('data')
-            .eq('project_id', userId)
-            .single();
-
-        if (remoteResult && remoteResult.data) {
-            // Para arrays de resposta do atleta: mantém todas as entradas do remoto que
-            // ainda não existem no cache local (entradas novas enviadas pelo atleta).
-            const athleteArrays = ['wellnessLogs', 'cargaTreino', 'respostas'];
-            athleteArrays.forEach(key => {
-                const localEntries = dataToSave[key] || [];
-                const remoteEntries = remoteResult.data[key] || [];
-                const localIds = new Set(localEntries.map(e => e.id));
-                const newFromAthletes = remoteEntries.filter(e => !localIds.has(e.id));
-                if (newFromAthletes.length > 0) {
-                    dataToSave[key] = localEntries.concat(newFromAthletes);
-                    // Atualiza o cache em memória para que a sessão atual veja os dados novos
-                    if (!db[key]) db[key] = [];
-                    newFromAthletes.forEach(e => {
-                        if (!db[key].find(x => x.id === e.id)) db[key].push(e);
-                    });
-                    window.db = db;
-                    localStorage.setItem('tkd_scout_db', JSON.stringify(db));
-                }
-            });
-        }
-
-        dataToSave._last_updated = Date.now();
-
-        const { error: upsertError } = await window.supabaseClient
-            .from('app_state')
-            .upsert({
-                project_id: userId,
-                data: dataToSave
-            });
-
-        if (upsertError) {
-            console.error("Erro no Upsert Supabase:", upsertError);
-            if (upsertError.code === '42501') {
-                console.warn("Permissão negada no Supabase. Verifique as políticas RLS da tabela app_state.");
-                if (typeof showToast === 'function') showToast('Erro de permissão ao salvar na nuvem. Dados salvos apenas localmente.', 'error');
-            }
-        } else {
-            console.log("Sincronização concluída.");
-        }
-
-        return dataToSave;
+        // NÃO inclui respostas no bulk sync — atletas inserem via RPC server-side e
+        // sobrescrever o array inteiro daqui causaria perda de dados em corrida.
+        // Coach feedback em uma resposta específica usa update_resposta_feedback (abaixo).
+        const settingsPatch = {
+            questionarios:    db.questionarios    || [],
+            treino_templates: db.treinoTemplates  || [],
+            periodizacao:     db.periodizacao     || {},
+            exercicios:       db.exercicios       || [],
+            mesociclos:       db.mesociclos       || [],
+            notifications:    db.notifications    || [],
+            treinador:        (db.treinadores && db.treinadores[0]) || {},
+            onboarding_done:  !!db.onboardingDone,
+            active_turma_id:  db.activeTurmaId    || null
+        };
+        await window.Data.updateSettings(settingsPatch);
     } catch (err) {
-        console.error("Erro crítico na sincronização:", err);
+        console.warn("syncToSupabase (coach_settings) falhou:", err && err.message);
     }
 }
 

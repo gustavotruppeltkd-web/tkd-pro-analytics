@@ -556,10 +556,19 @@
                 db.eventos     = rpcData.eventos      || [];
                 db.competicoes = rpcData.competicoes  || [];
                 db.lutasScout  = rpcData.lutasScout   || [];
+                db.turmas      = rpcData.turmas       || [];
+                db.horarios    = rpcData.horarios     || [];
+                db.respostas   = rpcData.respostas    || [];
                 if (rpcData.settings) {
                     db.questionarios   = rpcData.settings.questionarios    || [];
                     db.treinoTemplates = rpcData.settings.treino_templates  || [];
                     db.periodizacao    = rpcData.settings.periodizacao      || {};
+                    db.exercicios      = rpcData.settings.exercicios        || [];
+                    db.mesociclos      = rpcData.settings.mesociclos        || [];
+                    db.notifications   = rpcData.settings.notifications     || [];
+                    if (rpcData.settings.treinador && Object.keys(rpcData.settings.treinador).length > 0) {
+                        db.treinadores = [rpcData.settings.treinador];
+                    }
                 }
                 window.db = db;
                 try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch (_) { /* quota — ignora */ }
