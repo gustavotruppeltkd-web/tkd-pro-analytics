@@ -403,7 +403,7 @@ function fetchFromSupabase() {
                 if (settings.mesociclos)       db.mesociclos       = settings.mesociclos;
                 if (settings.respostas)        db.respostas        = settings.respostas;
                 if (settings.onboarding_done !== undefined) db.onboardingDone = settings.onboarding_done;
-                if (settings.active_turma_id) db.activeTurmaId = settings.active_turma_id;
+                // NÃO sobrescreve db.activeTurmaId — esse campo é device-local (estado de UI)
             }
 
             db._owner_id = userId;
@@ -509,7 +509,7 @@ function setupEntitySubscriptions(userId) {
             if (s.mesociclos)       db.mesociclos       = s.mesociclos;
             if (s.respostas)        db.respostas        = s.respostas;
             if (s.onboarding_done !== undefined) db.onboardingDone = s.onboarding_done;
-            if (s.active_turma_id)  db.activeTurmaId    = s.active_turma_id;
+            // active_turma_id NÃO é sincronizado entre dispositivos — é estado de UI local
             window.db = db;
             try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
             if (typeof renderSemaforo === 'function') renderSemaforo();
@@ -837,7 +837,10 @@ async function syncToSupabase() {
 
         // NÃO inclui respostas no bulk sync — atletas inserem via RPC server-side e
         // sobrescrever o array inteiro daqui causaria perda de dados em corrida.
-        // Coach feedback em uma resposta específica usa update_resposta_feedback (abaixo).
+        // Coach feedback em uma resposta específica usa update_resposta_feedback.
+        // NÃO inclui active_turma_id — é estado de UI device-local (qual turma o
+        // treinador está vendo agora). Sincronizar entre dispositivos sobrescreveria
+        // o clique do usuário com o último valor de outro device.
         const settingsPatch = {
             questionarios:    db.questionarios    || [],
             treino_templates: db.treinoTemplates  || [],
@@ -846,8 +849,7 @@ async function syncToSupabase() {
             mesociclos:       db.mesociclos       || [],
             notifications:    db.notifications    || [],
             treinador:        (db.treinadores && db.treinadores[0]) || {},
-            onboarding_done:  !!db.onboardingDone,
-            active_turma_id:  db.activeTurmaId    || null
+            onboarding_done:  !!db.onboardingDone
         };
         await window.Data.updateSettings(settingsPatch);
     } catch (err) {
