@@ -189,6 +189,40 @@ function copiarLinkAtleta(id) {
     }
 }
 
+// Faz upload de uma imagem (File ou data URL) para o bucket "avatars" do Storage.
+// Retorna URL pública. Usar em vez de salvar base64 no banco.
+async function uploadAvatar(fileOrDataUrl, kind, entityId) {
+    if (!window.supabaseClient) throw new Error('Supabase não inicializado');
+    const { data: authData } = await window.supabaseClient.auth.getUser();
+    const coachId = (authData && authData.user && authData.user.id) || window._cachedCoachId;
+    if (!coachId) throw new Error('Não autenticado');
+
+    let blob, ext;
+    if (fileOrDataUrl instanceof Blob) {
+        blob = fileOrDataUrl;
+        ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+    } else if (typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
+        const m = fileOrDataUrl.match(/^data:([^;]+);base64,(.+)$/);
+        if (!m) throw new Error('Data URL inválida');
+        const bytes = atob(m[2]);
+        const arr = new Uint8Array(bytes.length);
+        for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+        blob = new Blob([arr], { type: m[1] });
+        ext = m[1].split('/')[1].replace('jpeg', 'jpg');
+    } else {
+        throw new Error('Formato de avatar não reconhecido');
+    }
+
+    const path = `${coachId}/${kind}-${entityId}.${ext}`;
+    const { error } = await window.supabaseClient.storage
+        .from('avatars').upload(path, blob, { upsert: true, contentType: blob.type });
+    if (error) throw error;
+
+    const { data: pub } = window.supabaseClient.storage.from('avatars').getPublicUrl(path);
+    return pub.publicUrl + '?t=' + Date.now();
+}
+window.uploadAvatar = uploadAvatar;
+
 // Load Database from LocalStorage or initialize with MOCK_DATA
 // Salva db no localStorage de forma segura. Se estourar quota (Safari mobile = ~5MB),
 // tenta de novo sem os campos pesados (avatares, fotos). Nunca lança exception.

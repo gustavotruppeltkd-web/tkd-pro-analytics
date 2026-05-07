@@ -1542,7 +1542,7 @@
             document.getElementById('fotoPreviewContainer').style.display = 'none';
         }
 
-        function savePerfil(event) {
+        async function savePerfil(event) {
             event.preventDefault();
             const form = document.getElementById('formEditPerfil');
 
@@ -1567,7 +1567,16 @@
             }
 
             if (temporaryAvatar) {
-                alunoData.avatar = temporaryAvatar;
+                if (window.uploadAvatar) {
+                    try {
+                        alunoData.avatar = await window.uploadAvatar(temporaryAvatar, 'aluno', alunoData.id);
+                    } catch (e) {
+                        console.warn('uploadAvatar falhou, usando base64:', e.message);
+                        alunoData.avatar = temporaryAvatar;
+                    }
+                } else {
+                    alunoData.avatar = temporaryAvatar;
+                }
             }
 
             saveDB();

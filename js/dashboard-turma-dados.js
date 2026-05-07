@@ -801,7 +801,7 @@
             }
         }
 
-        function saveAluno(e) {
+        async function saveAluno(e) {
             e.preventDefault();
             const form = document.getElementById('formAddAluno');
 
@@ -851,7 +851,16 @@
             };
 
             if (temporaryAvatar) {
-                novoAluno.avatar = temporaryAvatar;
+                if (window.uploadAvatar) {
+                    try {
+                        novoAluno.avatar = await window.uploadAvatar(temporaryAvatar, 'aluno', novoAluno.id);
+                    } catch (e) {
+                        console.warn('uploadAvatar falhou, usando base64:', e.message);
+                        novoAluno.avatar = temporaryAvatar;
+                    }
+                } else {
+                    novoAluno.avatar = temporaryAvatar;
+                }
             }
 
             finalizeSave();

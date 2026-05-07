@@ -4,3 +4,4 @@
 .gemini/
 .vercel
 .claude/
+scripts/migrate-avatars.js
