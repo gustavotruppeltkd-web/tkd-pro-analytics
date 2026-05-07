@@ -190,6 +190,32 @@ function copiarLinkAtleta(id) {
 }
 
 // Load Database from LocalStorage or initialize with MOCK_DATA
+// Salva db no localStorage de forma segura. Se estourar quota (Safari mobile = ~5MB),
+// tenta de novo sem os campos pesados (avatares, fotos). Nunca lança exception.
+function _safeSaveDB(dbObj) {
+    const data = dbObj || window.db || db;
+    if (!data) return;
+    try {
+        localStorage.setItem('tkd_scout_db', JSON.stringify(data));
+        return true;
+    } catch (e) {
+        // Quota estourou — tenta versão "lite" sem avatares (que são base64 grande)
+        try {
+            const lite = JSON.parse(JSON.stringify(data));
+            if (Array.isArray(lite.alunos)) lite.alunos.forEach(a => { delete a.avatar; delete a.foto; });
+            if (Array.isArray(lite.treinadores)) lite.treinadores.forEach(t => { delete t.avatar; delete t.foto; });
+            if (Array.isArray(lite.turmas)) lite.turmas.forEach(t => { delete t.foto; });
+            localStorage.setItem('tkd_scout_db', JSON.stringify(lite));
+            console.warn('[storage] db salvo sem avatares (quota estourou)');
+            return true;
+        } catch (e2) {
+            console.warn('[storage] não foi possível salvar db local:', e2 && e2.message);
+            return false;
+        }
+    }
+}
+window._safeSaveDB = _safeSaveDB;
+
 function loadDB() {
     // -- Device mode ------------------------------------------
     const deviceMode = resolveDeviceMode();
@@ -289,13 +315,13 @@ function loadDB() {
 
         if (modified) {
             // Save local changes, but we will sync with Supabase in a moment anyway
-            localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+            _safeSaveDB();
         }
     } else {
         db = structuredClone(MOCK_DATA); // Deep copy
         // Do NOT call saveDB() here — that would push empty data to Supabase
         // and destroy any cloud data the user has. Just cache locally.
-        localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+        _safeSaveDB();
     }
     window.db = db;
     lastSyncTime = db._last_updated || 0;
@@ -411,7 +437,7 @@ function fetchFromSupabase() {
             db._last_updated = Date.now();
             lastSyncTime = db._last_updated;
             window.db = db;
-            try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
+            _safeSaveDB();
 
             console.log('Per-entity load OK: turmas=' + turmas.length + ' alunos=' + alunos.length + ' treinos=' + treinos.length);
         } catch (e) {
@@ -483,7 +509,7 @@ function setupEntitySubscriptions(userId) {
                     else db[key].push(item);
                 }
                 window.db = db;
-                try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
+                _safeSaveDB();
                 if (typeof renderSemaforo === 'function') renderSemaforo();
                 if (typeof renderAlunosUI === 'function') renderAlunosUI();
                 if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
@@ -512,7 +538,7 @@ function setupEntitySubscriptions(userId) {
             if (s.onboarding_done !== undefined) db.onboardingDone = s.onboarding_done;
             // active_turma_id NÃO é sincronizado entre dispositivos — é estado de UI local
             window.db = db;
-            try { localStorage.setItem('tkd_scout_db', JSON.stringify(db)); } catch(_) {}
+            _safeSaveDB();
             if (typeof renderSemaforo === 'function') renderSemaforo();
             if (typeof renderAlunosUI === 'function') renderAlunosUI();
             if (typeof window.onDataLoaded === 'function') window.onDataLoaded();
@@ -526,7 +552,7 @@ function setupEntitySubscriptions(userId) {
             const row = payload.new;
             if (!row) return;
             if (mergeAthleteResponse(row)) {
-                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                _safeSaveDB();
                 const labelMap = { wellness: 'Bem-estar', carga: 'Carga (PSE)', resposta: 'Resposta' };
                 showToast((labelMap[row.type] || 'Resposta') + ' recebida de atleta!', 'info');
                 if (typeof renderSemaforo === 'function') renderSemaforo();
@@ -574,7 +600,7 @@ function fetchAthleteResponses(userId) {
             });
             if (added > 0) {
                 console.log('fetchAthleteResponses: ' + added + ' respostas novas mescladas em db');
-                localStorage.setItem('tkd_scout_db', JSON.stringify(db));
+                _safeSaveDB();
                 if (typeof renderSemaforo === 'function') renderSemaforo();
                 if (typeof renderAlunosUI === 'function') renderAlunosUI();
                 if (typeof renderWellnessPanel === 'function') renderWellnessPanel();
@@ -772,14 +798,14 @@ async function saveDB() {
     // CRÍTICO: persistir no localStorage IMEDIATAMENTE (síncrono) antes de
     // qualquer await. Se o usuário atualizar a página rápido, a mudança
     // sobrevive — sem isso, qualquer await aqui cria janela de perda de dados.
-    localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
+    _safeSaveDB();
 
     // Resolver _owner_id em paralelo, sem bloquear (re-grava localStorage quando resolver)
     if (!db._owner_id && window.supabaseClient) {
         window.supabaseClient.auth.getUser().then(({ data: authData }) => {
             if (authData && authData.user) {
                 db._owner_id = authData.user.id;
-                localStorage.setItem('tkd_scout_db', JSON.stringify(window.db || db));
+                _safeSaveDB();
             }
         }).catch(() => {});
     }

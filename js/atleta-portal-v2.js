@@ -1247,7 +1247,7 @@
         });
 
         function savePortalDB() {
-            try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch (_) {}
+            try { try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch(_) {} } catch (_) {}
         }
 
         // Realtime: ouve mudanças per-entity do treinador e re-renderiza o portal
@@ -1285,7 +1285,7 @@
                             else window.db[key].push(item);
                         }
                         db = window.db;
-                        localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+                        try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch(_) {}
                         try { renderTreino(); } catch (e) {}
                         try { renderTreinosHoje(); } catch (e) {}
                         try { renderSchedule(); } catch (e) {}
@@ -1329,7 +1329,7 @@
                             }
                         }
                         db = window.db;
-                        try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch(_) {}
+                        try { try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch(_) {} } catch(_) {}
                     }
                     portalLoaded = false;
                     loadPortal();

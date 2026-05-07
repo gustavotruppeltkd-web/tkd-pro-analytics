@@ -924,7 +924,7 @@
                             if (remoto.settings.periodizacao)     window.db.periodizacao    = remoto.settings.periodizacao;
                         }
                         db = window.db;
-                        localStorage.setItem('tkd_scout_db', JSON.stringify(window.db));
+                        try { localStorage.setItem('tkd_scout_db', JSON.stringify(window.db)); } catch(_) {}
                     }
                     portalLoaded = false;
                     loadPortal();
