@@ -1116,16 +1116,39 @@
 
 
         // ───────────────────────────────────────────────────────────
-        // EXPORT ATLETAS — modal de seleção + PDF
+        // EXPORT ATLETAS — modal de seleção (atletas + campos) + PDF
         // ───────────────────────────────────────────────────────────
+        const EXPORT_FIELDS = [
+            { key: 'nome',           label: 'Nome',           default: true,  width: 40, get: a => a.nome || '-' },
+            { key: 'cpf',            label: 'CPF',            default: true,  width: 26, get: a => a.cpf || '-' },
+            { key: 'rg',             label: 'RG',             default: false, width: 22, get: a => a.rg || '-' },
+            { key: 'dataNascimento', label: 'Nascimento',     default: false, width: 22, get: a => (typeof formatarDataBR === 'function' ? formatarDataBR(a.dataNascimento) : a.dataNascimento) || '-' },
+            { key: 'idade',          label: 'Idade',          default: true,  width: 14, get: a => a.dataNascimento ? (calcularIdade(a.dataNascimento) + ' anos') : '-' },
+            { key: 'sexo',           label: 'Sexo',           default: true,  width: 14, get: a => a.sexo || '-' },
+            { key: 'faixa',          label: 'Graduação',      default: true,  width: 30, get: a => a.faixa || '-' },
+            { key: 'categoriaPeso',  label: 'Categoria Peso', default: true,  width: 22, get: a => a.categoriaPeso || '-' },
+            { key: 'categoriaIdade', label: 'Categoria Idade',default: false, width: 22, get: a => a.categoriaIdade || '-' },
+            { key: 'pesoAtual',      label: 'Peso Atual',     default: false, width: 18, get: a => a.pesoAtual ? (a.pesoAtual + ' kg') : '-' },
+            { key: 'contato',        label: 'Contato',        default: true,  width: 28, get: a => a.contato || '-' },
+            { key: 'email',          label: 'Email',          default: false, width: 38, get: a => a.email || '-' },
+            { key: 'gms',            label: 'GMS',            default: false, width: 20, get: a => a.gms || '-' },
+            { key: 'kukkiwon',       label: 'Kukkiwon',       default: false, width: 22, get: a => a.kukkiwon || '-' },
+            { key: 'cbtkd',          label: 'CBTKD',          default: false, width: 20, get: a => a.cbtkd || '-' },
+            { key: 'statusFin',      label: 'Status Financeiro', default: false, width: 24, get: a => a.statusFin || a.statusPagamento || '-' },
+            { key: 'mensalidade',    label: 'Mensalidade',    default: false, width: 22, get: a => a.mensalidade ? ('R$ ' + Number(a.mensalidade).toFixed(2)) : '-' },
+            { key: 'obs',            label: 'Observações',    default: false, width: 50, get: a => a.obs || '-' }
+        ];
+
         let _exportSelectedIds = new Set();
+        let _exportSelectedFields = new Set();
 
         function openModalExportAtletas() {
             const alunosTurma = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
-            // Por padrão, todos selecionados
             _exportSelectedIds = new Set(alunosTurma.map(a => String(a.id)));
+            _exportSelectedFields = new Set(EXPORT_FIELDS.filter(f => f.default).map(f => f.key));
             document.getElementById('exportSearchInput').value = '';
             renderExportAtletasList();
+            renderExportFieldsList();
             document.getElementById('modalExportAtletas').classList.add('active');
         }
 
@@ -1143,17 +1166,17 @@
             const sorted = filtered.slice().sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
 
             list.innerHTML = sorted.length === 0
-                ? `<div style="padding:20px; text-align:center; color:var(--text-muted);">Nenhum atleta encontrado.</div>`
+                ? `<div style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">Nenhum atleta encontrado.</div>`
                 : sorted.map(a => {
                     const checked = _exportSelectedIds.has(String(a.id)) ? 'checked' : '';
                     const avatar = a.avatar || a.foto || 'https://www.gravatar.com/avatar/?d=mp&s=40';
                     return `
-                        <label style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,0.02);">
-                            <input type="checkbox" ${checked} onchange="toggleExportAtleta('${a.id}', this.checked)" style="width:16px; height:16px;">
-                            <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;" onerror="this.src='https://www.gravatar.com/avatar/?d=mp&s=40'">
+                        <label style="display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,0.02);">
+                            <input type="checkbox" ${checked} onchange="toggleExportAtleta('${a.id}', this.checked)" style="width:15px; height:15px; flex-shrink:0;">
+                            <img src="${avatar}" style="width:28px; height:28px; border-radius:50%; object-fit:cover; flex-shrink:0;" onerror="this.src='https://www.gravatar.com/avatar/?d=mp&s=40'">
                             <div style="flex:1; min-width:0;">
-                                <div style="font-weight:600; font-size:14px;">${escapeHtml(a.nome || 'Sem nome')}</div>
-                                <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(a.faixa || '')} ${a.categoriaPeso ? '• ' + escapeHtml(a.categoriaPeso) : ''}</div>
+                                <div style="font-weight:600; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(a.nome || 'Sem nome')}</div>
+                                <div style="font-size:10px; color:var(--text-muted);">${escapeHtml(a.faixa || '')}</div>
                             </div>
                         </label>
                     `;
@@ -1161,13 +1184,33 @@
 
             document.getElementById('exportCount').innerText = _exportSelectedIds.size;
             document.getElementById('exportSelectAllLabel').innerText =
-                (_exportSelectedIds.size === alunosTurma.length) ? 'Desmarcar todos' : 'Selecionar todos';
+                (alunosTurma.length > 0 && _exportSelectedIds.size === alunosTurma.length) ? 'Desmarcar todos' : 'Marcar todos';
+        }
+
+        function renderExportFieldsList() {
+            const list = document.getElementById('exportFieldsList');
+            list.innerHTML = EXPORT_FIELDS.map(f => {
+                const checked = _exportSelectedFields.has(f.key) ? 'checked' : '';
+                const isObrig = f.key === 'nome';
+                return `
+                    <label style="display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:6px; cursor:${isObrig ? 'not-allowed' : 'pointer'}; background:rgba(255,255,255,0.02); ${isObrig ? 'opacity:0.7;' : ''}">
+                        <input type="checkbox" ${checked} ${isObrig ? 'disabled' : ''} onchange="toggleExportField('${f.key}', this.checked)" style="width:15px; height:15px; flex-shrink:0;">
+                        <span style="font-size:13px;">${escapeHtml(f.label)}${isObrig ? ' <span style=\"font-size:10px; color:var(--text-muted);\">(obrigatório)</span>' : ''}</span>
+                    </label>
+                `;
+            }).join('');
+            document.getElementById('exportFieldsCount').innerText = _exportSelectedFields.size;
+            document.getElementById('exportFieldsAllLabel').innerText =
+                (_exportSelectedFields.size === EXPORT_FIELDS.length) ? 'Desmarcar todos' : 'Marcar todos';
         }
 
         function toggleExportAtleta(id, checked) {
             if (checked) _exportSelectedIds.add(String(id));
             else _exportSelectedIds.delete(String(id));
+            const alunosTurma = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
             document.getElementById('exportCount').innerText = _exportSelectedIds.size;
+            document.getElementById('exportSelectAllLabel').innerText =
+                (alunosTurma.length > 0 && _exportSelectedIds.size === alunosTurma.length) ? 'Desmarcar todos' : 'Marcar todos';
         }
 
         function toggleExportSelectAll() {
@@ -1180,18 +1223,38 @@
             renderExportAtletasList();
         }
 
-        function generatePdfAtletasSelecionados() {
-            if (_exportSelectedIds.size === 0) {
-                showToast('Selecione pelo menos um atleta.', 'error');
-                return;
+        function toggleExportField(key, checked) {
+            if (key === 'nome') { _exportSelectedFields.add('nome'); return; }
+            if (checked) _exportSelectedFields.add(key);
+            else _exportSelectedFields.delete(key);
+            document.getElementById('exportFieldsCount').innerText = _exportSelectedFields.size;
+            document.getElementById('exportFieldsAllLabel').innerText =
+                (_exportSelectedFields.size === EXPORT_FIELDS.length) ? 'Desmarcar todos' : 'Marcar todos';
+        }
+
+        function toggleExportFieldsAll() {
+            if (_exportSelectedFields.size === EXPORT_FIELDS.length) {
+                _exportSelectedFields = new Set(['nome']);
+            } else {
+                _exportSelectedFields = new Set(EXPORT_FIELDS.map(f => f.key));
             }
+            renderExportFieldsList();
+        }
+
+        function generatePdfAtletasSelecionados() {
+            if (_exportSelectedIds.size === 0) { showToast('Selecione pelo menos um atleta.', 'error'); return; }
+            if (_exportSelectedFields.size === 0) { showToast('Selecione pelo menos um campo.', 'error'); return; }
             const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
             const alunos = (db.alunos || [])
                 .filter(a => _exportSelectedIds.has(String(a.id)))
                 .sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+            const fields = EXPORT_FIELDS.filter(f => _exportSelectedFields.has(f.key));
 
             const { jsPDF } = window.jspdf;
-            const doc = (typeof patchDocText === 'function') ? patchDocText(new jsPDF()) : new jsPDF();
+            const orientation = fields.length > 6 ? 'landscape' : 'portrait';
+            const doc = (typeof patchDocText === 'function')
+                ? patchDocText(new jsPDF({ orientation }))
+                : new jsPDF({ orientation });
             const dataGeracao = new Date().toLocaleDateString('pt-BR');
 
             doc.setFontSize(16);
@@ -1201,28 +1264,18 @@
             doc.text(`Gerado em ${dataGeracao} • ${alunos.length} atleta(s)`, 14, 25);
             doc.setTextColor(0);
 
-            const tableData = alunos.map(a => [
-                a.nome || '-',
-                a.faixa || '-',
-                a.dataNascimento ? (calcularIdade(a.dataNascimento) + ' anos') : '-',
-                a.sexo || '-',
-                a.categoriaPeso || '-',
-                a.pesoAtual ? (a.pesoAtual + ' kg') : '-',
-                a.contato || '-'
-            ]);
+            const head = [fields.map(f => f.label)];
+            const body = alunos.map(a => fields.map(f => f.get(a)));
+            const columnStyles = {};
+            fields.forEach((f, i) => { columnStyles[i] = { cellWidth: f.width }; });
 
             doc.autoTable({
-                startY: 32,
-                head: [['Nome', 'Graduação', 'Idade', 'Sexo', 'Categoria', 'Peso', 'Contato']],
-                body: tableData,
+                startY: 32, head, body,
                 theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 3 },
+                styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
                 headStyles: { fillColor: [65, 105, 225], textColor: 255, fontStyle: 'bold' },
                 alternateRowStyles: { fillColor: [245, 247, 250] },
-                columnStyles: {
-                    0: { cellWidth: 45 },
-                    6: { cellWidth: 30 }
-                }
+                columnStyles
             });
 
             const nomeArq = (turma ? turma.nome : 'equipe').replace(/\s+/g, '_').toLowerCase();
@@ -1235,6 +1288,9 @@
         window.openModalExportAtletas = openModalExportAtletas;
         window.closeModalExportAtletas = closeModalExportAtletas;
         window.renderExportAtletasList = renderExportAtletasList;
+        window.renderExportFieldsList = renderExportFieldsList;
         window.toggleExportAtleta = toggleExportAtleta;
         window.toggleExportSelectAll = toggleExportSelectAll;
+        window.toggleExportField = toggleExportField;
+        window.toggleExportFieldsAll = toggleExportFieldsAll;
         window.generatePdfAtletasSelecionados = generatePdfAtletasSelecionados;

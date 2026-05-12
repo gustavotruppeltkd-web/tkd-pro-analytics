@@ -769,6 +769,7 @@
             /* Filtros: empilha */
             #atletaFilterBar { flex-wrap: wrap !important; gap: 10px !important; }
             #atletaFilterBar input, #atletaFilterBar select { width: 100% !important; min-width: 0 !important; }
+            .export-modal-grid { grid-template-columns: 1fr !important; }
         }
     </style>
 </head>
@@ -1186,20 +1187,31 @@
         </div>
     </div>
 
-    <!-- MODAL EXPORT ATLETAS (seleção + PDF) -->
+    <!-- MODAL EXPORT ATLETAS (seleção de atletas + campos + PDF) -->
     <div class="modal-overlay" id="modalExportAtletas">
-        <div class="modal-content" style="max-width: 640px; max-height: 85vh; display: flex; flex-direction: column;">
+        <div class="modal-content" style="max-width: 760px; max-height: 90vh; display: flex; flex-direction: column;">
             <div class="modal-header">
                 <h2 class="modal-title">Baixar Lista em PDF</h2>
                 <button class="btn-close" onclick="closeModalExportAtletas()"><i class="ti ti-x"></i></button>
             </div>
-            <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <input type="text" id="exportSearchInput" class="form-control" placeholder="Buscar..." oninput="renderExportAtletasList()" style="flex:1;">
-                    <button class="btn btn-outline" onclick="toggleExportSelectAll()"><span id="exportSelectAllLabel">Selecionar todos</span></button>
+            <div class="export-modal-grid" style="padding: 12px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; overflow-y: auto;">
+                <!-- Coluna 1: Atletas -->
+                <div style="display:flex; flex-direction:column; gap:8px; min-width:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label style="font-size:13px; font-weight:600;">Atletas (<span id="exportCount">0</span>)</label>
+                        <button class="btn btn-outline btn-sm" onclick="toggleExportSelectAll()" style="padding:4px 8px; font-size:11px;"><span id="exportSelectAllLabel">Marcar todos</span></button>
+                    </div>
+                    <input type="text" id="exportSearchInput" class="form-control" placeholder="Buscar atleta..." oninput="renderExportAtletasList()" style="font-size:13px;">
+                    <div id="exportAtletasList" style="display:flex; flex-direction:column; gap:4px; max-height:48vh; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; padding:6px;"></div>
                 </div>
-                <div id="exportAtletasList" style="display:flex; flex-direction:column; gap:6px; max-height:50vh; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; padding:8px;"></div>
-                <div style="font-size:12px; color:var(--text-muted);"><span id="exportCount">0</span> selecionados</div>
+                <!-- Coluna 2: Campos -->
+                <div style="display:flex; flex-direction:column; gap:8px; min-width:0;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label style="font-size:13px; font-weight:600;">Dados (<span id="exportFieldsCount">0</span>)</label>
+                        <button class="btn btn-outline btn-sm" onclick="toggleExportFieldsAll()" style="padding:4px 8px; font-size:11px;"><span id="exportFieldsAllLabel">Marcar todos</span></button>
+                    </div>
+                    <div id="exportFieldsList" style="display:flex; flex-direction:column; gap:4px; max-height:55vh; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; padding:6px;"></div>
+                </div>
             </div>
             <div style="display:flex; gap:10px; padding-top:12px; border-top:1px solid var(--border-color);">
                 <button class="btn btn-outline" onclick="closeModalExportAtletas()" style="flex:1;">Cancelar</button>
