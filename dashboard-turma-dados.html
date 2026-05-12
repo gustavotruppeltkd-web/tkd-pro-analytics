@@ -920,9 +920,14 @@
                 <div class="athletes-section" style="margin-bottom: 32px;">
                     <div class="section-header">
                         <h2 id="totalAlunosTitle">Alunos Matriculados (0)</h2>
-                        <button class="btn btn-primary" onclick="openModalAluno()">
-                            <i class="ti ti-user-plus"></i> Adicionar Aluno
-                        </button>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button class="btn btn-outline" onclick="openModalExportAtletas()" id="btnExportAtletas">
+                                <i class="ti ti-file-download"></i> Baixar PDF
+                            </button>
+                            <button class="btn btn-primary" onclick="openModalAluno()">
+                                <i class="ti ti-user-plus"></i> Adicionar Aluno
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Filter bar (only shown for Rendimento turmas) -->
@@ -1178,6 +1183,28 @@
                 </div>
             </div>
             <div id="treinoViewPanel"></div>
+        </div>
+    </div>
+
+    <!-- MODAL EXPORT ATLETAS (seleção + PDF) -->
+    <div class="modal-overlay" id="modalExportAtletas">
+        <div class="modal-content" style="max-width: 640px; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <h2 class="modal-title">Baixar Lista em PDF</h2>
+                <button class="btn-close" onclick="closeModalExportAtletas()"><i class="ti ti-x"></i></button>
+            </div>
+            <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="text" id="exportSearchInput" class="form-control" placeholder="Buscar..." oninput="renderExportAtletasList()" style="flex:1;">
+                    <button class="btn btn-outline" onclick="toggleExportSelectAll()"><span id="exportSelectAllLabel">Selecionar todos</span></button>
+                </div>
+                <div id="exportAtletasList" style="display:flex; flex-direction:column; gap:6px; max-height:50vh; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; padding:8px;"></div>
+                <div style="font-size:12px; color:var(--text-muted);"><span id="exportCount">0</span> selecionados</div>
+            </div>
+            <div style="display:flex; gap:10px; padding-top:12px; border-top:1px solid var(--border-color);">
+                <button class="btn btn-outline" onclick="closeModalExportAtletas()" style="flex:1;">Cancelar</button>
+                <button class="btn btn-primary" onclick="generatePdfAtletasSelecionados()" style="flex:2;"><i class="ti ti-download"></i> Gerar PDF</button>
+            </div>
         </div>
     </div>
 

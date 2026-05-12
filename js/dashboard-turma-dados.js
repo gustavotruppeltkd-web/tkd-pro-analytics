@@ -1114,3 +1114,127 @@
             }, 400);
         });
 
+
+        // ───────────────────────────────────────────────────────────
+        // EXPORT ATLETAS — modal de seleção + PDF
+        // ───────────────────────────────────────────────────────────
+        let _exportSelectedIds = new Set();
+
+        function openModalExportAtletas() {
+            const alunosTurma = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            // Por padrão, todos selecionados
+            _exportSelectedIds = new Set(alunosTurma.map(a => String(a.id)));
+            document.getElementById('exportSearchInput').value = '';
+            renderExportAtletasList();
+            document.getElementById('modalExportAtletas').classList.add('active');
+        }
+
+        function closeModalExportAtletas() {
+            document.getElementById('modalExportAtletas').classList.remove('active');
+        }
+
+        function renderExportAtletasList() {
+            const list = document.getElementById('exportAtletasList');
+            const search = (document.getElementById('exportSearchInput').value || '').toLowerCase().trim();
+            const alunosTurma = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            const filtered = search
+                ? alunosTurma.filter(a => (a.nome || '').toLowerCase().includes(search))
+                : alunosTurma;
+            const sorted = filtered.slice().sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+
+            list.innerHTML = sorted.length === 0
+                ? `<div style="padding:20px; text-align:center; color:var(--text-muted);">Nenhum atleta encontrado.</div>`
+                : sorted.map(a => {
+                    const checked = _exportSelectedIds.has(String(a.id)) ? 'checked' : '';
+                    const avatar = a.avatar || a.foto || 'https://www.gravatar.com/avatar/?d=mp&s=40';
+                    return `
+                        <label style="display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,0.02);">
+                            <input type="checkbox" ${checked} onchange="toggleExportAtleta('${a.id}', this.checked)" style="width:16px; height:16px;">
+                            <img src="${avatar}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;" onerror="this.src='https://www.gravatar.com/avatar/?d=mp&s=40'">
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-weight:600; font-size:14px;">${escapeHtml(a.nome || 'Sem nome')}</div>
+                                <div style="font-size:11px; color:var(--text-muted);">${escapeHtml(a.faixa || '')} ${a.categoriaPeso ? '• ' + escapeHtml(a.categoriaPeso) : ''}</div>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+
+            document.getElementById('exportCount').innerText = _exportSelectedIds.size;
+            document.getElementById('exportSelectAllLabel').innerText =
+                (_exportSelectedIds.size === alunosTurma.length) ? 'Desmarcar todos' : 'Selecionar todos';
+        }
+
+        function toggleExportAtleta(id, checked) {
+            if (checked) _exportSelectedIds.add(String(id));
+            else _exportSelectedIds.delete(String(id));
+            document.getElementById('exportCount').innerText = _exportSelectedIds.size;
+        }
+
+        function toggleExportSelectAll() {
+            const alunosTurma = (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            if (_exportSelectedIds.size === alunosTurma.length) {
+                _exportSelectedIds.clear();
+            } else {
+                _exportSelectedIds = new Set(alunosTurma.map(a => String(a.id)));
+            }
+            renderExportAtletasList();
+        }
+
+        function generatePdfAtletasSelecionados() {
+            if (_exportSelectedIds.size === 0) {
+                showToast('Selecione pelo menos um atleta.', 'error');
+                return;
+            }
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
+            const alunos = (db.alunos || [])
+                .filter(a => _exportSelectedIds.has(String(a.id)))
+                .sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+
+            const { jsPDF } = window.jspdf;
+            const doc = (typeof patchDocText === 'function') ? patchDocText(new jsPDF()) : new jsPDF();
+            const dataGeracao = new Date().toLocaleDateString('pt-BR');
+
+            doc.setFontSize(16);
+            doc.text(`Lista de Atletas — ${turma ? turma.nome : 'Equipe'}`, 14, 18);
+            doc.setFontSize(10);
+            doc.setTextColor(120);
+            doc.text(`Gerado em ${dataGeracao} • ${alunos.length} atleta(s)`, 14, 25);
+            doc.setTextColor(0);
+
+            const tableData = alunos.map(a => [
+                a.nome || '-',
+                a.faixa || '-',
+                a.dataNascimento ? (calcularIdade(a.dataNascimento) + ' anos') : '-',
+                a.sexo || '-',
+                a.categoriaPeso || '-',
+                a.pesoAtual ? (a.pesoAtual + ' kg') : '-',
+                a.contato || '-'
+            ]);
+
+            doc.autoTable({
+                startY: 32,
+                head: [['Nome', 'Graduação', 'Idade', 'Sexo', 'Categoria', 'Peso', 'Contato']],
+                body: tableData,
+                theme: 'grid',
+                styles: { fontSize: 9, cellPadding: 3 },
+                headStyles: { fillColor: [65, 105, 225], textColor: 255, fontStyle: 'bold' },
+                alternateRowStyles: { fillColor: [245, 247, 250] },
+                columnStyles: {
+                    0: { cellWidth: 45 },
+                    6: { cellWidth: 30 }
+                }
+            });
+
+            const nomeArq = (turma ? turma.nome : 'equipe').replace(/\s+/g, '_').toLowerCase();
+            doc.save(`atletas_${nomeArq}_${new Date().toISOString().slice(0, 10)}.pdf`);
+            closeModalExportAtletas();
+            showToast('PDF gerado com sucesso!');
+        }
+
+        // Expor globalmente (HTML usa onclick)
+        window.openModalExportAtletas = openModalExportAtletas;
+        window.closeModalExportAtletas = closeModalExportAtletas;
+        window.renderExportAtletasList = renderExportAtletasList;
+        window.toggleExportAtleta = toggleExportAtleta;
+        window.toggleExportSelectAll = toggleExportSelectAll;
+        window.generatePdfAtletasSelecionados = generatePdfAtletasSelecionados;
