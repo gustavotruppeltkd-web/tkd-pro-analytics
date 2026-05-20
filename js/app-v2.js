@@ -1453,32 +1453,127 @@ function injectNotifBell() {
     });
 }
 
+// Notificações úteis (substitui as antigas de pagamento/sem-treino).
+// Categorias:
+//   1) Respostas de atletas (wellness, PSE/borg, questionários)
+//   2) Contagem regressiva para próximo evento (1x por dia)
+//   3) Atletas com risco de lesão ou dor
+//   4) PSE e carga do dia
+//   5) Média do borg/PSE da turma ao fim do dia (após 20h)
 function generateAutoNotifications() {
     if (!db.turmas || !db.turmas.length) return;
     const today = todayBR();
-    const existing = (db.notifications || []).map(n => n.msg);
+    const existingKeys = new Set((db.notifications || []).map(n => n.key || n.msg));
 
-    // Pagamentos vencidos (financeiro)
-    if (db.alunos) {
-        db.alunos.forEach(a => {
-            if (!a.statusPagamento || a.statusPagamento === 'pago') return;
-            const msg = `Pagamento pendente: ${a.nome}`;
-            if (!existing.includes(msg)) addNotification(msg, 'warning', 'financeiro.html');
+    // Helper: adiciona só se ainda não existe esse 'key' (idempotente por dia)
+    const addOnce = (key, msg, type, link) => {
+        if (existingKeys.has(key)) return;
+        if (!db.notifications) db.notifications = [];
+        db.notifications.unshift({
+            id: Date.now() + Math.random(),
+            key,
+            msg,
+            type: type || 'info',
+            link: link || null,
+            read: false,
+            ts: new Date().toISOString()
         });
+        existingKeys.add(key);
+    };
+
+    // Helper: nome do aluno por id (string-safe)
+    const nomeAtleta = (atletaId) => {
+        const a = (db.alunos || []).find(x => String(x.id) === String(atletaId));
+        return a ? (a.nome || 'Atleta') : 'Atleta';
+    };
+
+    // ───── 1) Respostas de atletas recebidas HOJE ─────
+    // Wellness
+    (db.wellnessLogs || []).forEach(w => {
+        if (w.data !== today) return;
+        const key = `well:${w.atletaId}:${today}`;
+        addOnce(key, `${nomeAtleta(w.atletaId)} respondeu o bem-estar.`, 'success', 'dashboard-rendimento.html');
+    });
+    // PSE / Borg (carga do treino)
+    (db.cargaTreino || []).forEach(c => {
+        if (c.data !== today) return;
+        const key = `pse:${c.atletaId}:${c.id || today}`;
+        const pse = c.pse != null ? ` (PSE ${c.pse})` : '';
+        const dur = c.duracaoMins ? ` • ${c.duracaoMins}min` : '';
+        addOnce(key, `${nomeAtleta(c.atletaId)} registrou Borg/PSE${pse}${dur}.`, 'info', 'dashboard-rendimento.html');
+    });
+    // Respostas de questionários
+    (db.respostas || []).forEach(r => {
+        if ((r.data || '').substring(0, 10) !== today) return;
+        const key = `resp:${r.id}`;
+        const q = (db.questionarios || []).find(x => x.id === r.questionarioId);
+        const nomeQ = q ? q.nome || q.titulo || 'questionário' : 'questionário';
+        addOnce(key, `${nomeAtleta(r.atletaId)} respondeu "${nomeQ}".`, 'success', 'dashboard-questionarios.html');
+    });
+
+    // ───── 2) Contagem regressiva para o próximo evento ─────
+    const proximoEvento = (db.eventos || [])
+        .filter(e => e.data && e.data >= today)
+        .sort((a, b) => a.data.localeCompare(b.data))[0];
+    if (proximoEvento) {
+        const dias = Math.round((new Date(proximoEvento.data + 'T12:00:00') - new Date(today + 'T12:00:00')) / (1000 * 60 * 60 * 24));
+        const key = `event:${proximoEvento.id}:${today}`; // 1x por dia
+        const titulo = proximoEvento.titulo || proximoEvento.nome || 'Evento';
+        let msg;
+        if (dias === 0) msg = `${titulo} é HOJE!`;
+        else if (dias === 1) msg = `Falta 1 dia para "${titulo}".`;
+        else msg = `Faltam ${dias} dias para "${titulo}".`;
+        addOnce(key, msg, dias <= 3 ? 'warning' : 'info', 'calendario.html');
     }
 
-    // Turma sem treino na semana atual
-    if (db.treinos) {
-        const weekStart = getWeekStartStr(today);
-        const weekEnd = addDays(weekStart, 6);
+    // ───── 3) Atletas com risco de lesão ou dor ─────
+    // Lesões ativas
+    (db.lesoes || []).forEach(l => {
+        if (l.status === 'recuperado' || l.status === 'curado') return;
+        const key = `lesao:${l.id}`;
+        addOnce(key, `${nomeAtleta(l.atletaId)} está lesionado — acompanhar.`, 'warning', 'dashboard-rendimento.html');
+    });
+    // Dor alta no wellness de hoje (dor >= 4 na escala 1-5)
+    (db.wellnessLogs || []).forEach(w => {
+        if (w.data !== today) return;
+        if ((w.dor || 0) >= 4) {
+            const key = `dor:${w.atletaId}:${today}`;
+            addOnce(key, `${nomeAtleta(w.atletaId)} relatou dor alta hoje (${w.dor}/5).`, 'warning', 'dashboard-rendimento.html');
+        }
+    });
+
+    // ───── 4) PSE e carga total do dia (resumo) ─────
+    const cargasHoje = (db.cargaTreino || []).filter(c => c.data === today);
+    if (cargasHoje.length > 0) {
+        const totalCarga = cargasHoje.reduce((s, c) => s + (Number(c.cargaCalculada) || (Number(c.pse) || 0) * (Number(c.duracaoMins) || 0)), 0);
+        const psesMedia = cargasHoje.reduce((s, c) => s + (Number(c.pse) || 0), 0) / cargasHoje.length;
+        const key = `cargadia:${today}:${cargasHoje.length}`; // muda quando novos registros chegam
+        addOnce(key, `Carga do dia: ${cargasHoje.length} registro(s) • PSE médio ${psesMedia.toFixed(1)} • Total ${Math.round(totalCarga)} u.a.`, 'info', 'dashboard-rendimento.html');
+    }
+
+    // ───── 5) Média do borg/PSE da turma — fim do dia (após 20h) ─────
+    const agora = new Date();
+    if (agora.getHours() >= 20 && cargasHoje.length > 0) {
+        // Por turma (rendimento)
         db.turmas.forEach(t => {
-            const hasTreino = db.treinos.some(tr => tr.turmaId == t.id && tr.data >= weekStart && tr.data <= weekEnd);
-            if (!hasTreino) {
-                const msg = `Turma "${t.nome}" sem treino esta semana`;
-                if (!existing.includes(msg)) addNotification(msg, 'info', 'treino-equipe.html');
-            }
+            const tipo = (t.tipo || '').toLowerCase();
+            const isRend = tipo.includes('rendimento') || tipo.includes('competic') || tipo.includes('competiç');
+            if (!isRend) return;
+            const atletasIds = new Set((db.alunos || []).filter(a => String(a.turmaId) === String(t.id)).map(a => String(a.id)));
+            const cargasTurma = cargasHoje.filter(c => atletasIds.has(String(c.atletaId)));
+            if (cargasTurma.length === 0) return;
+            const media = cargasTurma.reduce((s, c) => s + (Number(c.pse) || 0), 0) / cargasTurma.length;
+            const key = `mediaturma:${t.id}:${today}`;
+            addOnce(key, `Fim do dia — "${t.nome}": ${cargasTurma.length} atleta(s) responderam, PSE médio ${media.toFixed(1)}.`, 'success', 'dashboard-rendimento.html');
         });
     }
+
+    // Persistência
+    if (db.notifications && db.notifications.length > 50) {
+        db.notifications = db.notifications.slice(0, 50);
+    }
+    saveDB();
+    renderNotifBadge();
 }
 
 function getWeekStartStr(dateStr) {
