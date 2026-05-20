@@ -314,7 +314,7 @@ Let's fix that layout using CSS grid */
 
 /* Base */
 .btn {
-    padding: 0 18px;
+    padding: 0 14px;
     height: 36px;
     border-radius: var(--radius-sm);
     border: 1px solid transparent;
@@ -1446,8 +1446,8 @@ body.mode-mobile .sidebar {
     padding-top: max(24px, env(safe-area-inset-top));
 }
 
-/* Touch targets mínimos de 44px */
-body.mode-mobile .btn       { min-height: 44px; }
+/* Touch targets mínimos de 44px (com padding-x adequado para o dedo) */
+body.mode-mobile .btn       { min-height: 44px; padding: 0 18px; }
 body.mode-mobile .nav-item  { min-height: 44px; }
 body.mode-mobile .form-control { min-height: 44px; font-size: 16px; } /* 16px evita zoom automático no iOS */
 body.mode-mobile select,
@@ -2214,8 +2214,8 @@ body.mode-mobile .ob-card {
     }
     .tab-btn { white-space: nowrap !important; font-size: 13px; }
 
-    /* Botões min touch target */
-    .btn { min-height: 44px; }
+    /* Botões min touch target + padding maior pro dedo */
+    .btn { min-height: 44px; padding: 0 18px; }
 
     /* Grids inline → colapsar */
     [style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
