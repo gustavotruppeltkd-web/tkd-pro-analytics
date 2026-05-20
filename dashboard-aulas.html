@@ -247,7 +247,8 @@
 
         function renderStatsUI() {
             // Usar == para evitar erros de tipo (string vs number)
-            alunosTurma = db.alunos.filter(a => a.turmaId == db.activeTurmaId);
+            // Inativos não entram em chamada/financeiro
+            alunosTurma = db.alunos.filter(a => a.turmaId == db.activeTurmaId && (window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false));
             const statsGrid = document.getElementById('dashboardStats');
 
             let total = alunosTurma.length;

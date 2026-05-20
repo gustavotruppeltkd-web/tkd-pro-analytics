@@ -570,8 +570,10 @@
                         wellnessHTML = `<div style="margin: 10px 0 14px 0; font-size:11px; color:var(--text-muted); text-align:center; padding: 10px 0; width:100%;"><i class="ti ti-clipboard-off" style="display:block; font-size:18px; margin-bottom:4px; opacity:0.4;"></i>Nunca respondido</div>`;
                     }
 
+                    const _isInativo = !(window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false);
                     card = `
-                        <div class="student-square-card" style="animation: fadeIn 0.4s ease-out; height: 100%; display: flex; flex-direction: column;">
+                        <div class="student-square-card ${_isInativo ? 'inativo' : ''}" style="animation: fadeIn 0.4s ease-out; height: 100%; display: flex; flex-direction: column;">
+                            ${_isInativo ? '<div style="text-align:center; margin-bottom:6px;"><span class="badge-inativo">Inativo</span></div>' : ''}
                             <img src="${a.avatar}" alt="${escapeHtml(a.nome)}" class="student-square-avatar" style="align-self: center;" onerror="this.src=DEFAULT_AVATAR">
                             <h4 style="text-align: center;">${escapeHtml(a.nome)}</h4>
                             <p style="text-align: center; margin-bottom: 4px;"><strong>${a.categoriaIdade || 'S/ Idade'} ${a.categoriaPeso || 'S/ Peso'}</strong> ${(wLogDisplay && wLogDisplay.pesoAtual) ? ` <span style="background: rgba(59, 130, 246, 0.15); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 4px;">${wLogDisplay.pesoAtual}kg</span>` : ''}<br>${idade} anos</p>
@@ -590,12 +592,13 @@
                         </div>
                     `;
                 } else {
+                    const _isInativo = !(window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false);
                     card = `
-                        <div class="student-row" style="animation: fadeIn 0.4s ease-out;">
+                        <div class="student-row ${_isInativo ? 'inativo' : ''}" style="animation: fadeIn 0.4s ease-out;">
                             <div class="col-info">
                                 <img src="${a.avatar}" alt="${escapeHtml(a.nome)}" class="student-avatar">
                                 <div class="student-details">
-                                    <h4>${escapeHtml(a.nome)}</h4>
+                                    <h4>${escapeHtml(a.nome)} ${_isInativo ? '<span class="badge-inativo" style="margin-left:6px;">Inativo</span>' : ''}</h4>
                                     <p><strong>${a.faixa}</strong> • ${descMatricula} ${((db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0]?.pesoAtual) ? ` <span style="color: var(--primary); font-weight: 700;">(${(db.wellnessLogs || []).filter(w => w.atletaId == a.id).sort((x, y) => y.id - x.id)[0].pesoAtual}kg)</span>` : ''}</p>
                                 </div>
                             </div>

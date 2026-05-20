@@ -381,7 +381,7 @@
             // Atletas
             const selectA = document.getElementById('selectAtleta');
             selectA.innerHTML = '<option value="">Selecione o Atleta...</option>';
-            db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId)).forEach(a => {
+            db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId) && (window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false)).forEach(a => {
                 const opt = document.createElement('option');
                 opt.value = a.id;
                 opt.text = a.nome;
@@ -413,7 +413,7 @@
             const selA = document.getElementById('selectGraficoAtleta');
             const currentA = selA.value;
             selA.innerHTML = '<option value="equipe">&#128101; Toda a Equipe</option>';
-            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
+            const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId) && (window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false));
             alunosTurma.forEach(a => {
                 selA.innerHTML += `<option value="${a.id}">${a.nome}</option>`;
             });
@@ -883,7 +883,7 @@
 
                     if (isEquipe) {
                         // BAR: each athlete's average
-                        const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId));
+                        const alunosTurma = db.alunos.filter(a => String(a.turmaId) === String(db.activeTurmaId) && (window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false));
                         const atletasComResp = alunosTurma.map(a => {
                             const vals = respostas.filter(r => r.atletaId === a.id && r.respostas[pergunta.id] !== undefined)
                                 .map(r => parseFloat(r.respostas[pergunta.id])).filter(v => !isNaN(v));

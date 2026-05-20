@@ -148,6 +148,44 @@ function patchDocText(doc) {
     return doc;
 }
 
+// Aluno ativo por padrão. Só está inativo se ativo === false explicitamente.
+// Usar em todos os filtros de chamada/financeiro/gráficos/estatísticas.
+function isAlunoAtivo(aluno) {
+    if (!aluno) return false;
+    return aluno.ativo !== false;
+}
+window.isAlunoAtivo = isAlunoAtivo;
+
+// Injeta CSS global para visual de aluno/atleta inativo
+(function _injectInativoStyles() {
+    if (document.getElementById('__tkd_inativo_styles')) return;
+    const s = document.createElement('style');
+    s.id = '__tkd_inativo_styles';
+    s.textContent = `
+        .aluno-inativo, .athlete-card.inativo, .class-list-item.inativo,
+        .student-card.inativo, [data-inativo="true"] {
+            filter: grayscale(100%);
+            opacity: 0.55;
+            position: relative;
+        }
+        .aluno-inativo .badge-inativo,
+        .badge-inativo {
+            background: rgba(100,116,139,0.2);
+            color: #94a3b8;
+            border: 1px solid rgba(100,116,139,0.4);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+    `;
+    if (document.head) document.head.appendChild(s);
+    else document.addEventListener('DOMContentLoaded', () => document.head.appendChild(s));
+})();
+
 function escapeHtml(str) {
     return String(str)
         .replace(/&/g, '&amp;')

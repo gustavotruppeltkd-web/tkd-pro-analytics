@@ -901,6 +901,8 @@
                 const aTurma = db.turmas.find(t => t.id === a.turmaId);
                 const isRend = aTurma && (aTurma.tipo.toLowerCase().includes('rendimento') || aTurma.tipo.toLowerCase().includes('competição'));
                 if (isRend || a.statusFin === 'isento') return false;
+                // Inativos não entram no financeiro
+                if (window.isAlunoAtivo ? !window.isAlunoAtivo(a) : a.ativo === false) return false;
 
                 const matchName = a.nome.toLowerCase().includes(term);
                 const matchStatus = status === 'all' || a.statusFin === status;

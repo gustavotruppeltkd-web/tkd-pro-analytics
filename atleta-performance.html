@@ -366,7 +366,10 @@
                     </div>
                 </div>
 
-                <div style="position: absolute; top: 32px; right: 32px; display: flex; gap: 8px;">
+                <div style="position: absolute; top: 32px; right: 32px; display: flex; gap: 8px; flex-wrap:wrap;">
+                    <button id="btnToggleAtivo" class="btn btn-outline" onclick="toggleStatusAtivo()">
+                        <i class="ti ti-toggle-left"></i> <span id="lblToggleAtivo">Desativar</span>
+                    </button>
                     <button class="btn btn-primary" onclick="openModalEdit()">
                         <i class="ti ti-edit"></i> Editar Dados
                     </button>
@@ -779,6 +782,7 @@
             try { updateDynamicCharts(); } catch(e) { console.error('updateDynamicCharts:', e); }
             try { buildAlerts(); } catch(e) { console.error('buildAlerts:', e); }
             try { buildCargaDiaria(); } catch(e) { console.error('buildCargaDiaria:', e); }
+            try { refreshToggleAtivoUI(); } catch(e) {}
         }
 
         function populateRadarSelect() {
@@ -1505,6 +1509,49 @@
 
         // Edit Profile Logic
         const modalEdit = document.getElementById('modalEditPerfil');
+        function refreshToggleAtivoUI() {
+            const btn = document.getElementById('btnToggleAtivo');
+            const lbl = document.getElementById('lblToggleAtivo');
+            if (!btn || !alunoData) return;
+            const ativo = window.isAlunoAtivo ? window.isAlunoAtivo(alunoData) : (alunoData.ativo !== false);
+            if (ativo) {
+                btn.innerHTML = `<i class="ti ti-toggle-left"></i> <span id="lblToggleAtivo">Desativar</span>`;
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+            } else {
+                btn.innerHTML = `<i class="ti ti-toggle-right"></i> <span id="lblToggleAtivo">Ativar</span>`;
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+            }
+        }
+
+        async function toggleStatusAtivo() {
+            if (!alunoData) return;
+            const ativo = window.isAlunoAtivo ? window.isAlunoAtivo(alunoData) : (alunoData.ativo !== false);
+            const novoAtivo = !ativo;
+            const acao = novoAtivo ? 'Ativar' : 'Desativar';
+            const detalhe = novoAtivo
+                ? 'O atleta voltará para os cálculos, gráficos e respostas.'
+                : 'O atleta sairá de todos os cálculos, gráficos e respostas. Aparecerá em preto e branco no painel. Pode ser reativado a qualquer momento.';
+            if (typeof showConfirmModal === 'function') {
+                showConfirmModal(`${acao} ${alunoData.nome}?`, detalhe, () => doToggle(novoAtivo));
+            } else if (confirm(`${acao} ${alunoData.nome}?\n\n${detalhe}`)) {
+                doToggle(novoAtivo);
+            }
+        }
+
+        async function doToggle(novoAtivo) {
+            alunoData.ativo = novoAtivo;
+            try {
+                if (window.Data) await window.Data.update('alunos', alunoData.id, alunoData);
+                saveDB();
+                refreshToggleAtivoUI();
+                showToast(novoAtivo ? 'Atleta ativado.' : 'Atleta desativado.');
+            } catch (e) {
+                showToast('Erro ao atualizar status: ' + (e && e.message), 'error');
+            }
+        }
+
         function openModalEdit() {
             const form = document.getElementById('formEditPerfil');
             form.nomeAluno.value = alunoData.nome;

@@ -618,7 +618,7 @@
             const todosAtletas = coachIdParam
                 ? (db.alunos || [])
                 : (db.alunos || []).filter(a => String(a.turmaId) === String(db.activeTurmaId));
-            const atletas = todosAtletas.filter(a => turmasRendimentoSet.has(String(a.turmaId)));
+            const atletas = todosAtletas.filter(a => turmasRendimentoSet.has(String(a.turmaId)) && (window.isAlunoAtivo ? window.isAlunoAtivo(a) : a.ativo !== false));
 
             if (atletas.length === 0) {
                 grid.innerHTML = `
