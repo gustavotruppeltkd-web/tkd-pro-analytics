@@ -925,7 +925,7 @@
                             <button class="btn btn-outline" onclick="openModalExportAtletas()" id="btnExportAtletas">
                                 <i class="ti ti-file-download"></i> Baixar PDF
                             </button>
-                            <button class="btn btn-primary" onclick="openModalAluno()">
+                            <button class="btn btn-primary" onclick="abrirModoAdicionar()">
                                 <i class="ti ti-user-plus"></i> Adicionar Aluno
                             </button>
                         </div>
@@ -1184,6 +1184,42 @@
                 </div>
             </div>
             <div id="treinoViewPanel"></div>
+        </div>
+    </div>
+
+    <!-- MODAL ESCOLHA (criar perfil agora OU enviar link) -->
+    <div class="modal-overlay" id="modalEscolhaAdd">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalEscolhaTitulo">Adicionar à turma</h2>
+                <button class="btn-close" onclick="fecharModoAdicionar()"><i class="ti ti-x"></i></button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px; padding:16px 0;">
+                <button class="card" style="display:flex; gap:14px; align-items:center; padding:18px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); text-align:left; cursor:pointer; transition:0.2s; font-family:inherit;" onclick="abrirCriarAgora()"
+                    onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                    <div style="width:42px; height:42px; border-radius:10px; background:rgba(59,130,246,0.15); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">
+                        <i class="ti ti-user-edit"></i>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-weight:700; font-size:15px; color:var(--text-main);">Criar perfil agora</div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Você preenche os dados aqui mesmo.</div>
+                    </div>
+                </button>
+                <button class="card" style="display:flex; gap:14px; align-items:center; padding:18px; border:1px solid var(--border-color); background:rgba(255,255,255,0.02); text-align:left; cursor:pointer; transition:0.2s; font-family:inherit;" onclick="copiarLinkCadastro()"
+                    onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                    <div style="width:42px; height:42px; border-radius:10px; background:rgba(16,185,129,0.15); color:var(--green); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;">
+                        <i class="ti ti-link"></i>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-weight:700; font-size:15px; color:var(--text-main);">Enviar link de cadastro</div>
+                        <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">A pessoa preenche os dados pelo celular e cai direto nesta turma.</div>
+                    </div>
+                </button>
+                <div id="modalEscolhaLinkBox" style="display:none; margin-top:8px; padding:14px; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:10px;">
+                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Link copiado! Envie pelo WhatsApp ou e-mail:</div>
+                    <input type="text" id="modalEscolhaLinkInput" readonly class="form-control" onclick="this.select()" style="font-size:12px; font-family:monospace;">
+                </div>
+            </div>
         </div>
     </div>
 

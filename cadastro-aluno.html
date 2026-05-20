@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cadastro de Aluno</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.41.1/dist/tabler-icons.min.css">
+    <style>
+        body { display:flex; flex-direction:column; align-items:center; min-height:100vh; padding:24px 16px; background:var(--bg-dark); overflow-y:auto; }
+        .wrap { width:100%; max-width:520px; }
+        .header { text-align:center; margin-bottom:24px; }
+        .logo { width:64px; height:64px; background:linear-gradient(135deg,#3b82f6,#6366f1); border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:32px; color:#fff; margin:0 auto 16px; box-shadow:0 8px 32px rgba(59,130,246,0.4); }
+        .header h1 { font-size:22px; font-weight:700; margin-bottom:6px; }
+        .header p { font-size:13px; color:var(--text-muted); }
+        .turma-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; padding:16px; margin-bottom:20px; display:flex; align-items:center; gap:14px; }
+        .turma-card img { width:46px; height:46px; border-radius:50%; object-fit:cover; flex-shrink:0; }
+        .turma-info { flex:1; min-width:0; }
+        .turma-info .nome-turma { font-size:14px; font-weight:700; color:var(--text-main); }
+        .turma-info .meta { font-size:12px; color:var(--text-muted); }
+        .badge-tipo { display:inline-block; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:700; text-transform:uppercase; }
+        .badge-rend { background:rgba(168,85,247,0.15); color:#a855f7; }
+        .badge-com { background:rgba(59,130,246,0.15); color:var(--primary); }
+        .card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:14px; padding:20px; }
+        .form-group { margin-bottom:14px; }
+        .form-group label { display:block; font-size:12px; color:var(--text-muted); margin-bottom:6px; font-weight:500; }
+        .form-control { width:100%; padding:10px 12px; background:var(--bg-dark); border:1px solid var(--border-color); border-radius:8px; color:var(--text-main); font-size:14px; font-family:inherit; box-sizing:border-box; }
+        .form-control:focus { outline:none; border-color:var(--primary); }
+        .row { display:flex; gap:12px; }
+        .row .form-group { flex:1; }
+        .btn { width:100%; padding:14px; border:none; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:0.2s; font-family:inherit; }
+        .btn-primary { background:linear-gradient(135deg,#3b82f6,#6366f1); color:#fff; box-shadow:0 4px 16px rgba(59,130,246,0.3); }
+        .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(59,130,246,0.5); }
+        .btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+        .loader { text-align:center; padding:40px 20px; color:var(--text-muted); }
+        .loader i { font-size:32px; display:block; margin-bottom:12px; animation:spin 1s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .success { text-align:center; padding:40px 20px; }
+        .success i { font-size:64px; color:var(--green); display:block; margin-bottom:16px; }
+        .success h2 { font-size:20px; margin-bottom:8px; }
+        .success p { font-size:14px; color:var(--text-muted); }
+        .error-banner { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; padding:14px; border-radius:10px; font-size:13px; margin-bottom:16px; text-align:center; }
+        section { display:none; }
+        section.active { display:block; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3"></script>
+    <script src="js/supabase-client.js"></script>
+</head>
+<body>
+    <div class="wrap">
+        <div class="header">
+            <div class="logo"><i class="ti ti-shield-up"></i></div>
+            <h1>Cadastro</h1>
+            <p>Complete seus dados para entrar na turma</p>
+        </div>
+
+        <section id="sectionLoader" class="active">
+            <div class="loader"><i class="ti ti-loader-2"></i> Carregando informações da turma…</div>
+        </section>
+
+        <section id="sectionError">
+            <div class="error-banner" id="errorMsg">Link inválido.</div>
+        </section>
+
+        <section id="sectionForm">
+            <div class="turma-card" id="turmaCard">
+                <img id="treinadorAvatar" src="" alt="Treinador" onerror="this.style.visibility='hidden'">
+                <div class="turma-info">
+                    <div class="nome-turma" id="turmaNome">—</div>
+                    <div class="meta"><span id="turmaTreinador">—</span> • <span class="badge-tipo" id="turmaBadge">—</span></div>
+                </div>
+            </div>
+
+            <form class="card" id="formCadastro" onsubmit="return submitCadastro(event)">
+                <div class="form-group">
+                    <label>Nome completo *</label>
+                    <input type="text" name="nome" class="form-control" required placeholder="Ex: João Pedro Silva">
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Data de nascimento *</label>
+                        <input type="date" name="dataNascimento" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sexo</label>
+                        <select name="sexo" class="form-control">
+                            <option value="">—</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Contato (WhatsApp) *</label>
+                    <input type="tel" name="contato" class="form-control" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <input type="email" name="email" class="form-control" placeholder="email@exemplo.com">
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>CPF</label>
+                        <input type="text" name="cpf" class="form-control" placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group">
+                        <label>RG</label>
+                        <input type="text" name="rg" class="form-control" placeholder="00.000.000-0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Graduação atual</label>
+                    <select name="faixa" class="form-control" id="selFaixa"></select>
+                </div>
+
+                <!-- Campos específicos de Rendimento -->
+                <div id="fieldsRendimento" style="display:none;">
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Categoria de peso</label>
+                            <select name="categoriaPeso" class="form-control" id="selPeso"><option value="">—</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria de idade</label>
+                            <select name="categoriaIdade" class="form-control">
+                                <option value="">—</option>
+                                <option value="Infantil">Infantil</option>
+                                <option value="Cadete">Cadete</option>
+                                <option value="Juvenil">Juvenil</option>
+                                <option value="Sub21">Sub-21</option>
+                                <option value="Adulto">Adulto</option>
+                                <option value="Master 1">Master 1</option>
+                                <option value="Poomsae">Poomsae</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="ti ti-lock"></i> PIN de acesso ao portal (4 dígitos)</label>
+                        <input type="text" name="pin" class="form-control" placeholder="0000" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" style="letter-spacing:6px; text-align:center; font-weight:700; font-size:18px;">
+                        <small style="font-size:11px; color:var(--text-muted);">Você usará este PIN para acessar o portal do atleta. Se vazio, será 0000.</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnSubmit">
+                    <i class="ti ti-check"></i> Concluir cadastro
+                </button>
+            </form>
+        </section>
+
+        <section id="sectionSuccess">
+            <div class="card success">
+                <i class="ti ti-circle-check"></i>
+                <h2>Cadastro realizado!</h2>
+                <p>Você foi matriculado em <strong id="successTurma">—</strong>.<br>Seu treinador já consegue ver seu perfil.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    // Listas estáticas (espelham MOCK_DATA em js/app.js)
+    const FAIXAS = [
+        '10° GUB (Branca)', '9° GUB (Cinza)', '8° GUB (Amarela)', '7° GUB (Laranja)',
+        '6° GUB (Verde claro)', '5° GUB (Verde escuro)', '4° GUB (Azul claro)',
+        '3° GUB (Azul escuro)', '2° GUB (Vermelho claro)', '1° GUB (Vermelho escuro)',
+        '1º DAN (Preta)', '2º DAN (Preta)', '3º DAN (Preta)', '4º DAN (Preta)',
+        '5º DAN (Preta)', '6º DAN (Preta)', '7º DAN (Preta)', '8º DAN (Preta)', '9º DAN (Preta)'
+    ];
+    const CATEGORIAS_PESO = [
+        'Cad M -33kg','Cad M -37kg','Cad M -41kg','Cad M -45kg','Cad M -49kg','Cad M -53kg','Cad M -57kg','Cad M -61kg','Cad M -65kg','Cad M +65kg',
+        'Cad F -29kg','Cad F -33kg','Cad F -37kg','Cad F -41kg','Cad F -44kg','Cad F -47kg','Cad F -51kg','Cad F -55kg','Cad F -59kg','Cad F +59kg',
+        'Juv M -45kg','Juv M -48kg','Juv M -51kg','Juv M -55kg','Juv M -59kg','Juv M -63kg','Juv M -68kg','Juv M -73kg','Juv M -78kg','Juv M +78kg',
+        'Juv F -42kg','Juv F -44kg','Juv F -46kg','Juv F -49kg','Juv F -52kg','Juv F -55kg','Juv F -59kg','Juv F -63kg','Juv F -68kg','Juv F +68kg',
+        'S21 M -54kg','S21 M -58kg','S21 M -63kg','S21 M -68kg','S21 M -74kg','S21 M -80kg','S21 M -87kg','S21 M +87kg',
+        'S21 F -46kg','S21 F -49kg','S21 F -53kg','S21 F -57kg','S21 F -62kg','S21 F -67kg','S21 F -73kg','S21 F +73kg',
+        'Sên M -54kg','Sên M -58kg','Sên M -63kg','Sên M -68kg','Sên M -74kg','Sên M -80kg','Sên M -87kg','Sên M +87kg',
+        'Sên F -46kg','Sên F -49kg','Sên F -53kg','Sên F -57kg','Sên F -62kg','Sên F -67kg','Sên F -73kg','Sên F +73kg'
+    ];
+
+    function show(id) {
+        ['sectionLoader','sectionError','sectionForm','sectionSuccess'].forEach(s => {
+            document.getElementById(s).classList.toggle('active', s === id);
+        });
+    }
+    function showError(msg) {
+        document.getElementById('errorMsg').innerText = msg;
+        show('sectionError');
+    }
+
+    const params = new URLSearchParams(location.search);
+    const coachId = params.get('coach');
+    const turmaId = params.get('turma');
+
+    let _turmaData = null;
+    let _isRendimento = false;
+
+    async function init() {
+        if (!coachId || !turmaId) {
+            showError('Link inválido. Peça ao treinador um link novo.');
+            return;
+        }
+        if (!window.supabaseClient) {
+            showError('Erro de inicialização. Tente recarregar a página.');
+            return;
+        }
+        try {
+            const { data, error } = await window.supabaseClient
+                .rpc('get_turma_public_info', { p_coach_id: coachId, p_turma_id: parseInt(turmaId) });
+            if (error) throw error;
+            if (!data || !data.turma) {
+                showError('Turma não encontrada ou link expirado. Peça ao treinador um link novo.');
+                return;
+            }
+            _turmaData = data;
+            const turma = data.turma;
+            const tipo = (turma.tipo || '').toLowerCase();
+            _isRendimento = tipo.includes('rendimento') || tipo.includes('competic') || tipo.includes('competiç');
+
+            // Preenche header
+            document.getElementById('turmaNome').innerText = turma.nome || 'Turma';
+            document.getElementById('turmaTreinador').innerText = (data.treinador && data.treinador.nome) || 'Treinador';
+            const badge = document.getElementById('turmaBadge');
+            badge.innerText = _isRendimento ? 'Rendimento' : 'Comercial';
+            badge.className = 'badge-tipo ' + (_isRendimento ? 'badge-rend' : 'badge-com');
+            const avatar = (data.treinador && data.treinador.avatar) || '';
+            if (avatar) document.getElementById('treinadorAvatar').src = avatar;
+            else document.getElementById('treinadorAvatar').style.visibility = 'hidden';
+
+            // Mostra campos certos
+            document.getElementById('fieldsRendimento').style.display = _isRendimento ? 'block' : 'none';
+
+            // Populates selects
+            document.getElementById('selFaixa').innerHTML = FAIXAS.map(f => `<option value="${f}">${f}</option>`).join('');
+            document.getElementById('selPeso').innerHTML = '<option value="">—</option>' + CATEGORIAS_PESO.map(p => `<option value="${p}">${p}</option>`).join('');
+
+            show('sectionForm');
+        } catch (e) {
+            console.error(e);
+            showError('Não foi possível carregar a turma. ' + (e && e.message ? e.message : ''));
+        }
+    }
+
+    async function submitCadastro(ev) {
+        ev.preventDefault();
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite;"></i> Enviando…';
+
+        const form = ev.target;
+        const payload = {
+            nome: form.nome.value.trim(),
+            dataNascimento: form.dataNascimento.value,
+            sexo: form.sexo.value,
+            contato: form.contato.value.trim(),
+            email: form.email.value.trim() || null,
+            cpf: form.cpf.value.trim() || null,
+            rg: form.rg.value.trim() || null,
+            faixa: form.faixa.value,
+        };
+        if (_isRendimento) {
+            payload.categoriaPeso = form.categoriaPeso.value || null;
+            payload.categoriaIdade = form.categoriaIdade.value || null;
+            payload.pin = (form.pin.value || '').padStart(4, '0').slice(0, 4) || '0000';
+            payload.statusFin = 'isento';
+        } else {
+            payload.statusFin = 'avencer';
+            payload.mensalidade = 0;
+        }
+
+        try {
+            const { data, error } = await window.supabaseClient
+                .rpc('register_aluno_self', {
+                    p_coach_id: coachId,
+                    p_turma_id: parseInt(turmaId),
+                    p_payload: payload
+                });
+            if (error) throw error;
+            if (!data || data.ok !== true) {
+                throw new Error((data && data.error) || 'Erro desconhecido');
+            }
+            document.getElementById('successTurma').innerText = (_turmaData.turma.nome || 'sua turma');
+            show('sectionSuccess');
+        } catch (e) {
+            console.error(e);
+            btn.disabled = false;
+            btn.innerHTML = oldHtml;
+            alert('Não foi possível concluir o cadastro: ' + (e && e.message ? e.message : 'erro desconhecido'));
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1297,3 +1297,53 @@
         window.toggleExportField = toggleExportField;
         window.toggleExportFieldsAll = toggleExportFieldsAll;
         window.generatePdfAtletasSelecionados = generatePdfAtletasSelecionados;
+
+
+        // ───────────────────────────────────────────────────────────
+        // FLUXO DE ADIÇÃO: escolha entre criar agora ou enviar link
+        // ───────────────────────────────────────────────────────────
+        function abrirModoAdicionar() {
+            const turma = db.turmas.find(t => String(t.id) === String(db.activeTurmaId));
+            const isRend = turma && (turma.tipo || '').toLowerCase().match(/rendimento|competic|competiç/);
+            document.getElementById('modalEscolhaTitulo').innerText = isRend ? 'Adicionar atleta' : 'Adicionar aluno';
+            document.getElementById('modalEscolhaLinkBox').style.display = 'none';
+            document.getElementById('modalEscolhaAdd').classList.add('active');
+        }
+        function fecharModoAdicionar() {
+            document.getElementById('modalEscolhaAdd').classList.remove('active');
+        }
+        function abrirCriarAgora() {
+            fecharModoAdicionar();
+            openModalAluno();
+        }
+        function copiarLinkCadastro() {
+            const coachId = (window._cachedCoachId) || (window.db && window.db._owner_id);
+            if (!coachId || !db.activeTurmaId) {
+                showToast('Erro: dados do treinador não carregados ainda. Tente novamente.', 'error');
+                return;
+            }
+            const url = `${window.location.origin}/cadastro-aluno.html?coach=${encodeURIComponent(coachId)}&turma=${encodeURIComponent(db.activeTurmaId)}`;
+            const box = document.getElementById('modalEscolhaLinkBox');
+            const input = document.getElementById('modalEscolhaLinkInput');
+            input.value = url;
+            box.style.display = 'block';
+            const finalize = () => {
+                input.select();
+                showToast('Link copiado! Envie para a pessoa.');
+            };
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(finalize).catch(() => {
+                    try { document.execCommand('copy'); } catch(_) {}
+                    finalize();
+                });
+            } else {
+                input.select();
+                try { document.execCommand('copy'); } catch(_) {}
+                finalize();
+            }
+        }
+
+        window.abrirModoAdicionar = abrirModoAdicionar;
+        window.fecharModoAdicionar = fecharModoAdicionar;
+        window.abrirCriarAgora = abrirCriarAgora;
+        window.copiarLinkCadastro = copiarLinkCadastro;
