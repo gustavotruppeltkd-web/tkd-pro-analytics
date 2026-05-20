@@ -1494,13 +1494,28 @@ function generateAutoNotifications() {
         const key = `well:${w.atletaId}:${today}`;
         addOnce(key, `${nomeAtleta(w.atletaId)} respondeu o bem-estar.`, 'success', 'dashboard-rendimento.html');
     });
-    // PSE / Borg (carga do treino)
+    // PSE / Borg (carga do treino) — identifica o treino específico
     (db.cargaTreino || []).forEach(c => {
         if (c.data !== today) return;
         const key = `pse:${c.atletaId}:${c.id || today}`;
         const pse = c.pse != null ? ` (PSE ${c.pse})` : '';
         const dur = c.duracaoMins ? ` • ${c.duracaoMins}min` : '';
-        addOnce(key, `${nomeAtleta(c.atletaId)} registrou Borg/PSE${pse}${dur}.`, 'info', 'dashboard-rendimento.html');
+
+        // Identifica o treino: prioriza treino vinculado (treinoId), depois tipoTreino
+        let treinoLabel = '';
+        if (c.treinoId) {
+            const t = (db.treinos || []).find(x => String(x.id) === String(c.treinoId));
+            if (t) {
+                const titulo = t.titulo || t.tipo || 'treino';
+                const hora = t.horario ? ` ${t.horario}` : '';
+                treinoLabel = ` no treino "${titulo}"${hora}`;
+            }
+        }
+        if (!treinoLabel && c.tipoTreino) {
+            treinoLabel = ` no treino de ${c.tipoTreino}`;
+        }
+
+        addOnce(key, `${nomeAtleta(c.atletaId)} registrou Borg/PSE${pse}${dur}${treinoLabel}.`, 'info', 'dashboard-rendimento.html');
     });
     // Respostas de questionários
     (db.respostas || []).forEach(r => {
