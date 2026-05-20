@@ -52,7 +52,7 @@ BEGIN
     v_payload->>'nome',
     v_payload->>'faixa',
     NULLIF(v_payload->>'sexo', ''),
-    NULLIF(v_payload->>'dataNascimento', ''),
+    NULLIF(v_payload->>'dataNascimento', '')::date,
     NULLIF(v_payload->>'categoriaPeso', ''),
     NULLIF(v_payload->>'pin', ''),
     v_payload,
