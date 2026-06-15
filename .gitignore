@@ -5,3 +5,5 @@
 .vercel
 .claude/
 scripts/migrate-avatars.js
+scripts/backup-supabase.js
+backups/
