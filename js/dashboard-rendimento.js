@@ -1165,9 +1165,9 @@
                 ].map(Number);
             }
 
-            // --- Score de Bem-Estar (Últimos 7 dias ? dados REAIS) ---
+            // --- Score de Bem-Estar — semana fixa Segunda→Domingo (consistente com o Monitoramento) ---
             const targetDate = dataFiltro;
-            const dates7 = getDatesInRange(targetDate, 7).reverse();
+            const dates7 = getWeekDates(targetDate, 0);
             const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
             const labelsBemEstar = dates7.map(d => {
@@ -1759,7 +1759,6 @@
         function renderWellnessCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Registros Consolidados de Bem-Estar';
             document.getElementById('titleChart1').innerText = 'Evolução do Score Geral (Tendência)';
-            document.getElementById('titleChart2').innerText = 'Radar de Bem-Estar (5=ótimo)';
             document.getElementById('titleChart4').innerText = 'Prontidão Física vs Psicológica';
             document.getElementById('titleChart5').innerText = 'Média por Dia da Semana (Histórico)';
 
@@ -1877,46 +1876,8 @@
                 }]
             });
 
-            // Gráfico 2: Radar de Médias
-            // Para o radar: Sono e Humor são positivos (maior = melhor).
-            // Estresse, Dor e Fadiga são negativos — invertemos com (6 - valor) para que maior = melhor no radar.
-            let avgSono = 0, avgEstresseInv = 0, avgDorInv = 0, avgFadigaInv = 0, avgHumor = 0;
-            if (allLogs.length > 0) {
-                avgSono = (allLogs.reduce((acc, l) => acc + (l.sono || 3), 0) / allLogs.length).toFixed(1);
-                avgEstresseInv = (allLogs.reduce((acc, l) => acc + (6 - (l.estresse || 3)), 0) / allLogs.length).toFixed(1);
-                avgDorInv = (allLogs.reduce((acc, l) => acc + (6 - (l.dor || 3)), 0) / allLogs.length).toFixed(1);
-                avgFadigaInv = (allLogs.reduce((acc, l) => acc + (6 - (l.fadiga || 3)), 0) / allLogs.length).toFixed(1);
-                avgHumor = (allLogs.reduce((acc, l) => acc + (l.humor || 3), 0) / allLogs.length).toFixed(1);
-            }
-
-            dynamicCharts.chart2 = new Chart(ctx2, {
-                type: 'radar',
-                data: {
-                    labels: ['Sono', 'Baixo Estresse', 'Sem Dor', 'Baixa Fadiga', 'Humor'],
-                    datasets: [{
-                        label: 'Média do Período (5=ótimo)',
-                        data: [avgSono, avgEstresseInv, avgDorInv, avgFadigaInv, avgHumor],
-                        backgroundColor: 'rgba(139, 92, 246, 0.2)', // violet
-                        borderColor: '#8b5cf6',
-                        pointBackgroundColor: '#8b5cf6',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            min: 1,
-                            max: 5,
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            angleLines: { color: 'rgba(255,255,255,0.1)' },
-                            pointLabels: { color: '#94a3b8', font: { size: 12 } },
-                            ticks: { display: false }
-                        }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
+            // Gráfico 2 (Radar de Bem-Estar) REMOVIDO — radar é difícil de ler e o
+            // semáforo + score já cobrem a leitura. Slot oculto no carrossel (chart2 null).
 
             // Gráfico 3 (Distribuição de Zonas de Prontidão) REMOVIDO — repetia o
             // semáforo do topo da página. Slot fica oculto no carrossel (chart3 null).
