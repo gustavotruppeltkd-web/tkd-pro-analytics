@@ -1992,7 +1992,7 @@
             document.getElementById('titleTable').innerText = 'Diário de Treinos';
             document.getElementById('titleChart1').innerText = 'Carga do Treino vs Resposta do Atleta';
             document.getElementById('titleChart2').innerText = 'O Mesociclo está sendo seguido?';
-            document.getElementById('titleChart3').innerText = 'TKD vs Físico — Distribuição de Sessões';
+            document.getElementById('titleChart3').innerText = 'TKD vs Físico — Distribuição da Semana';
             document.getElementById('titleChart4').innerText = 'Como o atleta está respondendo? (Intensidade)';
             document.getElementById('titleChart5').innerText = 'Carga Semanal — Últimas 5 Semanas';
 
@@ -2117,8 +2117,8 @@
                 data: {
                     labels,
                     datasets: [
-                        { label: 'Carga do Treino', type: 'bar', data: extTotalData, backgroundColor: 'rgba(59,130,246,0.75)', borderRadius: 5 },
-                        { label: 'Resposta do Atleta', type: 'line', data: intTotalData, borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.12)', tension: 0.4, fill: true, pointRadius: 5, pointBackgroundColor: '#f59e0b', spanGaps: true, borderWidth: 2.5 }
+                        { label: 'Carga Planejada', type: 'bar', data: extTotalData, backgroundColor: 'rgba(59,130,246,0.75)', borderRadius: 5 },
+                        { label: 'Resposta do Atleta (PSE)', type: 'line', data: intTotalData, borderColor: '#f59e0b', backgroundColor: 'transparent', tension: 0.4, fill: false, pointRadius: 5, pointBackgroundColor: '#f59e0b', spanGaps: true, borderWidth: 3 }
                     ]
                 },
                 options: {
@@ -2157,7 +2157,7 @@
                 data: {
                     labels,
                     datasets: [
-                        { label: 'Planejado (Mesociclo)', type: 'line', data: mesoPlanned, borderColor: 'rgba(255,255,255,0.3)', borderDash: [6,4], tension: 0.3, fill: false, pointRadius: 3, spanGaps: true, borderWidth: 2 },
+                        { label: 'Planejado (Mesociclo)', type: 'line', data: mesoPlanned, borderColor: '#fbbf24', borderDash: [6,4], tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: '#fbbf24', spanGaps: true, borderWidth: 3 },
                         { label: 'Realizado (Treino)', type: 'bar', data: treinoRealized, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 5 }
                     ]
                 },
@@ -2183,22 +2183,21 @@
                 if (ts.length === 0) return null;
                 return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
             });
+            const totTkd = extTkdData.reduce((s, v) => s + (v || 0), 0);
+            const totFis = extFisData.reduce((s, v) => s + (v || 0), 0);
+            const totGeral = totTkd + totFis;
             dynamicCharts.chart3 = new Chart(ctx3, {
-                type: 'bar',
+                type: 'doughnut',
                 data: {
-                    labels,
-                    datasets: [
-                        { label: 'Taekwondo', data: extTkdData, backgroundColor: 'rgba(59,130,246,0.85)', borderRadius: 4, stack: 's' },
-                        { label: 'Físico', data: extFisData, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 4, stack: 's' }
-                    ]
+                    labels: ['Taekwondo', 'Físico'],
+                    datasets: [{ data: [totTkd, totFis], backgroundColor: ['rgba(59,130,246,0.85)', 'rgba(245,158,11,0.85)'], borderWidth: 0 }]
                 },
                 options: {
-                    ...getCommonOptions(),
-                    scales: {
-                        y: { stacked: true, min: 0, grid: gridStyle, ticks: axisStyle },
-                        x: { stacked: true, grid: { display: false }, ticks: axisStyle }
-                    },
-                    plugins: { legend: { display: true, labels: legendLabels } }
+                    responsive: true, maintainAspectRatio: false, cutout: '62%',
+                    plugins: {
+                        legend: { display: true, position: 'bottom', labels: legendLabels },
+                        tooltip: { callbacks: { label: (c) => { const v = c.raw || 0; const p = totGeral ? Math.round(v / totGeral * 100) : 0; return `${c.label}: ${v} UA (${p}%)`; } } }
+                    }
                 }
             });
 
@@ -2232,7 +2231,22 @@
                         y: { ticks: { stepSize: 1, ...axisStyle }, grid: gridStyle },
                         x: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 13, weight: '500' } } }
                     }
-                }
+                },
+                plugins: [{
+                    id: 'pseBarValues',
+                    afterDatasetsDraw(chart) {
+                        const ctx = chart.ctx;
+                        chart.getDatasetMeta(0).data.forEach((bar, i) => {
+                            const v = chart.data.datasets[0].data[i];
+                            ctx.save();
+                            ctx.fillStyle = '#e2e8f0';
+                            ctx.font = '700 15px sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.fillText(v, bar.x, bar.y - 8);
+                            ctx.restore();
+                        });
+                    }
+                }]
             });
 
             // ---- Gráfico 5: Tendência de carga semanal (5 semanas) ----
