@@ -1760,7 +1760,6 @@
             document.getElementById('titleTable').innerText = 'Registros Consolidados de Bem-Estar';
             document.getElementById('titleChart1').innerText = 'Evolução do Score Geral (Tendência)';
             document.getElementById('titleChart2').innerText = 'Radar de Bem-Estar (5=ótimo)';
-            document.getElementById('titleChart3').innerText = 'Distribuição de Zonas de Prontidão (Risco)';
             document.getElementById('titleChart4').innerText = 'Prontidão Física vs Psicológica';
             document.getElementById('titleChart5').innerText = 'Média por Dia da Semana (Histórico)';
 
@@ -1823,10 +1822,15 @@
 
             const datasets1 = [{
                 label: 'Média da Equipe',
-                type: 'bar',
+                type: 'line',
                 data: avgTeam,
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: 4
+                borderColor: '#f1f5f9',
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                tension: 0.3,
+                spanGaps: true,
+                pointRadius: 4,
+                pointBackgroundColor: '#f1f5f9'
             }];
 
             if (athleteId !== 'equipe') {
@@ -1841,13 +1845,36 @@
                     borderColor: '#3b82f6',
                     backgroundColor: 'transparent',
                     tension: 0.4,
+                    spanGaps: true,
+                    pointRadius: 4,
                     pointBackgroundColor: '#3b82f6'
                 });
             }
 
             dynamicCharts.chart1 = new Chart(ctx1, {
                 data: { labels: labels, datasets: datasets1 },
-                options: { ...getCommonOptions(), scales: { y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: true } } }
+                options: { ...getCommonOptions(), scales: { y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } } }, plugins: { legend: { display: true } } },
+                plugins: [{
+                    id: 'scoreZones',
+                    beforeDatasetsDraw(chart) {
+                        const { ctx, chartArea, scales } = chart;
+                        if (!chartArea || !scales.y) return;
+                        const y = scales.y;
+                        const bands = [
+                            { from: 70, to: 100, color: 'rgba(16,185,129,0.12)' },  // verde — apto
+                            { from: 40, to: 70,  color: 'rgba(245,158,11,0.12)' },  // amarelo — atenção
+                            { from: 0,  to: 40,  color: 'rgba(239,68,68,0.12)' }    // vermelho — risco
+                        ];
+                        ctx.save();
+                        bands.forEach(b => {
+                            const yTop = y.getPixelForValue(b.to);
+                            const yBot = y.getPixelForValue(b.from);
+                            ctx.fillStyle = b.color;
+                            ctx.fillRect(chartArea.left, yTop, chartArea.right - chartArea.left, yBot - yTop);
+                        });
+                        ctx.restore();
+                    }
+                }]
             });
 
             // Gráfico 2: Radar de Médias
@@ -1891,32 +1918,8 @@
                 }
             });
 
-            // Gráfico 3: Distribuição de Risco (Pizza)
-            let apto = 0, atencao = 0, risco = 0;
-            allLogs.forEach(l => {
-                const s = calcWellnessScore(l.sono, l.estresse, l.dor, l.humor, l.fadiga, l.alimentacao);
-                if (s >= 70) apto++;
-                else if (s >= 40) atencao++;
-                else risco++;
-            });
-            dynamicCharts.chart3 = new Chart(ctx3, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Apto (>70)', 'Atenção (40-69)', 'Risco Alto (<40)'],
-                    datasets: [{
-                        data: [apto, atencao, risco],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, position: 'right', labels: { color: '#94a3b8', font: { size: 11 } } }
-                    }
-                }
-            });
+            // Gráfico 3 (Distribuição de Zonas de Prontidão) REMOVIDO — repetia o
+            // semáforo do topo da página. Slot fica oculto no carrossel (chart3 null).
 
             // Gráfico 4: Prontidão Física vs Psicológica
             // Físico: média de (6-fadiga) e (6-dor) — invertidos pois são indicadores negativos
