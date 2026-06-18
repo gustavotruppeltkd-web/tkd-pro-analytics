@@ -1020,7 +1020,11 @@
 
         function addExercicioItem(blocoId, ex) {
             const container = document.getElementById(`exContainer_${blocoId}`);
-            const itemId = `ex_${blocoId}_${Date.now()}`;
+            // Contador incremental garante id único mesmo quando vários itens são
+            // criados no mesmo milissegundo (loop ao abrir treino p/ edição).
+            // Sem isso, Date.now() repetia → ids duplicados → getElementById sempre
+            // pegava o 1º item (editava/salvava sempre o primeiro exercício).
+            const itemId = `ex_${blocoId}_${Date.now()}_${(addExercicioItem._seq = (addExercicioItem._seq || 0) + 1)}`;
             const item = document.createElement('div');
             item.className = 'exercicio-item';
             item.id = itemId;
