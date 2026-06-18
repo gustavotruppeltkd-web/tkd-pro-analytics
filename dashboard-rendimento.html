@@ -222,10 +222,10 @@
 
         /* ---- Carrossel de gráficos (um por vez, maior) ---- */
         .chart-carousel { display: flex; align-items: stretch; gap: 12px; margin-top: 24px; }
-        .carousel-viewport { flex: 1; min-width: 0; }
-        .carousel-slide { display: none !important; min-height: 460px; }
-        .carousel-slide.active { display: flex !important; animation: slideFade .25s ease; }
-        @keyframes slideFade { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+        .carousel-viewport { flex: 1; min-width: 0; overflow: hidden; position: relative; }
+        .carousel-track { display: flex; transition: transform .3s ease; }
+        .carousel-slide { flex: 0 0 100%; width: 100%; min-height: 460px; }
+        .carousel-slide.hidden-slot { display: none !important; }
         .carousel-arrow {
             flex-shrink: 0; width: 46px; height: 120px; align-self: center;
             border: 1px solid var(--border-color); border-radius: 14px;
@@ -234,16 +234,17 @@
             font-size: 24px; transition: background .15s, color .15s, border-color .15s;
         }
         .carousel-arrow:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .carousel-dots { display: flex; gap: 9px; justify-content: center; margin-top: 18px; }
+        .carousel-dots { display: flex; gap: 9px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
         .carousel-dot {
             width: 9px; height: 9px; border-radius: 50%; border: none; padding: 0;
             background: rgba(255,255,255,0.22); cursor: pointer; transition: background .15s, transform .15s;
         }
         .carousel-dot.active { background: var(--primary); transform: scale(1.3); }
-        /* modo exportação: revela todos os slides empilhados p/ o PDF capturar tudo */
-        #dynamicChartsGrid.exporting .chart-carousel { display: block; }
+        /* modo exportação: empilha todos os slides visíveis p/ o PDF capturar tudo */
+        #dynamicChartsGrid.exporting .carousel-viewport { overflow: visible; }
+        #dynamicChartsGrid.exporting .carousel-track { display: block; transform: none !important; }
         #dynamicChartsGrid.exporting .carousel-arrow { display: none; }
-        #dynamicChartsGrid.exporting .carousel-slide { display: flex !important; min-height: 300px; margin-bottom: 18px; }
+        #dynamicChartsGrid.exporting .carousel-slide { margin-bottom: 18px; min-height: 300px; }
         @media (max-width: 768px) {
             .carousel-arrow { width: 38px; height: 88px; font-size: 20px; }
             .carousel-slide { min-height: 380px; }
@@ -433,6 +434,7 @@
                             <div class="chart-carousel">
                                 <button type="button" class="carousel-arrow carousel-prev" onclick="carouselPrev()" aria-label="Anterior"><i class="ti ti-chevron-left"></i></button>
                                 <div class="carousel-viewport">
+                                  <div class="carousel-track" id="carouselTrack">
                                     <div class="chart-box card carousel-slide" data-slot="table" style="display:flex;flex-direction:column;">
                                         <h4 id="titleTable" style="font-size:15px;margin-bottom:16px;color:var(--text-muted);border-bottom:1px solid var(--border-color);padding-bottom:8px;">Tabela de Dados</h4>
                                         <div style="flex:1;max-height:430px;overflow-y:auto;" id="dynamicTableContainer"><p style="color:var(--text-muted);font-size:13px;">Selecione uma categoria acima.</p></div>
@@ -457,6 +459,7 @@
                                         <h4 id="titleChart5" style="font-size:15px;margin-bottom:16px;color:var(--text-muted);min-height:2em;">Gráfico 5</h4>
                                         <div style="flex:1;min-height:260px;position:relative;" class="canvas-container"><canvas id="dynamicChart5"></canvas></div>
                                     </div>
+                                  </div>
                                 </div>
                                 <button type="button" class="carousel-arrow carousel-next" onclick="carouselNext()" aria-label="Próximo"><i class="ti ti-chevron-right"></i></button>
                             </div>

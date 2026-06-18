@@ -1257,6 +1257,11 @@
         }
 
         function getChartContexts() {
+            // Carrossel: revela todos os slides ANTES de criar os gráficos, para
+            // que cada canvas tenha largura real (Chart.js fixa 0px se nascer em
+            // display:none). O rebuildCarousel re-esconde os slots sem gráfico depois.
+            document.querySelectorAll('#dynamicChartsGrid .carousel-slide')
+                .forEach(s => s.classList.remove('hidden-slot'));
             // Re-create canvases to ensure a clean state (avoids "canvas already in use" errors from Chart.js)
             const ids = ['dynamicChart1', 'dynamicChart2', 'dynamicChart3', 'dynamicChart4', 'dynamicChart5'];
             const ctxs = {};
@@ -1349,52 +1354,48 @@
         }
 
         // ====================== CARROSSEL DE GRÁFICOS ======================
-        // Mostra 1 slide por vez (tabela + só os gráficos que a fonte gerou),
-        // com setas e bolinhas. Pula automaticamente os slots sem gráfico.
+        // Mostra 1 slide por vez (tabela + só os gráficos que a fonte gerou).
+        // Usa translateX numa faixa (track): os slides ficam SEMPRE com largura
+        // real, então o Chart.js dimensiona certo. (Criar gráfico dentro de um
+        // container display:none deixava o canvas travado em 0px.) Os slots sem
+        // gráfico na fonte atual recebem .hidden-slot e saem do carrossel.
         let _carouselActive = [];
         let _carouselIdx = 0;
 
-        function _carouselCollectSlides() {
-            const slides = [];
-            const table = document.querySelector('#dynamicChartsGrid .carousel-slide[data-slot="table"]');
-            if (table) slides.push(table);
-            for (let n = 1; n <= 5; n++) {
-                if (dynamicCharts && dynamicCharts['chart' + n]) {
-                    const s = document.querySelector(`#dynamicChartsGrid .carousel-slide[data-slot="${n}"]`);
-                    if (s) slides.push(s);
-                }
-            }
-            return slides;
-        }
-
         function rebuildCarousel(reset) {
-            _carouselActive = _carouselCollectSlides();
-            if (reset || _carouselIdx >= _carouselActive.length) _carouselIdx = 0;
-
-            document.querySelectorAll('#dynamicChartsGrid .carousel-slide')
-                .forEach(s => s.classList.remove('active'));
+            const slides = [...document.querySelectorAll('#dynamicChartsGrid .carousel-slide')];
+            const active = [];
+            slides.forEach(s => {
+                const slot = s.dataset.slot;
+                const on = (slot === 'table') || (dynamicCharts && dynamicCharts['chart' + slot]);
+                if (on) { s.classList.remove('hidden-slot'); active.push(s); }
+                else { s.classList.add('hidden-slot'); }
+            });
+            _carouselActive = active;
+            if (reset || _carouselIdx >= active.length) _carouselIdx = 0;
 
             const dotsEl = document.getElementById('carouselDots');
             if (dotsEl) {
-                dotsEl.innerHTML = _carouselActive.map((s, i) =>
+                dotsEl.innerHTML = active.map((s, i) =>
                     `<button type="button" class="carousel-dot${i === _carouselIdx ? ' active' : ''}" onclick="carouselGo(${i})" aria-label="Slide ${i + 1}"></button>`
                 ).join('');
             }
-
-            const current = _carouselActive[_carouselIdx];
-            if (current) {
-                current.classList.add('active');
-                const slot = current.dataset.slot;
-                if (slot !== 'table' && dynamicCharts['chart' + slot]) {
-                    // canvas foi criado escondido (0px) → força redimensionar ao aparecer
-                    setTimeout(() => { try { dynamicCharts['chart' + slot].resize(); } catch (e) {} }, 30);
-                }
-            }
+            _carouselApply();
         }
 
-        function carouselGo(i) { _carouselIdx = i; rebuildCarousel(false); }
-        function carouselNext() { if (_carouselActive.length) { _carouselIdx = (_carouselIdx + 1) % _carouselActive.length; rebuildCarousel(false); } }
-        function carouselPrev() { if (_carouselActive.length) { _carouselIdx = (_carouselIdx - 1 + _carouselActive.length) % _carouselActive.length; rebuildCarousel(false); } }
+        function _carouselApply() {
+            const vp = document.querySelector('#dynamicChartsGrid .carousel-viewport');
+            const track = document.getElementById('carouselTrack');
+            if (vp && track) track.style.transform = `translateX(-${_carouselIdx * vp.clientWidth}px)`;
+            document.querySelectorAll('#carouselDots .carousel-dot')
+                .forEach((d, i) => d.classList.toggle('active', i === _carouselIdx));
+        }
+
+        function carouselGo(i) { _carouselIdx = i; _carouselApply(); }
+        function carouselNext() { if (_carouselActive.length) { _carouselIdx = (_carouselIdx + 1) % _carouselActive.length; _carouselApply(); } }
+        function carouselPrev() { if (_carouselActive.length) { _carouselIdx = (_carouselIdx - 1 + _carouselActive.length) % _carouselActive.length; _carouselApply(); } }
+
+        window.addEventListener('resize', _carouselApply);
 
         function formatBRDate(dateStr) {
             if (!dateStr) return "-";
