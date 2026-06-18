@@ -1342,6 +1342,28 @@
             updateDynamicCharts();
         }
 
+        // Esconde do seletor "Dado" as fontes sem nenhum registro (gráficos vazios
+        // confundem). Reaparecem automaticamente quando houver dado cadastrado.
+        function hideEmptyDataSources() {
+            const sel = document.getElementById('selectDataSource');
+            if (!sel) return;
+            const counts = {
+                questionarios: (db.questionarios || []).length,
+                testes_fisicos: (db.testesFisicos || []).length,
+                antropometria: (db.antropometria || []).length,
+                saude: (db.lesoes || []).length
+            };
+            [...sel.options].forEach(opt => {
+                if (opt.value in counts) opt.hidden = counts[opt.value] === 0;
+            });
+            // se a fonte atualmente selecionada acabou de ser escondida, volta p/ Carga/PSE
+            const cur = sel.options[sel.selectedIndex];
+            if (cur && cur.hidden) {
+                sel.value = 'pse_carga';
+                handleDataSourceChange();
+            }
+        }
+
         function updateDynamicCharts() {
             const source = document.getElementById('selectDataSource').value;
             const athleteId = document.getElementById('selectComparison').value;
@@ -4288,6 +4310,7 @@
             renderSemaforo();
             setTimeout(() => {
                 populateComparisonSelect();
+                hideEmptyDataSources();
                 updateDynamicCharts();
             }, 100);
         }
@@ -4301,5 +4324,6 @@
         window.onDataLoaded = function() {
             try { renderSemaforo(); } catch (e) { }
             try { buildAverageChart(document.getElementById('dataFiltro')?.value); } catch (e) { }
+            try { hideEmptyDataSources(); } catch (e) { }
             try { updateDynamicCharts(); } catch (e) { }
         };
