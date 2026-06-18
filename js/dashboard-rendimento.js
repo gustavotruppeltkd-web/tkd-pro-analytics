@@ -1309,6 +1309,7 @@
         // de "7 dias terminando hoje"). _weekOffset move entre semanas passadas.
         // Tudo re-filtra arrays já em memória — nenhuma consulta nova ao Supabase.
         let _weekOffset = 0; // 0 = semana atual, -1 = semana passada, ...
+        let _lastChartSource = null; // detecta troca de fonte — só aí o carrossel volta ao 1º gráfico
 
         function getWeekDates(refStr, offset) {
             const base = refStr ? new Date(refStr + 'T00:00:00') : new Date();
@@ -1387,8 +1388,12 @@
                     break;
             }
 
-            // Reorganiza o carrossel após (re)criar os gráficos desta fonte
-            rebuildCarousel(true);
+            // Reorganiza o carrossel. Só volta ao 1º gráfico quando a FONTE muda;
+            // atualizações de dados (realtime/polling) e troca de semana preservam
+            // o gráfico que o usuário está vendo.
+            const sourceChanged = (source !== _lastChartSource);
+            _lastChartSource = source;
+            rebuildCarousel(sourceChanged);
         }
 
         // ====================== CARROSSEL DE GRÁFICOS ======================
