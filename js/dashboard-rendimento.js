@@ -1304,6 +1304,43 @@
             };
         }
 
+        // ============== NAVEGAÇÃO POR SEMANA (Seg–Dom) ==============
+        // Os gráficos de dia-a-dia mostram uma semana fixa Segunda→Domingo (em vez
+        // de "7 dias terminando hoje"). _weekOffset move entre semanas passadas.
+        // Tudo re-filtra arrays já em memória — nenhuma consulta nova ao Supabase.
+        let _weekOffset = 0; // 0 = semana atual, -1 = semana passada, ...
+
+        function getWeekDates(refStr, offset) {
+            const base = refStr ? new Date(refStr + 'T00:00:00') : new Date();
+            const dow = base.getDay();
+            const diffToMon = (dow === 0) ? -6 : 1 - dow; // domingo recua 6 dias até a segunda
+            const monday = new Date(base);
+            monday.setDate(base.getDate() + diffToMon + (offset * 7));
+            const days = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                days.push(d.toLocaleDateString('sv-SE'));
+            }
+            return days; // [Seg, Ter, Qua, Qui, Sex, Sáb, Dom]
+        }
+
+        function updateWeekLabel(dates) {
+            const el = document.getElementById('weekNavLabel');
+            if (el && dates && dates.length === 7) {
+                const fmt = s => { const p = s.split('-'); return p[2] + '/' + p[1]; };
+                el.textContent = `Seg ${fmt(dates[0])} – Dom ${fmt(dates[6])}`;
+            }
+            // não deixa avançar além da semana atual (futuro não tem dado)
+            const nextBtn = document.querySelector('.week-nav-btn[onclick="changeWeek(1)"]');
+            if (nextBtn) nextBtn.disabled = (_weekOffset >= 0);
+        }
+
+        function changeWeek(delta) {
+            _weekOffset = Math.min(0, _weekOffset + delta);
+            updateDynamicCharts();
+        }
+
         function updateDynamicCharts() {
             const source = document.getElementById('selectDataSource').value;
             const athleteId = document.getElementById('selectComparison').value;
@@ -1312,13 +1349,14 @@
 
             destroyCharts();
 
-            // Setup Labels for last 7 days
-            const dates7 = getDatesInRange(targetDate, 7).reverse();
+            // Semana fixa Segunda→Domingo (navegável pelas setas "Semana").
+            const dates7 = getWeekDates(targetDate, _weekOffset);
             const diasSemanaShort = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
             const labels7 = dates7.map(d => {
                 const dt = new Date(d + 'T00:00:00');
                 return diasSemanaShort[dt.getDay()];
             });
+            updateWeekLabel(dates7);
 
             switch (source) {
                 case 'wellness':
