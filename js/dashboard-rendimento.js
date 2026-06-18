@@ -2228,7 +2228,7 @@
                         datalabels: { display: false }
                     },
                     scales: {
-                        y: { ticks: { stepSize: 1, ...axisStyle }, grid: gridStyle },
+                        y: { ticks: { stepSize: 1, ...axisStyle }, grid: gridStyle, grace: '12%' },
                         x: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 13, weight: '500' } } }
                     }
                 },
