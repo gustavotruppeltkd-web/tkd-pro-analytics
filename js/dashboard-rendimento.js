@@ -1343,7 +1343,58 @@
                     renderHealthCharts(ctx1, ctx2, ctx3, ctx4, ctx5, athleteId);
                     break;
             }
+
+            // Reorganiza o carrossel após (re)criar os gráficos desta fonte
+            rebuildCarousel(true);
         }
+
+        // ====================== CARROSSEL DE GRÁFICOS ======================
+        // Mostra 1 slide por vez (tabela + só os gráficos que a fonte gerou),
+        // com setas e bolinhas. Pula automaticamente os slots sem gráfico.
+        let _carouselActive = [];
+        let _carouselIdx = 0;
+
+        function _carouselCollectSlides() {
+            const slides = [];
+            const table = document.querySelector('#dynamicChartsGrid .carousel-slide[data-slot="table"]');
+            if (table) slides.push(table);
+            for (let n = 1; n <= 5; n++) {
+                if (dynamicCharts && dynamicCharts['chart' + n]) {
+                    const s = document.querySelector(`#dynamicChartsGrid .carousel-slide[data-slot="${n}"]`);
+                    if (s) slides.push(s);
+                }
+            }
+            return slides;
+        }
+
+        function rebuildCarousel(reset) {
+            _carouselActive = _carouselCollectSlides();
+            if (reset || _carouselIdx >= _carouselActive.length) _carouselIdx = 0;
+
+            document.querySelectorAll('#dynamicChartsGrid .carousel-slide')
+                .forEach(s => s.classList.remove('active'));
+
+            const dotsEl = document.getElementById('carouselDots');
+            if (dotsEl) {
+                dotsEl.innerHTML = _carouselActive.map((s, i) =>
+                    `<button type="button" class="carousel-dot${i === _carouselIdx ? ' active' : ''}" onclick="carouselGo(${i})" aria-label="Slide ${i + 1}"></button>`
+                ).join('');
+            }
+
+            const current = _carouselActive[_carouselIdx];
+            if (current) {
+                current.classList.add('active');
+                const slot = current.dataset.slot;
+                if (slot !== 'table' && dynamicCharts['chart' + slot]) {
+                    // canvas foi criado escondido (0px) → força redimensionar ao aparecer
+                    setTimeout(() => { try { dynamicCharts['chart' + slot].resize(); } catch (e) {} }, 30);
+                }
+            }
+        }
+
+        function carouselGo(i) { _carouselIdx = i; rebuildCarousel(false); }
+        function carouselNext() { if (_carouselActive.length) { _carouselIdx = (_carouselIdx + 1) % _carouselActive.length; rebuildCarousel(false); } }
+        function carouselPrev() { if (_carouselActive.length) { _carouselIdx = (_carouselIdx - 1 + _carouselActive.length) % _carouselActive.length; rebuildCarousel(false); } }
 
         function formatBRDate(dateStr) {
             if (!dateStr) return "-";
@@ -1380,11 +1431,18 @@
             };
 
             showToast("Gerando PDF, aguarde...");
-            html2pdf().set(opt).from(el).save().then(() => {
-                tableContainer.style.maxHeight = originalMaxHeight;
-                tableContainer.style.overflowY = originalOverflow;
-                showToast("PDF Exportado com sucesso!");
-            });
+            // Revela todos os slides do carrossel e redimensiona os gráficos para
+            // que a captura inclua todos (não só o slide visível).
+            el.classList.add('exporting');
+            [1, 2, 3, 4, 5].forEach(n => { try { dynamicCharts['chart' + n]?.resize(); } catch (e) {} });
+            setTimeout(() => {
+                html2pdf().set(opt).from(el).save().then(() => {
+                    el.classList.remove('exporting');
+                    tableContainer.style.maxHeight = originalMaxHeight;
+                    tableContainer.style.overflowY = originalOverflow;
+                    showToast("PDF Exportado com sucesso!");
+                });
+            }, 150);
         }
 
         function exportDynamicCSV() {
