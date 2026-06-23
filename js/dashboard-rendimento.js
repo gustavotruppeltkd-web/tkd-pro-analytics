@@ -1954,10 +1954,10 @@
 
         function renderPseCargaCharts(ctx1, ctx2, ctx3, ctx4, ctx5, labels, dates, athleteId) {
             document.getElementById('titleTable').innerText = 'Diário de Treinos';
-            document.getElementById('titleChart1').innerText = 'Carga do Treino vs Resposta do Atleta';
-            document.getElementById('titleChart2').innerText = 'O Mesociclo está sendo seguido?';
-            document.getElementById('titleChart3').innerText = 'TKD vs Físico — Distribuição da Semana';
-            document.getElementById('titleChart4').innerText = 'Como o atleta está respondendo? (Intensidade)';
+            document.getElementById('titleChart1').innerText = 'Carga Física (Externa vs Interna)';
+            document.getElementById('titleChart2').innerText = 'Carga TKD (Externa vs Interna)';
+            document.getElementById('titleChart3').innerText = 'Carga Diária — Físico + TKD';
+            document.getElementById('titleChart4').innerText = 'O Mesociclo está sendo seguido?';
             document.getElementById('titleChart5').innerText = 'Carga Semanal — Últimas 5 Semanas';
 
             // --- Data helpers ---
@@ -2062,27 +2062,46 @@
             const axisStyle = { color: 'rgba(255,255,255,0.4)', font: { size: 12 } };
             const gridStyle = { color: 'rgba(255,255,255,0.06)' };
 
-            // ---- Gráfico 1: Carga do Treino (externa) vs Resposta do Atleta (interna) ----
-            // Story: "O atleta sentiu a mesma carga que você planejou?"
-            // Bars = external load from treinos (what the coach planned/executed)
-            // Line = internal load reported by athlete (how the athlete felt)
+            // ===== Carga Externa (prescrita) vs Interna (sentida) — Físico / TKD / Diário =====
+            // Externa = soma da carga dos treinos criados (o que você prescreve).
+            // Interna = carga reportada pelos atletas via PSE (o que eles sentem);
+            //           na equipe usa a MÉDIA por atleta para comparar na mesma escala.
+            const extFisData = dates.map(d => {
+                const ts = treinosTurma.filter(t => t.data === d && isTreinoFisico(t.tipo));
+                if (ts.length === 0) return null;
+                return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
+            });
+            const extTkdData = dates.map(d => {
+                const ts = treinosTurma.filter(t => t.data === d && !isTreinoFisico(t.tipo));
+                if (ts.length === 0) return null;
+                return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
+            });
             const extTotalData = dates.map(d => {
                 const ts = treinosTurma.filter(t => t.data === d);
                 if (ts.length === 0) return null;
                 return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
             });
-            const intTotalData = dates.map(d => {
-                const ls = allInternalLogs.filter(l => l.data === d);
+            const intCarga = (d, filtro) => {
+                let ls = allInternalLogs.filter(l => l.data === d);
+                if (filtro === 'fis') ls = ls.filter(l => l.tipoTreino === 'Físico');
+                else if (filtro === 'tkd') ls = ls.filter(l => l.tipoTreino !== 'Físico');
                 if (ls.length === 0) return null;
                 const sum = ls.reduce((s, l) => s + (l.cargaCalculada || (l.duracaoMins * l.pse)), 0);
-                return athleteId === 'equipe' ? Math.round(sum / ls.length) : Math.round(sum);
-            });
-            dynamicCharts.chart1 = new Chart(ctx1, {
+                if (athleteId !== 'equipe') return Math.round(sum);
+                const nAtletas = new Set(ls.map(l => l.atletaId)).size || 1; // média por atleta
+                return Math.round(sum / nAtletas);
+            };
+            const intFisData = dates.map(d => intCarga(d, 'fis'));
+            const intTkdData = dates.map(d => intCarga(d, 'tkd'));
+            const intTotalData = dates.map(d => intCarga(d, 'all'));
+
+            const mkGrupoCarga = (ctx, ext, int) => new Chart(ctx, {
+                type: 'bar',
                 data: {
                     labels,
                     datasets: [
-                        { label: 'Carga Planejada', type: 'bar', data: extTotalData, backgroundColor: 'rgba(59,130,246,0.75)', borderRadius: 5 },
-                        { label: 'Resposta do Atleta (PSE)', type: 'line', data: intTotalData, borderColor: '#f59e0b', backgroundColor: 'transparent', tension: 0.4, fill: false, pointRadius: 5, pointBackgroundColor: '#f59e0b', spanGaps: true, borderWidth: 3 }
+                        { label: 'Externa — você prescreve', data: ext, backgroundColor: 'rgba(59,130,246,0.85)', borderRadius: 5 },
+                        { label: 'Interna — atletas sentem', data: int, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 5 }
                     ]
                 },
                 options: {
@@ -2095,8 +2114,12 @@
                 }
             });
 
-            // ---- Gráfico 2: Mesociclo Planejado vs Realizado ----
-            // Story: "O que foi planejado no mesociclo está sendo executado?"
+            // Gráfico 1: Carga Física | Gráfico 2: Carga TKD | Gráfico 3: Carga Diária (Físico+TKD)
+            dynamicCharts.chart1 = mkGrupoCarga(ctx1, extFisData, intFisData);
+            dynamicCharts.chart2 = mkGrupoCarga(ctx2, extTkdData, intTkdData);
+            dynamicCharts.chart3 = mkGrupoCarga(ctx3, extTotalData, intTotalData);
+
+            // ---- Gráfico 4: Mesociclo Planejado vs Realizado ----
             const mesoAtivo = (db.mesociclos || []).find(m => m.turmaId === db.activeTurmaId);
             const mesoPlanned = dates.map(d => {
                 const weekStartObj = getWeekStartFor(new Date(d + 'T00:00:00'));
@@ -2112,17 +2135,12 @@
                 const v = Math.round(sem.sessoesDias[dayIndex].reduce((s, sess) => s + ((sess.min||0)*(sess.pse||0)), 0));
                 return v > 0 ? v : null;
             });
-            const treinoRealized = dates.map(d => {
-                const ts = treinosTurma.filter(t => t.data === d);
-                if (ts.length === 0) return null;
-                return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
-            });
-            dynamicCharts.chart2 = new Chart(ctx2, {
+            dynamicCharts.chart4 = new Chart(ctx4, {
                 data: {
                     labels,
                     datasets: [
                         { label: 'Planejado (Mesociclo)', type: 'line', data: mesoPlanned, borderColor: '#fbbf24', borderDash: [6,4], tension: 0.3, fill: false, pointRadius: 4, pointBackgroundColor: '#fbbf24', spanGaps: true, borderWidth: 3 },
-                        { label: 'Realizado (Treino)', type: 'bar', data: treinoRealized, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 5 }
+                        { label: 'Realizado (Treino)', type: 'bar', data: extTotalData, backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 5 }
                     ]
                 },
                 options: {
@@ -2135,83 +2153,9 @@
                 }
             });
 
-            // ---- Gráfico 3: TKD vs Físico — Carga por tipo empilhada por dia ----
-            // Story: "Qual foi o mix de TKD e Físico em cada treino?"
-            const extTkdData = dates.map(d => {
-                const ts = treinosTurma.filter(t => t.data === d && !isTreinoFisico(t.tipo));
-                if (ts.length === 0) return null;
-                return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
-            });
-            const extFisData = dates.map(d => {
-                const ts = treinosTurma.filter(t => t.data === d && isTreinoFisico(t.tipo));
-                if (ts.length === 0) return null;
-                return ts.reduce((s, t) => s + (t.cargaTreino || Math.round((t.psePlanejada||0)*(t.duracaoMins||0))), 0);
-            });
-            const totTkd = extTkdData.reduce((s, v) => s + (v || 0), 0);
-            const totFis = extFisData.reduce((s, v) => s + (v || 0), 0);
-            const totGeral = totTkd + totFis;
-            dynamicCharts.chart3 = new Chart(ctx3, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Taekwondo', 'Físico'],
-                    datasets: [{ data: [totTkd, totFis], backgroundColor: ['rgba(59,130,246,0.85)', 'rgba(245,158,11,0.85)'], borderWidth: 0 }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false, cutout: '62%',
-                    plugins: {
-                        legend: { display: true, position: 'bottom', labels: legendLabels },
-                        tooltip: { callbacks: { label: (c) => { const v = c.raw || 0; const p = totGeral ? Math.round(v / totGeral * 100) : 0; return `${c.label}: ${v} UA (${p}%)`; } } }
-                    }
-                }
-            });
-
-            // ---- Gráfico 4: Intensidade percebida pelo atleta (PSE) ----
-            // Story: "O atleta está treinando em qual zona de esforço com mais frequência?"
-            let leve = 0, mod = 0, intenso = 0;
-            allInternalLogs.forEach(l => {
-                if (l.pse <= 4) leve++;
-                else if (l.pse <= 7) mod++;
-                else intenso++;
-            });
-            dynamicCharts.chart4 = new Chart(ctx4, {
-                type: 'bar',
-                data: {
-                    labels: ['Leve  (PSE 1–4)', 'Moderado  (PSE 5–7)', 'Intenso  (PSE 8–10)'],
-                    datasets: [{
-                        label: 'Sessões',
-                        data: [leve, mod, intenso],
-                        backgroundColor: ['rgba(16,185,129,0.85)', 'rgba(245,158,11,0.85)', 'rgba(239,68,68,0.85)'],
-                        borderRadius: 6,
-                        barThickness: 48
-                    }]
-                },
-                options: {
-                    ...getCommonOptions(),
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: { display: false }
-                    },
-                    scales: {
-                        y: { ticks: { stepSize: 1, ...axisStyle }, grid: gridStyle, grace: '12%' },
-                        x: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 13, weight: '500' } } }
-                    }
-                },
-                plugins: [{
-                    id: 'pseBarValues',
-                    afterDatasetsDraw(chart) {
-                        const ctx = chart.ctx;
-                        chart.getDatasetMeta(0).data.forEach((bar, i) => {
-                            const v = chart.data.datasets[0].data[i];
-                            ctx.save();
-                            ctx.fillStyle = '#e2e8f0';
-                            ctx.font = '700 15px sans-serif';
-                            ctx.textAlign = 'center';
-                            ctx.fillText(v, bar.x, bar.y - 8);
-                            ctx.restore();
-                        });
-                    }
-                }]
-            });
+            // (Gráfico de Intensidade por zonas de PSE removido — o foco passou a
+            //  ser a comparação Externa vs Interna por Físico/TKD/Diário. O slot 4
+            //  agora é o Mesociclo, acima.)
 
             // ---- Gráfico 5: Tendência de carga semanal (5 semanas) ----
             // Story: "A carga está subindo, estável ou caindo?"
