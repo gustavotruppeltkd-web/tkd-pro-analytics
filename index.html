@@ -326,12 +326,19 @@
                 // Verificar autorização antes de criar a conta
                 const { data: authRow } = await supabaseClient
                     .from('authorized_emails')
-                    .select('email')
+                    .select('email, blocked')
                     .eq('email', email.toLowerCase())
-                    .single();
+                    .maybeSingle();
 
                 if (!authRow) {
                     errorMsg.innerText = "Este e-mail não está autorizado. Solicite acesso ao administrador.";
+                    errorMsg.style.display = 'block';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    return;
+                }
+                if (authRow.blocked) {
+                    errorMsg.innerText = "Acesso bloqueado pelo administrador.";
                     errorMsg.style.display = 'block';
                     btn.disabled = false;
                     btn.style.opacity = '1';
@@ -363,16 +370,18 @@
                 } else if (data && data.user) {
                     const userEmail = data.user.email.toLowerCase();
 
-                    // Verificar se está na lista de autorizados
+                    // Verificar se está na lista de autorizados (e não bloqueado)
                     const { data: authRow } = await supabaseClient
                         .from('authorized_emails')
-                        .select('email')
+                        .select('email, blocked')
                         .eq('email', userEmail)
-                        .single();
+                        .maybeSingle();
 
-                    if (!authRow) {
+                    if (!authRow || authRow.blocked) {
                         await supabaseClient.auth.signOut();
-                        errorMsg.innerText = "Acesso não autorizado. Solicite acesso ao administrador.";
+                        errorMsg.innerText = authRow && authRow.blocked
+                            ? "Acesso bloqueado pelo administrador."
+                            : "Acesso não autorizado. Solicite acesso ao administrador.";
                         errorMsg.style.display = 'block';
                         btn.disabled = false;
                         btn.style.opacity = '1';
@@ -385,6 +394,21 @@
             btn.disabled = false;
             btn.style.opacity = '1';
         });
+
+        // Aviso quando o auth.js deslogou por acesso removido/bloqueado pelo admin
+        (function () {
+            const revoked = sessionStorage.getItem('tkd_access_revoked');
+            if (revoked) {
+                sessionStorage.removeItem('tkd_access_revoked');
+                const el = document.getElementById('errorMsg');
+                if (el) {
+                    el.innerText = revoked === 'blocked'
+                        ? 'Seu acesso foi bloqueado pelo administrador.'
+                        : 'Seu acesso foi removido pelo administrador.';
+                    el.style.display = 'block';
+                }
+            }
+        })();
     </script>
 </body>
 

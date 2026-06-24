@@ -1057,14 +1057,29 @@
                 return;
             }
 
-            listEl.innerHTML = data.map(item => `
-                <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg-hover); border:1px solid var(--border-color); border-radius:8px; padding: 10px 16px;">
-                    <span style="font-size:14px; color:var(--text-main);"><i class="ti ti-mail" style="color:var(--primary); margin-right:8px;"></i>${item.email}</span>
-                    <button onclick="removeAuthorizedEmail('${item.email}')" class="btn btn-outline" style="padding:4px 10px; font-size:12px; border-color:var(--red); color:var(--red);">
-                        <i class="ti ti-trash"></i>
-                    </button>
-                </div>
-            `).join('');
+            listEl.innerHTML = data.map(item => {
+                const isOwner = item.email.toLowerCase() === OWNER_EMAIL.toLowerCase();
+                const blocked = !!item.blocked;
+                const safe = item.email.replace(/'/g, "\\'");
+                return `
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; background:var(--bg-hover); border:1px solid ${blocked ? 'var(--red)' : 'var(--border-color)'}; border-radius:8px; padding: 10px 16px;">
+                    <span style="font-size:14px; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                        <i class="ti ti-mail" style="color:${blocked ? 'var(--red)' : 'var(--primary)'};"></i>
+                        <span style="${blocked ? 'text-decoration:line-through; opacity:.7;' : ''}">${item.email}</span>
+                        ${isOwner ? '<span style="font-size:11px; color:var(--text-muted);">(você)</span>' : ''}
+                        ${blocked ? '<span style="font-size:11px; color:var(--red); font-weight:700;">BLOQUEADO</span>' : ''}
+                    </span>
+                    ${isOwner ? '' : `
+                    <div style="display:flex; gap:6px;">
+                        <button onclick="toggleBlockEmail('${safe}', ${!blocked})" class="btn btn-outline" style="padding:4px 10px; font-size:12px; border-color:${blocked ? '#10b981' : '#f59e0b'}; color:${blocked ? '#10b981' : '#f59e0b'};" title="${blocked ? 'Desbloquear acesso' : 'Bloquear acesso'}">
+                            <i class="ti ti-${blocked ? 'lock-open' : 'lock'}"></i> ${blocked ? 'Desbloquear' : 'Bloquear'}
+                        </button>
+                        <button onclick="deleteCoachAccount('${safe}')" class="btn btn-outline" style="padding:4px 10px; font-size:12px; border-color:var(--red); color:var(--red);" title="Excluir conta e TODOS os dados">
+                            <i class="ti ti-trash"></i>
+                        </button>
+                    </div>`}
+                </div>`;
+            }).join('');
         }
 
         async function addAuthorizedEmail() {
@@ -1094,13 +1109,31 @@
             loadAuthorizedEmails();
         }
 
-        async function removeAuthorizedEmail(email) {
-            if (!confirm(`Remover "${email}" da lista de autorizados?`)) return;
-            const { error } = await window.supabaseClient.from('authorized_emails').delete().eq('email', email);
-            if (error) {
-                alert('Erro ao remover: ' + error.message);
+        // Bloquear/Desbloquear — corta o acesso sem perder dados. Efeito no próximo
+        // carregamento de página da pessoa (auth.js revalida e desloga).
+        async function toggleBlockEmail(email, block) {
+            const { error } = await window.supabaseClient
+                .from('authorized_emails').update({ blocked: block }).eq('email', email);
+            if (error) { alert('Erro: ' + error.message); return; }
+            loadAuthorizedEmails();
+        }
+
+        // Excluir — APAGA a conta e TODOS os dados do treinador (irreversível).
+        async function deleteCoachAccount(email) {
+            const resp = prompt(
+                `ATENÇÃO — EXCLUSÃO PERMANENTE\n\n` +
+                `Isso vai apagar a conta "${email}" e TODOS os dados desse treinador ` +
+                `(turmas, alunos, treinos, mesociclos, respostas, etc.). É irreversível.\n\n` +
+                `Digite EXCLUIR para confirmar:`
+            );
+            if (resp === null) return;
+            if (resp.trim().toUpperCase() !== 'EXCLUIR') {
+                alert('Confirmação incorreta. Nada foi excluído.');
                 return;
             }
+            const { error } = await window.supabaseClient.rpc('admin_delete_coach', { target_email: email });
+            if (error) { alert('Erro ao excluir: ' + error.message); return; }
+            alert('Conta e dados excluídos com sucesso.');
             loadAuthorizedEmails();
         }
 

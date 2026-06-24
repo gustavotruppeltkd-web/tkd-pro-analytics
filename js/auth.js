@@ -19,9 +19,33 @@ async function checkAuth(isLoginPage = false) {
     if (!session && !isLoginPage) {
         // Not logged in, redirect to index (login)
         window.location.href = 'index.html';
+        return;
     } else if (session && isLoginPage) {
         // Logged in but on login page, redirect to trainer selection
         window.location.href = 'selecionar-treinador.html';
+        return;
+    }
+
+    // Revalida a autorização do treinador logado em TODA página protegida.
+    // Se o e-mail foi removido da lista OU bloqueado pelo admin, desloga e volta
+    // ao login. (Erro de rede NÃO derruba — fail-open p/ não travar por engano.)
+    if (session && !isLoginPage) {
+        try {
+            const email = (session.user.email || '').toLowerCase();
+            const { data: authRow, error } = await window.supabaseClient
+                .from('authorized_emails')
+                .select('email, blocked')
+                .eq('email', email)
+                .maybeSingle();
+            if (!error && (!authRow || authRow.blocked)) {
+                sessionStorage.setItem('tkd_access_revoked', (authRow && authRow.blocked) ? 'blocked' : 'removed');
+                await window.supabaseClient.auth.signOut();
+                localStorage.removeItem('tkd_scout_db');
+                window.location.href = 'index.html';
+            }
+        } catch (e) {
+            console.warn('Falha ao revalidar autorização (mantendo acesso):', e);
+        }
     }
 }
 
