@@ -290,11 +290,11 @@
             <div class="section-actions"
                 style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
                 <div class="view-switcher">
-                    <button class="view-btn active" onclick="switchView('list')"><i class="ti ti-list"></i>
+                    <button class="view-btn" onclick="switchView('list')"><i class="ti ti-list"></i>
                         Lista</button>
                     <button class="view-btn" onclick="switchView('week')"><i class="ti ti-calendar-week"></i>
                         Semana</button>
-                    <button class="view-btn" onclick="switchView('calendar')"><i class="ti ti-calendar"></i>
+                    <button class="view-btn active" onclick="switchView('calendar')"><i class="ti ti-calendar"></i>
                         Mensal</button>
                 </div>
                 <div style="display: flex; gap: 12px;">
@@ -314,7 +314,7 @@
             </div>
 
             <!-- List View Container -->
-            <div id="listView" class="event-list">
+            <div id="listView" class="event-list" style="display:none;">
                 <!-- Rendered by JS -->
             </div>
 
@@ -331,7 +331,7 @@
             </div>
 
             <!-- Calendar View Container -->
-            <div id="calendarView" class="card calendar-grid-container" style="padding: 0;">
+            <div id="calendarView" class="card calendar-grid-container" style="padding: 0; display:block;">
                 <div class="calendar-header">
                     <h2 id="currentMonthYear">Outubro 2023</h2>
                     <div class="calendar-nav">
@@ -458,7 +458,7 @@
     <script src="js/auth.js"></script>
     <script src="js/app-v2.js"></script>
     <script>
-        let currentView = 'list';
+        let currentView = 'calendar';
         let displayDate = new Date();
         let editingEventId = null;
         let currentWeekStart = getWeekStart(new Date());
@@ -1007,14 +1007,14 @@
         // Hook chamado pelo Realtime (app.js) quando dados do Supabase chegam
         window.onDataLoaded = function() {
             try {
-                const activeTab = document.querySelector('.view-btn.active')?.dataset?.view;
-                if (activeTab === 'calendar') renderCalendarView();
+                if (currentView === 'calendar') renderCalendarView();
+                else if (currentView === 'week') renderWeekView();
                 else renderListView();
             } catch (e) { }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(renderListView, 100);
+            setTimeout(renderCalendarView, 100);
         });
     </script>
 </body>
