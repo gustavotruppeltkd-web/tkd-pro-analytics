@@ -290,11 +290,11 @@
             <div class="section-actions"
                 style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
                 <div class="view-switcher">
-                    <button class="view-btn" onclick="switchView('list')"><i class="ti ti-list"></i>
+                    <button class="view-btn active" onclick="switchView('list')"><i class="ti ti-list"></i>
                         Lista</button>
                     <button class="view-btn" onclick="switchView('week')"><i class="ti ti-calendar-week"></i>
                         Semana</button>
-                    <button class="view-btn active" onclick="switchView('calendar')"><i class="ti ti-calendar"></i>
+                    <button class="view-btn" onclick="switchView('calendar')"><i class="ti ti-calendar"></i>
                         Mensal</button>
                 </div>
                 <div style="display: flex; gap: 12px;">
@@ -308,13 +308,16 @@
             </div>
 
             <!-- Search bar for list view -->
-            <div id="eventoSearchBar" style="margin-bottom:16px; display:none; position:relative;">
-                <i class="ti ti-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; pointer-events:none;"></i>
-                <input type="text" id="eventoSearchInput" class="form-control" placeholder="Buscar evento por nome ou local..." style="padding-left:38px;" oninput="renderListView()">
+            <div id="eventoSearchBar" style="margin-bottom:16px; display:none; gap:10px; align-items:center;">
+                <div style="position:relative; flex:1;">
+                    <i class="ti ti-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:14px; pointer-events:none;"></i>
+                    <input type="text" id="eventoSearchInput" class="form-control" placeholder="Buscar evento por nome ou local..." style="padding-left:38px; width:100%;" oninput="renderListView()">
+                </div>
+                <select id="eventoYearSelect" onchange="renderListView()" title="Filtrar por ano" class="form-control" style="width:auto; min-width:130px; cursor:pointer;"></select>
             </div>
 
             <!-- List View Container -->
-            <div id="listView" class="event-list" style="display:none;">
+            <div id="listView" class="event-list">
                 <!-- Rendered by JS -->
             </div>
 
@@ -331,15 +334,13 @@
             </div>
 
             <!-- Calendar View Container -->
-            <div id="calendarView" class="card calendar-grid-container" style="padding: 0; display:block;">
+            <div id="calendarView" class="card calendar-grid-container" style="padding: 0;">
                 <div class="calendar-header">
                     <h2 id="currentMonthYear">Outubro 2023</h2>
                     <div class="calendar-nav">
                         <button class="btn btn-icon" onclick="changeMonth(-1)"><i class="ti ti-chevron-left"></i></button>
                         <button class="btn" style="background: var(--bg-hover);" onclick="goToToday()">Hoje</button>
                         <button class="btn btn-icon" onclick="changeMonth(1)"><i class="ti ti-chevron-right"></i></button>
-                        <select id="yearSelect" onchange="changeYear(this.value)" title="Selecionar ano"
-                            style="background: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 7px 10px; font-size: 14px; font-weight: 600; cursor: pointer; margin-left: 8px;"></select>
                     </div>
                 </div>
                 <div class="calendar-grid" id="calendarGrid">
@@ -458,7 +459,7 @@
     <script src="js/auth.js"></script>
     <script src="js/app-v2.js"></script>
     <script>
-        let currentView = 'calendar';
+        let currentView = 'list';
         let displayDate = new Date();
         let editingEventId = null;
         let currentWeekStart = getWeekStart(new Date());
@@ -657,17 +658,40 @@
             });
         }
 
+        // Popula o seletor de ano da Lista com os anos que têm eventos + o ano atual.
+        // Default = ano atual; preserva a escolha do usuário entre re-renders.
+        function populateEventoYearSelect() {
+            const sel = document.getElementById('eventoYearSelect');
+            if (!sel) return;
+            const nowY = String(new Date().getFullYear());
+            const years = new Set([nowY]);
+            (db.eventos || []).forEach(ev => { if (ev.data) years.add(ev.data.slice(0, 4)); });
+            const sorted = [...years].filter(Boolean).sort((a, b) => b.localeCompare(a)); // desc
+            const sig = sorted.join(',');
+            if (sel.dataset.sig === sig && sel.options.length) return; // já populado com os mesmos anos
+            const prev = sel.value;
+            sel.innerHTML = '<option value="all">Todos os anos</option>' +
+                sorted.map(y => `<option value="${y}">${y}</option>`).join('');
+            sel.dataset.sig = sig;
+            sel.value = (prev && [...sel.options].some(o => o.value === prev)) ? prev : nowY;
+        }
+
         function renderListView() {
             const list = document.getElementById('listView');
             list.innerHTML = '';
 
             const searchBar = document.getElementById('eventoSearchBar');
-            if (searchBar) searchBar.style.display = 'block';
+            if (searchBar) searchBar.style.display = 'flex';
 
+            populateEventoYearSelect();
+            const selYear = document.getElementById('eventoYearSelect')?.value || 'all';
             const query = (document.getElementById('eventoSearchInput')?.value || '').toLowerCase().trim();
 
-            // Sort by date, filter by search
+            // Sort by date, filter by year + search
             let sortedEvents = [...db.eventos].sort((a, b) => new Date(a.data) - new Date(b.data));
+            if (selYear && selYear !== 'all') {
+                sortedEvents = sortedEvents.filter(ev => (ev.data || '').slice(0, 4) === selYear);
+            }
             if (query) {
                 sortedEvents = sortedEvents.filter(ev =>
                     (ev.titulo || '').toLowerCase().includes(query) ||
@@ -681,7 +705,7 @@
             }
 
             if (sortedEvents.length === 0) {
-                list.innerHTML = `<div class="empty-state"><i class="ti ti-search-off"></i><h3>Nenhum resultado encontrado</h3><p>Tente buscar por outro nome ou local.</p></div>`;
+                list.innerHTML = `<div class="empty-state"><i class="ti ti-search-off"></i><h3>Nenhum evento encontrado</h3><p>Ajuste o ano ou a busca para ver outros eventos.</p></div>`;
                 return;
             }
 
@@ -768,7 +792,6 @@
             const month = displayDate.getMonth();
 
             document.getElementById('currentMonthYear').innerText = displayDate.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
-            syncYearSelect(year);
 
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -980,41 +1003,17 @@
             renderCalendarView();
         }
 
-        // Seletor de ano: o calendário abre no ano atual e dá pra escolher outro.
-        function syncYearSelect(year) {
-            const sel = document.getElementById('yearSelect');
-            if (!sel) return;
-            const nowY = new Date().getFullYear();
-            const min = Math.min(nowY - 5, year);
-            const max = Math.max(nowY + 5, year);
-            if (sel.options.length === 0 || +sel.dataset.min !== min || +sel.dataset.max !== max) {
-                sel.innerHTML = '';
-                for (let y = max; y >= min; y--) {
-                    const opt = document.createElement('option');
-                    opt.value = y; opt.text = y;
-                    sel.appendChild(opt);
-                }
-                sel.dataset.min = min; sel.dataset.max = max;
-            }
-            sel.value = year;
-        }
-
-        function changeYear(year) {
-            displayDate = new Date(parseInt(year, 10), displayDate.getMonth(), 1);
-            renderCalendarView();
-        }
-
         // Hook chamado pelo Realtime (app.js) quando dados do Supabase chegam
         window.onDataLoaded = function() {
             try {
-                if (currentView === 'calendar') renderCalendarView();
-                else if (currentView === 'week') renderWeekView();
+                const activeTab = document.querySelector('.view-btn.active')?.dataset?.view;
+                if (activeTab === 'calendar') renderCalendarView();
                 else renderListView();
             } catch (e) { }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(renderCalendarView, 100);
+            setTimeout(renderListView, 100);
         });
     </script>
 </body>
