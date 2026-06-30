@@ -774,6 +774,19 @@
 
             const form = document.getElementById('formAddAluno');
             if (form) form.reset();
+
+            // Para-Taekwondo: preenche classes, liga o toggle e esconde os campos
+            // (form.reset volta a Modalidade para "Convencional").
+            const selMod = document.getElementById('selModalidadeAluno');
+            const paraWrap = document.getElementById('paraFieldsAluno');
+            if (selMod && paraWrap) {
+                if (window.fillParaClasseSelect) window.fillParaClasseSelect(document.getElementById('selParaClasseAluno'));
+                if (!selMod._wired) {
+                    selMod.addEventListener('change', () => { paraWrap.style.display = selMod.value === 'para' ? 'block' : 'none'; });
+                    selMod._wired = true;
+                }
+                paraWrap.style.display = 'none';
+            }
         }
 
         function confirmDeleteAluno(id) {
@@ -831,6 +844,9 @@
                 sexo: form.sexoAtleta ? form.sexoAtleta.value : '',
                 categoriaPeso: form.pesoAtleta ? form.pesoAtleta.value : '',
                 categoriaIdade: form.idadeAtleta ? form.idadeAtleta.value : '',
+                modalidade: form.modalidadeAluno ? form.modalidadeAluno.value : 'convencional',
+                paraClasse: (form.modalidadeAluno && form.modalidadeAluno.value === 'para' && form.paraClasseAluno) ? (form.paraClasseAluno.value || null) : null,
+                paraDeficiencia: (form.modalidadeAluno && form.modalidadeAluno.value === 'para' && form.paraDeficienciaAluno) ? ((form.paraDeficienciaAluno.value || '').trim() || null) : null,
                 pin: pinVal,
                 obs: '',
                 avatar: defaultAvatar,

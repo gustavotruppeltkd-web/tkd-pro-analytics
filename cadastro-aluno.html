@@ -46,6 +46,7 @@
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.103.3"></script>
     <script src="js/supabase-client.js"></script>
+    <script src="js/para-classes.js"></script>
 </head>
 <body>
     <div class="wrap">
@@ -117,6 +118,24 @@
                 <div class="form-group">
                     <label>Graduação atual</label>
                     <select name="faixa" class="form-control" id="selFaixa"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Modalidade</label>
+                    <select name="modalidade" class="form-control" id="selModalidade">
+                        <option value="convencional">Convencional</option>
+                        <option value="para">Para-Taekwondo</option>
+                    </select>
+                </div>
+                <div id="paraFields" style="display:none;">
+                    <div class="form-group">
+                        <label>Classe esportiva (Para-Taekwondo)</label>
+                        <select name="paraClasse" class="form-control" id="selParaClasse"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Deficiência / Lesão</label>
+                        <input type="text" name="paraDeficiencia" class="form-control" id="inpParaDeficiencia" placeholder="Descreva a deficiência ou lesão do atleta">
+                    </div>
                 </div>
 
                 <!-- Campos específicos de Rendimento -->
@@ -238,6 +257,14 @@
             document.getElementById('selFaixa').innerHTML = FAIXAS.map(f => `<option value="${f}">${f}</option>`).join('');
             document.getElementById('selPeso').innerHTML = '<option value="">—</option>' + CATEGORIAS_PESO.map(p => `<option value="${p}">${p}</option>`).join('');
 
+            // Para-Taekwondo: preenche as classes e libera os campos ao escolher "Para"
+            const selMod = document.getElementById('selModalidade');
+            window.fillParaClasseSelect(document.getElementById('selParaClasse'));
+            const paraWrap = document.getElementById('paraFields');
+            const togglePara = () => { paraWrap.style.display = selMod.value === 'para' ? 'block' : 'none'; };
+            selMod.addEventListener('change', togglePara);
+            togglePara();
+
             show('sectionForm');
         } catch (e) {
             console.error(e);
@@ -263,6 +290,11 @@
             rg: form.rg.value.trim() || null,
             faixa: form.faixa.value,
         };
+        payload.modalidade = form.modalidade.value || 'convencional';
+        if (payload.modalidade === 'para') {
+            payload.paraClasse = form.paraClasse.value || null;
+            payload.paraDeficiencia = (form.paraDeficiencia.value || '').trim() || null;
+        }
         if (_isRendimento) {
             payload.categoriaPeso = form.categoriaPeso.value || null;
             payload.categoriaIdade = form.categoriaIdade.value || null;

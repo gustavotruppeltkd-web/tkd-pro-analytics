@@ -538,6 +538,20 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Modalidade</label>
+                    <select class="form-control" name="modalidadeAluno" id="selModalidadeAluno">
+                        <option value="convencional">Convencional</option>
+                        <option value="para">Para-Taekwondo</option>
+                    </select>
+                </div>
+                <div class="form-group" id="paraFieldsAluno" style="display:none;">
+                    <label>Classe esportiva (Para-Taekwondo)</label>
+                    <select class="form-control" name="paraClasseAluno" id="selParaClasseAluno"></select>
+                    <label style="margin-top:10px;">Deficiência / Lesão</label>
+                    <input type="text" class="form-control" name="paraDeficienciaAluno" id="inpParaDeficienciaAluno" placeholder="Descreva a deficiência ou lesão do atleta">
+                </div>
+
+                <div class="form-group">
                     <label>Foto de Perfil (Nova Foto do Computador)</label>
                     <input type="file" class="form-control" name="fotoAluno" accept="image/*"
                         onchange="handleFotoUploadPerfil(event)" style="padding: 9px 16px;">
@@ -596,6 +610,7 @@
     <script src="js/data-layer.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app-v2.js"></script>
+    <script src="js/para-classes.js"></script>
     <script>
         // Modal edit logic
         const modalEdit = document.getElementById('modalEditPerfil');
@@ -849,6 +864,21 @@
             form.obsAluno.value = alunoData.obs || '';
             form.faixaAluno.value = alunoData.faixa;
 
+            // Para-Taekwondo: carrega modalidade/classe/lesão e libera os campos
+            const _selMod = document.getElementById('selModalidadeAluno');
+            const _paraWrap = document.getElementById('paraFieldsAluno');
+            if (_selMod && _paraWrap) {
+                if (window.fillParaClasseSelect) window.fillParaClasseSelect(document.getElementById('selParaClasseAluno'), alunoData.paraClasse || '');
+                _selMod.value = alunoData.modalidade === 'para' ? 'para' : 'convencional';
+                const _inpDef = document.getElementById('inpParaDeficienciaAluno');
+                if (_inpDef) _inpDef.value = alunoData.paraDeficiencia || '';
+                if (!_selMod._wired) {
+                    _selMod.addEventListener('change', () => { _paraWrap.style.display = _selMod.value === 'para' ? 'block' : 'none'; });
+                    _selMod._wired = true;
+                }
+                _paraWrap.style.display = _selMod.value === 'para' ? 'block' : 'none';
+            }
+
             if (alunoData.planoId) selectPlano.value = alunoData.planoId;
             if (alunoData.inicioPlano) form.inicioPlano.value = alunoData.inicioPlano;
             if (alunoData.fimPlano) form.fimPlano.value = alunoData.fimPlano;
@@ -895,6 +925,16 @@
             alunoData.categoriaIdade = form.catIdadeAluno.value;
             alunoData.obs = form.obsAluno.value;
             alunoData.faixa = form.faixaAluno.value;
+
+            // Para-Taekwondo
+            alunoData.modalidade = form.modalidadeAluno ? form.modalidadeAluno.value : 'convencional';
+            if (alunoData.modalidade === 'para') {
+                alunoData.paraClasse = (form.paraClasseAluno && form.paraClasseAluno.value) || null;
+                alunoData.paraDeficiencia = (form.paraDeficienciaAluno && form.paraDeficienciaAluno.value.trim()) || null;
+            } else {
+                alunoData.paraClasse = null;
+                alunoData.paraDeficiencia = null;
+            }
 
             const editComercial = document.getElementById('editFieldsComercial');
             if (editComercial && editComercial.style.display !== 'none') {
