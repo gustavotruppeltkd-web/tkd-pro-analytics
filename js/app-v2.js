@@ -942,14 +942,23 @@ async function syncToSupabase() {
         // o clique do usuário com o último valor de outro device.
         const settingsPatch = {
             questionarios:    db.questionarios    || [],
-            treino_templates: db.treinoTemplates  || [],
             periodizacao:     db.periodizacao     || {},
             exercicios:       db.exercicios       || [],
-            mesociclos:       db.mesociclos       || [],
             notifications:    db.notifications    || [],
             treinador:        (db.treinadores && db.treinadores[0]) || {},
             onboarding_done:  !!db.onboardingDone
         };
+        // PROTEÇÃO contra perda acidental de dados (mesociclos/templates):
+        // updateSettings faz upsert PARCIAL — omitir a chave preserva o valor que
+        // já está no servidor. Só gravamos mesociclos/templates quando NÃO estão
+        // vazios, ou quando for exclusão deliberada (db._allowEmptySingletons=true).
+        // Assim um estado local vazio (corrida, estado parcial, device stale) não
+        // apaga mais o que está salvo no servidor.
+        const _meso = db.mesociclos || [];
+        const _tpls = db.treinoTemplates || [];
+        if (_meso.length > 0 || db._allowEmptySingletons) settingsPatch.mesociclos = _meso;
+        if (_tpls.length > 0 || db._allowEmptySingletons) settingsPatch.treino_templates = _tpls;
+        db._allowEmptySingletons = false; // one-shot
         await window.Data.updateSettings(settingsPatch);
     } catch (err) {
         console.warn("syncToSupabase (coach_settings) falhou:", err && err.message);

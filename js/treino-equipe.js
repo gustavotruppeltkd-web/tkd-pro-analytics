@@ -1418,6 +1418,7 @@
             if (!tpl) return;
             showConfirmModal('Excluir Template', `Excluir o template "${tpl.nome}"?`, () => {
                 db.treinoTemplates = db.treinoTemplates.filter(t => t.id !== templateId);
+                db._allowEmptySingletons = true; // exclusão deliberada — permite gravar lista vazia
                 saveDB();
                 renderTemplateSelector();
                 showToast('Template excluído.');
@@ -2056,6 +2057,7 @@
         function deleteMeso(mesoId) {
             showConfirmModal('Excluir mesociclo?', 'Esta ação não poderá ser desfeita.', () => {
                 db.mesociclos = (db.mesociclos || []).filter(m => m.id !== mesoId);
+                db._allowEmptySingletons = true; // exclusão deliberada — permite gravar lista vazia
                 saveDB();
                 if (_activeMesoId === mesoId) _activeMesoId = null;
                 renderMesoView();
