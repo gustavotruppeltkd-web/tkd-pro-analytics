@@ -273,10 +273,15 @@ function _safeSaveDB(dbObj) {
     } catch (e) {
         // Quota estourou — tenta versão "lite" sem avatares (que são base64 grande)
         try {
+            // Só remove avatares BASE64 (grandes). URLs do Storage são pequenas e
+            // devem permanecer — senão o db "lite" fica sem foto e um sync seguinte
+            // apagaria a foto no servidor (foi o que sumiu com a foto do treinador).
+            const _isB64 = v => typeof v === 'string' && v.startsWith('data:');
+            const stripB64 = o => { if (_isB64(o.avatar)) delete o.avatar; if (_isB64(o.foto)) delete o.foto; };
             const lite = JSON.parse(JSON.stringify(data));
-            if (Array.isArray(lite.alunos)) lite.alunos.forEach(a => { delete a.avatar; delete a.foto; });
-            if (Array.isArray(lite.treinadores)) lite.treinadores.forEach(t => { delete t.avatar; delete t.foto; });
-            if (Array.isArray(lite.turmas)) lite.turmas.forEach(t => { delete t.foto; });
+            if (Array.isArray(lite.alunos)) lite.alunos.forEach(stripB64);
+            if (Array.isArray(lite.treinadores)) lite.treinadores.forEach(stripB64);
+            if (Array.isArray(lite.turmas)) lite.turmas.forEach(t => { if (_isB64(t.foto)) delete t.foto; });
             localStorage.setItem('tkd_scout_db', JSON.stringify(lite));
             console.warn('[storage] db salvo sem avatares (quota estourou)');
             return true;
@@ -945,7 +950,6 @@ async function syncToSupabase() {
             periodizacao:     db.periodizacao     || {},
             exercicios:       db.exercicios       || [],
             notifications:    db.notifications    || [],
-            treinador:        (db.treinadores && db.treinadores[0]) || {},
             onboarding_done:  !!db.onboardingDone
         };
         // PROTEÇÃO contra perda acidental de dados (mesociclos/templates):
@@ -957,6 +961,21 @@ async function syncToSupabase() {
         if (_meso.length > 0 || db._allowEmptySingletons) settingsPatch.mesociclos = _meso;
         if (_tpls.length > 0 || db._allowEmptySingletons) settingsPatch.treino_templates = _tpls;
         db._allowEmptySingletons = false; // one-shot
+
+        // PROTEÇÃO da foto do treinador: se o avatar local está vazio mas o servidor
+        // tem, preserva (evita que um db "lite"/parcial apague a foto do perfil).
+        let _tre = (db.treinadores && db.treinadores[0]) || {};
+        if (_tre && !_tre.avatar && !db._allowEmptyAvatar) {
+            try {
+                const { data: _srv } = await window.supabaseClient
+                    .from('coach_settings').select('treinador').eq('coach_id', authData.user.id).maybeSingle();
+                const _srvAv = _srv && _srv.treinador && (_srv.treinador.avatar || _srv.treinador.foto);
+                if (_srvAv) { _tre = { ..._tre, avatar: _srvAv }; if (db.treinadores && db.treinadores[0]) db.treinadores[0].avatar = _srvAv; }
+            } catch (e) {}
+        }
+        db._allowEmptyAvatar = false;
+        settingsPatch.treinador = _tre;
+
         await window.Data.updateSettings(settingsPatch);
     } catch (err) {
         console.warn("syncToSupabase (coach_settings) falhou:", err && err.message);
