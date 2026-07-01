@@ -946,20 +946,24 @@ async function syncToSupabase() {
         // treinador está vendo agora). Sincronizar entre dispositivos sobrescreveria
         // o clique do usuário com o último valor de outro device.
         const settingsPatch = {
-            questionarios:    db.questionarios    || [],
             periodizacao:     db.periodizacao     || {},
-            exercicios:       db.exercicios       || [],
             notifications:    db.notifications    || [],
             onboarding_done:  !!db.onboardingDone
         };
-        // PROTEÇÃO contra perda acidental de dados (mesociclos/templates):
-        // updateSettings faz upsert PARCIAL — omitir a chave preserva o valor que
-        // já está no servidor. Só gravamos mesociclos/templates quando NÃO estão
-        // vazios, ou quando for exclusão deliberada (db._allowEmptySingletons=true).
-        const _meso = db.mesociclos || [];
-        const _tpls = db.treinoTemplates || [];
-        if (_meso.length > 0 || db._allowEmptySingletons) settingsPatch.mesociclos = _meso;
-        if (_tpls.length > 0 || db._allowEmptySingletons) settingsPatch.treino_templates = _tpls;
+        // PROTEÇÃO GERAL contra perda acidental: bibliotecas do usuário (mesociclos,
+        // templates, exercícios, questionários) só entram no patch quando NÃO estão
+        // vazias (updateSettings faz upsert PARCIAL — omitir a chave preserva o
+        // servidor). db._allowEmptySingletons=true permite exclusão deliberada.
+        const _libFields = {
+            mesociclos:       db.mesociclos,
+            treino_templates: db.treinoTemplates,
+            exercicios:       db.exercicios,
+            questionarios:    db.questionarios
+        };
+        for (const _k in _libFields) {
+            const _arr = _libFields[_k] || [];
+            if (_arr.length > 0 || db._allowEmptySingletons) settingsPatch[_k] = _arr;
+        }
         db._allowEmptySingletons = false; // one-shot
 
         // PROTEÇÃO da foto do treinador: se o avatar local está vazio mas o servidor

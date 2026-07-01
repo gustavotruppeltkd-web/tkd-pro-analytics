@@ -683,6 +683,7 @@
             if (confirm(`Deseja realmente EXCLUIR o questionário "${quest.titulo}"?\n\nIsso apagará permanentemente o formulário e TODAS as respostas de atletas associadas a ele.`)) {
                 // Remove questionnaire
                 db.questionarios = db.questionarios.filter(q => q.id !== id);
+                db._allowEmptySingletons = true; // exclusão deliberada — permite zerar a lista
 
                 // Remove associated answers
                 if (db.respostas) {

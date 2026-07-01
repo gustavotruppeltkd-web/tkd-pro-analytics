@@ -1210,6 +1210,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                     db.exercicios = (db.exercicios || []).filter(n => n !== name);
+                    db._allowEmptySingletons = true; // exclusão deliberada — permite zerar a lista
                     saveDB();
                     document.querySelectorAll('[id^="exLib_"]').forEach(d => populateExLibDropdownEl(d));
                 });
