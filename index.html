@@ -323,21 +323,19 @@
                     setTimeout(() => toggleRecovery(), 3000);
                 }
             } else if (isSignup) {
-                // Verificar autorização antes de criar a conta
-                const { data: authRow } = await supabaseClient
-                    .from('authorized_emails')
-                    .select('email, blocked')
-                    .eq('email', email.toLowerCase())
-                    .maybeSingle();
+                // Verificar autorização antes de criar a conta (via RPC — a lista de
+                // e-mails não é legível pelo cliente; só o admin gerencia no banco)
+                const { data: authInfo } = await supabaseClient
+                    .rpc('is_email_authorized', { p_email: email.toLowerCase() });
 
-                if (!authRow) {
+                if (!authInfo || !authInfo.found) {
                     errorMsg.innerText = "Este e-mail não está autorizado. Solicite acesso ao administrador.";
                     errorMsg.style.display = 'block';
                     btn.disabled = false;
                     btn.style.opacity = '1';
                     return;
                 }
-                if (authRow.blocked) {
+                if (authInfo.blocked) {
                     errorMsg.innerText = "Acesso bloqueado pelo administrador.";
                     errorMsg.style.display = 'block';
                     btn.disabled = false;
@@ -370,16 +368,13 @@
                 } else if (data && data.user) {
                     const userEmail = data.user.email.toLowerCase();
 
-                    // Verificar se está na lista de autorizados (e não bloqueado)
-                    const { data: authRow } = await supabaseClient
-                        .from('authorized_emails')
-                        .select('email, blocked')
-                        .eq('email', userEmail)
-                        .maybeSingle();
+                    // Verificar se está na lista de autorizados e não bloqueado (via RPC)
+                    const { data: authInfo } = await supabaseClient
+                        .rpc('is_email_authorized', { p_email: userEmail });
 
-                    if (!authRow || authRow.blocked) {
+                    if (!authInfo || !authInfo.found || authInfo.blocked) {
                         await supabaseClient.auth.signOut();
-                        errorMsg.innerText = authRow && authRow.blocked
+                        errorMsg.innerText = (authInfo && authInfo.blocked)
                             ? "Acesso bloqueado pelo administrador."
                             : "Acesso não autorizado. Solicite acesso ao administrador.";
                         errorMsg.style.display = 'block';

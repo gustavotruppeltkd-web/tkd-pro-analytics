@@ -32,13 +32,11 @@ async function checkAuth(isLoginPage = false) {
     if (session && !isLoginPage) {
         try {
             const email = (session.user.email || '').toLowerCase();
-            const { data: authRow, error } = await window.supabaseClient
-                .from('authorized_emails')
-                .select('email, blocked')
-                .eq('email', email)
-                .maybeSingle();
-            if (!error && (!authRow || authRow.blocked)) {
-                sessionStorage.setItem('tkd_access_revoked', (authRow && authRow.blocked) ? 'blocked' : 'removed');
+            // Via RPC: valida o próprio e-mail sem o cliente poder ler a lista
+            const { data: authInfo, error } = await window.supabaseClient
+                .rpc('is_email_authorized', { p_email: email });
+            if (!error && authInfo && (!authInfo.found || authInfo.blocked)) {
+                sessionStorage.setItem('tkd_access_revoked', authInfo.blocked ? 'blocked' : 'removed');
                 await window.supabaseClient.auth.signOut();
                 localStorage.removeItem('tkd_scout_db');
                 window.location.href = 'index.html';
