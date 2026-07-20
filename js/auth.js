@@ -40,9 +40,27 @@ async function checkAuth(isLoginPage = false) {
                 await window.supabaseClient.auth.signOut();
                 localStorage.removeItem('tkd_scout_db');
                 window.location.href = 'index.html';
+                return;
             }
         } catch (e) {
             console.warn('Falha ao revalidar autorização (mantendo acesso):', e);
+        }
+
+        // Portão de Termos de Uso (LGPD): se o treinador ainda não aceitou a versão
+        // vigente, é levado à tela de termos antes de usar o sistema. termos.html é
+        // isento (senão faz loop). Fail-open em erro de rede (não trava o acesso).
+        const TERMS_VERSION = '1.0';
+        if (!currentPath.includes('termos.html')) {
+            try {
+                const { data: aceitou, error: e2 } = await window.supabaseClient
+                    .rpc('aceitou_termos', { p_versao: TERMS_VERSION });
+                if (!e2 && aceitou === false) {
+                    window.location.href = 'termos.html';
+                    return;
+                }
+            } catch (e) {
+                console.warn('Falha ao verificar aceite de termos (mantendo acesso):', e);
+            }
         }
     }
 }
